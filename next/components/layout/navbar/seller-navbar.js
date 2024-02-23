@@ -12,7 +12,7 @@ export default function SellerNavbar() {
   return (
     <>
     <div className='d-none d-lg-block'>
-      <div className={styles.sellerNavbar}>
+      <header className={styles.sellerNavbar}>
         <div // logo
         >
           <Link href="/index.js" className={styles.link}>
@@ -73,7 +73,7 @@ export default function SellerNavbar() {
             </li>
           </ul>
         </div>
-      </div>
+      </header>
     </div>
     {/* RWD */}
     <div className='d-flex flex-column d-lg-none'>
