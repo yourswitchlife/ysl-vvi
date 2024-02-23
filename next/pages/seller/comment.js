@@ -1,0 +1,460 @@
+import React, { useEffect } from 'react'
+import SellerNavbar from '@/components/layout/navbar/seller-navbar'
+import Sidebar from '@/components/seller/sidebar'
+import SellerCover from '@/components/seller/sellerCover'
+import styles from '@/components/seller/seller.module.scss'
+import {
+  FaHome,
+  FaStore,
+  FaFileAlt,
+  FaStar,
+  FaCoins,
+  FaPlus,
+  FaAngleDown,
+  FaFilter,
+} from 'react-icons/fa'
+import { IoIosArrowForward } from 'react-icons/io'
+import { IoGameController } from 'react-icons/io5'
+import Link from 'next/link'
+import profileImg from '@/public/images/profile-photo/peach.png'
+import defaultHead from '@/public/images/profile-photo/default-profile-img.svg'
+import Image from 'next/image'
+import SellerFooter from '@/components/layout/footer/footer-backstage'
+import InputGroup from 'react-bootstrap/InputGroup'
+import { FaCalendarAlt } from 'react-icons/fa'
+import Form from 'react-bootstrap/Form'
+import Nav from 'react-bootstrap/Nav'
+import Dropdown from 'react-bootstrap/Dropdown'
+import Pagination from '@/components/common/paginage'
+import Button from 'react-bootstrap/Button'
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import Card from 'react-bootstrap/Card'
+
+export default function Comment() {
+  //body style
+  useEffect(() => {
+    // 當元件掛載時添加樣式
+    document.body.classList.add(styles.bodyStyleA)
+    // 當元件卸載時移除樣式
+    return () => {
+      document.body.classList.remove(styles.bodyStyleA)
+    }
+  }, [])
+
+  // function handleSubmit(e) {
+  //   e.prevent.default
+  // }
+
+  return (
+    <>
+      <header>
+        <SellerNavbar />
+      </header>
+      <main className={styles.mainContainer}>
+        <div className="d-none d-md-block">
+          <Sidebar />
+        </div>
+        <div>
+          {/* cover */}
+          <SellerCover />
+          <div className="d-flex flex-column d-lg-none container ps-4 pe-4">
+            <div className="d-flex justify-content-around align-items-center mt-4 mb-2">
+              <div className={`${styles.profile}`}>
+                <Image src={profileImg} alt="" className={styles.fit} />
+              </div>
+              <div className="d-flex flex-column align-items-start justify-content-center">
+                <h5 className="mb-1">碧姬公主的玩具城堡</h5>
+                <p className="mb-1">ysl.com/princepeach8888</p>
+              </div>
+              <div>
+                <button className="btn btn-danger">查看賣場</button>
+              </div>
+            </div>
+            <hr />
+          </div>
+          <div className={`d-none d-md-block ${styles.dashboardMargin}`}>
+            <div className={`mb-4 ${styles.dashboardStyle}`}>
+              <Form>
+                <div className="d-flex justify-content-between align-items-end mb-4">
+                  <div className="d-flex justify-content-start align-items-end">
+                    <h5 className="text-dark mb-0 me-3">賣場評價</h5>
+                    <h6 className="text-secondary fw-normal mb-0">
+                      查看您的賣場評價
+                    </h6>
+                  </div>
+                  <h6 className="text-secondary fw-normal mb-0">
+                    <span className="text-danger fw-bold fs-4">4.5</span> / 5.0
+                  </h6>
+                </div>
+                <Form.Group className="mb-3" controlId="memberName">
+                  <Form.Label className="text-dark">會員名稱</Form.Label>
+                  <Form.Control type="text" placeholder="請輸入會員名稱" />
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="dateSelect">
+                  <Form.Label className="text-dark">評價時間</Form.Label>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <InputGroup className={`mb-0 ${styles.dateSelect}`}>
+                      <Form.Control
+                        type="date"
+                        aria-label="dateSelectStart"
+                        aria-describedby="dateSelectStart"
+                        className={styles.dateInput}
+                      />
+                    </InputGroup>
+                    <span className="text-dark mb-0 mx-2">-</span>
+                    <InputGroup className={`mb-0 ${styles.dateSelect}`}>
+                      <Form.Control
+                        type="date"
+                        aria-label="dateSelectEnd"
+                        aria-describedby="dateSelectEnd"
+                        className={styles.dateInput}
+                      />
+                    </InputGroup>
+                  </div>
+                </Form.Group>
+                <div className="d-flex justify-content-center">
+                  {/* <button
+                    type="button"
+                    href="/"
+                    className="btn btn-danger me-2"
+                    onChange={handleSubmit}
+                  > */}
+                  <button
+                    type="button"
+                    href="/"
+                    className="btn btn-danger me-2"
+                  >
+                    搜尋
+                  </button>
+                  <button type="button" href="/" className="btn btn-danger">
+                    取消
+                  </button>
+                </div>
+              </Form>
+            </div>
+            <div className={`mb-5 ${styles.dashboardStyle}`}>
+              <Nav
+                variant="tabs"
+                defaultActiveKey="/comment/all"
+                className="mb-4"
+              >
+                <Nav.Item>
+                  <Nav.Link href="/comment/all" className="text-danger">
+                    全部
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="unreply" className="text-secondary">
+                    待回覆
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="replied" className="text-secondary">
+                    已回覆
+                  </Nav.Link>
+                </Nav.Item>
+                {/* <Nav.Item>
+                  <Nav.Link eventKey="disabled" disabled>
+                    Disabled
+                  </Nav.Link>
+                </Nav.Item> */}
+              </Nav>
+              {/* <div className="d-flex align-items-center justify-content-between mb-2">
+                <h5 className="text-dark mb-0 me-3">41筆評價</h5>
+                <div className="d-flex ">
+                  <Dropdown className="me-2">
+                    <Dropdown.Toggle
+                      variant="success"
+                      id="ranking"
+                      type="button"
+                      className={`btn d-flex justify-content-center align-items-center ${styles.rankingBtn}`}
+                    >
+                      <h6
+                        className={`mb-0 d-none d-md-block ${styles.textColor}`}
+                      >
+                        訂單成立時間
+                      </h6>
+                      <p className="mb-0 d-block d-md-none">訂單成立時間</p>
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item href="#/action-1">
+                        時間由近到遠
+                      </Dropdown.Item>
+                      <Dropdown.Item href="#/action-2">
+                        時間由遠到近
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                  <Dropdown>
+                    <Dropdown.Toggle
+                      variant="success"
+                      id="ranking"
+                      type="button"
+                      className={`btn d-flex justify-content-center align-items-center ${styles.rankingBtn}`}
+                    >
+                      <h6
+                        className={`mb-0 d-none d-md-block ${styles.textColor}`}
+                      >
+                        評價分數
+                      </h6>
+                      <p className="mb-0 d-block d-md-none">評價分數</p>
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item href="#/action-1">
+                        分數由高到低
+                      </Dropdown.Item>
+                      <Dropdown.Item href="#/action-2">
+                        分數由低到高
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+              </div> */}
+              <ButtonGroup aria-label="ratingSort" size="sm">
+                <Button variant="secondary">全部</Button>
+                <Button variant="secondary">5顆星(141)</Button>
+                <Button variant="secondary">4顆星(1)</Button>
+                <Button variant="secondary">3顆星(0)</Button>
+                <Button variant="secondary">2顆星(0)</Button>
+                <Button variant="secondary">1顆星(0)</Button>
+              </ButtonGroup>
+              <div className="container">
+                {/*--------------Rating Subtitle------------------ */}
+                <div
+                  className={`row my-3 py-2 justify-content-center text-center ${styles.ratingST}`}
+                >
+                  <h6 className="mb-0 col-4 fw-normal">訂單資訊</h6>
+                  <h6 className="mb-0 col-6 fw-normal">評價內容</h6>
+                  <h6 className="mb-0 col-2 fw-normal">操作</h6>
+                </div>
+              </div>
+              {/*--------------Rating Content------------------ */}
+              <Card border="light" style={{ width: '100%' }} className="mb-3">
+                <Card.Header>
+                  <div className='d-flex align-items-center'>
+                    <p className="mb-0 text-secondary me-1">
+                      會員名稱:</p>
+                      <div className={`me-1 ${styles.shapeCircle}`}>
+                        <Image
+                          src={defaultHead}
+                          alt=""
+                          width={25}
+                          height={25}
+                        />
+                      </div>
+                      <p className="mb-0 text-secondary">zhang.wt</p>
+                  </div>
+                </Card.Header>
+                <Card.Body>
+                  <Card.Title className="text-dark">
+                    <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
+                  </Card.Title>
+                  <Card.Text className="text-dark">
+                    <div className="row">
+                      <div className="col-4 border-end">
+                        <p className="mb-0 text-dark">
+                          集合啦！動物森友會
+                          <span className="text-info ms-2">x1</span>
+                        </p>
+                      </div>
+                      <div className="col-6 border-end">
+                        <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
+                          <FaStar className="me-1" />
+                          <FaStar className="me-1" />
+                          <FaStar className="me-1" />
+                          <FaStar className="me-1" />
+                          <FaStar />
+                        </div>
+                        <p className="mb-0 text-dark">
+                          斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
+                        </p>
+                        <small className="text-secondary">
+                          2024/02/16 22:51
+                        </small>
+                      </div>
+                      <div className="col-2 d-flex justify-content-center align-items-center">
+                        {/* 可以跳出一個MODAL來處理 */}
+                        <button
+                          type="button"
+                          href="/comment/reply"
+                          className="btn btn-danger"
+                        >
+                          回覆
+                        </button>
+                      </div>
+                    </div>
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+              <Card border="light" style={{ width: '100%' }} className="mb-3">
+                <Card.Header>
+                <div className='d-flex align-items-center'>
+                    <p className="mb-0 text-secondary me-1">
+                      會員名稱:</p>
+                      <div className={`me-1 ${styles.shapeCircle}`}>
+                        <Image
+                          src={defaultHead}
+                          alt=""
+                          width={25}
+                          height={25}
+                        />
+                      </div>
+                      <p className="mb-0 text-secondary">zhang.wt</p>
+                  </div>
+                </Card.Header>
+                <Card.Body>
+                  <Card.Title className="text-dark">
+                    <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
+                  </Card.Title>
+                  <Card.Text className="text-dark">
+                    <div className="row">
+                      <div className="col-4 border-end">
+                        <p className="mb-0 text-dark">
+                          集合啦！動物森友會
+                          <span className="text-info ms-2">x1</span>
+                        </p>
+                      </div>
+                      <div className="col-6 border-end">
+                        <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
+                          <FaStar className="me-1" />
+                          <FaStar className="me-1" />
+                          <FaStar className="me-1" />
+                          <FaStar className="me-1" />
+                          <FaStar />
+                        </div>
+                        <p className="mb-0 text-dark">
+                          斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
+                        </p>
+                        <small className="text-secondary">
+                          2024/02/16 22:51
+                        </small>
+                      </div>
+                      <div className="col-2 d-flex justify-content-center align-items-center">
+                        {/* 可以跳出一個MODAL來處理 */}
+                        <button
+                          type="button"
+                          href="/comment/reply"
+                          className="btn btn-danger"
+                        >
+                          回覆
+                        </button>
+                      </div>
+                    </div>
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+
+              <Pagination />
+            </div>
+          </div>
+          <div className="d-block d-md-none container ps-4 pe-4">
+            <div className="d-flex justify-content-between mb-3">
+              <h6 className="mb-0 me-3">我的銷售</h6>
+              <Link href="/" className={styles.linkstyle}>
+                <p className="mb-0">
+                  查看銷售紀錄
+                  <IoIosArrowForward />
+                </p>
+              </Link>
+            </div>
+            <div className="d-flex justify-content-around">
+              <Link
+                href="/"
+                className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
+              >
+                <h5 className="text-danger">6</h5>
+                <p className="text-secondary">待處理訂單</p>
+              </Link>
+              <Link
+                href="/"
+                className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
+              >
+                <h5 className="text-danger">35</h5>
+                <p className="text-secondary">已完成訂單</p>
+              </Link>
+              <Link
+                href="/"
+                className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
+              >
+                <h5 className="text-danger">0</h5>
+                <p className="text-secondary">已售完商品</p>
+              </Link>
+              <Link
+                href="/"
+                className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
+              >
+                <h5 className="text-danger">2</h5>
+                <p className="text-secondary">評價</p>
+              </Link>
+            </div>
+            <hr />
+            <h6 className="mb-3">賣家中心</h6>
+            <ul
+              className={`nav nav-pills flex-column mb-auto ${styles.sidebarRWD}`}
+            >
+              <li className="nav-item">
+                <Link
+                  href="/seller/seller"
+                  className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
+                  aria-current="page"
+                >
+                  <FaHome className={`${styles.navText} me-2`} />
+                  <h6 className={`${styles.navText} mb-0`}>賣家中心</h6>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
+                >
+                  <FaStore className={`${styles.navText} me-2`} />
+                  <h6 className={`${styles.navText} mb-0`}>賣場管理</h6>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
+                >
+                  <IoGameController className={`${styles.navText} me-2`} />
+                  <h6 className={`${styles.navText} mb-0`}>商品管理</h6>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
+                >
+                  <FaFileAlt className={`${styles.navText} me-2`} />
+                  <h6 className={`${styles.navText} mb-0`}>訂單管理</h6>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
+                >
+                  <FaStar className={`${styles.navText} me-2`} />
+                  <h6 className={`${styles.navText} mb-0`}>評價管理</h6>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
+                >
+                  <FaCoins className={`${styles.navText} me-2`} />
+                  <h6 className={`${styles.navText} mb-0`}>行銷活動</h6>
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="d-none d-md-block">
+          <SellerFooter />
+        </div>
+      </main>
+    </>
+  )
+}
