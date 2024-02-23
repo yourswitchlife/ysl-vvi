@@ -1,0 +1,167 @@
+@import '@/styles/valuable.scss';
+
+// 控制固定欄位寬度
+.ab,
+.qb,
+.sb {
+  width: 200px;
+}
+
+.pb {
+  width: calc(100% - 300px);
+}
+
+// 訂單詳情
+.mainTitle {
+  margin-bottom: 20px;
+  padding-left: 20px;
+  font-size: 22px;
+}
+
+// 單一賣場訂單區塊
+.orderList {
+  padding: 15px 20px;
+  margin-bottom: 30px;
+  border: 1px solid $light-gray;
+  border-radius: 15px;
+  // 單價、數量、總價
+  .listFrame {
+    display: flex;
+    text-align: center;
+    padding: 15px 20px;
+  }
+
+  //   購買商品清單
+  .shop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid $light-gray;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    .shopName {
+      display: flex;
+
+      .icon {
+        width: 25px;
+        height: 25px;
+        padding-right: 5px;
+      }
+    }
+  }
+}
+
+// 商品
+.pContainer {
+  // 手機商品圖
+  .pImgMobile {
+    display: none;
+  }
+  .product {
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    // background: #aaa;
+  }
+
+  .pInfoFrame {
+    display: flex;
+    // flex: 1 1 auto;
+    // // justify-content: space-between;
+    // align-items: center;
+  }
+}
+
+// 商品名稱、加入收藏
+.pInfoBar {
+  display: flex;
+  flex-direction: column;
+
+  .pImg {
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .pDetailFrame {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 0 20px 0 10px;
+    .pDetail {
+      .pName {
+        text-decoration: none;
+        color: $primary-black;
+        max-height: 70px;
+        font-size: 1rem;
+        margin-bottom: 10px;
+        display: -webkit-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-all;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+      .language {
+        color: $primary-black;
+        margin-bottom: 10px;
+      }
+      .discount {
+        display: inline-block;
+        background: $danger;
+        color: $white;
+        padding: 5px;
+        border-radius: 5px;
+        line-height: 0.875rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    .pInfoBottom {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: auto;
+      .text,
+      .icon {
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+// 商品金額
+.priceBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  .price,
+  .prePrice,
+  .discountPrice {
+    text-align: center;
+  }
+
+  .prePrice {
+    text-decoration: line-through $danger;
+    color: $dark-gray;
+    margin-right: 0.625rem;
+  }
+
+  .discountPrice {
+    color: $danger;
+  }
+}
+
+// 購買數量
+.control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+// 總金額
+.totalBar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

@@ -1,0 +1,81 @@
+@import '../../styles/valuable.scss';
+
+// 電腦版1440px
+.frameMobile {
+  display: none;
+}
+.progressWrap {
+  margin: 30px 100px 60px;
+}
+
+.InfoContainer {
+  margin: 75px 40px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.iconBar {
+  display: inline-block;
+  position: relative;
+  cursor: default;
+}
+
+.iconInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  height: 60px;
+  top: 15px;
+  left: calc(50% - 32px);
+
+  .icon {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+// 手機板430px
+@media screen and (max-width: 431px) {
+  .framePC {
+    display: none;
+  }
+  .frameMobile {
+    display: block;
+    padding-top: 110px;
+    margin-bottom: 20px;
+    .progressWrap {
+      margin: 10px 60px 20px;
+      .iconBtn {
+        display: grid;
+        align-items: center;
+        padding-left: 9.5px;
+      }
+      .iconBtnCart {
+        padding-left: 8px;
+      }
+      .iconMobile {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    // 說明文字
+    .infoBar {
+      display: flex;
+      justify-content: space-between;
+      margin-inline: 25px;
+      .infoText {
+        margin: 5px 0px 10px;
+        text-align: center;
+      }
+      .infoTextA {
+        margin-left: -10px;
+      }
+      .infoTextB {
+        margin-right: 15px;
+      }
+    }
+  }
+}
