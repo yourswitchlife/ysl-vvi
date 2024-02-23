@@ -1,0 +1,181 @@
+@import '@/styles/valuable.scss';
+
+@font-face {
+  font-family: 'cubic 11';
+  src: url('Cubic_11_1.100_R.woff') format('woff');
+}
+
+.wrapper {
+  background: #0d548b;
+  .banner {
+    // width: 90%;
+    // position: relative;
+        & img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+    }
+
+    .bannerTitle{
+      width: 30%;
+      & img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        // aspect-ratio: 12 / 4;
+      }
+    }
+
+    .bannerSub{
+      margin-top:50px;
+      margin-inline: 50px;
+      width: 90%;
+      & img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+
+    .bannerCTA{
+      width: 18%;
+
+      & img{
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+  
+}
+
+
+
+
+
+  .title {
+    position: relative;
+    // text-align: center;
+    left: calc(20% - 56px);
+    // bottom: calc(100% - 300px);
+    font-family: 'cubic 11';
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+      1px 1px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000,
+      2px 2px 0 #000;
+    // text-shadow:
+    // 7px 3px 0 #000,
+    // -7px -1px 0 #000,
+    // 7px -7px 0 #000,
+    // -7px -7px 0 #000,
+  }
+
+  .title_action {
+    font-family: 'cubic 11';
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+      1px 1px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000,
+      2px 2px 0 #000;
+  }
+
+  .title_CTAbtn{
+    :hover {
+      background-color: red;
+      transition: 0.5s;
+
+  }
+  
+    .title_CTA {
+      font-family: 'cubic 11';
+    }
+  }
+}
+
+.couponMember {
+  background: linear-gradient(to bottom, #0d548b, black);
+  min-height: 800px;
+
+
+  // .consoleBG{
+  //   background-color: #0F2D45;
+  //   border-radius: 80px;
+  //   height: 415px;
+  //   width: 80%;
+  //   // z-index: 99;
+  // }
+  
+  .console{
+    // height: 30%;
+    max-width: 80%;
+    // position: relative;
+    // object-fit: cover;
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+    // background: url('../../public/images/coupon/section-ctaBG.png');
+    // width:50%;
+    // height:50%;
+    // background-repeat: no-repeat;
+    // background-size: cover;
+    // background-position: center;
+    // margin: auto;
+
+    & img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+
+
+  .consoleTitle{
+    max-width: 80%;
+    // left: calc(100% - 400px);
+    // top:85px;
+
+
+    & img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+   
+  }
+
+  .consoleSub{
+    max-width: 80%;
+    & img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .btnCTA{
+    
+  }
+}
+
+
+
+
+.title1 {
+  display: flex;
+  font-family: 'cubic 11';
+  justify-content: center;
+  align-items: center;
+  color:white;
+}
+
+
+
+
+
+.missionBG{
+  max-width: 30%
+    & img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+}
