@@ -4,6 +4,7 @@ import PRating from '@/components/products/p-rating'
 import Type from '@/components/products/type'
 import { FaRegHeart, FaCartPlus } from 'react-icons/fa'
 import styles from '../../styles/products/product-list.module.scss'
+import pImgs from '@/public/images/product/HOPSTEPDANCE.jpg'
 
 export default function ProductList() {
   return (
@@ -11,12 +12,12 @@ export default function ProductList() {
       <div className={styles.card}>
         <div className="d-flex justify-content-center">
           <Image
-            src="https://tshop.r10s.com/9d8/189/0ce7/b2d8/4078/5eba/1119/1117eb82f60242ac110006.jpg"
+            src={pImgs}
             alt="product"
             width={150}
             height={244}
             // priority={true}
-            className="p-2  pb-3"
+            className="px-2 pb-3 pt-1"
             layout="fixed"
             // fetchPriority="width"
           />
