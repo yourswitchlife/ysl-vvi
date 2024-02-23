@@ -1,0 +1,279 @@
+@import "@/styles/valuable.scss";
+// $danger:#e41e49;
+// $info:#0068f0;
+// $primary-black:#161719;
+// $white:#FFFFFF;
+// $red-secondary:#ED5260;
+// $dark-gray:#2D2D2D;
+// $blue-secondary:#43B0FF;
+// $gray:#676767;
+// $light-gray:#C4C4C4;
+// $yellow:#FFE03B;
+// $bright-gray:#E3E3E3;
+$nav-black: #161719ae;
+
+
+//style
+.outline{
+  border: 1px solid $white;
+  border-radius: 5px; 
+  background-color: transparent; 
+}
+.linkstyle{
+  margin: 0;
+  text-decoration: none;
+}
+
+//size
+.menu{
+  width: 35px;
+  height: 35px;
+  padding: 0;
+}
+  /* Navbar */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    width: 100svw;
+    align-items: center;
+    background-color: $nav-black;
+    color: $white;
+    font-size: 18px;    
+    padding: 10px 50px;
+    .linkPr{
+      color: $white;
+      text-decoration: none;
+      padding-right: 30px;           
+    }    
+    .link{
+      color: $white;
+      text-decoration: none;              
+    }   
+    .unlogin{
+      padding-inline: 10px;
+    }    
+    .loginIcon{
+      color: $white;
+      padding-right: 18px;
+    }
+    .loginIconEnd{
+      color: $white;      
+    }
+    .circleCut{
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+  }
+
+  //navbar B
+  .navbarB{
+    display: flex;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    width: 100svw;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $nav-black;
+    color: $white;
+    font-size: 18px;    
+    padding: 10px 20px;
+  }
+  .sellerNavbar{
+    display: flex;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    width: 100svw;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $primary-black;
+    color: $white;      
+    padding: 10px 150px;
+    .link{
+      display: flex;
+      align-items: center;
+      color: $white;
+      text-decoration: none; 
+      .text{
+        font-size: 20px;
+        margin: 0;
+      }                     
+    } 
+    .circleCut{
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .linkstyled{
+      text-decoration: none; 
+      color: $white;    
+      .shopname{
+        font-size: 16px;
+        font-weight: normal;
+        margin: 0;
+        padding-left: 12px;             
+      }
+    }    
+  }
+  .navMenu{
+    background-color: $dark-gray;
+  }
+  //toggle sort
+.togglebtn{
+  color: $white;
+  border: none;  
+  width: 85%;     
+  border-radius: 0;
+  border-bottom: 1px solid $gray;
+  padding: 15px;
+  &:hover{
+      border-bottom: 1px solid $white;
+  }
+}
+.selectBtn{
+  width: 100%;
+  margin-top: 50px;
+}
+  
+  .header {
+    text-align: center;
+  }
+  
+  .button {
+    color: $white;
+    display: inline-block;
+    position: relative;
+    padding: 2px 5px;
+  }
+
+
+  
+  .cartNav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $nav-black;
+    color: $white;      
+    padding: 10px 50px;
+    position: fixed;
+    top: 0;
+    width: 100svw;
+    z-index: 10;
+
+    .link{
+      display: flex;
+      align-items: center;
+      color: $white;
+      text-decoration: none; 
+      .text{
+        font-size: 20px;
+        margin: 0;
+      }                     
+    } 
+    .loginIcon{
+      color: $white;
+      padding-right: 15px;
+    }
+    .loginIconEnd{
+      color: $white;      
+    }
+    .cartRight {
+      display: flex;
+    }
+    .iconGroup{
+      display: flex;
+      align-items: center;
+      padding-right:45px ;
+    }
+    .circleCut{
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    
+  }
+
+  //searchBar
+  .display{
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 500px;
+    border: 1px solid $white;
+    // padding: 5px;
+    border-radius: 20px;
+}
+.button{
+    position: absolute;
+    left: 20px;
+    top: 3.5px;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.search{
+    width: 100%;
+    background-color: transparent;
+    box-shadow: none;
+    color: $white;
+    padding: 3px 5px 5px 55px; 
+    border: none;
+    &:focus {
+        outline: none;
+    }
+}
+.search::placeholder{
+        color: $white;
+        font-size: 16px;         
+    }
+
+.icon{
+    color: $white;
+}
+
+//searchBarB
+.displayB{
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 220px;  
+  // padding: 5px;
+  border-radius: 5px;
+  background-color: rgb(255, 255, 255, 0.5);
+
+}
+.buttonB{
+  position: absolute;
+  left: 10px;
+  top: 3.5px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.searchB{
+  width: 100%;
+  background-color: transparent;
+  box-shadow: none;
+  color: $white;
+  padding: 3px 5px 5px 35px; 
+  border: none;
+  &:focus {
+      outline: none;
+  }
+}
+.searchB::placeholder{
+      color: $white;
+      font-size: 14px;         
+  }

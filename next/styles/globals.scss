@@ -1,0 +1,79 @@
+// 共用顏色區
+@import "./valuable.scss";
+@import '~bootstrap/scss/bootstrap';
+@import 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Play:wght@400;700&display=swap';
+
+// #__next {
+//   flex-direction: column;
+//   height: 100%;
+//   display: flex;
+// }
+
+body {
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0;
+  background-color: $primary-black;
+  font-family: 'Noto Sans TC Regular', Helvetica, Arial, 'PingFang TC','Play',
+    '苹方-繁', 'Heiti TC', '黑體-繁', 'Microsoft JhengHei', '微軟正黑體',
+    // Cross-platform generic font family (default user interface font)
+    system-ui,
+    // Safari for macOS and iOS (San Francisco)
+    -apple-system,
+    // Windows
+    'Segoe UI',
+    // Android
+    Roboto,
+    // Sans serif fallback
+    sans-serif,
+    // Emoji fonts
+    'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+h1,
+h2,
+h3,
+h3,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+// 如果要粗體請自行覆蓋line-height 或直接加 <b>
+h1, .h1{font-size: 72px;font-family: 'Play';line-height: 80px;}
+h2, .h2{font-size: 48px;font-family: 'Noto';font-weight: 400;}
+h3, .h3{font-size: 36px;font-family: 'Noto';font-weight: 400;}
+h4, .h4{font-size: 28px;font-family: 'Noto';font-weight: 400;line-height: 42px;}
+h5, .h5{font-size: 20px;font-family: 'Noto';font-weight: 400;line-height: 30px;}
+h6, .h6{font-size: 16px;font-family: 'Noto';font-weight: 400;line-height: 24px;}
+p, .p{font-size: 12px;font-family: 'Noto';font-weight: 400;line-height: 18px;}
+
+// page
+.pagination{
+  .page-item:last-child .page-link, .page-item:first-child .page-link {
+    border-radius: 5px;
+    border: 1px solid $light-gray;
+  }
+  .page-link {
+    color: $light-gray; 
+    background-color: $primary-black; 
+    border: none;
+} 
+.pagination .page-item.active .page-link {
+  color: #ffffff;
+  background-color: #3a3a3a; 
+ }
+}
+
+// button
+.btn{
+  border-radius: 50px;
+  padding: 10px 20px;
+}
+
+.btn-sm{
+  border-radius: 50px;
+  padding: 4px 14px;
+}
