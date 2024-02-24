@@ -12,55 +12,55 @@ import BurgerMenu from './burgermenu'
 export default function CartNavbar() {
   return (
     <>
-    <div className='d-none d-lg-block'>
-      <header className={styles.cartNav}>
-        <div // logo
-        >
-          <Link href="/index.js" className={styles.link}>
-            <Image src={yslLogo} alt="" />
-            <span className="ps-4 pe-4">|</span>
-            <h3 className={styles.text}>購物車</h3>
-          </Link>
-        </div>
-        {/* 登入後顯示 */}
-        <div className={styles.cartRight}>
-          <div className={styles.iconGroup}>
-            <Link href="" className={styles.loginIcon}>
-              <FaHeart />
-            </Link>
-            <Link href="" className={styles.loginIcon}>
-              <FaBell />
-            </Link>
-            <Link href="" className={styles.loginIconEnd}>
-              <FaStore />
+      <div className="d-none d-lg-block">
+        <header className={styles.cartNav}>
+          <div // logo
+          >
+            <Link href="/index.js" className={styles.link}>
+              <Image src={yslLogo} alt="" />
+              <span className="ps-4 pe-4">|</span>
+              <h3 className={styles.text}>購物車</h3>
             </Link>
           </div>
-          <div className={styles.circleCut}>
-            <Link href="">
-              <Image src={profilePhoto} alt="" />
+          {/* 登入後顯示 */}
+          <div className={styles.cartRight}>
+            <div className={styles.iconGroup}>
+              <Link href="" className={styles.loginIcon}>
+                <FaHeart />
+              </Link>
+              <Link href="" className={styles.loginIcon}>
+                <FaBell />
+              </Link>
+              <Link href="" className={styles.loginIconEnd}>
+                <FaStore />
+              </Link>
+            </div>
+            <div className={styles.circleCut}>
+              <Link href="">
+                <Image src={profilePhoto} alt="" />
+              </Link>
+            </div>
+          </div>
+        </header>
+      </div>
+      <div className="d-flex flex-column d-lg-none">
+        {/* RWD 抓標題版本*/}
+        <header className={styles.navbarB}>
+          <div // logo
+          >
+            <Link href="/index.js">
+              <Image src={yslLogoXs} alt="" />
             </Link>
           </div>
-        </div>
-      </header>
-    </div>
-      <div className='d-flex flex-column d-lg-none'>
-      {/* RWD 抓標題版本*/}
-      <header className={styles.navbarB}>
-        <div // logo
-        >
-          <Link href="/index.js">
-            <Image src={yslLogoXs} alt="" />
+          <div className="">
+            <h5 className="mb-0">結帳</h5>
+          </div>
+          <Link href="/index.js" className="text-white ps-5">
+            <FaArrowRight />
           </Link>
-        </div>
-        <div className="">
-          <h5 className='mb-0'>我的賣場</h5>
-        </div>
-        <Link href="/index.js" className="text-white ps-5">
-          <FaArrowRight />
-        </Link>
-      </header>
-      {/* RWD 一般版本*/}
-      {/* <header className={styles.navbarB}>
+        </header>
+        {/* RWD 一般版本*/}
+        {/* <header className={styles.navbarB}>
         <div // logo
         >
           <Link href="/index.js">
@@ -73,7 +73,7 @@ export default function CartNavbar() {
         </div>
         <BurgerMenu />
       </header> */}
-      </div>      
+      </div>
     </>
   )
 }

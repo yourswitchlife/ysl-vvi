@@ -3,7 +3,7 @@ import { useState } from 'react'
 import styles from './select-coupon-modal.module.scss'
 import ProductCoupon from './product-coupon'
 import DeliveryCoupon from './delivery-coupon'
-import { FaInfoCircle } from 'react-icons/fa'
+import { FaCircleInfo } from 'react-icons/fa6'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 
@@ -18,7 +18,7 @@ export default function SelectCoupon({ show, handleClose }) {
           <div className={styles.productFrame}>
             <div className={styles.title}>
               <div className={styles.text}>商品抵用券</div>
-              <FaInfoCircle className={styles.icon} />
+              <FaCircleInfo className={styles.icon} />
             </div>
             <div className={styles.couponBody}>
               {/* 單一商品優惠券 */}
@@ -29,7 +29,7 @@ export default function SelectCoupon({ show, handleClose }) {
           <div className={styles.deliveryFrame}>
             <div className={styles.title}>
               <div className={styles.text}>運費抵用券</div>
-              <FaInfoCircle className={styles.icon} />
+              <FaCircleInfo className={styles.icon} />
             </div>
             <div className={styles.couponBody}>
               {/* 單一運費優惠券 */}

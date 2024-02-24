@@ -20,10 +20,15 @@
 
 // 單一賣場訂單區塊
 .orderList {
-  padding: 15px 20px;
   margin-bottom: 30px;
   border: 1px solid $light-gray;
+  overflow: hidden;
   border-radius: 15px;
+
+  .topFrame {
+    padding: 15px 20px;
+  }
+
   // 單價、數量、總價
   .listFrame {
     display: flex;
@@ -164,4 +169,288 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+// 寄送資訊、收件資訊區塊
+.deliveryContainer {
+  background: $bright-gray;
+  padding: 30px;
+}
+
+.deliveryInfo {
+  padding-right: 50px;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 20px;
+
+  .icon {
+    color: $gray;
+  }
+}
+
+// 選擇物流方式
+.selectFrame {
+  display: flex;
+  align-items: center;
+
+  & label {
+    min-width: 95px;
+  }
+  .formSelect {
+    width: calc(100% - 100px);
+  }
+}
+
+// 新增常用地址按鈕
+.addHomeAdr {
+  background: $primary-black;
+  color: $white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 145px;
+  padding: 5px;
+  border-radius: 5px;
+  margin-top: 20px;
+  gap: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background: $dark-gray;
+  }
+}
+
+// 新增常用地址標題
+
+// 選擇常用地址區塊radio
+.adressFrame {
+  .namePhone {
+    margin-bottom: 5px;
+  }
+}
+
+// 7-11 新增地址
+.sevenimg {
+  cursor: pointer;
+}
+.addSevevnAdr {
+  background: $white;
+  padding: 3px 8px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  cursor: pointer;
+  &:hover {
+    background: #f9f8f6;
+  }
+  &:hover .iconFrame {
+    background: $white;
+  }
+  .iconFrame {
+    background: #f9f8f6;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 5px;
+  }
+}
+
+// 收件資訊
+.receiveInfo {
+  padding-left: 50px;
+
+  .infoBar {
+    & div {
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    .feeTime {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      .time {
+        font-size: 14px;
+        color: $gray;
+      }
+    }
+  }
+}
+
+// 付款資訊
+
+// 選擇付款方式按鈕
+.payMethodBar {
+  display: flex;
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.15);
+  justify-content: space-between;
+  align-items: center;
+  max-width: 35%;
+  padding: 5px;
+  border-radius: 50px;
+  font-weight: bold;
+  .payBtn {
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    &:hover {
+      background: linear-gradient(90deg, $blue-secondary, $red-secondary);
+      color: $white;
+    }
+  }
+  .linePay {
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    &:hover {
+      background: linear-gradient(90deg, $blue-secondary, $red-secondary);
+    }
+  }
+}
+
+.focus {
+  background: linear-gradient(90deg, $blue-secondary, $red-secondary);
+  color: $white;
+}
+
+.sub {
+  color: $light-gray;
+  font-size: 14px;
+  padding-left: 15px;
+  margin-top: 10px;
+}
+
+// 選擇使用優惠券
+.useDiscountBar {
+  background: $primary-black;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 24px 0 24px;
+
+  .mainText {
+    color: $white;
+    padding-bottom: 5px;
+    cursor: pointer;
+    &:hover {
+      color: $light-gray;
+    }
+  }
+  .divider {
+    height: 2px;
+    background: linear-gradient(90deg, $danger, rgba(0, 104, 240, 0.5));
+  }
+  .discountListBtn {
+    background: $white;
+    color: $gray;
+    margin: 15px 0 0;
+    padding: 5px 8px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    &:hover {
+      color: $dark-gray;
+    }
+  }
+}
+
+// 訂單總金額
+.frameBody {
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  .summaryItem,
+  .summeryTotal {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+  }
+  .summaryItem {
+    margin-bottom: 15px;
+  }
+  .summeryTotal {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+}
+
+// 結帳按鈕
+.payBtnBar {
+  margin: 30px 0 14px;
+  display: flex;
+  justify-content: flex-end;
+  .btnPay {
+    padding: 10px 60px;
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+}
+
+// 手機版 430px
+@media screen and (max-width: 431px) {
+  // 訂單詳情標題
+  .mainTitle {
+    display: none;
+  }
+  .orderList {
+    border: none;
+    overflow: scroll;
+    .listFrame {
+      display: none;
+    }
+  }
+
+  // 電腦版商品圖
+  .pInfoBar {
+    .pImg {
+      display: none;
+    }
+  }
+
+  .pContainer {
+    .pImgMobile {
+      display: block;
+    }
+    .product {
+      display: flex;
+    }
+  }
+
+  .pb {
+    width: 100%;
+  }
+
+  // 總金額
+  .totalBar {
+    display: none;
+  }
+
+  // 商品標題+語言版本
+  .pNameMobile {
+    display: flex;
+    .pName {
+      flex: 1 1 auto;
+      max-width: 60%;
+    }
+    .language {
+      flex: 1 1 auto;
+      max-width: 40%;
+      text-align: center;
+    }
+  }
+
+  // 商品金額 + 購買數量
+  .priceQuanMoBile {
+    display: flex;
+  }
 }
