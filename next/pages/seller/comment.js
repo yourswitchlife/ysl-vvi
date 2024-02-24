@@ -18,6 +18,7 @@ import { IoGameController } from 'react-icons/io5'
 import Link from 'next/link'
 import profileImg from '@/public/images/profile-photo/peach.png'
 import defaultHead from '@/public/images/profile-photo/default-profile-img.svg'
+import gameCover from '@/public/images/seller/product-cover/crymachina.jpg'
 import Image from 'next/image'
 import SellerFooter from '@/components/layout/footer/footer-backstage'
 import InputGroup from 'react-bootstrap/InputGroup'
@@ -25,7 +26,7 @@ import { FaCalendarAlt } from 'react-icons/fa'
 import Form from 'react-bootstrap/Form'
 import Nav from 'react-bootstrap/Nav'
 import Dropdown from 'react-bootstrap/Dropdown'
-import Pagination from '@/components/common/paginage'
+import Pagination from '@/components/common/pagination'
 import Button from 'react-bootstrap/Button'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Card from 'react-bootstrap/Card'
@@ -42,7 +43,7 @@ export default function Comment() {
   }, [])
 
   // function handleSubmit(e) {
-  //   e.prevent.default
+  //   e.prevent.default()
   // }
 
   return (
@@ -119,14 +120,10 @@ export default function Comment() {
                     className="btn btn-danger me-2"
                     onChange={handleSubmit}
                   > */}
-                  <button
-                    type="button"
-                    href="/"
-                    className="btn btn-danger me-2"
-                  >
+                  <button type="button" className="btn btn-danger me-2">
                     搜尋
                   </button>
-                  <button type="button" href="/" className="btn btn-danger">
+                  <button type="button" className="btn btn-danger">
                     取消
                   </button>
                 </div>
@@ -231,28 +228,33 @@ export default function Comment() {
               {/*--------------Rating Content------------------ */}
               <Card border="light" style={{ width: '100%' }} className="mb-3">
                 <Card.Header>
-                  <div className='d-flex align-items-center'>
-                    <p className="mb-0 text-secondary me-1">
-                      會員名稱:</p>
-                      <div className={`me-1 ${styles.shapeCircle}`}>
-                        <Image
-                          src={defaultHead}
-                          alt=""
-                          width={25}
-                          height={25}
-                        />
-                      </div>
-                      <p className="mb-0 text-secondary">zhang.wt</p>
+                  <div className="d-flex align-items-center">
+                    <p className="mb-0 text-secondary me-1">會員名稱:</p>
+                    <div className={`me-1 ${styles.shapeCircle}`}>
+                      <Image
+                        src={defaultHead}
+                        alt="member-profile"
+                        width={25}
+                        height={25}
+                      />
+                    </div>
+                    <p className="mb-0 text-secondary">zhang.wt</p>
                   </div>
                 </Card.Header>
                 <Card.Body>
                   <Card.Title className="text-dark">
                     <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
                   </Card.Title>
-                  <Card.Text className="text-dark">
-                    <div className="row">
-                      <div className="col-4 border-end">
-                        <p className="mb-0 text-dark">
+                  <div className="text-dark">
+                    <div className="row align-items-center">
+                      <div className="col-4 border-end d-flex justify-content-center align-items-center mt-2">
+                        <Image
+                          src={gameCover}
+                          alt="game-cover"
+                          width={24}
+                          height={40}
+                        />
+                        <p className="mb-0 text-dark ms-2">
                           集合啦！動物森友會
                           <span className="text-info ms-2">x1</span>
                         </p>
@@ -283,33 +285,109 @@ export default function Comment() {
                         </button>
                       </div>
                     </div>
-                  </Card.Text>
+                  </div>
                 </Card.Body>
               </Card>
               <Card border="light" style={{ width: '100%' }} className="mb-3">
                 <Card.Header>
-                <div className='d-flex align-items-center'>
-                    <p className="mb-0 text-secondary me-1">
-                      會員名稱:</p>
-                      <div className={`me-1 ${styles.shapeCircle}`}>
-                        <Image
-                          src={defaultHead}
-                          alt=""
-                          width={25}
-                          height={25}
-                        />
-                      </div>
-                      <p className="mb-0 text-secondary">zhang.wt</p>
+                  <div className="d-flex align-items-center">
+                    <p className="mb-0 text-secondary me-1">會員名稱:</p>
+                    <div className={`me-1 ${styles.shapeCircle}`}>
+                      <Image src={defaultHead} alt="" width={25} height={25} />
+                    </div>
+                    <p className="mb-0 text-secondary">zhang.wt</p>
                   </div>
                 </Card.Header>
                 <Card.Body>
                   <Card.Title className="text-dark">
                     <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
                   </Card.Title>
-                  <Card.Text className="text-dark">
-                    <div className="row">
-                      <div className="col-4 border-end">
+                  <div className="text-dark pb-3 mb-2">
+                    <div className="row align-items-center">
+                      <div className="col-4 border-end d-flex flex-column  justify-content-center align-items-center mt-2">
+                        <div className="d-flex justify-content-center align-items-center mb-2">
+                          <Image
+                            src={gameCover}
+                            alt="game-cover"
+                            width={24}
+                            height={40}
+                          />
+                          <p className="mb-0 text-dark ms-2">
+                            集合啦！動物森友會
+                            <span className="text-info ms-2">x1</span>
+                          </p>
+                        </div>
+                        <div className="d-flex justify-content-center align-items-center mb-2">
+                          <Image
+                            src={gameCover}
+                            alt="game-cover"
+                            width={24}
+                            height={40}
+                          />
+                          <p className="mb-0 text-dark ms-2">
+                            集合啦！動物森友會
+                            <span className="text-info ms-2">x1</span>
+                          </p>
+                        </div>
+                      </div>
+                      <div className="col-6 border-end">
+                        <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
+                          <FaStar className="me-1" />
+                          <FaStar className="me-1" />
+                          <FaStar className="me-1" />
+                          <FaStar className="me-1" />
+                          <FaStar />
+                        </div>
                         <p className="mb-0 text-dark">
+                          斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
+                        </p>
+                        <small className="text-secondary">
+                          2024/02/16 22:51
+                        </small>
+                      </div>
+                      <div className="col-2 d-flex justify-content-center align-items-center">
+                        {/* 可以跳出一個MODAL來處理 */}
+                        <button
+                          type="button"
+                          href="/comment/reply"
+                          className="btn btn-danger"
+                        >
+                          回覆
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </Card.Body>
+              </Card>
+              <Card border="light" style={{ width: '100%' }} className="mb-3">
+                <Card.Header>
+                  <div className="d-flex align-items-center">
+                    <p className="mb-0 text-secondary me-1">會員名稱:</p>
+                    <div className={`me-1 ${styles.shapeCircle}`}>
+                      <Image
+                        src={defaultHead}
+                        alt="member-profile"
+                        width={25}
+                        height={25}
+                      />
+                    </div>
+                    <p className="mb-0 text-secondary">zhang.wt</p>
+                  </div>
+                </Card.Header>
+                <Card.Body>
+                  <Card.Title className="text-dark">
+                    <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
+                  </Card.Title>
+                  <div className="text-dark">
+                    <div className="row align-items-center">
+                      <div className="col-4 border-end d-flex justify-content-center align-items-center mt-2">
+                        <Image
+                          src={gameCover}
+                          alt="game-cover"
+                          width={24}
+                          height={40}
+                        />
+                        <p className="mb-0 text-dark ms-2">
                           集合啦！動物森友會
                           <span className="text-info ms-2">x1</span>
                         </p>
@@ -340,7 +418,78 @@ export default function Comment() {
                         </button>
                       </div>
                     </div>
-                  </Card.Text>
+                  </div>
+                </Card.Body>
+              </Card>
+              <Card border="light" style={{ width: '100%' }} className="mb-3">
+                <Card.Header>
+                  <div className="d-flex align-items-center">
+                    <p className="mb-0 text-secondary me-1">會員名稱:</p>
+                    <div className={`me-1 ${styles.shapeCircle}`}>
+                      <Image src={defaultHead} alt="" width={25} height={25} />
+                    </div>
+                    <p className="mb-0 text-secondary">zhang.wt</p>
+                  </div>
+                </Card.Header>
+                <Card.Body>
+                  <Card.Title className="text-dark">
+                    <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
+                  </Card.Title>
+                  <div className="text-dark pb-3 mb-2">
+                    <div className="row align-items-center">
+                      <div className="col-4 border-end d-flex flex-column  justify-content-center align-items-center mt-2">
+                        <div className="d-flex justify-content-center align-items-center mb-2">
+                          <Image
+                            src={gameCover}
+                            alt="game-cover"
+                            width={24}
+                            height={40}
+                          />
+                          <p className="mb-0 text-dark ms-2">
+                            集合啦！動物森友會
+                            <span className="text-info ms-2">x1</span>
+                          </p>
+                        </div>
+                        <div className="d-flex justify-content-center align-items-center mb-2">
+                          <Image
+                            src={gameCover}
+                            alt="game-cover"
+                            width={24}
+                            height={40}
+                          />
+                          <p className="mb-0 text-dark ms-2">
+                            集合啦！動物森友會
+                            <span className="text-info ms-2">x1</span>
+                          </p>
+                        </div>
+                      </div>
+                      <div className="col-6 border-end">
+                        <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
+                          <FaStar className="me-1" />
+                          <FaStar className="me-1" />
+                          <FaStar className="me-1" />
+                          <FaStar className="me-1" />
+                          <FaStar />
+                        </div>
+                        <p className="mb-0 text-dark">
+                          斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
+                        </p>
+                        <small className="text-secondary">
+                          2024/02/16 22:51
+                        </small>
+                      </div>
+                      <div className="col-2 d-flex justify-content-center align-items-center">
+                        {/* 可以跳出一個MODAL來處理 */}
+                        <button
+                          type="button"
+                          href="/comment/reply"
+                          className="btn btn-danger"
+                        >
+                          回覆
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </Card.Body>
               </Card>
 

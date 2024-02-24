@@ -20,7 +20,7 @@ export default function Sidebar() {
             <use xlink:href="#bootstrap" />
           </svg> */}
           <div className={styles.sellerprofile}>
-            <Image src={profileImg} alt="" className={styles.fit} />
+            <Image src={profileImg} alt="profile-photo" className={styles.fit} />
           </div>
           <h6>碧姬公主的玩具城堡</h6>
         </Link>
@@ -28,7 +28,7 @@ export default function Sidebar() {
         <ul className="nav nav-pills flex-column mb-auto">
           <li className="nav-item">
             <Link
-              href="/seller/seller"
+              href="/seller"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
               aria-current="page"
             >
@@ -38,7 +38,7 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="#"
+              href="seller/shop"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <FaStore className={`${styles.navText} me-2`} />
@@ -47,7 +47,7 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="#"
+              href="seller/product"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <IoGameController className={`${styles.navText} me-2`} />
@@ -56,7 +56,7 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="#"
+              href="seller/order"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <FaFileAlt className={`${styles.navText} me-2`} />
@@ -65,20 +65,11 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="#"
+              href="seller/comment"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <FaStar className={`${styles.navText} me-2`} />
               <h6 className={`${styles.navText} mb-0`}>評價管理</h6>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="#"
-              className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
-            >
-              <FaCoins className={`${styles.navText} me-2`} />
-              <h6 className={`${styles.navText} mb-0`}>行銷活動</h6>
             </Link>
           </li>
         </ul>

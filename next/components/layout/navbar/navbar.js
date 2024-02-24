@@ -21,7 +21,7 @@ export default function Navbar() {
         <div // logo
         >
           <Link href="/index.js">
-            <Image src={yslLogoSm} alt="" />
+            <Image src={yslLogoSm} alt="ysl-logo" />
           </Link>
         </div>
         <div className={styles.links}>
@@ -65,7 +65,7 @@ export default function Navbar() {
         </div>
         <div className={styles.circleCut}>
           <Link href="">
-            <Image src={profilePhoto} alt="" />
+            <Image src={profilePhoto} alt="profile-photo" />
           </Link>
         </div>
       </header>
@@ -76,7 +76,7 @@ export default function Navbar() {
         <div // logo
         >
           <Link href="/index.js">
-            <Image src={yslLogoXs} alt="" />
+            <Image src={yslLogoXs} alt="ysl-logo" />
           </Link>
         </div>
         
