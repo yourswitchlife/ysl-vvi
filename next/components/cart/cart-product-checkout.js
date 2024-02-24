@@ -32,25 +32,29 @@ export default function CartProductConfirm() {
               </Link>
               <div className={styles.pDetailFrame}>
                 <div className={styles.pDetail}>
-                  <Link href="" className={styles.pName}>
-                    PUI PUI 天竺鼠車車 一起來！天竺鼠車車派對！
-                  </Link>
-                  <h6 className={styles.language}>中文版</h6>
+                  <div className={styles.pNameMobile}>
+                    <Link href="" className={styles.pName}>
+                      PUI PUI 天竺鼠車車 一起來！天竺鼠車車派對！
+                    </Link>
+                    <h6 className={styles.language}>中文版</h6>
+                  </div>
                   <h6 className={styles.discount}>8折</h6>
                 </div>
               </div>
             </div>
           </div>
           {/* 商品金額 */}
-          <div className={`${styles.priceBar} ${styles.ab}`}>
-            <div className="d-flex flex-wrap">
-              <span className={`d-none ${styles.price}`}>$1200</span>
-              <span className={styles.prePrice}>$1200</span>
-              <span className={styles.discountPrice}>$960</span>
+          <div className={styles.priceQuanMoBile}>
+            <div className={`${styles.priceBar} ${styles.ab}`}>
+              <div className="d-flex flex-wrap">
+                <span className={`d-none ${styles.price}`}>$1200</span>
+                <span className={styles.prePrice}>$1200</span>
+                <span className={styles.discountPrice}>$960</span>
+              </div>
             </div>
+            {/* 購買數量 */}
+            <div className={`${styles.control} ${styles.qb}`}>1</div>
           </div>
-          {/* 購買數量 */}
-          <div className={`${styles.control} ${styles.qb}`}>1</div>
 
           {/* 總金額 */}
           <div className={`${styles.totalBar} ${styles.sb}`}>
