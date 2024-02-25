@@ -67,11 +67,11 @@ export default function Comment() {
                 <Image src={profileImg} alt="" className={styles.fit} />
               </div>
               <div className="d-flex flex-column align-items-start justify-content-center">
-                <h5 className="mb-1">碧姬公主的玩具城堡</h5>
+                <h5 className="mb-1 fw-bold">碧姬公主的玩具城堡</h5>
                 <p className="mb-1">ysl.com/princepeach8888</p>
               </div>
               <div>
-                <button className="btn btn-danger">查看賣場</button>
+                <button className="btn btn-danger btn-sm">查看賣場</button>
               </div>
             </div>
             <hr />
@@ -500,15 +500,15 @@ export default function Comment() {
             </div>
           </div>
           <div className="d-block d-md-none container ps-4 pe-4">
-            <Form className="mb-3">
-              <div className="d-flex justify-content-between align-items-end mb-3">
-                <div className="d-flex justify-content-start align-items-end">
-                  <h6 className="mb-0 me-3">賣場評價</h6>
-                </div>
-                <h6 className="text-secondary fw-normal mb-0">
-                  <span className="text-danger fw-bold fs-4">4.5</span> / 5.0
-                </h6>
+            <div className="d-flex justify-content-start align-items-end mb-3">
+              <div className="d-flex justify-content-start align-items-end">
+                <h6 className={`mb-0 me-3 fw-bold ${styles.subtitleFs}`}>賣場評價</h6>
               </div>
+              <h6 className="fw-normal mb-0">
+                <span className="text-danger fw-bold fs-4">4.5</span> / 5.0
+              </h6>
+            </div>
+            <Form className="mb-3">
               <Form.Group className="mb-3" controlId="memberName">
                 <Form.Label>會員名稱</Form.Label>
                 <Form.Control type="text" placeholder="請輸入會員名稱" />
@@ -522,30 +522,26 @@ export default function Comment() {
                       aria-label="dateSelectStart"
                       aria-describedby="dateSelectStart"
                       className={styles.dateInput}
+                      onChange={(e) => handleStartDateChange(e.target.value)} // 處理開始日期變更
                     />
                   </InputGroup>
-                  <span className="text-dark mb-0 mx-2">-</span>
+                  <span className="mb-0 mx-2">-</span>
                   <InputGroup className={`mb-0 ${styles.dateSelect}`}>
                     <Form.Control
                       type="date"
                       aria-label="dateSelectEnd"
                       aria-describedby="dateSelectEnd"
                       className={styles.dateInput}
+                      onChange={(e) => handleEndDateChange(e.target.value)} // 處理結束日期變更
                     />
                   </InputGroup>
                 </div>
               </Form.Group>
-              <div className="d-flex justify-content-center">
-                {/* <button
-                    type="button"
-                    href="/"
-                    className="btn btn-danger me-2"
-                    onChange={handleSubmit}
-                  > */}
-                <button type="button" className="btn btn-danger me-2">
+              <div className="d-flex justify-content-center align-items-center mt-4">
+                <button type="button" className="btn btn-danger btn-sm me-3">
                   搜尋
                 </button>
-                <button type="button" className="btn btn-danger">
+                <button type="button" className="btn btn-danger btn-sm">
                   取消
                 </button>
               </div>
