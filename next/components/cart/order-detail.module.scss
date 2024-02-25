@@ -1,5 +1,9 @@
 @import '@/styles/valuable.scss';
 
+.link {
+  text-decoration: none;
+}
+
 // 控制固定欄位寬度
 .ab,
 .qb,
@@ -432,6 +436,11 @@
   }
 }
 
+// 手機版下訂單區塊
+.stickyMobileBar {
+  display: none;
+}
+
 // 手機版 430px
 @media screen and (max-width: 431px) {
   // PC白色大背景
@@ -579,6 +588,8 @@
 
   // 寄送明細區塊(mobile)
   .deliveryInfoMobile {
+    text-decoration: none;
+    color: $dark-gray;
     display: block;
     cursor: pointer;
   }
@@ -676,6 +687,43 @@
         .checkoutBtn {
           padding: 0 20px;
         }
+      }
+    }
+  }
+
+  // 顯示完整折扣細節手機版
+  .couponInfo {
+    border: 1px solid $primary-black;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    padding: 10px;
+    .mainTitle {
+      display: block;
+      font-size: 14px;
+      padding: 0;
+      margin: 0 0 5px;
+    }
+    .line {
+      height: 1px;
+      width: 100%;
+      background: linear-gradient(90deg, $red-secondary, $blue-secondary);
+      margin-bottom: 5px;
+    }
+    .title {
+      font-size: 12px;
+      margin-bottom: 5px;
+      color: $gray;
+    }
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      margin-bottom: 10px;
+      .icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
       }
     }
   }

@@ -1,0 +1,35 @@
+@import '@/styles/valuable.scss';
+.container {
+  padding-top: 90px;
+  min-height: 100svh;
+}
+
+.paymentItem {
+  padding: 20px 30px;
+  border-bottom: 1px solid $bright-gray;
+  font-size: 20px;
+  position: relative;
+  .sub {
+    font-size: 16px;
+    color: $light-gray;
+    margin-top: 10px;
+  }
+  .icon {
+    position: absolute;
+    top: calc(50% - 35px / 2);
+    right: 50px;
+    color: $danger;
+    width: 35px;
+    height: 35px;
+  }
+}
+
+.confirmBtn {
+  display: block;
+  text-decoration: none;
+  background: $danger;
+  color: $white;
+  padding: 10px 0;
+  text-align: center;
+  margin: calc(90svh - 400px) 10px 20px;
+}

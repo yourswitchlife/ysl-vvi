@@ -9,6 +9,7 @@ import {
 import { FaAngleRight } from 'react-icons/fa'
 import OrderCheckout from './order-checkout'
 import Image from 'next/image'
+import Link from 'next/link'
 // 選擇優惠券元件
 import SelectCouponModal from './select-coupon-modal'
 
@@ -19,6 +20,7 @@ import coupon from '@/public/images/cart/coupon.svg'
 
 export default function OrderDetail() {
   const [show, setShow] = useState(false)
+  const [showInfo, setShowInfo] = useState(false)
 
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
@@ -108,7 +110,12 @@ export default function OrderDetail() {
                 <Image src={couponStar} />
                 <div>優惠券</div>
               </div>
-              <div className="text-dark">選擇使用優惠券</div>
+              <Link
+                href="/cart/checkout/coupon"
+                className={`text-dark ${styles.link}`}
+              >
+                選擇使用優惠券
+              </Link>
             </div>
             {/* 顯示完整優惠折抵區塊 */}
             <div className={styles.paymentItem}>
@@ -122,6 +129,23 @@ export default function OrderDetail() {
                 顯示完整折扣細節
               </div>
             </div>
+            {/*完整優惠折抵細節  */}
+            <div className={styles.couponInfo}>
+              <div className={styles.mainTitle}>完整折扣細節</div>
+              <div className={styles.line}></div>
+              <div className={styles.title}>按折抵順序顯示</div>
+              <div className={styles.item}>
+                <Image src={couponStar} className={styles.icon} />
+                <div>RPG遊戲優惠券 全站消費滿$1000 折抵$100 (每人限用一次)</div>
+              </div>
+              <div className={styles.item}>
+                <Image src={couponStar} className={styles.icon} />
+                <div>RPG遊戲優惠券 全站消費滿$1000 折抵$100 (每人限用一次)</div>
+              </div>
+              <div className="d-flex justify-content-end">
+                <button className="btn btn-dark btn-sm">確認</button>
+              </div>
+            </div>
             {/* 付款方式 */}
             <div className={styles.paymentItem}>
               <div className={styles.title}>
@@ -129,7 +153,12 @@ export default function OrderDetail() {
                 <div>付款方式</div>
               </div>
               <div>
-                <span className="me-2 text-dark">信用卡</span>
+                <Link
+                  href="/cart/checkout/payment"
+                  className={`me-2 text-dark ${styles.link}`}
+                >
+                  請選擇付款方式
+                </Link>
                 <FaAngleRight className="text-dark" />
               </div>
             </div>

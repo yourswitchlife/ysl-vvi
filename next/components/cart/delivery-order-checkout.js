@@ -3,6 +3,7 @@ import styles from '@/components/cart/order-detail.module.scss'
 import { FaCircleQuestion, FaPlus, FaAngleRight } from 'react-icons/fa6'
 import Form from 'react-bootstrap/Form'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function DeliveryOrderCheckout() {
   return (
@@ -223,7 +224,8 @@ export default function DeliveryOrderCheckout() {
         </div>
 
         {/* 手機版 - 寄送資訊明細區塊 */}
-        <div
+        <Link
+          href="/cart/checkout/delivery"
           className={`col-12 bg-secondary-subtle rounded-3 p-3 ${styles.deliveryInfoMobile}`}
         >
           <div className="row align-items-center">
@@ -243,7 +245,7 @@ export default function DeliveryOrderCheckout() {
               <b>運費：$100</b>
             </div>
           </div>
-        </div>
+        </Link>
         {/* 收件資訊區塊-電腦版顯示 */}
         <div className={`col-6 ${styles.receiveInfo}`}>
           <div className={styles.headerTitle}>
