@@ -343,9 +343,40 @@ $sortbar-height-rwd: 50px;
   margin-top: 58px;
 }
 
+//---------Tab Color #1 ---------------
+// .tabsStyle{
+//   .nav-tabs{
+//     .nav-item{
+//       .nav-link{
+//         color: $gray !important; 
+//         background-color: $light-gray !important;
+//         &:hover{
+//           background-color: $white !important;
+//         }
+//       }
+//     }
+//     .nav-link.active {
+//       color: $danger !important; 
+//       background-color: $white !important; 
+//       border-color: $light-gray !important; 
+//     }
+//   }
+// }
+
+
+
 //---------Seller Comment--------------
 .subtitleFs{
   font-size: 18px;
+}
+
+//--------Seller Product---------------
+.fsSmall{
+  font-size: 13px;
+}
+.productCard{
+  background-color: $white;
+  border-radius: 10px;
 }
 
 
