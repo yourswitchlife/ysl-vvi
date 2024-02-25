@@ -25,9 +25,11 @@ export const pathsLocaleMap = {
     'mobile': '手機',
     'pc': '電腦',
     'breadcrumb':'麵包屑',
-    'home':'首頁',
+    'home':'Your Switch Life 首頁',
     'posts':'張貼文章',
     'test':'測試',
     'user':'會員',
+    'seller': '賣家中心',
+    'order': '訂單管理'
   }
   /* eslint-enable */
