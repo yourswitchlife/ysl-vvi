@@ -11,6 +11,13 @@
   width: calc(100% - 300px);
 }
 
+.pcBg {
+  background: $white;
+  padding: 30px 40px;
+  margin-bottom: 30px;
+  border-radius: 20px;
+}
+
 // 訂單詳情
 .mainTitle {
   margin-bottom: 20px;
@@ -70,9 +77,6 @@
 
   .pInfoFrame {
     display: flex;
-    // flex: 1 1 auto;
-    // // justify-content: space-between;
-    // align-items: center;
   }
 }
 
@@ -90,33 +94,36 @@
     flex: 1;
     flex-direction: column;
     padding: 0 20px 0 10px;
-    .pDetail {
-      .pName {
-        text-decoration: none;
-        color: $primary-black;
-        max-height: 70px;
-        font-size: 1rem;
-        margin-bottom: 10px;
-        display: -webkit-box;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        word-break: break-all;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-      }
-      .language {
-        color: $primary-black;
-        margin-bottom: 10px;
-      }
-      .discount {
-        display: inline-block;
-        background: $danger;
-        color: $white;
-        padding: 5px;
-        border-radius: 5px;
-        line-height: 0.875rem;
-        font-size: 0.875rem;
-      }
+    .priceQuanMobile {
+      display: none;
+    }
+    .pName {
+      text-decoration: none;
+      color: $primary-black;
+      max-height: 70px;
+      font-size: 1rem;
+      text-align-last: left;
+      margin-bottom: 10px;
+      display: -webkit-box;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-all;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+    .language {
+      color: $primary-black;
+      margin-bottom: 10px;
+    }
+    .discount {
+      width: 35px;
+      text-align: center;
+      background: $danger;
+      color: $white;
+      padding: 5px;
+      border-radius: 5px;
+      line-height: 0.875rem;
+      font-size: 0.875rem;
     }
 
     .pInfoBottom {
@@ -171,6 +178,16 @@
   align-items: center;
 }
 
+// 訂單金額區塊
+.summeryPriceFrame {
+  width: 100%;
+  display: flex;
+  margin-top: 24px;
+  font-size: 20px;
+  font-weight: bold;
+  justify-content: flex-end;
+}
+
 // 寄送資訊、收件資訊區塊
 .deliveryContainer {
   background: $bright-gray;
@@ -185,7 +202,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 
   .icon {
     color: $gray;
@@ -196,16 +213,31 @@
 .selectFrame {
   display: flex;
   align-items: center;
+  margin-bottom: 30px;
 
   & label {
     min-width: 95px;
+    .deliveryName {
+      display: none;
+    }
   }
   .formSelect {
     width: calc(100% - 100px);
   }
 }
 
+// 新增7-11地址
+.addSevevnFrame {
+  display: flex;
+}
+
 // 新增常用地址按鈕
+
+.addHomeAdrBtn {
+  display: flex;
+  margin-bottom: 10px;
+}
+
 .addHomeAdr {
   background: $primary-black;
   color: $white;
@@ -215,7 +247,6 @@
   width: 145px;
   padding: 5px;
   border-radius: 5px;
-  margin-top: 20px;
   gap: 5px;
   cursor: pointer;
 
@@ -224,9 +255,7 @@
   }
 }
 
-// 新增常用地址標題
-
-// 選擇常用地址區塊radio
+// 選擇常用地址區塊radio(PC)
 .adressFrame {
   .namePhone {
     margin-bottom: 5px;
@@ -264,7 +293,7 @@
   }
 }
 
-// 收件資訊
+// 收件資訊(PC)
 .receiveInfo {
   padding-left: 50px;
 
@@ -286,7 +315,14 @@
   }
 }
 
-// 付款資訊
+// 寄送明細區塊(mobile)
+.deliveryInfoMobile {
+  display: none;
+}
+
+.paymentMobile {
+  display: none;
+}
 
 // 選擇付款方式按鈕
 .payMethodBar {
@@ -398,11 +434,19 @@
 
 // 手機版 430px
 @media screen and (max-width: 431px) {
+  // PC白色大背景
+  .pcBg {
+    background: transparent;
+    padding-inline: 20px;
+    padding-block: 0;
+  }
+
   // 訂單詳情標題
   .mainTitle {
     display: none;
   }
   .orderList {
+    background: $white;
     border: none;
     overflow: scroll;
     .listFrame {
@@ -410,10 +454,42 @@
     }
   }
 
+  .receiveInfo {
+    display: none;
+  }
+
   // 電腦版商品圖
   .pInfoBar {
+    width: 100%;
     .pImg {
       display: none;
+    }
+    .pDetailFrame {
+      padding-right: 0;
+      .pNameMobile {
+        display: flex;
+        .pName {
+          width: 65%;
+          margin-bottom: 5px;
+        }
+        .language {
+          width: 35%;
+          text-align: center;
+          margin-bottom: 0;
+        }
+      }
+      .priceQuanMobile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5px;
+        .priceBar {
+          display: block;
+        }
+        .control {
+          display: block;
+        }
+      }
     }
   }
 
@@ -424,33 +500,183 @@
     .product {
       display: flex;
     }
-  }
-
-  .pb {
-    width: 100%;
+    // 商品名稱+語言版本 / 單價+數量
+    .pInfoFrame {
+      flex-direction: column;
+    }
   }
 
   // 總金額
-  .totalBar {
+  .totalBar,
+  .priceBar,
+  .control {
     display: none;
   }
 
-  // 商品標題+語言版本
-  .pNameMobile {
-    display: flex;
-    .pName {
-      flex: 1 1 auto;
-      max-width: 60%;
-    }
-    .language {
-      flex: 1 1 auto;
-      max-width: 40%;
-      text-align: center;
+  // 寄送資訊、收件資訊區塊大區塊
+  .deliveryContainer {
+    background: none;
+    .deliveryRow {
+      border-top: 1px solid $light-gray;
+      padding-top: 20px;
     }
   }
 
-  // 商品金額 + 購買數量
-  .priceQuanMoBile {
-    display: flex;
+  .headerTitle {
+    display: none;
+  }
+
+  // 選擇物流方式
+  .deliveryInfo {
+    width: 100%;
+    padding: 0;
+    .selectFrame {
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      & label {
+        display: flex;
+        font-size: 20px;
+        margin-bottom: 5px;
+        padding-left: 5px;
+        .deliveryName {
+          display: block;
+        }
+      }
+      .formSelect {
+        width: 100%;
+        font-size: 20px;
+      }
+    }
+  }
+
+  // 新增常用地址按鈕區塊
+  .addHomeAdrBtn {
+    display: none;
+  }
+
+  // 預計送達時間
+  .time {
+    margin-top: 5px;
+    font-size: 14px;
+    color: $gray;
+  }
+
+  // 選擇常用地址區塊radio
+  .adressFrame {
+    display: none;
+  }
+
+  // 宅配地址表單(PC)
+  .addrForm {
+    display: none;
+  }
+
+  // 新增7-11地址
+  .addSevevnFrame {
+    display: none;
+  }
+
+  // 寄送明細區塊(mobile)
+  .deliveryInfoMobile {
+    display: block;
+    cursor: pointer;
+  }
+
+  // 付款資訊
+  .paymentPC {
+    display: none;
+  }
+
+  // 訂單金額區塊
+  .summeryPriceFrame {
+    justify-content: space-between;
+  }
+
+  // 付款方式、選擇優惠券 手機版獨立區塊
+  .paymentMobile {
+    display: block;
+    .payment {
+      background: $white;
+      border-radius: 15px;
+      padding: 30px;
+
+      .paymentItem {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+
+        .title {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
+        .subText {
+          font-size: 14px;
+        }
+        .billIcon {
+          color: #ff8761;
+        }
+        .infoIcon {
+          color: $red-secondary;
+        }
+      }
+
+      // 付款詳情金額明細
+      .InfoFrame {
+        .infoItem {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 14px;
+          margin-bottom: 15px;
+        }
+        .summInfo {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 20px;
+        }
+      }
+    }
+  }
+
+  // 下訂單sticky區塊
+  .stickyMobileBar {
+    display: block;
+    position: sticky;
+    bottom: 0px;
+
+    .checkoutBar {
+      background: $white;
+      box-shadow: 0 -3px 2px rgba(0, 0, 0, 0.15);
+      .checkout {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        min-height: 77px;
+        .textContent,
+        .checkoutBtn {
+          min-height: 77px;
+        }
+        .textContent {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-end;
+          margin-right: 10px;
+          .totalPrice {
+            margin-bottom: 10px;
+          }
+          .subInfo {
+            font-size: 14px;
+            color: $gray;
+          }
+        }
+        .checkoutBtn {
+          padding: 0 20px;
+        }
+      }
+    }
   }
 }

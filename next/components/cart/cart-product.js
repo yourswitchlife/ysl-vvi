@@ -27,7 +27,13 @@ export default function SingleProduct() {
         </div>
         {/* 手機板商品圖 */}
         <Link href="" className={styles.pImgMobile}>
-          <Image src="" width={65} height={105} layout="fixed" alt="" />
+          <Image
+            src="/images/cart/product.png"
+            width={65}
+            height={105}
+            layout="fixed"
+            alt=""
+          />
         </Link>
         <div className={styles.pInfoMobile}>
           {/* 商品名稱、加入收藏 */}

@@ -1,12 +1,21 @@
 import React from 'react'
 import { useState } from 'react'
 import styles from '@/components/cart/order-detail.module.scss'
-import { FaCircleQuestion } from 'react-icons/fa6'
+import {
+  FaCircleQuestion,
+  FaMoneyBillWave,
+  FaClipboardList,
+} from 'react-icons/fa6'
 import { FaAngleRight } from 'react-icons/fa'
 import OrderCheckout from './order-checkout'
 import Image from 'next/image'
 // 選擇優惠券元件
 import SelectCouponModal from './select-coupon-modal'
+
+// 優惠券星星圖
+import couponStar from '@/public/images/cart/couponStar.svg'
+// 優惠券長型圖
+import coupon from '@/public/images/cart/coupon.svg'
 
 export default function OrderDetail() {
   const [show, setShow] = useState(false)
@@ -17,15 +26,14 @@ export default function OrderDetail() {
     <>
       <SelectCouponModal />
       <section className="container">
-        <div className="bg-white py-3 px-4 rounded-4 mb-4">
+        <div className={styles.pcBg}>
           <div className={styles.mainTitle}>訂單詳情</div>
-          <div className={styles.orderListBar}>
-            {/* 單一賣場訂單 */}
-            <OrderCheckout />
-            <OrderCheckout />
-          </div>
+          {/* 單一賣場訂單 */}
+          <OrderCheckout />
+          <OrderCheckout />
         </div>
-        <div className="bg-white py-3 px-4 rounded-4 mb-4">
+        {/* 選擇優惠券/付款詳情區塊 */}
+        <div className={`${styles.pcBg} ${styles.paymentPC}`}>
           <div className={styles.headerTitle}>
             <h5>
               <b>付款資訊</b>
@@ -92,7 +100,85 @@ export default function OrderDetail() {
             <button className={`btn btn-danger ${styles.btnPay}`}>結帳</button>
           </div>
         </div>
+        <div className={`${styles.pcBg} ${styles.paymentMobile}`}>
+          <div className={styles.payment}>
+            {/* 選擇優惠券 */}
+            <div className={styles.paymentItem}>
+              <div className={styles.title}>
+                <Image src={couponStar} />
+                <div>優惠券</div>
+              </div>
+              <div className="text-dark">選擇使用優惠券</div>
+            </div>
+            {/* 顯示完整優惠折抵區塊 */}
+            <div className={styles.paymentItem}>
+              <div className={styles.title}>
+                <Image src={coupon} />
+                <div className={`text-body-secondary ${styles.subtext}`}>
+                  已折抵 $160
+                </div>
+              </div>
+              <div className={`text-body-secondary ${styles.subtext}`}>
+                顯示完整折扣細節
+              </div>
+            </div>
+            {/* 付款方式 */}
+            <div className={styles.paymentItem}>
+              <div className={styles.title}>
+                <FaMoneyBillWave className={styles.billIcon} />
+                <div>付款方式</div>
+              </div>
+              <div>
+                <span className="me-2 text-dark">信用卡</span>
+                <FaAngleRight className="text-dark" />
+              </div>
+            </div>
+            {/* 付款詳情 */}
+            <div className={`mb-3 ${styles.paymentItem}`}>
+              <div className={styles.title}>
+                <FaClipboardList className={styles.infoIcon} />
+                <div>付款詳情</div>
+              </div>
+            </div>
+            <div className={styles.InfoFrame}>
+              <div className={styles.infoItem}>
+                <div>商品總金額</div>
+                <div>$3616</div>
+              </div>
+              <div className={styles.infoItem}>
+                <div>運費總金額</div>
+                <div>$60</div>
+              </div>
+              <div className={styles.summInfo}>
+                <div>總付款金額</div>
+                <div className="fw-bold text-danger">$7516</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
+
+      {/* 手機版-去買單腰帶區塊 */}
+      <div className={styles.stickyMobileBar}>
+        <div className={styles.checkoutBar}>
+          <div className={styles.checkout}>
+            <div className={styles.textContent}>
+              <div className={styles.totalPrice}>
+                總付款金額{' '}
+                <span className="text-danger">
+                  <b>$7516</b>
+                </span>
+              </div>
+              <div className={styles.subInfo}>總額$7660 折抵$160</div>
+            </div>
+            <button
+              className={`btn btn-danger rounded-0 ${styles.checkoutBtn}`}
+            >
+              下訂單
+            </button>
+          </div>
+        </div>
+      </div>
     </>
   )
 }

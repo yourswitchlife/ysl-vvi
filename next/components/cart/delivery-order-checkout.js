@@ -1,16 +1,16 @@
 import React from 'react'
 import styles from '@/components/cart/order-detail.module.scss'
-import { FaCircleQuestion, FaPlus } from 'react-icons/fa6'
+import { FaCircleQuestion, FaPlus, FaAngleRight } from 'react-icons/fa6'
 import Form from 'react-bootstrap/Form'
 import Image from 'next/image'
 
 export default function DeliveryOrderCheckout() {
   return (
     <>
-      <div className="row">
+      <div className={`row ${styles.deliveryRow}`}>
         <div
-          // className={`col-6 border-end border-white border-4 ${styles.deliveryInfo}`}
-          className={`col-12 border-0 border-4 pb-4 ${styles.deliveryInfo}`}
+          className={`col-6 border-end border-white border-4 ${styles.deliveryInfo}`}
+          // className={`col-12 border-0 border-4 pb-4 ${styles.deliveryInfo}`}
         >
           <div className={styles.headerTitle}>
             <h5>
@@ -19,20 +19,25 @@ export default function DeliveryOrderCheckout() {
             <FaCircleQuestion className={styles.icon} />
           </div>
           <div className={styles.selectFrame}>
-            <label htmlFor="select">物流方式：</label>
+            <label htmlFor="select">
+              物流方式：
+              <span className={styles.deliveryName}>7-11 超商寄送</span>
+            </label>
             <Form.Select className={styles.formSelect}>
               <option value="1">7-11 超商寄送 ｜運費$60</option>
               <option value="2">店家宅配寄送 ｜運費$100</option>
             </Form.Select>
           </div>
-          <div className="d-flex justify-content-end">
-            <div className={`d-none ${styles.addHomeAdr}`}>
+          {/* 新增常用地址按鈕(宅配) */}
+          <div className={`justify-content-end ${styles.addHomeAdrBtn}`}>
+            <div className={styles.addHomeAdr}>
               <FaPlus />
               <span className={styles.text}>新增常用地址</span>
             </div>
           </div>
-          <div className={styles.adressFrame}>
-            <div className="d-none form-check mb-3 d-flex align-items-center">
+          {/* 選擇常用地址radio 區塊 (block)*/}
+          <div className={`${styles.adressFrame}`}>
+            <div className=" form-check mb-3 d-flex align-items-center">
               <input
                 className="form-check-input me-3"
                 type="radio"
@@ -48,7 +53,7 @@ export default function DeliveryOrderCheckout() {
                 </div>
               </label>
             </div>
-            <div className="d-none form-check mb-3 d-flex align-items-center">
+            <div className=" form-check mb-3 d-flex align-items-center">
               <input
                 className="form-check-input me-3"
                 type="radio"
@@ -65,8 +70,8 @@ export default function DeliveryOrderCheckout() {
               </label>
             </div>
           </div>
-          {/* 新增超商地址按鈕 */}
-          <div className="d-none flex-column align-items-center my-2">
+          {/* 新增超商地址按鈕(寄送資訊) */}
+          <div className={`flex-column align-items-center mt-3 d-none`}>
             <Image
               src="/images/cart/7-eleven.svg"
               width={50}
@@ -83,7 +88,8 @@ export default function DeliveryOrderCheckout() {
             </div>
           </div>
         </div>
-        <div className="col-12">
+        {/* 電腦版-新增宅配地址表單區塊 */}
+        <div className={`col-12 d-none ${styles.addrForm}`}>
           {/* 新增常用地址標題 */}
           <div className="d-flex mt-4">
             <div className="border border-black py-1 px-2 rounded">
@@ -216,7 +222,30 @@ export default function DeliveryOrderCheckout() {
           </form>
         </div>
 
-        <div className={`d-none col-6 ${styles.receiveInfo}`}>
+        {/* 手機版 - 寄送資訊明細區塊 */}
+        <div
+          className={`col-12 bg-secondary-subtle rounded-3 p-3 ${styles.deliveryInfoMobile}`}
+        >
+          <div className="row align-items-center">
+            <div className="col-10">
+              <div>7-ELEVEN 華泰城門市</div>
+              <div>桃園市中壢區春德路159號86櫃位</div>
+              <div>
+                <span>辦公室</span>｜<span>僅白天可收 (10:00 - 17:00)</span>
+              </div>
+              <div>小哈姆 09123456789</div>
+              <div className={styles.time}>預計到貨時間 1/19 - 1/23</div>
+            </div>
+            <div className="col-2">
+              <FaAngleRight />
+            </div>
+            <div className="col-12 text-end mt-3">
+              <b>運費：$100</b>
+            </div>
+          </div>
+        </div>
+        {/* 收件資訊區塊-電腦版顯示 */}
+        <div className={`col-6 ${styles.receiveInfo}`}>
           <div className={styles.headerTitle}>
             <h5>
               <b>收件資訊</b>
@@ -224,7 +253,7 @@ export default function DeliveryOrderCheckout() {
             <FaCircleQuestion className={styles.icon} />
           </div>
           {/* 無7-11常用地址時在收件資訊新增地址 */}
-          <div className="d-none flex-column align-items-center my-2">
+          <div className={`flex-column align-items-center my-2 d-none`}>
             <Image
               src="/images/cart/7-eleven.svg"
               width={50}
@@ -239,7 +268,8 @@ export default function DeliveryOrderCheckout() {
               <span className={styles.text}>新增地址</span>
             </div>
           </div>
-          <div className={`d-none ${styles.infoBar}`}>
+          {/* 有選擇收件地址後顯示地址細項 */}
+          <div className={`d-block ${styles.infoBar}`}>
             <div>7-ELEVEN 華泰城門市</div>
             <div>桃園市中壢區春德路159號86櫃位</div>
             <div>
@@ -254,10 +284,11 @@ export default function DeliveryOrderCheckout() {
             </div>
           </div>
         </div>
-        <div className="row">
-          <div className="col-12 d-flex justify-content-end fs-5 fw-bold font-monospace p-0 mt-4">
-            訂單金額：<span className="text-danger">$5820</span>
-          </div>
+        {/* 訂單金額區塊 */}
+        <div className={styles.summeryPriceFrame}>
+          <span className="d-none d-sm-block">訂單金額：</span>
+          <span className="d-block d-sm-none">訂單金額 (4件商品)</span>
+          <span className="text-danger">$5820</span>
         </div>
       </div>
     </>
