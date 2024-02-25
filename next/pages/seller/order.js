@@ -3,18 +3,7 @@ import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
 import styles from '@/components/seller/seller.module.scss'
-import {
-  FaHome,
-  FaStore,
-  FaFileAlt,
-  FaStar,
-  FaCoins,
-  FaPlus,
-  FaAngleDown,
-  FaFilter,
-} from 'react-icons/fa'
-import { IoIosArrowForward } from 'react-icons/io'
-import { IoGameController } from 'react-icons/io5'
+import { FaStar } from 'react-icons/fa'
 import Link from 'next/link'
 import profileImg from '@/public/images/profile-photo/peach.png'
 import defaultHead from '@/public/images/profile-photo/default-profile-img.svg'
@@ -135,292 +124,332 @@ export default function Order() {
                   </Form>
                   <h5 className="text-dark fw-bold">41筆訂單</h5>
                   <div className="container">
-                {/*--------------Rating Subtitle------------------ */}
-                <div
-                  className={`row my-3 py-2 justify-content-center text-start ${styles.ratingST}`}
-                >
-                  <h6 className="mb-0 col-4 fw-normal">商品</h6>
-                  <h6 className="mb-0 col-2 fw-normal">付款金額</h6>
-                  <h6 className="mb-0 col-2 fw-normal">狀態</h6>
-                  <h6 className="mb-0 col-2 fw-normal">運送方式</h6>
-                  <h6 className="mb-0 col-2 fw-normal">操作</h6>
-                </div>
-              </div>
-              {/*--------------Rating Content------------------ */}
-              <Card border="light" style={{ width: '100%' }} className="mb-3">
-                <Card.Header>
-                <div className='d-flex justify-content-between align-items-center'>
-                <div className="d-flex align-items-center">
-                    <div className={`me-1 ${styles.shapeCircle}`}>
-                      <Image
-                        src={defaultHead}
-                        alt="member-profile"
-                        width={25}
-                        height={25}
-                      />
+                    {/*--------------Rating Subtitle------------------ */}
+                    <div
+                      className={`row my-3 py-2 justify-content-center text-start ${styles.ratingST}`}
+                    >
+                      <h6 className="mb-0 col-4 fw-normal">商品</h6>
+                      <h6 className="mb-0 col-2 fw-normal">付款金額</h6>
+                      <h6 className="mb-0 col-2 fw-normal">狀態</h6>
+                      <h6 className="mb-0 col-2 fw-normal">運送方式</h6>
+                      <h6 className="mb-0 col-2 fw-normal">操作</h6>
                     </div>
-                    <p className="mb-0 text-secondary">zhang.wt</p>
                   </div>
-                  <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
-                </div>
-                </Card.Header>
-                <Card.Body>
-                  <div className="text-dark">
-                    <div className="row align-items-center">
-                      <div className="col-4 border-end d-flex justify-content-start align-items-center mt-2">
-                        <Image
-                          src={gameCover}
-                          alt="game-cover"
-                          width={24}
-                          height={40}
-                        />
-                        <div>
-                        <p className="mb-0 text-dark ms-2">
-                          集合啦！動物森友會
-                          <span className="text-info ms-2">x1</span>
-                        </p>
-                        <p className='text-secondary ms-2'>
-                            規格：中文版
-                        </p>
+                  {/*--------------Rating Content------------------ */}
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
                         </div>
-                      </div>
-                      <div className="col-2 border-end">
-                        
-                      </div>
-                      <div className="col-2 border-end">
-                        
-                      </div>
-                      <div className="col-2 border-end">
-                        
-                      </div>
-                      <div className="col-2 d-flex justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger"
-                        >
-                          回覆
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
-              <Card border="light" style={{ width: '100%' }} className="mb-3">
-                <Card.Header>
-                  <div className="d-flex align-items-center">
-                    <p className="mb-0 text-secondary me-1">會員名稱:</p>
-                    <div className={`me-1 ${styles.shapeCircle}`}>
-                      <Image src={defaultHead} alt="" width={25} height={25} />
-                    </div>
-                    <p className="mb-0 text-secondary">zhang.wt</p>
-                  </div>
-                </Card.Header>
-                <Card.Body>
-                  <Card.Title className="text-dark">
-                    <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
-                  </Card.Title>
-                  <div className="text-dark mb-2">
-                    <div className="row align-items-center">
-                      <div className="col-4 border-end d-flex flex-column  justify-content-center align-items-center mt-2">
-                        <div className="d-flex justify-content-center align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={24}
-                            height={40}
-                          />
-                          <p className="mb-0 text-dark ms-2">
-                            集合啦！動物森友會
-                            <span className="text-info ms-2">x1</span>
-                          </p>
-                        </div>
-                        <div className="d-flex justify-content-center align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={24}
-                            height={40}
-                          />
-                          <p className="mb-0 text-dark ms-2">
-                            集合啦！動物森友會
-                            <span className="text-info ms-2">x1</span>
-                          </p>
-                        </div>
-                      </div>
-                      <div className="col-6 border-end">
-                        <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar />
-                        </div>
-                        <p className="mb-0 text-dark">
-                          斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
-                        </p>
-                        <small className="text-secondary">
-                          2024/02/16 22:51
-                        </small>
-                      </div>
-                      <div className="col-2 d-flex justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger"
-                        >
-                          回覆
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
-              <Card border="light" style={{ width: '100%' }} className="mb-3">
-                <Card.Header>
-                  <div className="d-flex align-items-center">
-                    <p className="mb-0 text-secondary me-1">會員名稱:</p>
-                    <div className={`me-1 ${styles.shapeCircle}`}>
-                      <Image
-                        src={defaultHead}
-                        alt="member-profile"
-                        width={25}
-                        height={25}
-                      />
-                    </div>
-                    <p className="mb-0 text-secondary">zhang.wt</p>
-                  </div>
-                </Card.Header>
-                <Card.Body>
-                  <Card.Title className="text-dark">
-                    <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
-                  </Card.Title>
-                  <div className="text-dark">
-                    <div className="row align-items-center">
-                      <div className="col-4 border-end d-flex justify-content-center align-items-center mt-2">
-                        <Image
-                          src={gameCover}
-                          alt="game-cover"
-                          width={24}
-                          height={40}
-                        />
-                        <p className="mb-0 text-dark ms-2">
-                          集合啦！動物森友會
-                          <span className="text-info ms-2">x1</span>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
                         </p>
                       </div>
-                      <div className="col-6 border-end">
-                        <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar />
+                    </Card.Header>
+                    <Card.Body>
+                      <div className="text-dark">
+                        <div className="row align-items-center">
+                          <div className="col-4 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center mb-2">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-2">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-2 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              更新狀態
+                            </button>
+                          </div>
                         </div>
-                        <p className="mb-0 text-dark">
-                          斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：1025484548W
                         </p>
-                        <small className="text-secondary">
-                          2024/02/16 22:51
-                        </small>
                       </div>
-                      <div className="col-2 d-flex justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger"
-                        >
-                          回覆
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
-              <Card border="light" style={{ width: '100%' }} className="mb-3">
-                <Card.Header>
-                  <div className="d-flex align-items-center">
-                    <p className="mb-0 text-secondary me-1">會員名稱:</p>
-                    <div className={`me-1 ${styles.shapeCircle}`}>
-                      <Image src={defaultHead} alt="" width={25} height={25} />
-                    </div>
-                    <p className="mb-0 text-secondary">zhang.wt</p>
-                  </div>
-                </Card.Header>
-                <Card.Body>
-                  <Card.Title className="text-dark">
-                    <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
-                  </Card.Title>
-                  <div className="text-dark mb-2">
-                    <div className="row align-items-center">
-                      <div className="col-4 border-end d-flex flex-column  justify-content-center align-items-center mt-2">
-                        <div className="d-flex justify-content-center align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={24}
-                            height={40}
-                          />
-                          <p className="mb-0 text-dark ms-2">
-                            集合啦！動物森友會
-                            <span className="text-info ms-2">x1</span>
-                          </p>
-                        </div>
-                        <div className="d-flex justify-content-center align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={24}
-                            height={40}
-                          />
-                          <p className="mb-0 text-dark ms-2">
-                            集合啦！動物森友會
-                            <span className="text-info ms-2">x1</span>
-                          </p>
+                    </Card.Header>
+                    <Card.Body>
+                      <div className="text-dark">
+                        <div className="row align-items-center">
+                          <div className="col-4 d-flex justify-content-start align-items-center mt-2">
+                            <Image
+                              src={gameCover}
+                              alt="game-cover"
+                              width={24}
+                              height={40}
+                            />
+                            <div>
+                              <p className="mb-0 text-dark ms-2">
+                                集合啦！動物森友會
+                                <span className="text-info ms-2">x1</span>
+                              </p>
+                              <p className="text-secondary ms-2">
+                                規格：中文版
+                              </p>
+                            </div>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">NT$1390</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-2">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-2 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              更新狀態
+                            </button>
+                          </div>
                         </div>
                       </div>
-                      <div className="col-6 border-end">
-                        <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar />
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
                         </div>
-                        <p className="mb-0 text-dark">
-                          斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
                         </p>
-                        <small className="text-secondary">
-                          2024/02/16 22:51
-                        </small>
                       </div>
-                      <div className="col-2 d-flex justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger"
-                        >
-                          回覆
-                        </button>
+                    </Card.Header>
+                    <Card.Body>
+                      <div className="text-dark">
+                        <div className="row align-items-center">
+                          <div className="col-4 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center mb-2">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-2">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-2 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              更新狀態
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
-              <Pagination />
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：1025484548W
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+                      <div className="text-dark">
+                        <div className="row align-items-center">
+                          <div className="col-4 d-flex justify-content-start align-items-center mt-2">
+                            <Image
+                              src={gameCover}
+                              alt="game-cover"
+                              width={24}
+                              height={40}
+                            />
+                            <div>
+                              <p className="mb-0 text-dark ms-2">
+                                集合啦！動物森友會
+                                <span className="text-info ms-2">x1</span>
+                              </p>
+                              <p className="text-secondary ms-2">
+                                規格：中文版
+                              </p>
+                            </div>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">NT$1390</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-2">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-2 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              更新狀態
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Pagination />
                 </Tab>
                 <Tab eventKey="unsend" title="待出貨">
                   <Form>
-                    <Form.Group className="mb-3" controlId="memberName">
-                      <Form.Label className="text-dark">會員名稱</Form.Label>
-                      <Form.Control type="text" placeholder="請輸入會員名稱" />
-                    </Form.Group>
                     <Form.Group className="mb-3" controlId="dateSelect">
-                      <Form.Label className="text-dark">評價時間</Form.Label>
+                      <Form.Label className="text-dark">
+                        訂單成立日期
+                      </Form.Label>
                       <div className="d-flex justify-content-between align-items-center">
                         <InputGroup className={`mb-0 ${styles.dateSelect}`}>
                           <Form.Control
@@ -441,13 +470,18 @@ export default function Order() {
                         </InputGroup>
                       </div>
                     </Form.Group>
+                    <InputGroup className="mb-3">
+                      <DropdownButton
+                        variant="dark"
+                        title="訂單編號"
+                        id="searchAreaBtn"
+                      >
+                        <Dropdown.Item href="#">訂單編號</Dropdown.Item>
+                        <Dropdown.Item href="#">會員名稱</Dropdown.Item>
+                      </DropdownButton>
+                      <Form.Control aria-label="searchAreaText" />
+                    </InputGroup>
                     <div className="d-flex justify-content-center">
-                      {/* <button
-                    type="button"
-                    href="/"
-                    className="btn btn-danger me-2"
-                    onChange={handleSubmit}
-                  > */}
                       <button type="button" className="btn btn-danger me-2">
                         搜尋
                       </button>
@@ -456,41 +490,334 @@ export default function Order() {
                       </button>
                     </div>
                   </Form>
-                  <Nav
-                    variant="tabs"
-                    defaultActiveKey="/comment/all"
-                    className="mb-4"
+                  <h5 className="text-dark fw-bold">41筆訂單</h5>
+                  <div className="container">
+                    {/*--------------Rating Subtitle------------------ */}
+                    <div
+                      className={`row my-3 py-2 justify-content-center text-start ${styles.ratingST}`}
+                    >
+                      <h6 className="mb-0 col-4 fw-normal">商品</h6>
+                      <h6 className="mb-0 col-2 fw-normal">付款金額</h6>
+                      <h6 className="mb-0 col-2 fw-normal">狀態</h6>
+                      <h6 className="mb-0 col-2 fw-normal">運送方式</h6>
+                      <h6 className="mb-0 col-2 fw-normal">操作</h6>
+                    </div>
+                  </div>
+                  {/*--------------Rating Content------------------ */}
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
                   >
-                    <Nav.Item>
-                      <Nav.Link href="/comment/all" className="text-danger">
-                        全部
-                      </Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                      <Nav.Link eventKey="unreply" className="text-secondary">
-                        待回覆
-                      </Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                      <Nav.Link eventKey="replied" className="text-secondary">
-                        已回覆
-                      </Nav.Link>
-                    </Nav.Item>
-                    {/* <Nav.Item>
-                  <Nav.Link eventKey="disabled" disabled>
-                    Disabled
-                  </Nav.Link>
-                </Nav.Item> */}
-                  </Nav>
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+                      <div className="text-dark">
+                        <div className="row align-items-center">
+                          <div className="col-4 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center mb-2">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-2">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-2 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              更新狀態
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：1025484548W
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+                      <div className="text-dark">
+                        <div className="row align-items-center">
+                          <div className="col-4 d-flex justify-content-start align-items-center mt-2">
+                            <Image
+                              src={gameCover}
+                              alt="game-cover"
+                              width={24}
+                              height={40}
+                            />
+                            <div>
+                              <p className="mb-0 text-dark ms-2">
+                                集合啦！動物森友會
+                                <span className="text-info ms-2">x1</span>
+                              </p>
+                              <p className="text-secondary ms-2">
+                                規格：中文版
+                              </p>
+                            </div>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">NT$1390</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-2">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-2 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              更新狀態
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+                      <div className="text-dark">
+                        <div className="row align-items-center">
+                          <div className="col-4 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center mb-2">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-2">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-2 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              更新狀態
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：1025484548W
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+                      <div className="text-dark">
+                        <div className="row align-items-center">
+                          <div className="col-4 d-flex justify-content-start align-items-center mt-2">
+                            <Image
+                              src={gameCover}
+                              alt="game-cover"
+                              width={24}
+                              height={40}
+                            />
+                            <div>
+                              <p className="mb-0 text-dark ms-2">
+                                集合啦！動物森友會
+                                <span className="text-info ms-2">x1</span>
+                              </p>
+                              <p className="text-secondary ms-2">
+                                規格：中文版
+                              </p>
+                            </div>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">NT$1390</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-2">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-2 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              更新狀態
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Pagination />
                 </Tab>
                 <Tab eventKey="sending" title="運送中">
                   <Form>
-                    <Form.Group className="mb-3" controlId="memberName">
-                      <Form.Label className="text-dark">會員名稱</Form.Label>
-                      <Form.Control type="text" placeholder="請輸入會員名稱" />
-                    </Form.Group>
                     <Form.Group className="mb-3" controlId="dateSelect">
-                      <Form.Label className="text-dark">評價時間</Form.Label>
+                      <Form.Label className="text-dark">
+                        訂單成立日期
+                      </Form.Label>
                       <div className="d-flex justify-content-between align-items-center">
                         <InputGroup className={`mb-0 ${styles.dateSelect}`}>
                           <Form.Control
@@ -511,13 +838,18 @@ export default function Order() {
                         </InputGroup>
                       </div>
                     </Form.Group>
+                    <InputGroup className="mb-3">
+                      <DropdownButton
+                        variant="dark"
+                        title="訂單編號"
+                        id="searchAreaBtn"
+                      >
+                        <Dropdown.Item href="#">訂單編號</Dropdown.Item>
+                        <Dropdown.Item href="#">會員名稱</Dropdown.Item>
+                      </DropdownButton>
+                      <Form.Control aria-label="searchAreaText" />
+                    </InputGroup>
                     <div className="d-flex justify-content-center">
-                      {/* <button
-                    type="button"
-                    href="/"
-                    className="btn btn-danger me-2"
-                    onChange={handleSubmit}
-                  > */}
                       <button type="button" className="btn btn-danger me-2">
                         搜尋
                       </button>
@@ -526,102 +858,330 @@ export default function Order() {
                       </button>
                     </div>
                   </Form>
-                  <Nav
-                    variant="tabs"
-                    defaultActiveKey="/comment/all"
-                    className="mb-4"
+                  <h5 className="text-dark fw-bold">41筆訂單</h5>
+                  <div className="container">
+                    {/*--------------Rating Subtitle------------------ */}
+                    <div
+                      className={`row my-3 py-2 justify-content-center text-start ${styles.ratingST}`}
+                    >
+                      <h6 className="mb-0 col-4 fw-normal">商品</h6>
+                      <h6 className="mb-0 col-2 fw-normal">付款金額</h6>
+                      <h6 className="mb-0 col-2 fw-normal">狀態</h6>
+                      <h6 className="mb-0 col-2 fw-normal">運送方式</h6>
+                      <h6 className="mb-0 col-2 fw-normal">操作</h6>
+                    </div>
+                  </div>
+                  {/*--------------Rating Content------------------ */}
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
                   >
-                    <Nav.Item>
-                      <Nav.Link href="/comment/all" className="text-danger">
-                        全部
-                      </Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                      <Nav.Link eventKey="unreply" className="text-secondary">
-                        待回覆
-                      </Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                      <Nav.Link eventKey="replied" className="text-secondary">
-                        已回覆
-                      </Nav.Link>
-                    </Nav.Item>
-                    {/* <Nav.Item>
-                  <Nav.Link eventKey="disabled" disabled>
-                    Disabled
-                  </Nav.Link>
-                </Nav.Item> */}
-                  </Nav>
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+                      <div className="text-dark">
+                        <div className="row align-items-center">
+                          <div className="col-4 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center mb-2">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-2">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-2 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              更新狀態
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：1025484548W
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+                      <div className="text-dark">
+                        <div className="row align-items-center">
+                          <div className="col-4 d-flex justify-content-start align-items-center mt-2">
+                            <Image
+                              src={gameCover}
+                              alt="game-cover"
+                              width={24}
+                              height={40}
+                            />
+                            <div>
+                              <p className="mb-0 text-dark ms-2">
+                                集合啦！動物森友會
+                                <span className="text-info ms-2">x1</span>
+                              </p>
+                              <p className="text-secondary ms-2">
+                                規格：中文版
+                              </p>
+                            </div>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">NT$1390</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-2">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-2 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              更新狀態
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+                      <div className="text-dark">
+                        <div className="row align-items-center">
+                          <div className="col-4 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center mb-2">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-2">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-2 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              更新狀態
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：1025484548W
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+                      <div className="text-dark">
+                        <div className="row align-items-center">
+                          <div className="col-4 d-flex justify-content-start align-items-center mt-2">
+                            <Image
+                              src={gameCover}
+                              alt="game-cover"
+                              width={24}
+                              height={40}
+                            />
+                            <div>
+                              <p className="mb-0 text-dark ms-2">
+                                集合啦！動物森友會
+                                <span className="text-info ms-2">x1</span>
+                              </p>
+                              <p className="text-secondary ms-2">
+                                規格：中文版
+                              </p>
+                            </div>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">NT$1390</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-2">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-2">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-2 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              更新狀態
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Pagination />
                 </Tab>
                 <Tab eventKey="done" title="已完成">
-                  <Form>
-                    <Form.Group className="mb-3" controlId="memberName">
-                      <Form.Label className="text-dark">會員名稱</Form.Label>
-                      <Form.Control type="text" placeholder="請輸入會員名稱" />
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="dateSelect">
-                      <Form.Label className="text-dark">評價時間</Form.Label>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <InputGroup className={`mb-0 ${styles.dateSelect}`}>
-                          <Form.Control
-                            type="date"
-                            aria-label="dateSelectStart"
-                            aria-describedby="dateSelectStart"
-                            className={styles.dateInput}
-                          />
-                        </InputGroup>
-                        <span className="text-dark mb-0 mx-2">-</span>
-                        <InputGroup className={`mb-0 ${styles.dateSelect}`}>
-                          <Form.Control
-                            type="date"
-                            aria-label="dateSelectEnd"
-                            aria-describedby="dateSelectEnd"
-                            className={styles.dateInput}
-                          />
-                        </InputGroup>
-                      </div>
-                    </Form.Group>
-                    <div className="d-flex justify-content-center">
-                      {/* <button
-                    type="button"
-                    href="/"
-                    className="btn btn-danger me-2"
-                    onChange={handleSubmit}
-                  > */}
-                      <button type="button" className="btn btn-danger me-2">
-                        搜尋
-                      </button>
-                      <button type="button" className="btn btn-danger">
-                        取消
-                      </button>
-                    </div>
-                  </Form>
-                  <Nav
-                    variant="tabs"
-                    defaultActiveKey="/comment/all"
-                    className="mb-4"
-                  >
-                    <Nav.Item>
-                      <Nav.Link href="/comment/all" className="text-danger">
-                        全部
-                      </Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                      <Nav.Link eventKey="unreply" className="text-secondary">
-                        待回覆
-                      </Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                      <Nav.Link eventKey="replied" className="text-secondary">
-                        已回覆
-                      </Nav.Link>
-                    </Nav.Item>
-                    {/* <Nav.Item>
-                  <Nav.Link eventKey="disabled" disabled>
-                    Disabled
-                  </Nav.Link>
-                </Nav.Item> */}
-                  </Nav>
+                  <h6 className="text-secondary">尚無訂單資訊</h6>
                 </Tab>
               </Tabs>
               {/* <div className="d-flex align-items-center justify-content-between mb-2">
@@ -675,299 +1235,1115 @@ export default function Order() {
                   </Dropdown>
                 </div>
               </div> */}
-              
             </div>
           </div>
           <div className="d-block d-md-none container ps-4 pe-4">
-            <div className="d-flex justify-content-start align-items-end mb-3">
-              <div className="d-flex justify-content-start align-items-end">
-                <h6 className={`mb-0 me-3 fw-bold ${styles.subtitleFs}`}>
-                  賣場評價
-                </h6>
-              </div>
-              <h6 className="fw-normal mb-0">
-                <span className="text-danger fw-bold fs-4">4.5</span> / 5.0
-              </h6>
-            </div>
-            <Form className="mb-3">
-              <Form.Group className="mb-3" controlId="memberName">
-                <Form.Label>會員名稱</Form.Label>
-                <Form.Control type="text" placeholder="請輸入會員名稱" />
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="dateSelect">
-                <Form.Label>評價時間</Form.Label>
-                <div className="d-flex justify-content-between align-items-center">
-                  <InputGroup className={`mb-0 ${styles.dateSelect}`}>
-                    <Form.Control
-                      type="date"
-                      aria-label="dateSelectStart"
-                      aria-describedby="dateSelectStart"
-                      className={styles.dateInput}
-                      onChange={(e) => handleStartDateChange(e.target.value)} // 處理開始日期變更
-                    />
-                  </InputGroup>
-                  <span className="mb-0 mx-2">-</span>
-                  <InputGroup className={`mb-0 ${styles.dateSelect}`}>
-                    <Form.Control
-                      type="date"
-                      aria-label="dateSelectEnd"
-                      aria-describedby="dateSelectEnd"
-                      className={styles.dateInput}
-                      onChange={(e) => handleEndDateChange(e.target.value)} // 處理結束日期變更
-                    />
-                  </InputGroup>
-                </div>
-              </Form.Group>
-              <div className="d-flex justify-content-center align-items-center mt-4">
-                <button type="button" className="btn btn-danger btn-sm me-3">
-                  搜尋
-                </button>
-                <button type="button" className="btn btn-danger btn-sm">
-                  取消
-                </button>
-              </div>
-            </Form>
-            <hr />
-            <Tabs
-              defaultActiveKey="all"
-              id="mobile-tabs"
-              className="mb-3"
-              justify
-            >
-              <Tab eventKey="all" title="全部">
-                <div className="d-flex justify-content-around">
-                  <Button variant="secondary" size="sm">
-                    5顆星
-                  </Button>
-                  <Button variant="secondary" size="sm">
-                    4顆星
-                  </Button>
-                  <Button variant="secondary" size="sm">
-                    3顆星
-                  </Button>
-                  <Button variant="secondary" size="sm">
-                    2顆星
-                  </Button>
-                  <Button variant="secondary" size="sm">
-                    1顆星
-                  </Button>
-                </div>
-                <h6 className="m-2">41則評論</h6>
-                <Card border="light" style={{ width: '100%' }} className="mb-3">
-                  <Card.Header>
-                    <div className="d-flex align-items-center">
-                      <p className="mb-0 text-secondary me-1">會員名稱:</p>
-                      <div className={`me-1 ${styles.shapeCircle}`}>
-                        <Image
-                          src={defaultHead}
-                          alt="member-profile"
-                          width={25}
-                          height={25}
-                        />
-                      </div>
-                      <p className="mb-0 text-secondary">zhang.wt</p>
-                    </div>
-                  </Card.Header>
-                  <Card.Body>
-                    <Card.Title className="text-dark">
-                      <p className="mb-0 text-secondary">
-                        訂單編號：1025484548W
-                      </p>
-                    </Card.Title>
-                    <div className="text-dark">
-                      <div className="row align-items-center">
-                        <div className="col-12 border-bottom pb-2 d-flex justify-content-start align-items-center mt-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={24}
-                            height={40}
+          <Tabs
+                defaultActiveKey="all-order"
+                id="orderStatusTabs-mobile"
+                className="mb-3"
+                justify
+              >
+                <Tab eventKey="all-order" title="全部">
+                  <Form>
+                    <Form.Group className="mb-3" controlId="dateSelect">
+                      <Form.Label>
+                        訂單成立日期
+                      </Form.Label>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <InputGroup className={`mb-0 ${styles.dateSelect}`}>
+                          <Form.Control
+                            type="date"
+                            aria-label="dateSelectStart"
+                            aria-describedby="dateSelectStart"
+                            className={styles.dateInput}
                           />
-                          <p className="mb-0 text-dark ms-2">
-                            集合啦！動物森友會
-                            <span className="text-info ms-2">x1</span>
-                          </p>
-                        </div>
-                        <div className="col-12 py-3">
-                          <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar />
-                          </div>
-                          <p className="mb-0 text-dark">
-                            斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
-                          </p>
-                          <small className="text-secondary">
-                            2024/02/16 22:51
-                          </small>
-                        </div>
-                        <div className="col-12 d-flex justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger"
-                          >
-                            回覆
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </Card.Body>
-                </Card>
-                <Card border="light" style={{ width: '100%' }} className="mb-3">
-                  <Card.Header>
-                    <div className="d-flex align-items-center">
-                      <p className="mb-0 text-secondary me-1">會員名稱:</p>
-                      <div className={`me-1 ${styles.shapeCircle}`}>
-                        <Image
-                          src={defaultHead}
-                          alt="member-profile"
-                          width={25}
-                          height={25}
-                        />
-                      </div>
-                      <p className="mb-0 text-secondary">zhang.wt</p>
-                    </div>
-                  </Card.Header>
-                  <Card.Body>
-                    <Card.Title className="text-dark">
-                      <p className="mb-0 text-secondary">
-                        訂單編號：102545648S
-                      </p>
-                    </Card.Title>
-                    <div className="text-dark">
-                      <div className="row align-items-center">
-                        <div className="col-12 border-bottom pb-2 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={24}
-                              height={40}
-                            />
-                            <p className="mb-0 text-dark ms-2">
-                              集合啦！動物森友會
-                              <span className="text-info ms-2">x1</span>
-                            </p>
-                          </div>
-                          <div className="d-flex justify-content-start align-items-center">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={24}
-                              height={40}
-                            />
-                            <p className="mb-0 text-dark ms-2">
-                              集合啦！動物森友會
-                              <span className="text-info ms-2">x1</span>
-                            </p>
-                          </div>
-                        </div>
-                        <div className="col-12 py-3">
-                          <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar />
-                          </div>
-                          <p className="mb-0 text-dark">
-                            斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
-                          </p>
-                          <small className="text-secondary">
-                            2024/02/16 22:51
-                          </small>
-                        </div>
-                        <div className="col-12 d-flex justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger"
-                          >
-                            回覆
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </Card.Body>
-                </Card>
-                <Card border="light" style={{ width: '100%' }} className="mb-3">
-                  <Card.Header>
-                    <div className="d-flex align-items-center">
-                      <p className="mb-0 text-secondary me-1">會員名稱:</p>
-                      <div className={`me-1 ${styles.shapeCircle}`}>
-                        <Image
-                          src={defaultHead}
-                          alt="member-profile"
-                          width={25}
-                          height={25}
-                        />
-                      </div>
-                      <p className="mb-0 text-secondary">zhang.wt</p>
-                    </div>
-                  </Card.Header>
-                  <Card.Body>
-                    <Card.Title className="text-dark">
-                      <p className="mb-0 text-secondary">
-                        訂單編號：1025484548W
-                      </p>
-                    </Card.Title>
-                    <div className="text-dark">
-                      <div className="row align-items-center">
-                        <div className="col-12 border-bottom pb-2 d-flex justify-content-start align-items-center mt-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={24}
-                            height={40}
+                        </InputGroup>
+                        <span className="mb-0 mx-2">-</span>
+                        <InputGroup className={`mb-0 ${styles.dateSelect}`}>
+                          <Form.Control
+                            type="date"
+                            aria-label="dateSelectEnd"
+                            aria-describedby="dateSelectEnd"
+                            className={styles.dateInput}
                           />
-                          <p className="mb-0 text-dark ms-2">
-                            集合啦！動物森友會
-                            <span className="text-info ms-2">x1</span>
-                          </p>
-                        </div>
-                        <div className="col-12 py-3">
-                          <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar />
+                        </InputGroup>
+                      </div>
+                    </Form.Group>
+                    <InputGroup className="mb-3">
+                      <DropdownButton
+                        variant="dark"
+                        title="訂單編號"
+                        id="searchAreaBtn"
+                      >
+                        <Dropdown.Item href="#">訂單編號</Dropdown.Item>
+                        <Dropdown.Item href="#">會員名稱</Dropdown.Item>
+                      </DropdownButton>
+                      <Form.Control aria-label="searchAreaText" />
+                    </InputGroup>
+                    <div className="d-flex justify-content-center align-items-center">
+                      <button type="button" className="btn btn-danger btn-sm me-2">
+                        搜尋
+                      </button>
+                      <button type="button" className="btn btn-danger btn-sm">
+                        取消
+                      </button>
+                    </div>
+                  </Form>
+                  <hr />
+                  <h5 className="fw-bold mb-2">41筆訂單</h5>
+                  {/*--------------Rating Content------------------ */}
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
                           </div>
-                          <p className="mb-0 text-dark">
-                            斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
-                          </p>
-                          <small className="text-secondary">
-                            2024/02/16 22:51
-                          </small>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
                         </div>
-                        <div className="col-12 d-flex justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger"
-                          >
-                            回覆
-                          </button>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className='pt-1'>
+                      <div className="text-dark">
+                        <div className="row align-items-center ">
+                          <div className="col-8 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center mb-2">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-4">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-12"><hr /></div>
+                          <div className="col-4 text-center">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-4 text-center">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-4 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              編輯
+                            </button>
+                          </div>
                         </div>
                       </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className='pt-1'>
+                      <div className="text-dark">
+                        <div className="row align-items-center ">
+                          <div className="col-8 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-4">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-12"><hr /></div>
+                          <div className="col-4 text-center">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-4 text-center">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-4 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              編輯
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className='pt-1'>
+                      <div className="text-dark">
+                        <div className="row align-items-center ">
+                          <div className="col-8 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center mb-2">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-4">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-12"><hr /></div>
+                          <div className="col-4 text-center">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-4 text-center">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-4 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              編輯
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className='pt-1'>
+                      <div className="text-dark">
+                        <div className="row align-items-center ">
+                          <div className="col-8 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-4">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-12"><hr /></div>
+                          <div className="col-4 text-center">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-4 text-center">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-4 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              編輯
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Pagination />
+                </Tab>
+                <Tab eventKey="unsend" title="待出貨">
+                <Form>
+                    <Form.Group className="mb-3" controlId="dateSelect">
+                      <Form.Label>
+                        訂單成立日期
+                      </Form.Label>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <InputGroup className={`mb-0 ${styles.dateSelect}`}>
+                          <Form.Control
+                            type="date"
+                            aria-label="dateSelectStart"
+                            aria-describedby="dateSelectStart"
+                            className={styles.dateInput}
+                          />
+                        </InputGroup>
+                        <span className="mb-0 mx-2">-</span>
+                        <InputGroup className={`mb-0 ${styles.dateSelect}`}>
+                          <Form.Control
+                            type="date"
+                            aria-label="dateSelectEnd"
+                            aria-describedby="dateSelectEnd"
+                            className={styles.dateInput}
+                          />
+                        </InputGroup>
+                      </div>
+                    </Form.Group>
+                    <InputGroup className="mb-3">
+                      <DropdownButton
+                        variant="dark"
+                        title="訂單編號"
+                        id="searchAreaBtn"
+                      >
+                        <Dropdown.Item href="#">訂單編號</Dropdown.Item>
+                        <Dropdown.Item href="#">會員名稱</Dropdown.Item>
+                      </DropdownButton>
+                      <Form.Control aria-label="searchAreaText" />
+                    </InputGroup>
+                    <div className="d-flex justify-content-center align-items-center">
+                      <button type="button" className="btn btn-danger btn-sm me-2">
+                        搜尋
+                      </button>
+                      <button type="button" className="btn btn-danger btn-sm">
+                        取消
+                      </button>
                     </div>
-                  </Card.Body>
-                </Card>
-                <Pagination />
-              </Tab>
-              <Tab eventKey="unreply" title="待回覆">
-                待回覆
-              </Tab>
-              <Tab eventKey="replied" title="已回覆">
-                已回覆
-              </Tab>
-            </Tabs>
+                  </Form>
+                  <hr />
+                  <h5 className="fw-bold mb-2">41筆訂單</h5>
+                  {/*--------------Rating Content------------------ */}
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className='pt-1'>
+                      <div className="text-dark">
+                        <div className="row align-items-center ">
+                          <div className="col-8 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center mb-2">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-4">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-12"><hr /></div>
+                          <div className="col-4 text-center">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-4 text-center">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-4 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              編輯
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className='pt-1'>
+                      <div className="text-dark">
+                        <div className="row align-items-center ">
+                          <div className="col-8 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-4">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-12"><hr /></div>
+                          <div className="col-4 text-center">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-4 text-center">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-4 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              編輯
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className='pt-1'>
+                      <div className="text-dark">
+                        <div className="row align-items-center ">
+                          <div className="col-8 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center mb-2">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-4">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-12"><hr /></div>
+                          <div className="col-4 text-center">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-4 text-center">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-4 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              編輯
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className='pt-1'>
+                      <div className="text-dark">
+                        <div className="row align-items-center ">
+                          <div className="col-8 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-4">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-12"><hr /></div>
+                          <div className="col-4 text-center">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-4 text-center">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-4 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              編輯
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Pagination />
+                </Tab>
+                <Tab eventKey="sending" title="運送中">
+                <Form>
+                    <Form.Group className="mb-3" controlId="dateSelect">
+                      <Form.Label>
+                        訂單成立日期
+                      </Form.Label>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <InputGroup className={`mb-0 ${styles.dateSelect}`}>
+                          <Form.Control
+                            type="date"
+                            aria-label="dateSelectStart"
+                            aria-describedby="dateSelectStart"
+                            className={styles.dateInput}
+                          />
+                        </InputGroup>
+                        <span className="mb-0 mx-2">-</span>
+                        <InputGroup className={`mb-0 ${styles.dateSelect}`}>
+                          <Form.Control
+                            type="date"
+                            aria-label="dateSelectEnd"
+                            aria-describedby="dateSelectEnd"
+                            className={styles.dateInput}
+                          />
+                        </InputGroup>
+                      </div>
+                    </Form.Group>
+                    <InputGroup className="mb-3">
+                      <DropdownButton
+                        variant="dark"
+                        title="訂單編號"
+                        id="searchAreaBtn"
+                      >
+                        <Dropdown.Item href="#">訂單編號</Dropdown.Item>
+                        <Dropdown.Item href="#">會員名稱</Dropdown.Item>
+                      </DropdownButton>
+                      <Form.Control aria-label="searchAreaText" />
+                    </InputGroup>
+                    <div className="d-flex justify-content-center align-items-center">
+                      <button type="button" className="btn btn-danger btn-sm me-2">
+                        搜尋
+                      </button>
+                      <button type="button" className="btn btn-danger btn-sm">
+                        取消
+                      </button>
+                    </div>
+                  </Form>
+                  <hr />
+                  <h5 className="fw-bold mb-2">41筆訂單</h5>
+                  {/*--------------Rating Content------------------ */}
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className='pt-1'>
+                      <div className="text-dark">
+                        <div className="row align-items-center ">
+                          <div className="col-8 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center mb-2">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-4">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-12"><hr /></div>
+                          <div className="col-4 text-center">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-4 text-center">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-4 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              編輯
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className='pt-1'>
+                      <div className="text-dark">
+                        <div className="row align-items-center ">
+                          <div className="col-8 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-4">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-12"><hr /></div>
+                          <div className="col-4 text-center">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-4 text-center">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-4 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              編輯
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className='pt-1'>
+                      <div className="text-dark">
+                        <div className="row align-items-center ">
+                          <div className="col-8 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center mb-2">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-4">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-12"><hr /></div>
+                          <div className="col-4 text-center">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-4 text-center">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-4 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              編輯
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Card
+                    border="light"
+                    style={{ width: '100%' }}
+                    className="mb-3"
+                  >
+                    <Card.Header>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <div className={`me-1 ${styles.shapeCircle}`}>
+                            <Image
+                              src={defaultHead}
+                              alt="member-profile"
+                              width={25}
+                              height={25}
+                            />
+                          </div>
+                          <p className="mb-0 text-secondary">zhang.wt</p>
+                        </div>
+                        <p className="mb-0 text-secondary">
+                          訂單編號：10284390548H
+                        </p>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className='pt-1'>
+                      <div className="text-dark">
+                        <div className="row align-items-center ">
+                          <div className="col-8 d-flex flex-column justify-content-start align-items-start mt-2">
+                            <div className="d-flex justify-content-start align-items-center">
+                              <Image
+                                src={gameCover}
+                                alt="game-cover"
+                                width={24}
+                                height={40}
+                              />
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
+                                  集合啦！動物森友會
+                                  <span className="text-info ms-2">x1</span>
+                                </p>
+                                <p className="text-secondary ms-2">
+                                  規格：中文版
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-4">
+                            <p className="fw-bold">NT$2580</p>
+                            <p className="text-secondary">貨到付款</p>
+                          </div>
+                          <div className="col-12"><hr /></div>
+                          <div className="col-4 text-center">
+                            <p className="fw-bold">待出貨</p>
+                          </div>
+                          <div className="col-4 text-center">
+                            <p>7-11 超商寄送</p>
+                          </div>
+                          <div className="col-4 d-flex justify-content-center align-items-center">
+                            {/* 可以跳出一個MODAL來處理 */}
+                            <button
+                              type="button"
+                              href="/comment/reply"
+                              className="btn btn-danger btn-sm"
+                            >
+                              編輯
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <Pagination />
+                </Tab>
+                <Tab eventKey="done" title="已完成">
+                  <h6 className="text-secondary">尚無訂單資訊</h6>
+                </Tab>
+              </Tabs>
+            
           </div>
         </div>
         <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
