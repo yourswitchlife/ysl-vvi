@@ -277,3 +277,24 @@ $nav-black: #161719ae;
       color: $white;
       font-size: 14px;         
   }
+
+  // ------------  phoneNav
+.phoneNav {
+  z-index: 5;
+  height: 90px;
+  width: 100%;
+  bottom: 0;
+  position: fixed;
+  background-color: #161719;
+  // border-top: 1px solid rgb(151, 151, 151);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
+}
+.phoneNavContent {
+  color: white;
+  text-decoration: none;
+}
+// .active{
+//   color: #ED5260;
+//   text-decoration: $red-secondary;
+// }
+

@@ -1,0 +1,556 @@
+@import '@/styles/valuable.scss';
+
+// 電腦版
+.checkBox {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.orderListBar {
+  flex: 1 1 auto;
+  margin-right: 1rem;
+}
+
+.orderList {
+  border: 1px solid $light-gray;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 1.25rem;
+}
+
+.selectAllBar {
+  padding-left: 2.5rem;
+}
+
+.shop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid $light-gray;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  .shopName {
+    display: flex;
+
+    .icon {
+      width: 25px;
+      height: 25px;
+      padding-right: 5px;
+    }
+  }
+  .editBar {
+    display: none;
+  }
+}
+
+// 單個商品刪除button
+.delIcon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 25px;
+  height: 25px;
+  color: $gray;
+  cursor: pointer;
+  &:hover {
+    color: $dark-gray;
+  }
+}
+
+// 單個商品細節
+.pInfoMobile {
+  display: flex;
+  flex-wrap: wrap;
+}
+.pContainer {
+  .product {
+    padding: 15px 20px;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.15);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    position: relative;
+  }
+  .pImgMobile {
+    display: none;
+  }
+  .editBtnBar {
+    display: none;
+  }
+}
+
+// 勾選框框
+.checkBoxBar {
+  display: flex;
+  min-width: 50px;
+}
+
+// 商品名稱、加入收藏
+.pInfoBar {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+
+  .pImg {
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .pInfo {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 0 20px 0 10px;
+    .pInfoTop {
+      .pName {
+        text-decoration: none;
+        color: $primary-black;
+        max-height: 70px;
+        font-size: 1rem;
+        margin-bottom: 10px;
+        display: -webkit-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-all;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+      .language {
+        color: $primary-black;
+      }
+      .discount {
+        background: $danger;
+        color: $white;
+        padding: 5px;
+        border-radius: 5px;
+        line-height: 0.875rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    .pInfoBottom {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: auto;
+      .text,
+      .icon {
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+// 商品金額
+.priceBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 15%;
+  .price,
+  .prePrice,
+  .discountPrice {
+    text-align: center;
+  }
+
+  .prePrice {
+    text-decoration: line-through $danger;
+    color: $dark-gray;
+    margin-right: 0.625rem;
+  }
+
+  .discountPrice {
+    color: $danger;
+  }
+}
+
+// 購買數量控制按鈕
+.controlBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20%;
+  .control {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btnMinus,
+  .btnPlus {
+    background: $light-gray;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $dark-gray;
+    cursor: pointer;
+    font-size: 0.875rem;
+    // 點擊按鈕數量更動小效果(待做)
+    transition: background-color 0.1s cubic-bezier(0.4, 0, 0.6, 1);
+  }
+  .amount {
+    cursor: text;
+    font-size: 1rem;
+    font-weight: 400;
+    height: 2rem;
+    width: 3.125rem;
+    text-align: center;
+    border: none;
+
+    &:focus {
+      border: none;
+      outline: none;
+      caret-color: $danger;
+    }
+  }
+}
+
+// 總金額
+.totalBar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 15%;
+  padding-left: 1.25rem;
+
+  .text {
+    color: $gray;
+  }
+  .total {
+    color: $danger;
+  }
+}
+
+// 訂單總覽區塊
+
+.stickyMobileBar {
+  display: none;
+}
+
+.orderOverviewBar {
+  min-width: 300px;
+  width: 300px;
+  flex: 1 1 auto;
+}
+
+.stickyBar {
+  position: sticky;
+  top: 70px;
+  .cartFrame {
+    position: relative;
+    border: 1px solid $light-gray;
+    border-radius: 15px;
+    padding: 20px;
+    background: $white;
+  }
+}
+
+// 訂單總覽header
+.framHeader {
+  .title {
+    font-weight: bold;
+    text-align: center;
+    border-bottom: 2px solid $light-gray;
+    padding-bottom: 10px;
+  }
+  .totalQuantity {
+    text-align: right;
+    padding-top: 10px;
+    color: $gray;
+  }
+}
+
+// 商品金額折扣區塊
+.frameBody {
+  margin-top: 10px;
+  .summaryItem {
+    display: flex;
+    padding: 10px 0;
+    .summaryItemLabel {
+      flex: 0 1 auto;
+    }
+    .summaryItemLine {
+      visibility: hidden;
+      flex: 1 1 auto;
+      height: 1.4rem;
+      margin: 0 10px;
+    }
+    .summaryItemPrice {
+      flex: 0 0 auto;
+      font-weight: 600;
+    }
+  }
+
+  // 選擇使用優惠券
+  .useDiscountBar {
+    background: $primary-black;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 10px 0 50px;
+
+    .mainText {
+      color: $white;
+      padding-bottom: 5px;
+      cursor: pointer;
+      &:hover {
+        color: $light-gray;
+      }
+    }
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, $danger, rgba(0, 104, 240, 0.5));
+    }
+    .discountListBtn {
+      background: $white;
+      color: $gray;
+      margin: 15px 0 0;
+      padding: 5px 8px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      &:hover {
+        color: $dark-gray;
+      }
+    }
+  }
+
+  // 訂單總金額
+  .summeryTotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .totalText,
+    .totalPrice {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .totalPrice {
+      color: $danger;
+    }
+  }
+
+  // 去買單按鈕
+  .payBtnBar {
+    .btnPay {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+      letter-spacing: 1px;
+      width: 100%;
+    }
+  }
+}
+
+// 手機板
+@media screen and (max-width: 431px) {
+  .checkBox {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .orderListBar {
+    margin-right: 0;
+  }
+
+  // 選擇全部checkBox
+  .selectAllBar {
+    display: flex;
+    align-items: center;
+  }
+
+  .shop {
+    .trasgIcon {
+      display: none;
+    }
+    .editBar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2px;
+      color: $gray;
+    }
+  }
+
+  // 單個商品刪除button
+  .delIcon {
+    display: none;
+  }
+
+  .orderList {
+    margin-right: 0;
+  }
+
+  // 單個商品細節
+  .pContainer {
+    .product {
+      padding: 15px 10px;
+      box-shadow: none;
+      border-radius: 0;
+      overflow: scroll;
+      // flex-wrap: wrap;
+    }
+    .pImgMobile {
+      display: block;
+      width: 30%;
+    }
+    .editBtnBar {
+      display: flex;
+      margin-left: 20px;
+      .addToListBtn,
+      .delPBtn {
+        min-height: 158px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: $white;
+        padding-inline: 20px;
+      }
+      .addToListBtn {
+        background: #ff8761;
+      }
+      .delPBtn {
+        background: $danger;
+      }
+    }
+  }
+
+  .pInfoBar {
+    width: 100%;
+    .pImg {
+      display: none;
+    }
+    .pInfo {
+      padding: 0;
+      .pInfoBottom {
+        display: none;
+      }
+    }
+  }
+
+  // 勾選框框
+  .checkBoxBar {
+    min-width: 30px;
+  }
+
+  // 商品詳細內容、金額、數量、總金額
+  .pInfoMobile {
+    display: flex;
+    flex-direction: column;
+    width: 55%;
+
+    .pInfoTop {
+      .pName {
+        max-height: 45px;
+        margin-bottom: 5px;
+      }
+      .language {
+        font-size: 0.875rem;
+      }
+      .discount {
+        line-height: 0.75rem;
+        font-size: 0.75rem;
+      }
+    }
+
+    // 商品金額
+    .priceBar {
+      width: 100%;
+      align-items: flex-start;
+    }
+
+    // 購買數量控制按鈕
+    .controlBar {
+      justify-content: flex-start;
+      width: 100%;
+      margin-top: 20px;
+      .control {
+        flex-wrap: nowrap;
+      }
+    }
+
+    // 總金額
+    .totalBar {
+      display: none;
+    }
+  }
+
+  // 訂單總覽區塊
+  .orderOverviewBar {
+    display: none;
+  }
+
+  .stickyMobileBar {
+    display: block;
+    position: sticky;
+    bottom: 0px;
+  }
+  .orderOverviewMobileBar {
+    display: block;
+    background: $white;
+    padding: 10px 20px 10px;
+    border-bottom: 1px solid $light-gray;
+
+    .useDiscountBar,
+    .discountInfo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0 20px;
+      .discountLeft,
+      .infoLeft {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+      }
+      .discountRight {
+        color: $dark-gray;
+      }
+
+      .infoLeft {
+        .discountPrice {
+          font-size: 14px;
+          color: $gray;
+        }
+      }
+      .infoRight {
+        font-size: 14px;
+        color: $gray;
+      }
+    }
+  }
+  .checkoutBar {
+    background: $white;
+    .checkout {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      min-height: 77px;
+      .textContent,
+      .checkoutBtn {
+        min-height: 77px;
+      }
+      .textContent {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-end;
+        margin-right: 10px;
+        .totalPrice {
+          margin-bottom: 8px;
+        }
+      }
+      .checkoutBtn {
+        padding: 0 20px;
+      }
+    }
+  }
+}

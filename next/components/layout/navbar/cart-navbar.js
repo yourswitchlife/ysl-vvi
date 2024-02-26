@@ -16,8 +16,8 @@ export default function CartNavbar() {
       <header className={styles.cartNav}>
         <div // logo
         >
-          <Link href="/index.js" className={styles.link}>
-            <Image src={yslLogo} alt="" />
+          <Link href="/cart" className={styles.link}>
+            <Image src={yslLogo} alt="ysl-logo" />
             <span className="ps-4 pe-4">|</span>
             <h3 className={styles.text}>購物車</h3>
           </Link>
@@ -37,7 +37,7 @@ export default function CartNavbar() {
           </div>
           <div className={styles.circleCut}>
             <Link href="">
-              <Image src={profilePhoto} alt="" />
+              <Image src={profilePhoto} alt="profile-photo" />
             </Link>
           </div>
         </div>

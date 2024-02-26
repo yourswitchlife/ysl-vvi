@@ -1,0 +1,49 @@
+@import '@/styles/valuable.scss';
+.container {
+  padding-top: 90px;
+  min-height: 100svh;
+}
+
+.deliveryItem {
+  padding: 20px 30px;
+  border-bottom: 1px solid $bright-gray;
+  font-size: 20px;
+
+  .sub {
+    font-size: 16px;
+    color: $light-gray;
+    margin-top: 10px;
+  }
+}
+
+.addrItem {
+  padding: 10px 15px;
+  border-bottom: 1px solid $bright-gray;
+
+  .address {
+    color: $gray;
+  }
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 15px;
+  border-bottom: 1px solid $bright-gray;
+}
+
+.adressForm {
+  padding: 20px;
+}
+
+.confirmBtn {
+  display: block;
+  text-decoration: none;
+  background: $danger;
+  color: $white;
+  padding: 10px 0;
+  text-align: center;
+  margin: calc(90svh - 400px) 10px 20px;
+}
