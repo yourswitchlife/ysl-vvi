@@ -1,36 +1,55 @@
 import React from 'react'
 import Navbar from '@/components/layout/navbar/navbar'
-import Footer from '@/components/layout/footer/footer-b'
+import Footer from '@/components/layout/footer/footer-front'
 import Image from 'next/image'
 import styles from '@/styles/coupon/coupon.module.scss'
 
+//coupon card
+import CouponCard from '@/components/coupon-card/coupon-card'
+
 //pictures
-import banner from '@/public/images/coupon/ensayo11.png'
-import bannerTitle from '@/public/images/coupon/banner-title.png'
+import banner from '@/public/images/coupon/tryout.png'
+// import bannerTitle from '@/public/images/coupon/banner-title.png'
 import bannerCTA from '@/public/images/coupon/bannerCTA.png'
-import bannerSub1 from '@/public/images/coupon/banner-sub1.png'
-import bannerSub2 from '@/public/images/coupon/banner-sub2.png'
-import bannerSub3 from '@/public/images/coupon/banner-sub3.png'
-import console from '@/public/images/coupon/couponMember-CTA.png'
-import consoleTitle from '@/public/images/coupon/section2-headline.png'
-import consoleSub from '@/public/images/coupon/section2-headline&Des.png'
+import bannerSub1 from '@/public/images/coupon/banner-sub11.png'
+import bannerSub2 from '@/public/images/coupon/banner-sub22.png'
+import bannerSub3 from '@/public/images/coupon/banner-sub33.png'
+import console from '@/public/images/coupon/sectionTwo.png'
+// import consoleTitle from '@/public/images/coupon/section2-headline.png'
+// import consoleSub from '@/public/images/coupon/section2-headline&Des.png'
 import missionBG from '@/public/images/coupon/galaxy-night-panorama.png'
 
 export default function CouponPage() {
   return (
     <>
-      {/* <Navbar /> */}
+      <Navbar />
       <section
         className={`${styles.wrapper} d-flex justify-content-center align-items-center container-field flex-column`}
       >
         <div className={`${styles.banner} position-relative container-field`}>
           <Image src={banner} alt="ysl coupon" />
 
-          <div
+          <div className={styles.bannerSubs}>
+            <div className={styles.bannerSub1}>
+              <Image src={bannerSub1}  />
+            </div>
+
+            <div className={styles.bannerSub2}>
+              <Image src={bannerSub2}  />
+            </div>
+            
+            <div className={styles.bannerSub3}>
+             <Image src={bannerSub3} />
+             </div>
+          </div>
+
+          {/* <div
             className={`${styles.bannerTitle} position-absolute top-50 start-50 translate-middle d-flex justify-content-center align-items-center container-field`}
           >
             <Image src={bannerTitle} />
-          </div>
+          </div> */}
+          
+          
 
           {/*         
           <div className={`${styles.bannerSub} position-absolute top-50 start-50 translate-middle d-flex justify-content-center align-items-center`}>
@@ -82,18 +101,14 @@ export default function CouponPage() {
             <div className={`${styles.console} container-fluid`}>
               <Image src={console} />
 
-                <div className={`${styles.consoleTitle}`}>
+                {/* <div className={`${styles.consoleTitle}`}>
                   <Image src={consoleTitle} /> 
                 </div>
                 <div className={`${styles.consoleSub} `}>
               <Image src={consoleSub} />
-            </div>
+                </div> */}
                
             </div>
-
-            
-
-            
 
             <div className='d-flex justify-content-center'>
               <button className={`btn btn-primary ${styles.btnCTA}`}>
@@ -101,6 +116,9 @@ export default function CouponPage() {
               </button>
             </div>
 
+            <div>
+              {/* <CouponCard/> */}
+            </div>
 
           </div>
         </div>
@@ -111,12 +129,12 @@ export default function CouponPage() {
       </section>
 
  
-        <div className='text-white'>coupon area</div>
+      
      
 
       <section className='text-white'>
         <div className={styles.missionBG + 'container-fluid'}>
-          <Image src={missionBG}/>
+          {/* <Image src={missionBG}/> */}
         </div>
       </section>
       <Footer />

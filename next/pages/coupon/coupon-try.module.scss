@@ -77,80 +77,56 @@
     
   }
     
-    // .bannerCTA{
-    //   width: 18%;
+    .bannerCTA{
+      width: 18%;
 
-    //   & img{
-    //     width: 100%;
-    //     height: 100%;
-    //     object-fit: contain;
-    //   }
-    // }
-
-
-    .titles {
-      position: absolute;
-      // text-align: center;
-      // left: calc(20% - 56px);
-      // bottom: calc(100% - 300px);
-      bottom:380px;
-      left: 450px;
-      font-size: 80px;
-      
-      // font-family: 'cubic 11';
-      // text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-      //   1px 1px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000,
-      //   2px 2px 0 #000;
-      // text-shadow:
-      // 7px 3px 0 #000,
-      // -7px -1px 0 #000,
-      // 7px -7px 0 #000,
-      // -7px -7px 0 #000,
-    
-  
-    .title_action {
-      font-family: 'cubic 11';
-      text-shadow: 
-        -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-        1px 1px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000,
-        5px 5px 0 #000;
-        margin-inline: 60px;
+      & img{
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
     }
   
   }
 
-    
+
+
+
+
+  .title {
+    position: relative;
+    // text-align: center;
+    left: calc(20% - 56px);
+    // bottom: calc(100% - 300px);
+    font-family: 'cubic 11';
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+      1px 1px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000,
+      2px 2px 0 #000;
+    // text-shadow:
+    // 7px 3px 0 #000,
+    // -7px -1px 0 #000,
+    // 7px -7px 0 #000,
+    // -7px -7px 0 #000,
+  }
+
+  .title_action {
+    font-family: 'cubic 11';
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+      1px 1px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000,
+      2px 2px 0 #000;
+  }
+
   .title_CTAbtn{
-    position: absolute;
-    // bottom:calc(23% - 60.8px);
-    // left:calc(10% - 197.6px);
-    // right:5px;
-    // right: 6px;
-    bottom:150px;
-    left:720px;
-    
     :hover {
-      // background-color: rgb(234, 175, 175);
-      transition: 0.2s;
-      font-size: 40px;
+      background-color: red;
+      transition: 0.5s;
 
   }
   
     .title_CTA {
       font-family: 'cubic 11';
-      text-shadow: 
-      -1px -1px 0 #000, 1px -1px 0 #000;
     }
   }
-
-  
-  }
-
-
-
-
-
- 
 
 
 .couponMember {
@@ -190,16 +166,33 @@
   }
 
 
-  .btnCTA {
-    bottom: calc(50% - 45.6px); // Example to place it in the middle, adjust 30px based on half of your button's height
-    left: 50%;
-    transform: translate(-50%, 200%);
+
+  .consoleTitle{
+    max-width: 80%;
+    // left: calc(100% - 400px);
+    // top:85px;
+
+
+    & img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+   
   }
-  
-  
-  // @media screen and (max-width: 430px){
-  //   bottom: calc(50% - 45.6px);
-  // }
+
+  .consoleSub{
+    max-width: 80%;
+    & img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .btnCTA{
+    
+  }
 }
 
 
@@ -215,12 +208,14 @@
 
 
 
+
+
 .missionBG{
-  background: url(../../public/images/coupon/galaxy-night-panorama.png);
-  min-height: 495px;
-  & img{
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
+  max-width: 30%
+    & img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
 }
