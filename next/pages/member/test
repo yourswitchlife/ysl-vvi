@@ -1,0 +1,19 @@
+<Navbar />
+<div className={mStyle.accountClass + ' d-flex'}>
+  <SideBar />
+
+
+</div>
+<Footer/>
+
+
+<div className={fpStyle.page_check}>
+  <Link href="" className={fsStyle.pagep_btn}>
+      <span></span>商品
+  </Link>
+  <h3 className={pStyle.gray_text}>|</h3>
+  <Link href="" className={fsStyle.pages_btn}>
+      賣場
+  </Link>
+</div>
+<div className={fpStyle.line}></div>
