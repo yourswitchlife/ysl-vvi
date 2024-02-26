@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import styles from '@/components/layout/navbar/navbar.module.scss'
+import styles from '@/components/navbar/navbar.module.scss'
 import yslLogo from '@/public/images/logo/logo-sm.svg'
 import yslLogoXs from '@/public/images/logo/logo-xs.svg'
 import SearchBarB from './searchBarB'
@@ -43,24 +43,9 @@ export default function CartNavbar() {
         </div>
       </header>
     </div>
+      {/* RWD */}
       <div className='d-flex flex-column d-lg-none'>
-      {/* RWD 抓標題版本*/}
       <header className={styles.navbarB}>
-        <div // logo
-        >
-          <Link href="/index.js">
-            <Image src={yslLogoXs} alt="" />
-          </Link>
-        </div>
-        <div className="">
-          <h5 className='mb-0'>我的賣場</h5>
-        </div>
-        <Link href="/index.js" className="text-white ps-5">
-          <FaArrowRight />
-        </Link>
-      </header>
-      {/* RWD 一般版本*/}
-      {/* <header className={styles.navbarB}>
         <div // logo
         >
           <Link href="/index.js">
@@ -72,8 +57,8 @@ export default function CartNavbar() {
           <SearchBarB />
         </div>
         <BurgerMenu />
-      </header> */}
-      </div>      
+      </header>
+      </div>
     </>
   )
 }

@@ -1,23 +1,22 @@
-@import '@/styles/valuable.scss';
+@import '../../styles/valuable.scss';
 
 .footer {
-  background: $light-gray;
+  background: $primary-black;
+  padding: 30px 0 50px;
 }
+
 .infoTop {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: $light-gray;
-  padding-block: 30px;
-  .logoPc {
-    display: block;
-  }
+  background: $dark-gray;
+  padding: 15px 150px;
 }
 
 .infoTextWrap {
   .infoText {
     text-decoration: none;
-    color: $gray;
+    color: $white;
     padding-right: 30px;
     &:last-child {
       padding-right: 0;
@@ -27,7 +26,7 @@
 
 .infoIcon {
   text-decoration: none;
-  color: $gray;
+  color: $white;
   margin-right: 50px;
   display: inline-block;
   &:last-child {
@@ -40,10 +39,26 @@
 }
 
 .logoWrap {
-  display: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90px;
+  margin-block: 15px;
+  .logo {
+    height: 45px;
+  }
+  .logoMobile {
+    display: none;
+  }
 }
 
-// 手機footer A版
+.infoBottom {
+  font-size: 12px;
+  color: $white;
+  margin: 0;
+}
+
+// 手機footer B版
 @media screen and (max-width: 431px) {
   .footer {
     background: $primary-black;
@@ -52,31 +67,15 @@
   .infoTop {
     background: $dark-gray;
     flex-direction: column;
-    margin: 30px 0 20px;
-
-    .logoPc {
-      display: none;
-    }
+    padding: 30px 0;
   }
   .infoTextWrap {
     display: flex;
     font-size: 16px;
     margin-bottom: 15px;
-    .infoText {
-      color: $white;
-    }
   }
-
-  .infoIcon {
-    color: $white;
-  }
-
   .logoWrap {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 90px;
-    margin-block: 15px;
     .logo {
       display: none;
     }
@@ -84,5 +83,9 @@
       display: flex;
       height: 66px;
     }
+  }
+
+  .infoBottom {
+    display: none;
   }
 }
