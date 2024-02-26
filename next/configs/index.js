@@ -19,7 +19,7 @@ export const pathsLocaleMap = {
     'member':'會員',
     'news':'新聞',
     'about': '關於我們',
-    'product': '產品',
+    'product': '商品管理',
     'type': '分類',
     'list': '列表',
     'mobile': '手機',
