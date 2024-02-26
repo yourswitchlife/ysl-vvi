@@ -18,18 +18,18 @@ export default function Seller() {
   useEffect(() => {
     // 當元件掛載時添加樣式
     document.body.classList.add(styles.bodyStyleA)
-    document.body.classList.add(styles.bodySetHeight)
+    // document.body.classList.add(styles.bodySetHeight)
 
     // 當元件卸載時移除樣式
     return () => {
       document.body.classList.remove(styles.bodyStyleA)
-      document.body.classList.remove(styles.bodySetHeight)
+      // document.body.classList.remove(styles.bodySetHeight)
     }
   }, [])
 
   return (
     <>
-    <div className={styles.outsideHeight}>
+    {/* <div className={styles.outsideHeight}> */}
       <header>
         <SellerNavbar />
       </header>
@@ -43,7 +43,7 @@ export default function Seller() {
           <div className="d-flex flex-column d-lg-none container ps-4 pe-4">
             <div className="d-flex justify-content-around align-items-center mt-4 mb-2">
               <div className={`${styles.profile}`}>
-                <Image src={profileImg} alt="" className={styles.fit} />
+                <Image src={profileImg} alt="profile-photo" className={styles.fit} />
               </div>
               <div className="d-flex flex-column align-items-start justify-content-center">
                 <h5 className="mb-1">碧姬公主的玩具城堡</h5>
@@ -104,7 +104,7 @@ export default function Seller() {
                 </Link>
               </div>
             </div>
-            <div className={styles.dashboardStyle}>
+            <div className={`${styles.dashboardStyle} mb-4`}>
               <div className="d-flex align-items-end mb-4">
                 <h4 className="text-dark mb-0 me-3">賣場評價</h4>
                 <p className="text-primary mb-0">賣場評價總計</p>
@@ -228,7 +228,7 @@ export default function Seller() {
         </div>
       </main>
       <footer><SellerFooter /></footer>
-      </div>
+      {/* </div> */}
     </>
   )
 }
