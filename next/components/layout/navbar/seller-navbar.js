@@ -1,10 +1,11 @@
 import react from 'react'
-import styles from '@/components/navbar/navbar.module.scss'
+import styles from '@/components/layout/navbar/navbar.module.scss'
 import yslLogo from '@/public/images/logo/logo-sm.svg'
+import yslLogoXs from '@/public/images/logo/logo-xs.svg'
 import Image from 'next/image'
 import Link from 'next/link'
 import profileImg from '@/public/images/profile-photo/peach.png'
-import { FaArrowLeft, FaSearch } from "react-icons/fa";
+import { FaArrowRight, FaSearch } from "react-icons/fa";
 
 
 export default function SellerNavbar() {
@@ -84,14 +85,14 @@ export default function SellerNavbar() {
       <header className={styles.navbarB}>
         <div // logo
         >
-          <Link href="/index.js" className="text-danger">
-            <FaArrowLeft />
+          <Link href="/index.js">
+            <Image src={yslLogoXs} alt="" />
           </Link>
         </div>
         <div className="">
           <h5 className='mb-0'>我的賣場</h5>
         </div>
-        <Link href="/index.js" className="text-white">
+        <Link href="/index.js" className="text-white ps-5">
           <FaSearch />
         </Link>
       </header>
