@@ -1,0 +1,150 @@
+@import '@/styles/valuable.scss';
+
+.mainBg {
+  background: $white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 770px;
+  margin: 100px auto;
+  padding: 150px 100px 50px;
+  border-radius: 20px;
+  position: relative;
+}
+
+.checkFrame {
+  position: absolute;
+  top: -50px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.iconCircle {
+  width: 80px;
+  height: 80px;
+  background: $blue-secondary;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  .icon {
+    width: 50px;
+    height: 50px;
+    color: $white;
+  }
+}
+
+.btnFrame {
+  display: flex;
+  gap: 60px;
+}
+
+.button {
+  min-width: 185px;
+  margin-top: 95px;
+}
+
+.guessLike {
+  margin-bottom: 100px;
+
+  .title {
+    color: $white;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 50px;
+    position: relative;
+    &::before {
+      content: '';
+      display: block;
+      width: calc(50% - 142px / 2);
+      height: 2px;
+      background: $white;
+      position: absolute;
+      top: 50%;
+      left: 0;
+    }
+    &::after {
+      content: '';
+      display: block;
+      width: calc(50% - 142px / 2);
+      height: 2px;
+      background: $white;
+      position: absolute;
+      top: 50%;
+      right: 0;
+    }
+  }
+}
+
+// 購物車是空的頁面
+.emptyFrame {
+  max-width: 770px;
+  margin: 90px auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .ratio {
+    width: 60%;
+    height: 60%;
+    right: 0;
+    margin: 0 auto;
+  }
+  .text {
+    color: $white;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+}
+
+// 手機版430px
+@media screen and (max-width: 431px) {
+  .mainBg {
+    margin-top: 50px;
+  }
+  .mb {
+    margin: 0 8px;
+  }
+  .checkFrame {
+    top: -30px;
+  }
+  .iconCircle {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+    .icon {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .btnFrame {
+    gap: 20px;
+  }
+
+  .button {
+    min-width: 140px;
+    margin-top: 95px;
+  }
+}
+
+.guessLike {
+  .title {
+    font-size: 22px;
+  }
+}
+
+.emptyFrame {
+  .text {
+    font-size: 20px;
+  }
+}
