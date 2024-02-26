@@ -71,7 +71,7 @@ export default function CartNavbar() {
         </div>
         <BurgerMenu />
       </header> */}
-      </div>      
+      </div>
     </>
   )
 }

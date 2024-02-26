@@ -28,7 +28,7 @@ export default function SingleProduct() {
         {/* 手機板商品圖 */}
         <Link href="" className={styles.pImgMobile}>
           <Image
-            src="https://tshop.r10s.com/9d8/189/0ce7/b2d8/4078/5eba/1119/1117eb82f60242ac110006.jpg"
+            src="/images/cart/product.png"
             width={65}
             height={105}
             layout="fixed"
@@ -41,7 +41,7 @@ export default function SingleProduct() {
             <div className="d-flex">
               <Link href="" className={styles.pImg}>
                 <Image
-                  src="https://tshop.r10s.com/9d8/189/0ce7/b2d8/4078/5eba/1119/1117eb82f60242ac110006.jpg"
+                  src="/images/cart/product.png"
                   width={85}
                   height={140}
                   layout="fixed"

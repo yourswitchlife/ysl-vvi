@@ -1,11 +1,9 @@
-import { useState } from 'react'
 import styles from '../cart/order-list.module.scss'
 import Order from './order'
-import { FaAngleRight } from 'react-icons/fa'
 import Image from 'next/image'
 
-// 選擇優惠券元件
-import SelectCouponModal from './select-coupon-modal'
+// 引用優惠券選擇區
+import UseCoupon from './use-coupon'
 
 // 引用星星優惠券
 import CouponStar from '@/public/images/cart/couponStar.svg'
@@ -13,13 +11,8 @@ import CouponStar from '@/public/images/cart/couponStar.svg'
 import coupon from '@/public/images/cart/coupon.svg'
 
 export default function OrderList() {
-  const [show, setShow] = useState(false)
-
-  const handleClose = () => setShow(false)
-  const handleShow = () => setShow(true)
   return (
     <>
-      <SelectCouponModal />
       <section className="container">
         {/* 購物車有商品顯示畫面 */}
         <div className="bg-white py-3 px-4 rounded-4 mb-5">
@@ -77,20 +70,7 @@ export default function OrderList() {
                         $60
                       </div>
                     </div>
-                    <div className={styles.useDiscountBar}>
-                      <div className={styles.mainText} onClick={handleShow}>
-                        選擇使用優惠券
-                      </div>
-                      <SelectCouponModal
-                        show={show}
-                        handleClose={handleClose}
-                      />
-                      <div className={styles.divider}></div>
-                      <div className={styles.discountListBtn}>
-                        <span className={styles.text}>顯示完整折扣細節</span>
-                        <FaAngleRight className={styles.icon} />
-                      </div>
-                    </div>
+                    <UseCoupon />
                     <div className={styles.summeryTotal}>
                       <div className={styles.totalText}>訂單總金額</div>
                       <div className={styles.totalPrice}>$1920</div>
