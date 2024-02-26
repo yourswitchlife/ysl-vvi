@@ -1,0 +1,97 @@
+@import "../valuable.scss";
+
+.nav_main {
+  padding-top: 60px;
+  p {
+    color: white;
+  }
+  .nav_h1 {
+    color: white;
+  }
+  }
+
+  .share_icon{
+    padding-right: 10px;
+    font-size: 23px;
+  }
+
+.hr {
+  border: 2px solid rgb(250, 0, 0);
+}
+
+.tag{
+  margin-right: 10px;
+  border-radius: 3px;
+}
+.txt_p {
+    font-size: 23px;
+  }
+.txt {
+  padding-top: 20px;
+  img {
+    width: 100%;
+  }
+}
+
+/* 留言 */
+.comment {
+  border-bottom: solid 2px white;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  background-color: #3498db;
+  border-radius: 50%;
+
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+
+.member_name {
+  padding-left: 20px;
+
+  h6
+   {
+    color: white;
+  }
+}
+
+.edit_icon {
+  color: white;
+  font-size: 25px;
+}
+
+.txt_area {
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+.hi{
+  h6 {
+    margin: 0;
+    text-align: center;
+  }
+}
+.edit_heart {
+  width: 50px;
+  padding: 2px;
+  margin: 8px;
+  border-radius: 5px;
+}
+
+.bi-emoji-grin {
+  color: yellow;
+  font-size: 30px;
+}
+.comment_area {
+  width: 92%;
+}
+// input::placeholder {
+//   padding-left: 10px;
+// }
