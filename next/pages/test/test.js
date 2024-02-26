@@ -1,10 +1,12 @@
 import React from 'react'
-import NavbarB from '@/components/navbar/navbar-b'
+import CartNavbar from '@/components/layout/navbar/cart-navbar'
 
 export default function Test() {
   return (
     <>
-      <NavbarB />
+      <CartNavbar />
     </>
   )
 }
+
+
