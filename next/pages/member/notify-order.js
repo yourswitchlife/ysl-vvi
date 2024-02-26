@@ -17,7 +17,7 @@ import { IoNotificationsCircle } from "react-icons/io5";
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import Link from 'next/link'
-import Paginage from '@/components/common/paginage'
+import Paginage from '@/components/common/pagination'
 import Dropdown from 'react-bootstrap/Dropdown'
 
 export default function notifyNormal() {

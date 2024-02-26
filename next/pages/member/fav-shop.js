@@ -13,7 +13,7 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Link from 'next/link'
 import Dropdown from 'react-bootstrap/Dropdown'
-import Paginage from '@/components/common/paginage'
+import Paginage from '@/components/common/pagination'
 import { FaMinus, FaAngleDown, FaFilter, FaStar } from 'react-icons/fa'
 import { wrap } from 'lodash'
 

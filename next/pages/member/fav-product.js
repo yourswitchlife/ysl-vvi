@@ -19,7 +19,7 @@ import { FaRegHeart, FaCartPlus } from 'react-icons/fa'
 // import styles from '@/styles/products/product-list.module.scss'
 
 
-import Paginage from '@/components/common/paginage'
+import Paginage from '@/components/common/pagination'
 import Dropdown from 'react-bootstrap/Dropdown'
 
 export default function FavProduct() {
