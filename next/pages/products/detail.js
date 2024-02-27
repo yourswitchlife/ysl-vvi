@@ -1,5 +1,5 @@
 import React from 'react'
-import Breadcrumb from '@/components/products/breadcrumb'
+import BreadCrumb from '@/components/common/breadcrumb'
 import Image from 'next/image'
 import { FaRegHeart, FaCartPlus, FaShoppingCart } from 'react-icons/fa'
 import ProductList from '@/components/products/product-list'
@@ -15,9 +15,7 @@ import RatingStars from '@/components/products/rating-stars'
 import PImgs from '@/components/products/p-imgs'
 import pImgDetail from '@/public/images/product/MonsterFarm-1.jpg'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
-
-import img2 from '@/public/images/product/MonsterFarm-1.jpg'
-import img3 from '@/public/images/product/MonsterFarm-1.jpg'
+import PHistory from '@/components/products/p-history'
 
 export default function ProductDetail() {
   // let imgAry = [img2, img3, img3]
@@ -26,14 +24,16 @@ export default function ProductDetail() {
     <>
       <Navbar />
       <PhoneTabNav />
+      
+      <div className={`d-lg-block d-none ${styles.pHistory}`}><PHistory /></div>
 
       <div className="container mt-5 pt-4 px-lg-5 px-4">
-        <Breadcrumb></Breadcrumb>
+        <BreadCrumb/>
         <section className="p-detail-sec1 row mt-4">
           <div className="col-lg col pe-5-lg pe-2-lg">
             <PImgs />
           </div>
-          <div className="col-lg-6 col-12 mt-3">
+          <div className="col-lg-6 col-12 mt-lg-0 mt-3">
             <h4 className="text-white mb-0">角落小夥伴 一起來玩節奏派對</h4>
             <p className={`${styles.pDiscount} bg-info p-1 mb-4 text-white`}>
               滿＄999免運
@@ -42,7 +42,7 @@ export default function ProductDetail() {
               <h5 className="me-2 text-white mb-2 pt-2">數量 </h5>
               <div>
                 <select
-                  class="form-select form-select-sm"
+                  className="form-select form-select-sm"
                   aria-label="Large select example"
                 >
                   <option selected>amount</option>
@@ -86,14 +86,14 @@ export default function ProductDetail() {
             </div>
 
             <div class={`row d-lg-none m-0 ${styles.btns}`}>
-              <div typeof="button" class="col-4 btn btn-info rounded-0">
-                <FaCartPlus className="text-light pb-1" /> 加入購物車
+              <div typeof="button" className="col btn btn-info rounded-0 py-1">
+                <FaCartPlus className="text-light" /> <p>加入購物車</p>
               </div>
-              <div typeof="button" class="col-4 btn btn-info rounded-0">
-                <FaRegHeart className="text-light pb-1" /> 加入追蹤
+              <div typeof="button" className="col btn btn-info rounded-0 py-1 border-top-0 border-bottom-0 border-black">
+                <FaRegHeart className="text-light" /> <p>加入追蹤</p>
               </div>
-              <div typeof="button" class="col-4 btn btn-danger rounded-0">
-                <FaShoppingCart className="text-light pb-1" /> 立即結帳
+              <div typeof="button" className="col-6 btn btn-danger rounded-0 py-1 d-flex align-items-center justify-content-center">
+                <FaShoppingCart className="text-light me-1" /> <h6>立即結帳</h6>
               </div>
             </div>
           </div>
@@ -217,7 +217,7 @@ export default function ProductDetail() {
         </section>
       </div>
       <Footer />
-      <div className="d-lg-none mt-4"></div>
+      <div className="d-lg-none mt-4 pt-3"></div>
     </>
   )
 }

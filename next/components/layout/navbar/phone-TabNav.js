@@ -7,7 +7,7 @@ import Link from 'next/link'
 export default function PhoneTabNav() {
   return (
     <>
-      <div class={`row g-0 text-center d-lg-none ${styles.phoneNav}`}>
+      <div className={`row g-0 text-center d-lg-none ${styles.phoneNav}`}>
         <div className="pt-1 d-flex">
           <div class="col">
             <Link href="" className={styles.phoneNavContent}>

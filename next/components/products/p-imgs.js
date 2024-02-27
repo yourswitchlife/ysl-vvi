@@ -17,10 +17,10 @@ export default function PImgs() {
     <>
       <div className="container">
         <div className="row d-flex justify-content-center align-items-center mb-2">
-          <div className="col prev text-white">
+          <div className={`col-1 prev text-white d-flex justify-content-center align-items-center ${styles.ImgBtnhover}`}>
             <FaAngleLeft />
           </div>
-          <div className="col-9">
+          <div className="col-10">
             <div className={styles.h450px}>
               <Image
                 src={imgAry[0]}
@@ -34,7 +34,7 @@ export default function PImgs() {
             </div>
          
           </div>
-          <div className="col next text-white">
+          <div className={`col-1 next text-white d-flex justify-content-center align-items-center ${styles.ImgBtnhover}`}>
             <FaAngleRight />
           </div>
         </div>

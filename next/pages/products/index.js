@@ -3,8 +3,7 @@ import Image from 'next/image'
 import { FaBorderAll } from 'react-icons/fa'
 import { IoReorderFour } from 'react-icons/io5'
 import ProductList from '@/components/products/product-list'
-import Breadcrumb from '@/components/products/breadcrumb'
-// import Paginage from '@/components/common/paginage'
+import BreadCrumb from '@/components/common/breadcrumb'
 import Pagination from '@/components/common/pagination'
 import BtnOutline from '@/components/products/btn-outline'
 import Link from 'next/link'
@@ -12,6 +11,7 @@ import styles from '../../styles/products/products.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
 import Navbar from '@/components/layout/navbar/navbar'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
+import products from '@/data/product.json'
 
 export default function Products() {
   return (
@@ -42,7 +42,7 @@ export default function Products() {
         </div>
       </div>
       <div className="container pt-3 px-lg-5 px-4">
-        <Breadcrumb></Breadcrumb>
+        <BreadCrumb/>
         <div className="d-flex justify-content-between mb-3">
           <BtnOutline></BtnOutline>
           <div>
@@ -50,36 +50,25 @@ export default function Products() {
             <IoReorderFour className="text-white h4 mb-0" />
           </div>
         </div>
-        <div class="container px-0 py-2">
-          <div class="row row-cols-2 row-cols-lg-5 g-0 g-lg-3">
-            <div class="col">
+        <div className="container px-0 py-2">
+          <div className="row row-cols-2 row-cols-lg-5 g-0 g-lg-3">
+            {/* <div className="col">
               <ProductList className="p-5" />
-            </div>
-            <div class="col">
-              <ProductList className="p-5" />
-            </div>
-            <div class="col">
-              <ProductList className="p-5" />
-            </div>
-            <div class="col">
-              <ProductList className="p-5" />
-            </div>
-            <div class="col">
-              <ProductList className="p-5" />
-            </div>
-            <div class="col">
-              <ProductList className="p-5" />
-            </div>
-            <div class="col">
-              <ProductList className="p-5" />
-            </div>
+            </div> */}
+            {products.map((p) => {
+              return (
+                <div key={p.id} className="col">
+                  <ProductList className="p-5" name={p.name} price={p.price} displayPrice={p.display_price} releaseTime={p.release_time} cover={p.img_cover} type={p.type_id}/>
+                </div>
+              )
+            })}
           </div>
         </div>
         <Pagination />
 
         <div>
           <h4 className="text-white mx-2 ">猜你喜歡</h4>
-          <div class={`px-0 py-2 ${styles.guessLike}`}>
+          <div className={`px-0 py-2 ${styles.guessLike}`}>
             <ProductList className="" />
             <ProductList className="" />
             <ProductList className="" />

@@ -16,6 +16,8 @@
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
 }
 
 .h450px {
@@ -42,11 +44,21 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid $white;
+  border: 2px solid rgb(62, 62, 62);
   border-radius: 5px;
   overflow: hidden;
   padding: 4px;
+  &:hover {
+    border: 1px solid $white;
+  }
 }
+
+.historyUpDown:hover {
+  // color: white;
+  // color: aqua;
+  background-color: rgb(51, 51, 51);
+}
+
 .h100100px {
   height: 100px;
   width: 100px;
@@ -71,18 +83,38 @@
     background: $info;
     color: $white;
     border-radius: 0 5px 5px 0;
-    &:hover{
-    background: rgb(0, 88, 204);
-
+    &:hover {
+      background: rgb(0, 88, 204);
     }
   }
 }
-
+.ImgBtnhover {
+  height: 75px;
+  &:hover {
+    background-color: rgb(51, 51, 51);
+    border-radius: 5px;
+  }
+}
+.pHistory {
+  position: fixed;
+  bottom: 50px;
+  right: 20px;
+  // background-color: #15505e;
+}
+.historyUpDown:hover {
+  background-color: rgb(86, 86, 86);
+  color: rgb(255, 255, 255) !important;
+}
+.f14 {
+  font-size: 14px;
+}
 // ------------------------------ RWD
 @media (max-width: 576px) {
   .wrap {
     display: flex;
-    overflow-y: scroll;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    margin: 0 8px;
     flex-wrap: nowrap;
   }
   .h450px {
@@ -102,10 +134,10 @@
 }
 
 .btns {
-  z-index: 3;
+  z-index: 5;
   height: 30px;
   width: 100%;
-  bottom: 105px;
+  bottom: 112px;
   right: 0;
   position: fixed;
 }
