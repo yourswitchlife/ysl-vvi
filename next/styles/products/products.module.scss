@@ -1,24 +1,44 @@
-@import "../valuable.scss";
+@import '../valuable.scss';
 
-.pIndexImg{
+.pIndexImg {
   margin-top: 60px;
   position: relative;
   width: 100%;
   height: auto;
 }
 
-.pTitle{
-    background-color: rgba(255, 59, 59, 0.6);
-    border-radius: 0 70px 0 0;
-    // filter: blur(2px);
-    top: 176px;
-    right: 100px;
-    width: 460px;
-    height: 398px;
-    place-content: center;
+.pTitle {
+  background-color: rgba(255, 59, 59, 0.6);
+  border-radius: 0 70px 0 0;
+  // filter: blur(2px);
+  top: 176px;
+  right: 100px;
+  width: 460px;
+  height: 398px;
+  place-content: center;
+}
+.guessLike {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  gap: 12px;
+}
+
+.more {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 5px;
   }
-  .wrap{
+}
+
+@media (max-width: 576px) {
+  .guessLike {
     display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    overflow-y: scroll;
+    margin: 0 8px;
+  }
+  .guessLike {
+    gap: 0px;
+  }
 }

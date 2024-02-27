@@ -1,5 +1,5 @@
 import React from 'react'
-import Breadcrumb from '@/components/products/breadcrumb'
+import BreadCrumb from '@/components/common/breadcrumb'
 import Image from 'next/image'
 import { FaRegHeart, FaCartPlus, FaShoppingCart } from 'react-icons/fa'
 import ProductList from '@/components/products/product-list'
@@ -12,30 +12,37 @@ import Navbar from '@/components/layout/navbar/navbar'
 import Review from '@/components/products/review'
 import Reviewed from '@/components/products/reviewed'
 import RatingStars from '@/components/products/rating-stars'
-import AddPhoto from '@/components/products/addPhoto'
 import PImgs from '@/components/products/p-imgs'
-import DetailImg from '@/components/products/detail-img'
+import pImgDetail from '@/public/images/product/MonsterFarm-1.jpg'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
+import PHistory from '@/components/products/p-history'
 
 export default function ProductDetail() {
+  // let imgAry = [img2, img3, img3]
+
   return (
     <>
       <Navbar />
+      <PhoneTabNav />
+      
+      <div className={`d-lg-block d-none ${styles.pHistory}`}><PHistory /></div>
+
       <div className="container mt-5 pt-4 px-lg-5 px-4">
-        <Breadcrumb></Breadcrumb>
+        <BreadCrumb/>
         <section className="p-detail-sec1 row mt-4">
           <div className="col-lg col pe-5-lg pe-2-lg">
             <PImgs />
           </div>
-          <div className="col-lg-6 col-12 mt-3">
+          <div className="col-lg-6 col-12 mt-lg-0 mt-3">
             <h4 className="text-white mb-0">角落小夥伴 一起來玩節奏派對</h4>
             <p className={`${styles.pDiscount} bg-info p-1 mb-4 text-white`}>
               滿＄999免運
             </p>
             <div className="d-flex mt-4 align-items-center">
-              <h5 className="me-2 text-white mb-2">數量 </h5>
+              <h5 className="me-2 text-white mb-2 pt-2">數量 </h5>
               <div>
                 <select
-                  class="form-select form-select-sm"
+                  className="form-select form-select-sm"
                   aria-label="Large select example"
                 >
                   <option selected>amount</option>
@@ -60,25 +67,34 @@ export default function ProductDetail() {
               </h5>
             </div>
             <hr className="text-white border-3" />
-            <h5 className="text-white pb-4 mb-5 mt-4">
+            <h5 className="text-white pb-lg-4 mb-lg-5 pb-0 mb-0 mt-4">
               「角落小夥伴」是以「喜歡縮在牆角來享受安全感」
               這樣有些害羞內向且獨具個性的角色設定及故事，而廣受來自各種族群的支持及喜愛。
               本作品《角落小夥伴
               大家的節奏派對》，藉此讓玩家們享受風格迥異的音樂跟充滿趣味的影像等要素的節奏遊戲。
             </h5>
-            <div className="d-flex justify-content-evenly">
+            <div className="d-lg-flex d-none justify-content-evenly">
               <button type="button" className="btn btn-info">
-                <FaCartPlus className="text-light" />
-                加入購物車
+                <FaCartPlus className="text-light pb-1" /> 加入購物車
               </button>
               <button type="button" className="btn btn-info">
-                <FaRegHeart className="text-light" />
-                加入追蹤
+                <FaRegHeart className="text-light pb-1" /> 加入追蹤
               </button>
               <button type="button" className="btn btn-danger">
-                <FaShoppingCart className="text-light" />
-                立即結帳
+                <FaShoppingCart className="text-light pb-1" /> 立即結帳
               </button>
+            </div>
+
+            <div class={`row d-lg-none m-0 ${styles.btns}`}>
+              <div typeof="button" className="col btn btn-info rounded-0 py-1">
+                <FaCartPlus className="text-light" /> <p>加入購物車</p>
+              </div>
+              <div typeof="button" className="col btn btn-info rounded-0 py-1 border-top-0 border-bottom-0 border-black">
+                <FaRegHeart className="text-light" /> <p>加入追蹤</p>
+              </div>
+              <div typeof="button" className="col-6 btn btn-danger rounded-0 py-1 d-flex align-items-center justify-content-center">
+                <FaShoppingCart className="text-light me-1" /> <h6>立即結帳</h6>
+              </div>
             </div>
           </div>
         </section>
@@ -112,9 +128,30 @@ export default function ProductDetail() {
                 <PRatingBig></PRatingBig>
               </div>
             </div>
-            <DetailImg />
-            <DetailImg />
-            <DetailImg />
+            <Image
+              src={pImgDetail}
+              alt="product-detail"
+              width={670}
+              height={400}
+              priority={true}
+              className="my-3 w-100 h-auto"
+            />
+            <Image
+              src={pImgDetail}
+              alt="product-detail"
+              width={670}
+              height={400}
+              priority={true}
+              className="my-3 w-100 h-auto"
+            />
+            <Image
+              src={pImgDetail}
+              alt="product-detail"
+              width={670}
+              height={400}
+              priority={true}
+              className="my-3 w-100 h-auto"
+            />
           </div>
           <div className="col px-lg-3">
             <h5 className="mb-2 text-white">關於本店</h5>
@@ -142,12 +179,10 @@ export default function ProductDetail() {
                   type="button"
                   className="btn btn-danger btn-sm d-block mb-1"
                 >
-                  <FaRegHeart className="text-light" />
-                  關注店家
+                  <FaRegHeart className="text-light pb-1" /> 關注店家
                 </button>
                 <button type="button" className="btn btn-danger btn-sm mt-1">
-                  <FaRegHeart className="text-light" />
-                  進入本店
+                  <FaRegHeart className="text-light pb-1" /> 進入本店
                 </button>
               </div>
             </div>
@@ -158,6 +193,7 @@ export default function ProductDetail() {
               <ProductList></ProductList>
             </div>
             <hr className="text-white border-3" />
+
             <h5 className="text-white mb-3">本分類熱銷</h5>
             <div className={styles.wrap}>
               <ProductList></ProductList>
@@ -165,8 +201,11 @@ export default function ProductDetail() {
               <ProductList></ProductList>
               <ProductList></ProductList>
             </div>
-            <Link href="">
-              <p className="text-end px-4">看更多</p>
+            <Link
+              href=""
+              className={`d-block mt-2 text-end more h6 text-white ${styles.more}`}
+            >
+              看更多...
             </Link>
           </div>
         </section>
@@ -175,10 +214,10 @@ export default function ProductDetail() {
           <hr className="text-white border-3" />
           <Reviewed />
           <Review />
-          <AddPhoto />
         </section>
       </div>
       <Footer />
+      <div className="d-lg-none mt-4 pt-3"></div>
     </>
   )
 }
