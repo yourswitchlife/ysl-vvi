@@ -149,11 +149,13 @@ export default function notifyNormal() {
 
 
             </div>
+            <Paginage className="mt-5 mb-5" />
           </div>
-          <Paginage className="mt-5 mb-5" />
         </div>
       </div>
-      <Footer />
+      <div className="d-none d-sm-block">
+        <Footer />
+      </div>
     </>
   )
 }
