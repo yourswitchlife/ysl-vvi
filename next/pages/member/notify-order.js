@@ -56,14 +56,16 @@ export default function notifyNormal() {
                 </Card.Body>
               </Card>
               {/* CARD BODY迴圈 */}
-              <Card className={oStyles.order_xs + " px-5 container d-flex flex-row"}>
+              <Card className={oStyles.shop_xs + " px-5 container d-flex flex-row"}>
                 <div className={styles.profile + ' m-3'}>
                   <Image className={styles.fit} src={sellerImg} />
                 </div>
                 <Card.Body className={oStyles.order_xs+" d-flex flex-row m-3 justify-content-between align-items-center"}>
-                  <h5 className={oStyles.h6text_xs+" mx-3 text-danger fw-bold"}>已出貨</h5>
-                  <h5 className={oStyles.h6text_xs+" mx-3 my-3"}>訂單編號489416161616516已出貨。請留意後續訂單訊息。</h5>
-                  <h5 className={oStyles.h6text_xs+" me-2 text-secondary"}>
+                  <div className='d-flex flex-wrap align-items-center'>
+                  <h5 className={oStyles.h4text_xs+" mx-3 text-danger fw-bold"}>已出貨</h5>
+                  <h5 className={oStyles.h4text_xs+" mx-3 my-3"}>訂單編號489416161616516已出貨。請留意後續訂單訊息。</h5>
+                  </div>
+                  <h5 className={oStyles.h4text_xs+" me-2 text-secondary"}>
                     2024/01/16
                     12:26:03
                   </h5>
@@ -71,76 +73,90 @@ export default function notifyNormal() {
               </Card>
               {/* CARD BODY */}
 
-              <Card className={oStyles.order_xs + " px-5 container d-flex flex-row"}>
+              <Card className={oStyles.shop_xs + " px-5 container d-flex flex-row"}>
                 <div className={styles.profile + ' m-3'}>
                   <Image className={styles.fit} src={sellerImg} />
                 </div>
                 <Card.Body className={oStyles.order_xs+" d-flex flex-row m-3 justify-content-between align-items-center"}>
-                  <h5 className={oStyles.h6text_xs+" mx-3 text-danger fw-bold"}>已出貨</h5>
-                  <h5 className={oStyles.h6text_xs+" mx-3 my-3"}>訂單編號489416161616516已出貨。請留意後續訂單訊息。</h5>
-                  <h5 className={oStyles.h6text_xs+" me-2 text-secondary"}>
+                  <div className='d-flex flex-wrap align-items-center'>
+                  <h5 className={oStyles.h4text_xs+" mx-3 text-danger fw-bold"}>已出貨</h5>
+                  <h5 className={oStyles.h4text_xs+" mx-3 my-3"}>訂單編號489416161616516已出貨。請留意後續訂單訊息。</h5>
+                  </div>
+                  <h5 className={oStyles.h4text_xs+" me-2 text-secondary"}>
                     2024/01/16
                     12:26:03
                   </h5>
                 </Card.Body>
               </Card>
 
-              <Card className={oStyles.order_xs + " px-5 container d-flex flex-row"}>
+              <Card className={oStyles.shop_xs + " px-5 container d-flex flex-row"}>
                 <div className={styles.profile + ' m-3'}>
                   <Image className={styles.fit} src={sellerImg} />
                 </div>
                 <Card.Body className={oStyles.order_xs+" d-flex flex-row m-3 justify-content-between align-items-center"}>
-                  <h5 className={oStyles.h6text_xs+" mx-3 text-danger fw-bold"}>已出貨</h5>
-                  <h5 className={oStyles.h6text_xs+" mx-3 my-3"}>訂單編號489416161616516已出貨。請留意後續訂單訊息。</h5>
-                  <h5 className={oStyles.h6text_xs+" me-2 text-secondary"}>
+                  <div className='d-flex flex-wrap align-items-center'>
+                  <h5 className={oStyles.h4text_xs+" mx-3 text-danger fw-bold"}>已出貨</h5>
+                  <h5 className={oStyles.h4text_xs+" mx-3 my-3"}>訂單編號489416161616516已出貨。請留意後續訂單訊息。</h5>
+                  </div>
+                  <h5 className={oStyles.h4text_xs+" me-2 text-secondary"}>
                     2024/01/16
                     12:26:03
                   </h5>
                 </Card.Body>
               </Card>
 
-              <Card className={oStyles.order_xs + " px-5 container d-flex flex-row"}>
+              <Card className={oStyles.shop_xs + " px-5 container d-flex flex-row"}>
                 <div className={styles.profile + ' m-3'}>
                   <Image className={styles.fit} src={sellerImg} />
                 </div>
                 <Card.Body className={oStyles.order_xs+" d-flex flex-row m-3 justify-content-between align-items-center"}>
-                  <h5 className={oStyles.h6text_xs+" mx-3 text-danger fw-bold"}>已出貨</h5>
-                  <h5 className={oStyles.h6text_xs+" mx-3 my-3"}>訂單編號489416161616516已出貨。請留意後續訂單訊息。</h5>
-                  <h5 className={oStyles.h6text_xs+" me-2 text-secondary"}>
+                  <div className='d-flex flex-wrap align-items-center'>
+                  <h5 className={oStyles.h4text_xs+" mx-3 text-danger fw-bold"}>已出貨</h5>
+                  <h5 className={oStyles.h4text_xs+" mx-3 my-3"}>訂單編號489416161616516已出貨。請留意後續訂單訊息。</h5>
+                  </div>
+                  <h5 className={oStyles.h4text_xs+" me-2 text-secondary"}>
                     2024/01/16
                     12:26:03
                   </h5>
                 </Card.Body>
               </Card>
 
-              <Card className={oStyles.order_xs + " px-5 container d-flex flex-row"}>
+              <Card className={oStyles.shop_xs + " px-5 container d-flex flex-row"}>
                 <div className={styles.profile + ' m-3'}>
                   <Image className={styles.fit} src={sellerImg} />
                 </div>
                 <Card.Body className={oStyles.order_xs+" d-flex flex-row m-3 justify-content-between align-items-center"}>
-                  <h5 className={oStyles.h6text_xs+" mx-3 text-danger fw-bold"}>已出貨</h5>
-                  <h5 className={oStyles.h6text_xs+" mx-3 my-3"}>訂單編號489416161616516已出貨。請留意後續訂單訊息。</h5>
-                  <h5 className={oStyles.h6text_xs+" me-2 text-secondary"}>
+                  <div className='d-flex flex-wrap align-items-center'>
+                  <h5 className={oStyles.h4text_xs+" mx-3 text-danger fw-bold"}>已出貨</h5>
+                  <h5 className={oStyles.h4text_xs+" mx-3 my-3"}>訂單編號489416161616516已出貨。請留意後續訂單訊息。</h5>
+                  </div>
+                  <h5 className={oStyles.h4text_xs+" me-2 text-secondary"}>
                     2024/01/16
                     12:26:03
                   </h5>
                 </Card.Body>
               </Card>
 
-              <Card className={oStyles.order_xs + " px-5 container d-flex flex-row"}>
+              <Card className={oStyles.shop_xs + " px-5 container d-flex flex-row"}>
                 <div className={styles.profile + ' m-3'}>
                   <Image className={styles.fit} src={sellerImg} />
                 </div>
                 <Card.Body className={oStyles.order_xs+" d-flex flex-row m-3 justify-content-between align-items-center"}>
-                  <h5 className={oStyles.h6text_xs+" mx-3 text-danger fw-bold"}>已出貨</h5>
-                  <h5 className={oStyles.h6text_xs+" mx-3 my-3"}>訂單編號489416161616516已出貨。請留意後續訂單訊息。</h5>
-                  <h5 className={oStyles.h6text_xs+" me-2 text-secondary"}>
+                  <div className='d-flex flex-wrap align-items-center'>
+                  <h5 className={oStyles.h4text_xs+" mx-3 text-danger fw-bold"}>已出貨</h5>
+                  <h5 className={oStyles.h4text_xs+" mx-3 my-3"}>訂單編號489416161616516已出貨。請留意後續訂單訊息。</h5>
+                  </div>
+                  <h5 className={oStyles.h4text_xs+" me-2 text-secondary"}>
                     2024/01/16
                     12:26:03
                   </h5>
                 </Card.Body>
               </Card>
-              
+
+
+
+
+
 
             </div>
             <Paginage className="pt-5 mt-5" />
@@ -148,7 +164,9 @@ export default function notifyNormal() {
           
         </div>
       </div>
-      <Footer />
+      <div className="d-none d-sm-block">
+        <Footer />
+      </div>
     </>
   )
 }

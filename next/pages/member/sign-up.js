@@ -25,7 +25,7 @@ export default function SignUp() {
                 <InputGroup.Text>
                   <FaUser />
                 </InputGroup.Text>
-                <Form.Control
+                <Form.Control className={sStyle.input}
                   type="text"
                   placeholder="使用者名稱"
                   style={{ width: '330px' }}
@@ -36,7 +36,7 @@ export default function SignUp() {
                 <InputGroup.Text>
                   <FaEnvelope />
                 </InputGroup.Text>
-                <Form.Control
+                <Form.Control className={sStyle.input}
                   type="email"
                   placeholder="信箱@example.com"
                   style={{ width: '330px' }}
@@ -48,7 +48,7 @@ export default function SignUp() {
                   <InputGroup.Text>
                     <MdKey />
                   </InputGroup.Text>
-                  <Form.Control
+                  <Form.Control className={sStyle.input}
                     type="password"
                     placeholder="密碼：使用至少8個英文字母含數字"
                     autoFocus
@@ -62,7 +62,7 @@ export default function SignUp() {
                   <InputGroup.Text>
                     <MdKey />
                   </InputGroup.Text>
-                  <Form.Control
+                  <Form.Control className={sStyle.input}
                     type="password"
                     placeholder="再次輸入密碼"
                     style={{ width: '330px' }}
@@ -73,7 +73,7 @@ export default function SignUp() {
               <div className={sStyle.error + " px-4"}>
               <h6> * 信箱格式錯誤</h6>
               </div>
-              <div className="d-flex justify-content-center align-items-center px-5 py-4">
+              <div className={sStyle.wid_xs+" d-flex justify-content-center align-items-center px-5 py-4"}>
               <Button className={sStyle.sign_btn + ' h5 me-4'}>開始探索</Button>
               <Button
                 className={sStyle.sign_btn + ' h5 d-flex align-items-center'}

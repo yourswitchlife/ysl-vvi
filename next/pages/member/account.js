@@ -182,7 +182,9 @@ export default function account() {
         </div>
         
       </div>
-      <Footer/>
+      <div className="d-none d-sm-block">
+        <Footer />
+      </div>
     </>
   )
 }

@@ -25,7 +25,7 @@ export default function SignIn() {
                 <InputGroup.Text>
                   <FaUser />
                 </InputGroup.Text>
-                <Form.Control
+                <Form.Control className={sStyle.input}
                   type="text"
                   placeholder="使用者名稱"
                   style={{ width: '330px' }}
@@ -37,7 +37,7 @@ export default function SignIn() {
                   <InputGroup.Text>
                     <MdKey />
                   </InputGroup.Text>
-                  <Form.Control
+                  <Form.Control className={sStyle.input}
                     type="password"
                     placeholder="請輸入密碼"
                     autoFocus
@@ -51,7 +51,7 @@ export default function SignIn() {
               </div>
 
 
-              <div className="d-flex justify-content-center align-items-center px-5 py-4">
+              <div className={sStyle.wid_xs +" d-flex justify-content-center align-items-center px-5 py-4"}>
                 <Button className={sStyle.sign_btn + ' h5 me-4'}>開始探索</Button>
                 <Button
                   className={sStyle.sign_btn + ' h5 d-flex align-items-center'}

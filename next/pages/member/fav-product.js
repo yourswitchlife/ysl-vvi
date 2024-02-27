@@ -33,7 +33,7 @@ export default function FavProduct() {
         <SideBar />
         <div className="container d-flex flex-column  align-items-center pt-5">
 
-          <div className={mStyle.product_card + ' container d-flex flex-column pb-5 align-items-center pt-5'}>
+          <div className={mStyle.product_card + ' container d-flex flex-column pb-5 align-items-center pt-5 mb-5'}>
           <div className={fpStyle.page_check}>
             <Link href="" className={fpStyle.pagep_btn}>
               商品
@@ -541,7 +541,9 @@ export default function FavProduct() {
           
         </div>
       </div>
-      <Footer />
+      <div className="d-none d-sm-block">
+        <Footer />
+      </div>
     </>
   )
 }
