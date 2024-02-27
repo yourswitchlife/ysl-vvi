@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from '../cart/order-list.module.scss'
 import { FaPlus, FaMinus } from 'react-icons/fa'
 import { IoClose } from 'react-icons/io5'
@@ -6,13 +6,24 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 // 收藏愛心空心圖
-import heart from '@/public/images/cart/heart.svg'
+import heartIcon from '@/public/images/cart/heart.svg'
 // 收藏愛心實心圖
 import heartFill from '@/public/images/cart/heart-fill.svg'
 // 收藏愛心hover圖
 import heartHover from '@/public/images/cart/heart-hover.svg'
 
-export default function SingleProduct() {
+export default function CartProduct() {
+  const [heartState, setHeartState] = useState(heartIcon)
+  const handleMouseEnter = () => {
+    setHeartState(heartState === heartFill ? heartFill : heartHover)
+  }
+  const handleMouseLeave = () => {
+    setHeartState(heartState === heartFill ? heartFill : heartIcon)
+  }
+  const handleClick = () => {
+    setHeartState(heartState === heartIcon ? heartFill : heartIcon)
+  }
+
   return (
     <>
       <div className={styles.product}>
@@ -58,8 +69,13 @@ export default function SingleProduct() {
                     <h6 className={styles.discount}>8折</h6>
                   </div>
                 </div>
-                <div className={styles.pInfoBottom}>
-                  <Image src={heart} className={styles.icon} />
+                <div
+                  className={styles.pInfoBottom}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  onClick={handleClick}
+                >
+                  <Image src={heartState} className={styles.icon} />
                   <h6 className={styles.text}>加入收藏清單</h6>
                 </div>
               </div>
@@ -86,7 +102,12 @@ export default function SingleProduct() {
                 value="1"
                 className={styles.amount}
               />
-              <div className={styles.btnPlus}>
+              <div
+                className={styles.btnPlus}
+                onClick={() => {
+                  increment()
+                }}
+              >
                 <FaPlus />
               </div>
             </div>
