@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import styles from './navbar.module.scss'
+import styles from '@/components/layout/navbar/navbar.module.scss'
 import yslLogoSm from '@/public/images/logo/logo-sm.svg'
 import yslLogoXs from '@/public/images/logo/logo-xs.svg'
 import SearchBar from './searchBar'
