@@ -20,15 +20,14 @@ export default function Purchase() {
               <div className={styles.iconCircle}>
                 <FaCheck className={styles.icon} />
               </div>
-              <h4>
-                <b>訂購完成</b>
-              </h4>
+              <h4 className={styles.text}>訂購完成</h4>
             </div>
-            <div className="ratio ratio-1x1">
+            <div className={styles.imgFrame}>
               <Image
                 src="/images/cart/shoppingCart.png"
                 width={998}
                 height={912}
+                className={styles.img}
               />
             </div>
             <div className={styles.btnFrame}>

@@ -18,6 +18,7 @@
     padding-bottom: 20px;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
 
     & h6 {
       color: $white;
@@ -30,6 +31,24 @@
 
     .progress_bg {
       background-color: $dark-gray;
+    }
+  }
+}
+@media (max-width: 430px) {
+  .point_frame {
+    padding-inline: 20px !important;
+
+    .progress_frame {
+      margin-top: 50px;
+      width: 100%;
+      padding: 40px;
+
+      .progress_flex {
+        text-align: center;
+        .shop_btn {
+          margin-block: 15px;
+        }
+      }
     }
   }
 }
@@ -67,10 +86,9 @@
 }
 
 .level_div {
-    width: 60%;
+  width: 80%;
 
   .margin_auto {
-    
     width: 80px;
 
     .line {
@@ -87,7 +105,7 @@
   display: flex;
   flex-direction: column;
   padding-top: 25px;
-  padding-left: 7%;
+  padding-left: 50px;
 
   .border_bm {
     margin-bottom: 10px;
@@ -108,7 +126,7 @@
   .level_text {
     align-items: center;
     color: $red-secondary;
-}
+  }
 }
 
 .blue_text {
@@ -118,19 +136,37 @@
 
 .white_text {
   color: $white;
+  font-weight: 500;
+}
+
+.second_text {
+  color: burlywood;
   font-weight: bold;
 }
 
-.second_text{
-color: burlywood;
-font-weight: bold;
+.master_text {
+  color: rgb(255, 227, 67);
+  font-weight: bold;
 }
 
-.master_text{
-color: gold;
-font-weight: bold;
-}
-
-.gray_text{
+.gray_text {
   color: $gray;
+}
+
+
+@media (max-width: 430px) {
+  .level_div {
+    width: 100%;
+
+    .margin_auto {
+      .line {
+        width: 3px;
+        height: 95px;
+      }
+    }
+  }
+  .column_leveltext {
+    padding-left: 20px;
+  }
+  
 }
