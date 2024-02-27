@@ -127,20 +127,22 @@ export default function Product() {
                 >
                   <div className="d-flex justify-content-between align-items-center">
                     <h5 className="text-dark fw-bold">152件商品</h5>
+                    <Link href="./new">
                     <button
                       type="button"
-                      className="btn btn-danger btn-sm d-flex align-items-center"
+                      className="btn btn-danger btn-sm d-flex align-items-center text-decoration-none"
                     >
                       <FaPlus className="me-1" />
-                      新增商品
+                      <h6 className='text-decoration-none'>新增商品</h6>
                     </button>
+                    </Link>
                   </div>
                   <div className="container">
                     {/*--------------Rating Subtitle------------------ */}
                     <div
                       className={`row mt-3 py-2 text-center ${styles.ratingST}`}
                     >
-                      <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
+                      <h6 className="mb-0 col-1 fw-normal text-start"><Form.Check aria-label="option 1" /></h6>
                       <h6 className="mb-0 col-3 fw-normal">商品名稱</h6>
                       <h6 className="mb-0 col-1 fw-normal">級別</h6>
                       <h6 className="mb-0 col-1 fw-normal">語言</h6>
@@ -156,7 +158,7 @@ export default function Product() {
                   <div className="px-3 py-2 border-bottom">
                     <div className="text-dark">
                       <div className="row align-items-center text-center">
-                        <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
+                        <h6 className="mb-0 col-1 fw-normal text-start"><Form.Check aria-label="option 1" /></h6>
                         <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
                           <div className="d-flex justify-content-start align-items-center mb-2">
                             <Image
