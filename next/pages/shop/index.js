@@ -187,26 +187,11 @@ export default function Shop() {
           </div>
           <div className="d-none d-md-flex justify-content-end">
             {/* offcanvas btn */}
-            <button
-              type="button"
-              onClick={handleShow}
-              className={`me-3 btn d-flex justify-content-center align-items-center ${styles.offcanvasBtn}`}
-            >
-              <h6 className="mb-0">條件篩選</h6>
-              <FaFilter className={`ms-1 ${styles.iconsmall}`} />
-            </button>
+            <TypeFilter />
             <SortDropdown />
           </div>
           <div className="d-flex d-md-none ps-4 pe-4">
-            {/* offcanvas btn */}
-            <button
-              type="button"
-              onClick={handleShow}
-              className={`me-2 btn btn-sm d-flex justify-content-center align-items-center ${styles.offcanvasBtn}`}
-            >
-              <p className="mb-0">條件篩選(0)</p>
-              {/* <FaFilter className={`ms-1 ${styles.iconsmall}`} /> */}
-            </button>
+            <TypeFilter />
             <SortDropdown />
           </div>
         </div>
