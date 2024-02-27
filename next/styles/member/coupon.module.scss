@@ -1,0 +1,106 @@
+@import '../valuable.scss';
+
+.logo_frame{
+    width: 120px;
+    overflow: hidden;
+
+    .fit{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        
+    }
+}
+
+  
+
+  .c_coupon {
+    position: relative;
+    left: 22.5%;
+    top: 90px;
+    width: 350px;
+    height: 180px;
+    margin: 20px;
+    box-sizing: border-box;
+    transform: translate(-50%, -50%);
+    background: $blue-secondary;
+    border-radius: 4px;
+    // box-shadow: 0 0 8px 4px transparentize($dark-gray, 0.75);
+      &:before, &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      height: 48px;
+      width: 48px;
+      background: $white;
+      border-radius: 64px;
+      top: 50%;
+    }
+    &:before {
+      left: 0;
+      transform: translate(-50%, -50%);    
+    }
+  
+    &:after {
+      right: 0;
+      transform: translate(50%, -50%); 
+    }
+  }
+
+  .p_coupon {
+    position: relative;
+    left: 22.5%;
+    top: 90px;
+    width: 350px;
+    height: 180px;
+    margin: 20px;
+    box-sizing: border-box;
+    transform: translate(-50%, -50%);
+    background: $red-secondary;
+    opacity: 0.8;
+    border-radius: 4px;
+    // box-shadow: 0 0 8px 4px transparentize($dark-gray, 0.75);
+      &:before, &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      height: 48px;
+      width: 48px;
+      background: $white;
+      border-radius: 64px;
+      top: 50%;
+    }
+    &:before {
+      left: 0;
+      transform: translate(-50%, -50%);    
+    }
+  
+    &:after {
+      right: 0;
+      transform: translate(50%, -50%); 
+    }
+  }
+  
+  .coupon_tearaway {
+    display: block;
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    right: 0;
+    top: 0;
+    border-left: 12px dotted $white;
+  }
+  
+  
+  @media (max-width: 430px) {
+    .c_coupon {
+        position: relative;
+        top:90px;
+        left: 45%;
+    }
+    .p_coupon {
+        position: relative;
+        top:90px;
+        left: 45%;
+    }
+  }
