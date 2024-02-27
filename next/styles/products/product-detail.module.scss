@@ -10,29 +10,136 @@
 .myshop {
   background-color: $dark-gray;
   border-radius: 10px;
-  border: 3px solid $gray;
+  border: 2px solid $gray;
 }
 .wrap {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
 }
-.imgMain {
-  height: 380px;
-  width: 380px;
+
+.h450px {
+  height: 450px;
+  // width: 420px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.h420px{
-  height: 420px;
-  width: 420px;
-}
-.objFit{
+
+.objFit {
   object-fit: contain;
+  height: 100%;
+  width: 100%;
+}
+.objFitC {
+  object-fit: cover;
+  // overflow: hidden;
+  height: 100%;
+  width: 100%;
 }
 .h100px {
   height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid rgb(62, 62, 62);
+  border-radius: 5px;
+  overflow: hidden;
+  padding: 4px;
+  &:hover {
+    border: 1px solid $white;
+  }
 }
-.h600px {
-  height: 600px;
+
+.historyUpDown:hover {
+  // color: white;
+  // color: aqua;
+  background-color: rgb(51, 51, 51);
+}
+
+.h100100px {
+  height: 100px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #9f9f9f;
+  border-radius: 5px;
+  overflow: hidden;
+  padding: 4px;
+  margin: 0 4px;
+}
+.formStyle {
+  background-color: white;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  .btnSubmit {
+    text-align: center;
+    height: 122px;
+    width: 80px;
+    background: $info;
+    color: $white;
+    border-radius: 0 5px 5px 0;
+    &:hover {
+      background: rgb(0, 88, 204);
+    }
+  }
+}
+.ImgBtnhover {
+  height: 75px;
+  &:hover {
+    background-color: rgb(51, 51, 51);
+    border-radius: 5px;
+  }
+}
+.pHistory {
+  position: fixed;
+  bottom: 50px;
+  right: 20px;
+  // background-color: #15505e;
+}
+.historyUpDown:hover {
+  background-color: rgb(86, 86, 86);
+  color: rgb(255, 255, 255) !important;
+}
+.f14 {
+  font-size: 14px;
+}
+// ------------------------------ RWD
+@media (max-width: 576px) {
+  .wrap {
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    margin: 0 8px;
+    flex-wrap: nowrap;
+  }
+  .h450px {
+    height: 280px;
+    // width: 420px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .h100px {
+    height: 80px;
+  }
+  .h100100px {
+    height: 75px;
+    width: 75px;
+  }
+}
+
+.btns {
+  z-index: 5;
+  height: 30px;
+  width: 100%;
+  bottom: 112px;
+  right: 0;
+  position: fixed;
 }
 
 //--------------------------------------------addPhoto
@@ -41,18 +148,18 @@
   position: relative;
   height: 100px;
   width: 100px;
-  border: 3px solid rgb(232, 163, 255);
+  border: 2px dashed $light-gray;
   border-radius: 10px;
   overflow: hidden;
 }
 .myLabel .icon {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 30px;
-  height: 30px;
-  background-color: rgb(232, 163, 255);
-  color: rgb(45, 13, 148);
+  right: 28px;
+  bottom: 28px;
+  width: 40px;
+  height: 40px;
+  // background-color: rgb(232, 163, 255);
+  color: $light-gray;
   font-size: 20px;
   display: flex;
   justify-content: center;
@@ -67,27 +174,4 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-//------------------------------------------
-
-.myLabel {
-  position: relative;
-  height: 90px;
-  width: 90px;
-  border: 3px dashed rgb(139, 139, 139);
-  border-radius: 10px;
-  overflow: hidden;
-
-  .icon {
-    position: absolute;
-    top: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .img {
-    display: inline-block;
-    position: absolute;
-  }
 }

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa6'
 import Image from 'next/image'
 import pImgCover from '@/public/images/product/HOPSTEPDANCE.jpg'
-import DetailImg from './detail-img'
 import styles from '@/styles/products/product-detail.module.scss'
 import img1 from '@/public/images/product/HOPSTEPDANCE.jpg'
 import img2 from '@/public/images/product/MonsterFarm-1.jpg'
@@ -18,27 +17,29 @@ export default function PImgs() {
     <>
       <div className="container">
         <div className="row d-flex justify-content-center align-items-center mb-2">
-          <div className="col prev text-white">
+          <div className={`col-1 prev text-white d-flex justify-content-center align-items-center ${styles.ImgBtnhover}`}>
             <FaAngleLeft />
           </div>
-          <div className="col-9 d-flex justify-content-center align-items-center bg-danger-subtle">
-            <div className={styles.h420px}>
+          <div className="col-10">
+            <div className={styles.h450px}>
               <Image
                 src={imgAry[0]}
                 alt="product"
-                width={150}
-                height={244}
+                // width={450}
+                // height={250}
                 priority={true}
                 className={styles.objFit}
+                // layout="intrinsic"
               />
             </div>
+         
           </div>
-          <div className="col next text-white">
+          <div className={`col-1 next text-white d-flex justify-content-center align-items-center ${styles.ImgBtnhover}`}>
             <FaAngleRight />
           </div>
         </div>
-        <div className={`row ${styles.pImgs} align-items-center`}>
-          <div className="col d-flex justify-content-center align-items-center bg-primary-subtle">
+        <div className="row align-items-center py-2">
+          <div className="col-3 p-1">
             <div className={styles.h100px}>
               <Image
                 src={imgAry[0]}
@@ -46,39 +47,44 @@ export default function PImgs() {
                 // width={100}
                 height={100}
                 priority={true}
+                className={styles.objFitC}
+
               />
             </div>
           </div>
-          <div className="col bg-primary-subtle p-0 d-flex align-items-center">
+          <div className="col-3 p-1">
             <div className={styles.h100px}>
               <Image
                 src={imgAry[1]}
                 alt="product"
-                width={100}
+                // width={100}
                 // height={100}
                 priority={true}
+                className={styles.objFitC}
               />
             </div>
           </div>
-          <div className="col bg-primary-subtle p-0">
+          <div className="col-3 p-1">
             <div className={styles.h100px}>
               <Image
                 src={imgAry[1]}
                 alt="product"
-                width={100}
+                // width={100}
                 // height={100}
                 priority={true}
+                className={styles.objFitC}
               />
             </div>
           </div>
-          <div className="col bg-primary-subtle p-0">
+          <div className="col-3 p-1">
             <div className={styles.h100px}>
               <Image
                 src={imgAry[1]}
                 alt="product"
-                width={100}
-                // height={100}
+                // width={100}
+                // height={400}
                 priority={true}
+                className={styles.objFitC}
               />
             </div>
           </div>
