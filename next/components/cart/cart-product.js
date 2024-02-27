@@ -6,20 +6,13 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 // 收藏愛心空心圖
-import heartIcon from '@/public/images/cart/heart.svg'
+import heartIcon from '@/assets/heart.svg'
 // 收藏愛心實心圖
-import heartFill from '@/public/images/cart/heart-fill.svg'
-// 收藏愛心hover圖
-import heartHover from '@/public/images/cart/heart-hover.svg'
+import heartFill from '@/assets/heart-fill.svg'
 
 export default function CartProduct() {
   const [heartState, setHeartState] = useState(heartIcon)
-  const handleMouseEnter = () => {
-    setHeartState(heartState === heartFill ? heartFill : heartHover)
-  }
-  const handleMouseLeave = () => {
-    setHeartState(heartState === heartFill ? heartFill : heartIcon)
-  }
+
   const handleClick = () => {
     setHeartState(heartState === heartIcon ? heartFill : heartIcon)
   }
@@ -69,12 +62,7 @@ export default function CartProduct() {
                     <h6 className={styles.discount}>8折</h6>
                   </div>
                 </div>
-                <div
-                  className={styles.pInfoBottom}
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                  onClick={handleClick}
-                >
+                <div className={styles.pInfoBottom} onClick={handleClick}>
                   <Image src={heartState} className={styles.icon} />
                   <h6 className={styles.text}>加入收藏清單</h6>
                 </div>
