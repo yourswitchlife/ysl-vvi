@@ -1,0 +1,78 @@
+@import '../valuable.scss';
+
+.img_frame {
+  width: 110px;
+  height: 170px;
+  overflow: hidden;
+
+  .img_fit {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.bg_card {
+  /* background: url('/images/member/cardbg2 (2).webp') left/cover no-repeat; */
+  background-color: $bright-gray;
+}
+
+@media (max-width: 430px) {
+  .bg_card {
+    margin-inline: 0 !important;
+    padding-inline: 0 !important;
+    justify-content: space-between;
+  }
+
+  .wid_xs {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .h4text_xs {
+    width: fit-content;
+    padding: 0 !important;
+    margin: 0 !important;
+    padding-inline: 3px !important;
+    font-size: 16px;
+  }
+  .h5text_xs {
+    width: 40%;
+    align-items: center;
+    padding: 5px !important;
+    margin: 5px !important;
+    font-size: 16px;
+  }
+
+  .h6text_xs {
+    width: fit-content;
+    padding: 5px !important;
+    margin: 10px !important;
+    font-size: 16px;
+  }
+  .card_xs {
+    padding-inline: 10px !important;
+  }
+  .order_xs {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .shop_xs {
+    padding-inline: 0 !important;
+    padding-block:25px ;
+    margin-inline: 0 !important;
+  }
+  .nopdmn_xs {
+    padding-inline: 0 !important;
+    margin-inline: 0 !important;
+  }
+  .nopdmn_block_xs {
+    margin-block: 0 !important;
+    margin-inline: 10px !important;
+  }
+  .img_frame {
+    max-width: 80px;
+    height: 140px;
+    align-self: center;
+  }
+}

@@ -1,0 +1,153 @@
+@import '@/styles/valuable.scss';
+
+.radioBox {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+// 選擇優惠券標題
+.couponHeader {
+  font-size: 1.25rem;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+// 商品抵用券區塊
+.productFrame,
+.deliveryFrame {
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  border-radius: 15px;
+  .title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-left: 15px;
+    gap: 5px;
+
+    .icon {
+      color: $gray;
+    }
+  }
+
+  .couponBody {
+    max-height: 175px;
+    overflow-y: auto;
+    padding: 10px;
+    // 客製scrollbar樣式
+    &::-webkit-scrollbar {
+      width: 7px;
+    }
+    &::-webkit-scrollbar-button {
+      background: transparent;
+      border-radius: 4px;
+    }
+    &::-webkit-scrollbar-track-piece {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid $light-gray;
+    }
+    &::-webkit-scrollbar-track {
+      box-shadow: transparent;
+    }
+    // 單一商品優惠券
+    .coupon {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.15);
+      border-radius: 15px;
+      margin-bottom: 10px;
+
+      // 勾選框框
+      .radioBar {
+        min-width: 30px;
+      }
+
+      // 優惠券icon圖
+      .iconCircle {
+        background: #09aaf8;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin-left: 30px;
+
+        .icon {
+          width: 30px;
+          height: 30px;
+        }
+        .text {
+          font-size: 14px;
+        }
+      }
+
+      // 優惠券詳細資訊
+      .couponInfoFrame {
+        margin-left: 30px;
+        flex: 1 1 auto;
+        .mainText,
+        .sub {
+          font-size: 14px;
+          margin-bottom: 5px;
+        }
+
+        .rule {
+          font-size: 14px;
+          text-align: right;
+          color: $blue-secondary;
+          cursor: pointer;
+          &:hover {
+            color: $info;
+          }
+        }
+      }
+    }
+  }
+}
+
+.productFrame {
+  margin-bottom: 20px;
+}
+
+// 運費抵用券區塊icon顏色
+.deliveryFrame {
+  .couponBody {
+    .iconFrame {
+      .iconCircle {
+        background: #3155cd;
+        .icon,
+        .text {
+          color: $white;
+        }
+      }
+    }
+  }
+}
+
+// couponFooter送出按鈕
+
+.couponFooter {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4rem;
+  padding: 10px 30px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+// 手機板430px
+@media screen and (max-width: 431px) {
+  .modal {
+    display: none;
+  }
+}
