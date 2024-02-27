@@ -1,0 +1,28 @@
+.btn{
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    height: 90px;
+    width: 90px;
+    font-size: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+
+    .icon{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        color:#676767;
+    }
+    }
+
+    @media screen and (max-width: 431px) {
+        .btn{
+        right: 20px;
+        height: 60px;
+        width: 60px;
+    }
+}
+

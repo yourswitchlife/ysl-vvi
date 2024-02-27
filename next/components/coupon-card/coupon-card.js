@@ -11,10 +11,11 @@ import logo from '@/public/images/coupon/logominiFig.png'
 
 function CouponCard() {
   return (
-    <Row xs={1} md={2} className="g-3">
+    // <div className=''>
+    <Row xs={1} md={2} className="">
       {Array.from({ length: 4 }).map((_, idx) => (
-        <Col key={idx} className='m-auto d-flex justify-content-center align-items-center mb-3'>
-          {/* <Card className={` ${styles.cardBG}`}> */}
+        <Col key={idx} className='d-flex justify-content-center align-items-center mb-3'>
+          <Card >
             <div className={`${styles.cardBG} p-5 d-flex justify-content-between`}>
               <div className={styles.left}>
                  <Image src={logo}/>
@@ -37,7 +38,7 @@ function CouponCard() {
                   </div>
                 </div>
 
-                  <div className='text-white'>
+                  <div className='text-white '>
                     效期至: 2024/04/15 23:59:59
                   </div>
                   
@@ -48,10 +49,11 @@ function CouponCard() {
             
             {/* <Card.Img Img variant="top" src={couponProduct} /> */}
             {/* <Card.Img variant="top" src="holder.js/100px160" /> */}
-          {/* </Card> */}
+          </Card> 
         </Col>
       ))}
     </Row>
+    // </div>0
   )
 }
 
