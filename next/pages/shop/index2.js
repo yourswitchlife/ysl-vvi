@@ -186,27 +186,11 @@ export default function Shop() {
             <SearchbarB />
           </div>
           <div className="d-none d-md-flex justify-content-end">
-            {/* offcanvas btn */}
-            <button
-              type="button"
-              onClick={handleShow}
-              className={`me-3 btn d-flex justify-content-center align-items-center ${styles.offcanvasBtn}`}
-            >
-              <h6 className="mb-0">條件篩選</h6>
-              <FaFilter className={`ms-1 ${styles.iconsmall}`} />
-            </button>
+            <TypeFilter />
             <SortDropdown />
           </div>
           <div className="d-flex d-md-none ps-4 pe-4">
-            {/* offcanvas btn */}
-            <button
-              type="button"
-              onClick={handleShow}
-              className={`me-2 btn btn-sm d-flex justify-content-center align-items-center ${styles.offcanvasBtn}`}
-            >
-              <p className="mb-0">條件篩選(0)</p>
-              {/* <FaFilter className={`ms-1 ${styles.iconsmall}`} /> */}
-            </button>
+            <TypeFilter />
             <SortDropdown />
           </div>
         </div>
@@ -267,86 +251,6 @@ export default function Shop() {
         </div>
       </div>
       <Footer />
-      {/* offcanvas */}
-      <Offcanvas show={show} onHide={handleClose} className={styles.offcanvas}>
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>
-            <h4>條件篩選</h4>
-          </Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-          {/* toggle sort */}
-          <Form className="d-flex align-items-center flex-column">
-            <button
-              type="button"
-              onClick={() => setOpenSort(!openSort)}
-              aria-controls="sort-collapse-text"
-              aria-expanded={openSort}
-              className={`btn d-flex justify-content-center align-items-center ${styles.togglebtn}`}
-            >
-              <h5 className="mb-0 me-2">遊戲類別</h5>
-              <FaPlus />
-            </button>
-            <Collapse in={openSort}>
-              <div id="sort-collapse-text">
-                <div className="d-flex flex-column align-items-center pt-2">
-                {typeName.map((t) => {
-                  return (
-                    <div key={t.id}>
-                    <Form.Check // prettier-ignore
-                    type="checkbox"
-                    id={t.id}
-                    label={t.name}
-                    className="my-1"
-                  />
-                    </div>
-                  )
-                })}
-                </div>
-              </div>
-            </Collapse>
-            {/* toggle rate */}
-            <button
-              type="button"
-              onClick={() => setOpenRate(!openRate)}
-              aria-controls="rate-collapse-text"
-              aria-expanded={openRate}
-              className={`btn d-flex justify-content-center align-items-center ${styles.togglebtn}`}
-            >
-              <h5 className="mb-0 me-2">遊戲分級</h5>
-              <FaPlus />
-            </button>
-            <Collapse in={openRate}>
-              <div id="rate-collapse-text">
-                <div className="d-flex flex-column align-items-center pt-2">
-                {ratings.map((r) => {
-                  return (
-                    <div key={r.id}>
-                    <Form.Check // prettier-ignore
-                    type="checkbox"
-                    id={r.id}
-                    label={r.name}
-                    className="my-1"
-                  />
-                    </div>
-                  )
-                })}
-                </div>
-              </div>
-            </Collapse>
-            <div
-              className={`d-flex justify-content-center ${styles.selectBtn}`}
-            >
-              <button
-                type="button"
-                className="btn btn-danger d-flex align-items-center"
-              >
-                篩選商品
-              </button>
-            </div>
-          </Form>
-        </Offcanvas.Body>
-      </Offcanvas>
     </>
   )
 }
