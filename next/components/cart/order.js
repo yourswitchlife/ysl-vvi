@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from '../cart/order-list.module.scss'
-import SingleProduct from './cart-product'
+import CartProduct from './cart-product'
 import { FaShopify, FaTrashAlt, FaRegEdit } from 'react-icons/fa'
 
 export default function Order() {
@@ -25,8 +25,8 @@ export default function Order() {
           </div>
         </div>
         <div className={styles.pContainer}>
-          <SingleProduct />
-          <SingleProduct />
+          <CartProduct />
+          <CartProduct />
         </div>
       </div>
     </>

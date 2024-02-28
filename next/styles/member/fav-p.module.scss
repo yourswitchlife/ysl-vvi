@@ -46,11 +46,11 @@
 }
 
 .page_check {
-  margin: auto;
   display: flex;
-  width: 700px;
-  justify-content: space-between;
-  align-items: flex-start;
+  width: 100%;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: auto;
 
   .pagep_btn {
     padding: 5px 80px;
@@ -170,7 +170,8 @@
   .page_check {
     width: 350px;
     justify-content: space-evenly;
-    align-items: flex-start;
+    align-items: center;
+    margin: auto;
   
     .pagep_btn {
       padding: 5px 30px;
