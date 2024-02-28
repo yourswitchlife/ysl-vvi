@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { FaBorderAll } from 'react-icons/fa'
 import { IoReorderFour } from 'react-icons/io5'
@@ -11,9 +11,22 @@ import styles from '../../styles/products/products.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
 import Navbar from '@/components/layout/navbar/navbar'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
-import products from '@/data/product.json'
+import data from '@/data/product.json'
 
 export default function Products() {
+  // console.log(products)
+  const initState = data.map((p) => {
+    return { ...p, fav: false }
+  })
+  const [products, setProducts] = useState(initState)
+  // console.log(initState)
+  const handleToggleFav = (id) => {
+    const newProducts = products.map((p) => {
+      if (p.id === id) return {...p, fav:!p.fav}
+      else return p
+    })
+  setProducts(newProducts)}
+
   return (
     <>
       <Navbar />
@@ -42,7 +55,7 @@ export default function Products() {
         </div>
       </div>
       <div className="container pt-3 px-lg-5 px-4">
-        <BreadCrumb/>
+        <BreadCrumb />
         <div className="d-flex justify-content-between mb-3">
           <BtnOutline></BtnOutline>
           <div>
@@ -50,15 +63,24 @@ export default function Products() {
             <IoReorderFour className="text-white h4 mb-0" />
           </div>
         </div>
-        <div className="container px-0 py-2">
+        <div className="container px-0 py-2 mb-3">
           <div className="row row-cols-2 row-cols-lg-5 g-0 g-lg-3">
-            {/* <div className="col">
-              <ProductList className="p-5" />
-            </div> */}
             {products.map((p) => {
               return (
                 <div key={p.id} className="col">
-                  <ProductList className="p-5" name={p.name} price={p.price} displayPrice={p.display_price} releaseTime={p.release_time} cover={p.img_cover} type={p.type_id}/>
+                  <ProductList
+                    className="p-5"
+                    id={p.id}
+                    name={p.name}
+                    price={p.price}
+                    displayPrice={p.display_price}
+                    releaseTime={p.release_time}
+                    cover={p.img_cover}
+                    type={p.type_id}
+                    ratingId={p.rating_id}
+                    fav={p.fav}
+                    handleToggleFav={handleToggleFav}
+                  />
                 </div>
               )
             })}
@@ -67,7 +89,7 @@ export default function Products() {
         <Pagination />
 
         <div>
-          <h4 className="text-white mx-2 ">猜你喜歡</h4>
+          <h4 className="text-white mx-3 ">猜你喜歡</h4>
           <div className={`px-0 py-2 ${styles.guessLike}`}>
             <ProductList className="" />
             <ProductList className="" />
