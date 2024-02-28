@@ -83,6 +83,11 @@
   }
 }
 
+// 手機版點擊編輯顯示按鈕- 收藏、刪除
+.editBtn {
+  display: none;
+}
+
 // 勾選框框
 .checkBoxBar {
   display: flex;
@@ -382,6 +387,14 @@
     }
   }
 
+  // 手機版點擊編輯顯示按鈕- 收藏、刪除
+  .editBtn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+
   // 單個商品刪除button
   .delIcon {
     display: none;
@@ -516,6 +529,7 @@
       }
       .discountRight {
         color: $dark-gray;
+        text-decoration: none;
       }
 
       .infoLeft {

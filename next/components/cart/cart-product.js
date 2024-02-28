@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styles from '../cart/order-list.module.scss'
-import { FaPlus, FaMinus } from 'react-icons/fa'
+import { FaPlus, FaMinus, FaHeart, FaRegHeart } from 'react-icons/fa'
 import { IoClose } from 'react-icons/io5'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -10,7 +10,7 @@ import heartIcon from '@/assets/heart.svg'
 // 收藏愛心實心圖
 import heartFill from '@/assets/heart-fill.svg'
 
-export default function CartProduct() {
+export default function CartProduct({ isEditing }) {
   const [heartState, setHeartState] = useState(heartIcon)
 
   const handleClick = () => {
@@ -77,29 +77,41 @@ export default function CartProduct() {
               <span className={styles.discountPrice}>$960</span>
             </div>
           </div>
-          {/* 購買數量控制按鈕 */}
-          <div className={styles.controlBar}>
-            <div className={styles.control}>
-              <div className={styles.btnMinus}>
-                <FaMinus />
+          {isEditing ? (
+            <>
+              {/* 當手機版點擊編輯出現 */}
+              <div className={styles.editBtn}>
+                <button type="button" className="btn btn-sm btn-danger">
+                  <FaHeart />
+                </button>
+                <button type="button" className="btn btn-sm btn-dark">
+                  刪除
+                </button>
               </div>
-              <input
-                type="text"
-                role="spinbutton"
-                aria-valuenow="1"
-                value="1"
-                className={styles.amount}
-              />
-              <div
-                className={styles.btnPlus}
-                onClick={() => {
-                  increment()
-                }}
-              >
-                <FaPlus />
+            </>
+          ) : (
+            <>
+              {/* 購買數量控制按鈕 */}
+              <div className={styles.controlBar}>
+                <div className={styles.control}>
+                  <div className={styles.btnMinus}>
+                    <FaMinus />
+                  </div>
+                  <input
+                    type="text"
+                    role="spinbutton"
+                    aria-valuenow="1"
+                    value="1"
+                    className={styles.amount}
+                  />
+                  <div className={styles.btnPlus}>
+                    <FaPlus />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
+
           {/* 總金額 */}
           <div className={styles.totalBar}>
             <span className={styles.text}>總金額：</span>

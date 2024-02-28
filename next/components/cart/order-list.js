@@ -1,6 +1,7 @@
 import styles from '../cart/order-list.module.scss'
 import Order from './order'
 import Image from 'next/image'
+import Link from 'next/link'
 
 // 引用優惠券選擇區
 import UseCoupon from './use-coupon'
@@ -95,7 +96,9 @@ export default function OrderList() {
               <Image src={CouponStar} />
               <div className={styles.coupon}>優惠券</div>
             </div>
-            <div className={styles.discountRight}>選擇使用優惠券</div>
+            <Link href="/cart/checkout/coupon" className={styles.discountRight}>
+              選擇使用優惠券
+            </Link>
           </div>
           <div className={styles.discountInfo}>
             <div className={styles.infoLeft}>
