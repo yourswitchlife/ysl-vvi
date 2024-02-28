@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import styles from '../cart/order-list.module.scss'
+import styles from './order-list.module.scss'
 import { FaPlus, FaMinus, FaHeart, FaRegHeart } from 'react-icons/fa'
 import { IoClose } from 'react-icons/io5'
 import Link from 'next/link'
@@ -10,7 +10,7 @@ import heartIcon from '@/assets/heart.svg'
 // 收藏愛心實心圖
 import heartFill from '@/assets/heart-fill.svg'
 
-export default function CartProduct({ isEditing }) {
+export default function ProductCard({ isEditing }) {
   const [heartState, setHeartState] = useState(heartIcon)
 
   const handleClick = () => {

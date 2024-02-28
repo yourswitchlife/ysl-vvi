@@ -1,4 +1,4 @@
-import styles from '../cart/order-list.module.scss'
+import styles from './order-list.module.scss'
 import Order from './order'
 import Image from 'next/image'
 import Link from 'next/link'

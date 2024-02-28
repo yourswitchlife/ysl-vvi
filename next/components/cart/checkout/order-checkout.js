@@ -1,7 +1,7 @@
 import React from 'react'
-import styles from '@/components/cart/order-detail.module.scss'
-import ProductCheckout from './cart-product-checkout'
-import DeliveryOrderCheckout from './delivery-order-checkout'
+import styles from './orders-detail.module.scss'
+import ProductCheckout from './product-checkout'
+import DeliveryCheckout from './delivery-checkout'
 import { FaShopify } from 'react-icons/fa'
 
 export default function OrderCheckout() {
@@ -33,7 +33,7 @@ export default function OrderCheckout() {
         </div>
         <div className={styles.deliveryContainer}>
           {/* 寄送資訊、收件資訊 */}
-          <DeliveryOrderCheckout />
+          <DeliveryCheckout />
         </div>
       </div>
     </>

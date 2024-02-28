@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import styles from '@/components/cart/order-detail.module.scss'
+import styles from './orders-detail.module.scss'
 import { FaCircleQuestion, FaPlus, FaAngleRight } from 'react-icons/fa6'
 import Form from 'react-bootstrap/Form'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function DeliveryOrderCheckout() {
+export default function DeliveryCheckout() {
   const [selectAddrOption, setSelectAddrOption] = useState('1')
 
   // 點擊新增宅配地址按鈕狀態

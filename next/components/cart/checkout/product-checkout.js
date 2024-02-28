@@ -1,9 +1,9 @@
 import React from 'react'
-import styles from '@/components/cart/order-detail.module.scss'
+import styles from './orders-detail.module.scss'
 import Link from 'next/link'
 import Image from 'next/image'
 
-export default function CartProductConfirm() {
+export default function ProductConfirm() {
   return (
     <>
       <div className={styles.product}>
