@@ -114,11 +114,11 @@ export default function ShopSetting() {
                     </p>
                   </div>
                   <Form.Group controlId="coverFile" className="mb-3">
-                    <Form.Label className="text-dark">賣場封面</Form.Label>
+                    <Form.Label className="text-dark">賣場封面<span className="text-danger">*</span></Form.Label>
                     <Form.Control type="file" />
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="shopName">
-                    <Form.Label className="text-dark">賣場名稱</Form.Label>
+                    <Form.Label className="text-dark">賣場名稱<span className="text-danger">*</span></Form.Label>
                     <Form.Control type="text" placeholder="請輸入賣場名稱" />
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="shopSite">
@@ -146,9 +146,12 @@ export default function ShopSetting() {
                   </Form.Group>
                   <div className="d-flex justify-content-center">
                     <button type="submit" className="btn btn-danger me-2">
-                      儲存
+                      儲存並上架賣場
                     </button>
-                    <button type="button" href="/" className="btn btn-danger">
+                    <button type="submit" className={`btn btn-danger ${styles.btnDangerOutlined} me-2`}>
+                      儲存暫不上架賣場
+                    </button>
+                    <button type="button" href="/" className={`btn btn-danger ${styles.btnGrayOutlined}`}>
                       取消
                     </button>
                   </div>

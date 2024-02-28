@@ -32,7 +32,7 @@ export default function BurgerMenu() {
             <Offcanvas.Title>
               <div // logo
               >
-                <Link href="/index.js">
+                <Link href="/">
                   <Image src={yslLogoXs} alt="" />
                 </Link>
               </div>
@@ -40,13 +40,13 @@ export default function BurgerMenu() {
           </Offcanvas.Header>
           <Offcanvas.Body className="d-flex align-items-center flex-column">
             <div className='d-flex flex-column'>
-              <Link href="" className={`text-white pt-2 pb-2 ${styles.linkstyle}`}>
+              <Link href="/products" className={`text-white pt-2 pb-2 ${styles.linkstyle}`}>
                 <h5>商品專區</h5>
               </Link>
-              <Link href="" className={`text-white pt-2 pb-2 ${styles.linkstyle}`}>
+              <Link href="/coupon/coupon-page" className={`text-white pt-2 pb-2 ${styles.linkstyle}`}>
               <h5>優惠報報</h5>
               </Link>
-              <Link href="" className={`text-white pt-2 pb-2 ${styles.linkstyle}`}>
+              <Link href="/article" className={`text-white pt-2 pb-2 ${styles.linkstyle}`}>
               <h5>最新攻略</h5>
               </Link>
             </div>
@@ -55,13 +55,13 @@ export default function BurgerMenu() {
             >
               {/* 未登入時顯示 */}
               <div className={`d-flex justify-content-end`}>
-                <Link href="" className={`text-white ${styles.linkstyle}`}>
+                <Link href="/member/sign-in" className={`text-white ${styles.linkstyle}`}>
                   登入
                 </Link>
                 <span className={`text-white ps-2 pe-2 ${styles.linkstyle}`}>
                   |
                 </span>
-                <Link href="" className={`text-white ${styles.linkstyle}`}>
+                <Link href="/member/account" className={`text-white ${styles.linkstyle}`}>
                   會員專區
                 </Link>
               </div>

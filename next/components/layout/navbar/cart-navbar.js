@@ -25,18 +25,18 @@ export default function CartNavbar() {
         {/* 登入後顯示 */}
         <div className={styles.cartRight}>
           <div className={styles.iconGroup}>
-            <Link href="" className={styles.loginIcon}>
+            <Link href="/member/fav-product" className={styles.loginIcon}>
               <FaHeart />
             </Link>
-            <Link href="" className={styles.loginIcon}>
+            <Link href="/member/notify-normal" className={styles.loginIcon}>
               <FaBell />
             </Link>
-            <Link href="" className={styles.loginIconEnd}>
+            <Link href="/shop" className={styles.loginIconEnd}>
               <FaStore />
             </Link>
           </div>
           <div className={styles.circleCut}>
-            <Link href="">
+            <Link href="/member/account">
               <Image src={profilePhoto} alt="profile-photo" />
             </Link>
           </div>
@@ -53,7 +53,7 @@ export default function CartNavbar() {
           </Link>
         </div>
           <h5 className='mb-0'>結帳</h5>
-        <Link href="/index.js" className="text-white ps-5">
+        <Link href="/" className="text-white ps-5">
           <FaArrowRight />
         </Link>
       </header>
