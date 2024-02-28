@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from '@/components/cart/order-detail.module.scss'
 import { FaCircleQuestion, FaPlus, FaAngleRight } from 'react-icons/fa6'
 import Form from 'react-bootstrap/Form'
@@ -6,12 +6,45 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 export default function DeliveryOrderCheckout() {
+  const [selectAddrOption, setSelectAddrOption] = useState('1')
+
+  // 點擊新增宅配地址按鈕狀態
+  const [showAddrForm, setshowAddrForm] = useState(false)
+
+  // 用戶是否有新增常用地址資料
+  const [hasCommonAddr, setHasCommonAddr] = useState(false)
+
+  // 選擇物流方式下拉選單值
+  const handleSelectChange = (e) => {
+    setSelectAddrOption(e.target.value)
+  }
+
+  // 是否點擊新增宅配地址按鈕
+  const handleClickAddrBtn = () => {
+    setshowAddrForm(true)
+  }
+
+  // // 是否有從server端接收到常用地址資料
+  // useEffect(() => {
+  //   fetchCommonAddr().then((sevenAddr) => {
+  //     if (sevenAddr.length > 0) {
+  //       // 有常用地址
+  //       setHasCommonAddr(true)
+  //     } else {
+  //       setHasCommonAddr(false)
+  //     }
+  //   })
+  // }, [])
+
   return (
     <>
       <div className={`row ${styles.deliveryRow}`}>
         <div
-          className={`col-6 border-end border-white border-4 ${styles.deliveryInfo}`}
-          // className={`col-12 border-0 border-4 pb-4 ${styles.deliveryInfo}`}
+          className={
+            showAddrForm
+              ? `col-12 border-0 border-4 pb-4 ${styles.deliveryInfo}`
+              : `col-6 border-end border-white border-4 ${styles.deliveryInfo}`
+          }
         >
           <div className={styles.headerTitle}>
             <h5>
@@ -19,25 +52,34 @@ export default function DeliveryOrderCheckout() {
             </h5>
             <FaCircleQuestion className={styles.icon} />
           </div>
+          {/* 物流方式下拉選單 */}
           <div className={styles.selectFrame}>
             <label htmlFor="select">
               物流方式：
               <span className={styles.deliveryName}>7-11 超商寄送</span>
             </label>
-            <Form.Select className={styles.formSelect}>
+            <Form.Select
+              className={styles.formSelect}
+              onChange={handleSelectChange}
+              disabled={showAddrForm}
+            >
               <option value="1">7-11 超商寄送 ｜運費$60</option>
               <option value="2">店家宅配寄送 ｜運費$100</option>
             </Form.Select>
           </div>
           {/* 新增常用地址按鈕(宅配) */}
-          <div className={`justify-content-end ${styles.addHomeAdrBtn}`}>
-            <div className={styles.addHomeAdr}>
+          <div
+            className={
+              selectAddrOption === '2' ? styles.addHomeAdrBtn : 'd-none'
+            }
+          >
+            <div className={styles.addHomeAdr} onClick={handleClickAddrBtn}>
               <FaPlus />
               <span className={styles.text}>新增常用地址</span>
             </div>
           </div>
           {/* 選擇常用地址radio 區塊 (block)*/}
-          <div className={`${styles.adressFrame}`}>
+          <div className={showAddrForm ? 'd-none' : 'd-block'}>
             <div className=" form-check mb-3 d-flex align-items-center">
               <input
                 className="form-check-input me-3"
@@ -72,25 +114,35 @@ export default function DeliveryOrderCheckout() {
             </div>
           </div>
           {/* 新增超商地址按鈕(寄送資訊) */}
-          <div className={`flex-column align-items-center mt-3 d-none`}>
-            <Image
-              src="/images/cart/7-eleven.svg"
-              width={50}
-              height={50}
-              alt="選擇7-ELEVEN超商地址"
-              className={styles.sevenimg}
-            />
+          <div
+            className={`flex-column align-items-center mt-3 ${
+              selectAddrOption === '1' ? 'd-flex' : 'd-none'
+            }`}
+          >
+            <Link href="">
+              <Image
+                src="/images/cart/7-eleven.svg"
+                width={50}
+                height={50}
+                alt="選擇7-ELEVEN超商地址"
+                className={styles.sevenimg}
+              />
+            </Link>
             {/* 新增住家常用地址按鈕 */}
-            <div className={styles.addSevevnAdr}>
+            <Link href="" className={styles.addSevevnAdr}>
               <span className={styles.iconFrame}>
                 <FaPlus />
               </span>
               <span className={styles.text}>新增地址</span>
-            </div>
+            </Link>
           </div>
         </div>
         {/* 電腦版-新增宅配地址表單區塊 */}
-        <div className={`col-12 d-none ${styles.addrForm}`}>
+        <div
+          className={`col-12  ${styles.addrForm} ${
+            showAddrForm ? 'd-block' : 'd-none'
+          } `}
+        >
           {/* 新增常用地址標題 */}
           <div className="d-flex mt-4">
             <div className="border border-black py-1 px-2 rounded">
@@ -246,8 +298,13 @@ export default function DeliveryOrderCheckout() {
             </div>
           </div>
         </Link>
+
         {/* 收件資訊區塊-電腦版顯示 */}
-        <div className={`col-6 ${styles.receiveInfo}`}>
+        <div
+          className={`col-6 ${styles.receiveInfo} ${
+            showAddrForm ? 'd-none' : 'd-block'
+          }`}
+        >
           <div className={styles.headerTitle}>
             <h5>
               <b>收件資訊</b>
@@ -255,20 +312,28 @@ export default function DeliveryOrderCheckout() {
             <FaCircleQuestion className={styles.icon} />
           </div>
           {/* 無7-11常用地址時在收件資訊新增地址 */}
-          <div className={`flex-column align-items-center my-2 d-none`}>
-            <Image
-              src="/images/cart/7-eleven.svg"
-              width={50}
-              height={50}
-              alt="選擇7-ELEVEN超商地址"
-              className={styles.sevenimg}
-            />
-            <div className={styles.addSevevnAdr}>
+          <div
+            className="flex-column align-items-center my-2 d-none"
+
+            // className={`flex-column align-items-center my-2 ${
+            //   !hasCommonAddr && selectAddrOption === 2 ? 'd-none' : 'd-flex'
+            // }`}
+          >
+            <Link href="">
+              <Image
+                src="/images/cart/7-eleven.svg"
+                width={50}
+                height={50}
+                alt="選擇7-ELEVEN超商地址"
+                className={styles.sevenimg}
+              />
+            </Link>
+            <Link href="" className={styles.addSevevnAdr}>
               <span className={styles.iconFrame}>
                 <FaPlus />
               </span>
               <span className={styles.text}>新增地址</span>
-            </div>
+            </Link>
           </div>
           {/* 有選擇收件地址後顯示地址細項 */}
           <div className={`d-block ${styles.infoBar}`}>

@@ -239,6 +239,7 @@
 
 .addHomeAdrBtn {
   display: flex;
+  justify-content: flex-end;
   margin-bottom: 10px;
 }
 
@@ -271,6 +272,8 @@
   cursor: pointer;
 }
 .addSevevnAdr {
+  text-decoration: none;
+  color: $dark-gray;
   background: $white;
   padding: 3px 8px;
   border-radius: 15px;
