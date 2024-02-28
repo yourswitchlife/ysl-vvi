@@ -61,7 +61,7 @@ export default function BreadCrumb({
       // 最後一個
       if (i === array.length - 1) {
         return (
-          <li key={i} className="breadcrumb-item active" aria-current="page">
+          <li key={i} className="breadcrumb-item text-light text-decoration-underline link-offset-3" aria-current="page">
             {v}
           </li>
         )
@@ -72,7 +72,7 @@ export default function BreadCrumb({
         <li key={i} className="breadcrumb-item">
           <Link
             href={paths.slice(0, i + 1).join('/')}
-            className="link-body-emphasis fw-semibold text-decoration-none"
+            className="link-body-emphasis fw-semibold text-decoration-none text-light"
           >
             {v}
           </Link>
@@ -92,7 +92,7 @@ export default function BreadCrumb({
   return (
     <nav aria-label="breadcrumb" style={{ lineHeight: '32px' }}>
       <ol
-        className={`breadcrumb px-3 py-1 ${bgClass} rounded-3 ${
+        className={`breadcrumb px-3 py-1 rounded-3 ${
           isChevron ? styles['breadcrumb-chevron'] : ''
         }`}
       >
@@ -104,7 +104,7 @@ export default function BreadCrumb({
           >
             <Link
               href="/"
-              className="link-body-emphasis fw-semibold text-decoration-none"
+              className="link-body-emphasis fw-semibold text-decoration-none text-light"
             >
               {!isHomeIcon ? pathsLocaleMap['home'] : homeIcon}
             </Link>
