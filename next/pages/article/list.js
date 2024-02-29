@@ -12,7 +12,7 @@ export default function list() {
         <div
           className={`container d-flex justify-content-between px-lg-5 ${style.tag_link}`}
         >
-          <div className='align-items-center d-flex'>
+          <div className={`align-items-center d-flex ${style.index_padding}`}>
             <Link href="index.html" className='text-decoration-none text-white' >首頁&gt;</Link>
             <Link href="list.html" className='text-decoration-none text-white'>熱門標籤</Link>
           </div>
@@ -34,16 +34,16 @@ export default function list() {
           </div>
         </div>
         <div className="container">
-          <ul>
-            <li>
+          <ul className={style.ul}>
+            <li className={style.li} >
               <div className={`${style.list} mt-5`}>
-                <a href="article_main.html" className={`d-flex text-decoration-none text-white`}>
+                <a href="article_main.html" className={`d-flex text-decoration-none text-white ${style.li}`}>
                   <div className={style.pic}>
                     <img src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000" alt="" />
                   </div>
                   <div className={`${style.txt} mx-4 p-3`}>
                     <div className= {`badge text-bg-secondary mb-3 ${style.tag_btn}`}>
-                      <h5 className='mb-0'>冒險類</h5>
+                      <h5 className={`${style.h5} mb-0`}>冒險類</h5>
                     </div>
                     <div>
                       <h6>
@@ -59,15 +59,15 @@ export default function list() {
                 </a>
               </div>
             </li>
-            <li>
+            <li className={style.li} >
               <div className={`${style.list} mt-5`}>
-                <a href="article_main.html" className={`d-flex text-decoration-none text-white`}>
+                <a href="article_main.html" className={`d-flex text-decoration-none text-white ${style.li}`}>
                   <div className={style.pic}>
                     <img src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000" alt="" />
                   </div>
                   <div className={`${style.txt} mx-4 p-3`}>
                     <div className= {`badge text-bg-secondary mb-3 ${style.tag_btn}`}>
-                      <h5 className='mb-0'>冒險類</h5>
+                      <h5 className={`${style.h5} mb-0`}>冒險類</h5>
                     </div>
                     <div>
                       <h6>
@@ -83,15 +83,15 @@ export default function list() {
                 </a>
               </div>
             </li>
-            <li>
+            <li className={style.li} >
               <div className={`${style.list} mt-5`}>
-                <a href="article_main.html" className={`d-flex text-decoration-none text-white`}>
+                <a href="article_main.html" className={`d-flex text-decoration-none text-white ${style.li}`}>
                   <div className={style.pic}>
                     <img src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000" alt="" />
                   </div>
                   <div className={`${style.txt} mx-4 p-3`}>
                     <div className= {`badge text-bg-secondary mb-3 ${style.tag_btn}`}>
-                      <h5 className='mb-0'>冒險類</h5>
+                      <h5 className={`${style.h5} mb-0`}>冒險類</h5>
                     </div>
                     <div>
                       <h6>

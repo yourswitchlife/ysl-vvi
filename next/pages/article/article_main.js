@@ -18,7 +18,7 @@ export default function article_main() {
             宣布與集英社遊戲共同開發《OPUS：心相吾山》
           </h2>
           <div className="d-flex justify-content-between mt-5">
-            <div>
+            <div className="d-flex align-items-center">
               <p>2024-01-15</p>
             </div>
             <div className="btn btn-primary  d-flex">
@@ -27,7 +27,7 @@ export default function article_main() {
             </div>
           </div>
           <hr className={style.hr} />
-          <div className={` d-flex`}>
+          <div className={` d-flex flex-wrap gap-2`}>
             <Link
               href="list.html"
               className={`text-decaration-none btn btn-primary ${style.tag}`}
@@ -52,6 +52,7 @@ export default function article_main() {
             >
               <p className={style.txt_p}>#集英社</p>
             </Link>
+            
           </div>
           <div className={style.txt}>
             <h6 className="text-white">
@@ -163,7 +164,9 @@ export default function article_main() {
               </div>
             </div>
             <form action="">
-              <div className="d-flex justify-content-between p-4">
+              <div
+                className={`d-flex justify-content-between p-4 ${style.submit}`}
+              >
                 <input
                   type="text"
                   placeholder="發表文字...限50字"

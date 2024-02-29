@@ -17,9 +17,27 @@ export default function index() {
         </div>
       </section>
       <main>
-        <div className="container px-lg-5 d-flex justify-content-center">
+        <div
+          className={`${style.main_media} container px-lg-5 d-flex justify-content-center`}
+        >
           <div className={style.left_main}>
-            <h3 style={{ color: 'white' }}>最新文章</h3>
+            <div className="mb-4">
+              <form className="d-flex" role="search">
+                <button
+                  className={`btn btn-primary ${style.search_btn}`}
+                  type="submit"
+                >
+                  <FaSearch />
+                </button>
+                <input
+                  className={`form-control ${style.search_form}`}
+                  type="search"
+                  placeholder="搜尋文章"
+                  aria-label="Search"
+                />
+              </form>
+            </div>
+            <h3 className={`text-white ${style.h3}`}>最新文章</h3>
             <div className={style.swtich}>
               <li>冒險類</li>
               <li>動作類</li>
@@ -96,22 +114,7 @@ export default function index() {
             </div>
           </div>
           <div className={style.right_main}>
-            <div className="mb-4">
-              <form className="d-flex" role="search">
-                <button className={`btn btn-primary ${style.search_btn}`} type="submit">
-                  <FaSearch />
-                </button>
-                <input
-                  className={`form-control ${style.search_form}`}
-                  type="search"
-                  placeholder="搜尋文章"
-                  aria-label="Search"
-                />
-              </form>
-            </div>
-            <h3 className="mb-3" style={{ color: 'white' }}>
-              熱門標籤
-            </h3>
+            <h3 className={`text-white mb-3 ${style.h3}`}>熱門標籤</h3>
             <div className={style.tag}>
               <a
                 href="list.html"
@@ -144,9 +147,7 @@ export default function index() {
                 #集英社
               </a>
             </div>
-            <h3 className="mt-4" style={{ color: 'white' }}>
-              熱門話題
-            </h3>
+            <h3 className={`text-white mt-4 ${style.h3}`}>熱門話題</h3>
             <div className={style.hot_main}>
               <div className={style.hot_main_img}>
                 <a href="article_main.html">
@@ -203,7 +204,7 @@ export default function index() {
         </div>
       </main>
       <section>
-        <div className="container px-5  ">
+        <div className={`container px-5 ${style.more_main}`}>
           <h5 className="mt-5 " style={{ color: 'white' }}>
             查看更多...
           </h5>

@@ -52,6 +52,8 @@
   .txt {
     width: 100%;
     box-sizing: border-box;
+    letter-spacing: 3px;
+
     h4 {
       margin: 0;
     }
@@ -64,18 +66,40 @@
   }
 }
 
-// @media screen and (max-width: 430px) {
-//     .main{
-//         margin-inline: 20px !important;
-//     }
-//     .tag_link{
-//         padding-inline: 0 !important;
-//     }
-// }
-
 @media screen and (max-width: 431px) {
   .main {
-    padding-inline: 20px ;
+    padding-inline: 20px;
   }
-  
+  .tag_link {
+    display: flex;
+    flex-direction: column;
+    .index_padding {
+      padding-bottom: 15px;
+    }
+  }
+  .li {
+    display: flex;
+    flex-direction: column;
+  }
+  .pic {
+    width: 100% !important;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  .txt {
+    // width: 50%;
+    margin: 0 !important;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    max-width: 300px;
+
+    h4 {
+      margin: 0;
+    }
+  }
 }
