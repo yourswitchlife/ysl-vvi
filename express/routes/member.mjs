@@ -1,7 +1,9 @@
 import express from 'express';
 const router = express.Router();
 import db from '../configs/db.js';
+
 import { generateHash, compareHash } from '../db-helpers/password-hash.js';
+import jwt from 'jsonwebtoken';
 
 router.post('/register', async function (req, res) {
   const { account, email } = req.body;
@@ -43,7 +45,6 @@ router.post('/register', async function (req, res) {
 
 
 // 登入路由
-// 登入路由
 router.post('/login', async function (req, res) {
   const { account, password } = req.body;
 
@@ -62,6 +63,16 @@ router.post('/login', async function (req, res) {
       }
 
       // 登入成功的處理
+      // 使用者帳號密碼正確，生成JWT
+      const userId = userResults[0].id; 
+      const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET || 'fallback_secret_key';
+      const token = jwt.sign({ userId }, accessTokenSecret, { expiresIn: '1h' });
+
+      res.cookie('accessToken', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // 建議僅在生產環境中啟用 Secure
+      });
+      
       res.status(200).send({ message: '登入成功' });
     } else {
       return res.status(401).send({ message: '使用者名稱或密碼不正確' });

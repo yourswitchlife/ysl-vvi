@@ -11,7 +11,7 @@ import { MdKey } from 'react-icons/md'
 import { Form, InputGroup, Button, FormControl } from 'react-bootstrap'
 
 export default function SignIn() {
-  const router = useRouter();
+  const router = useRouter()
   const [formData, setFormData] = useState({
     account: '',
     password: '',
@@ -32,10 +32,10 @@ export default function SignIn() {
   }
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!formData.account || !formData.password) {
-      setErrorMessage('所有欄位不得為空');
-      return;
+      setErrorMessage('所有欄位不得為空')
+      return
     }
 
     try {
@@ -53,12 +53,17 @@ export default function SignIn() {
       if (response.ok) {
         const data = await response.json()
         console.log('登入成功:', data)
-        router.push('/'); //這首頁
+
+        const token = data.token
+        AuthService.setToken(data.token)
+        console.log('登入成功:', data)
+
+        router.push('/') //這首頁
       } else {
         // 處理錯誤情況
         const errorData = await response.json()
         console.error('登入失敗:', errorData.message)
-        setErrorMessage(errorData.message);
+        setErrorMessage(errorData.message)
       }
     } catch (error) {
       console.error('登入請求失敗:', error)
@@ -120,7 +125,7 @@ export default function SignIn() {
                 />
               </Form.Group>
               <div className={sStyle.error + ' px-4'}>
-              {errorMessage && <h6>{errorMessage}</h6>}
+                {errorMessage && <h6>{errorMessage}</h6>}
               </div>
 
               <div
