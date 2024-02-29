@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import BreadCrumb from '@/components/common/breadcrumb'
 import Image from 'next/image'
 import { FaRegHeart, FaCartPlus, FaShoppingCart } from 'react-icons/fa'
-import ProductList from '@/components/products/product-list'
+import ProductCard from '@/components/products/product-card'
 import Link from 'next/link'
 import PLanguageBig from '@/components/products/p-language-big'
 import PRatingBig from '@/components/products/p-rating-big'
@@ -16,31 +17,82 @@ import PImgs from '@/components/products/p-imgs'
 import pImgDetail from '@/public/images/product/MonsterFarm-1.jpg'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import PHistory from '@/components/products/p-history'
+// import { Link,useParams } from 'react-router-dom'
 
 export default function ProductDetail() {
+  const router = useRouter()
+
+  const [product, setProduct] = useState({
+    id: '',
+    type_id: '',
+    name: '',
+    product_quanty: 0,
+    fav: '',
+    display_price: 0,
+    price: 0,
+    img_cover: '',
+    img_1: '',
+    img_2: '',
+    img_3: '',
+    release_time: '',
+    language: [],
+    rating_id: '3',
+    co_op_valid: '0',
+    description: '',
+    member_id: '',
+    valid: '',
+    launch_valid: '',
+    created_at: '',
+  })
   // let imgAry = [img2, img3, img3]
+  // useEffect(() => {
+  //   if (router.isReady) {
+  //     const { pid } = router.query
+  //     console.log(pid)
+  //     getProduct(pid)
+  //   }
+  // }, [])
 
   return (
     <>
       <Navbar />
       <PhoneTabNav />
-      
-      <div className={`d-lg-block d-none ${styles.pHistory}`}><PHistory /></div>
+
+      <div className={`d-lg-block d-none ${styles.pHistory}`}>
+        <PHistory />
+      </div>
 
       <div className="container mt-5 pt-4 px-lg-5 px-4">
-        <BreadCrumb/>
+        <BreadCrumb />
         <section className="p-detail-sec1 row mt-4">
           <div className="col-lg col pe-5-lg pe-2-lg">
             <PImgs />
           </div>
           <div className="col-lg-6 col-12 mt-lg-0 mt-3">
-            <h4 className="text-white mb-0">角落小夥伴 一起來玩節奏派對</h4>
+            <h4 className="text-white mb-0">{product.name}</h4>
             <p className={`${styles.pDiscount} bg-info p-1 mb-4 text-white`}>
               滿＄999免運
             </p>
             <div className="d-flex mt-4 align-items-center">
-              <h5 className="me-2 text-white mb-2 pt-2">數量 </h5>
-              <div>
+              <h5 className="me-3 text-white mb-2 pt-2">數量 </h5>
+              <div className={`${styles.counter} d-flex bg-light`}>
+                <button
+                  className={`btn btn-secondary ${styles.counterBtn}`}
+                  typeof="button"
+                >
+                  <b>-</b>
+                </button>
+                <div className='d-flex align-items-center'>
+                  <input type="text" className={styles.input} max="3" min="1" value={1} />
+                </div>
+                <button
+                  className={`btn btn-secondary ${styles.counterBtn}`}
+                  typeof="button"
+                >
+                  <b>+</b>
+                </button>
+              </div>
+              {/* <div>
                 <select
                   className="form-select form-select-sm"
                   aria-label="Large select example"
@@ -50,7 +102,7 @@ export default function ProductDetail() {
                   <option value="2">Two</option>
                   <option value="3">Three</option>
                 </select>
-              </div>
+              </div> */}
             </div>
 
             <hr className="text-white border-3" />
@@ -85,14 +137,20 @@ export default function ProductDetail() {
               </button>
             </div>
 
-            <div class={`row d-lg-none m-0 ${styles.btns}`}>
+            <div className={`row d-lg-none m-0 ${styles.btns}`}>
               <div typeof="button" className="col btn btn-info rounded-0 py-1">
                 <FaCartPlus className="text-light" /> <p>加入購物車</p>
               </div>
-              <div typeof="button" className="col btn btn-info rounded-0 py-1 border-top-0 border-bottom-0 border-black">
+              <div
+                typeof="button"
+                className="col btn btn-info rounded-0 py-1 border-top-0 border-bottom-0 border-black"
+              >
                 <FaRegHeart className="text-light" /> <p>加入追蹤</p>
               </div>
-              <div typeof="button" className="col-6 btn btn-danger rounded-0 py-1 d-flex align-items-center justify-content-center">
+              <div
+                typeof="button"
+                className="col-6 btn btn-danger rounded-0 py-1 d-flex align-items-center justify-content-center"
+              >
                 <FaShoppingCart className="text-light me-1" /> <h6>立即結帳</h6>
               </div>
             </div>
@@ -189,17 +247,17 @@ export default function ProductDetail() {
             <hr className="text-white border-3" />
             <h5 className="text-white mb-3">本店精選</h5>
             <div className={styles.wrap}>
-              <ProductList></ProductList>
-              <ProductList></ProductList>
+              <ProductCard></ProductCard>
+              <ProductCard></ProductCard>
             </div>
             <hr className="text-white border-3" />
 
             <h5 className="text-white mb-3">本分類熱銷</h5>
             <div className={styles.wrap}>
-              <ProductList></ProductList>
-              <ProductList></ProductList>
-              <ProductList></ProductList>
-              <ProductList></ProductList>
+              <ProductCard></ProductCard>
+              <ProductCard></ProductCard>
+              <ProductCard></ProductCard>
+              <ProductCard></ProductCard>
             </div>
             <Link
               href=""

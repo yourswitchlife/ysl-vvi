@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { FaRegHeart, FaHeart, FaCartPlus } from 'react-icons/fa'
-import styles from '../../styles/products/product-list.module.scss'
-import bookkIconFill from 'assets/bookmark-fill.svg'
-import bookkIcon from 'assets/bookmark.svg'
+import { FaCartPlus } from 'react-icons/fa'
+import styles from '../../styles/products/product-card.module.scss'
+import heartFill from 'assets/heart-fill.svg'
+import heratIcon from 'assets/heart-white.svg'
 
-export default function ProductList({
+export default function ProductCard({
   id,
   name,
   releaseTime,
@@ -100,10 +100,17 @@ export default function ProductList({
               </p>{' '}
             </div>
             <div>
-              <Image src={fav ? bookkIconFill : bookkIcon} alt="" onClick={()=>{handleToggleFav(id)}}/>
-            
+              <Image
+                src={fav ? heartFill : heratIcon}
+                className="me-2"
+                alt=""
+                onClick={() => {
+                  handleToggleFav(id)
+                }}
+              />
+
               <FaCartPlus
-                className={`text-light ${styles.Chover}`}
+                className={`text-light h5 ${styles.Chover}`}
                 onClick={() => {}}
               />
             </div>
