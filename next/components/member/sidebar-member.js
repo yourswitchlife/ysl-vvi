@@ -32,13 +32,13 @@ export default function SideBar() {
           </div>
           
           <div className={Style.line}></div>
-          <div className={Style.member_link}><Link href='' className={Style.member_link}><FaUser className="me-3" />我的帳戶</Link></div>
-          <div className={Style.member_link}><Link href='' className={Style.member_link}><FaBell className="me-3" />通知中心</Link></div>
-          <div className={Style.member_link}><Link href='' className={Style.member_link}><SiLevelsdotfyi className="me-3" />會員積分</Link></div>
+          <div className={Style.member_link}><Link href='/member/account' className={Style.member_link}><FaUser className="me-3" />我的帳戶</Link></div>
+          <div className={Style.member_link}><Link href='/member/notify-order' className={Style.member_link}><FaBell className="me-3" />通知中心</Link></div>
+          <div className={Style.member_link}><Link href='/member/points' className={Style.member_link}><SiLevelsdotfyi className="me-3" />會員積分</Link></div>
           <div className={Style.member_link}><Link href='' className={Style.member_link}><FaGamepad className="me-3" />我的任務</Link></div>
-          <div className={Style.member_link}><Link href='' className={Style.member_link}><FaListAlt className="me-3" />我的訂單</Link></div>
-          <div className={Style.member_link}><Link href='' className={Style.member_link}><FaHeart className="me-3" />我的收藏</Link></div>
-          <div className={Style.member_link}><Link href='' className={Style.member_link}><RiCoupon3Fill className="me-3" />我的優惠</Link></div>
+          <div className={Style.member_link}><Link href='/member/order' className={Style.member_link}><FaListAlt className="me-3" />我的訂單</Link></div>
+          <div className={Style.member_link}><Link href='/member/fav-product' className={Style.member_link}><FaHeart className="me-3" />我的收藏</Link></div>
+          <div className={Style.member_link}><Link href='/member/coupon-product' className={Style.member_link}><RiCoupon3Fill className="me-3" />我的優惠</Link></div>
           <div className='mt-3'></div>
 
           <div className={Style.line}></div>
