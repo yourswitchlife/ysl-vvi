@@ -1,9 +1,9 @@
 import React from 'react'
 import { useState } from 'react'
-import styles from './order-list.module.scss'
+import styles from '../order-list.module.scss'
 import { FaAngleRight } from 'react-icons/fa'
 // 選擇優惠券元件
-import SelectCouponModal from '../coupon-modal/select-coupon-modal'
+import SelectCouponModal from '../../../coupon-modal/select-coupon-modal'
 
 export default function UseCoupon() {
   const [show, setShow] = useState(false)

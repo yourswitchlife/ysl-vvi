@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import styles from './orders-detail.module.scss'
+import styles from '../orders-detail.module.scss'
 import { FaCircleQuestion, FaPlus, FaAngleRight } from 'react-icons/fa6'
 import Form from 'react-bootstrap/Form'
 import Image from 'next/image'

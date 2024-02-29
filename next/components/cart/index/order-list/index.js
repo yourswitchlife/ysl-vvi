@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 // 引用優惠券選擇區
-import UseCoupon from './use-coupon'
+import UseCoupon from './order/use-coupon'
 
 // 引用星星優惠券
 import CouponStar from '@/public/images/cart/couponStar.svg'

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import styles from './order-list.module.scss'
+import styles from '../order-list.module.scss'
 import CartProduct from './product-card'
 import { FaShopify, FaTrashAlt, FaRegEdit } from 'react-icons/fa'
 import { FaCheck } from 'react-icons/fa6'

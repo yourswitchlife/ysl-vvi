@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import styles from './order-list.module.scss'
+import styles from '../order-list.module.scss'
 import { FaPlus, FaMinus, FaHeart, FaRegHeart } from 'react-icons/fa'
 import { IoClose } from 'react-icons/io5'
 import Link from 'next/link'

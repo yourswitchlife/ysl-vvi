@@ -10,7 +10,7 @@ import OrderCheckout from './order-checkout'
 import Image from 'next/image'
 import Link from 'next/link'
 // 選擇優惠券元件
-import SelectCouponModal from '../coupon-modal/select-coupon-modal'
+import SelectCouponModal from '../../coupon-modal/select-coupon-modal'
 
 // 優惠券星星圖
 import couponStar from '@/public/images/cart/couponStar.svg'

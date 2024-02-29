@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './orders-detail.module.scss'
+import styles from '../orders-detail.module.scss'
 import ProductCheckout from './product-checkout'
 import DeliveryCheckout from './delivery-checkout'
 import { FaShopify } from 'react-icons/fa'

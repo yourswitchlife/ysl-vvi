@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './orders-detail.module.scss'
+import styles from '../orders-detail.module.scss'
 import Link from 'next/link'
 import Image from 'next/image'
 
