@@ -1,0 +1,64 @@
+@import '@/styles/valuable.scss';
+
+//size
+.iconsmall {
+    width: 12px;
+  }
+
+//offcanvas
+.offcanvas {
+    background-color: $dark-gray;
+    color: $white;
+  }
+  // .closeButton{
+  //     color: $white !important; // 使用 !important 確保覆蓋預設樣式
+  // }
+  .offcanvasBtn {
+    color: $white;
+    background-color: transparent;
+    border: 1px solid $white;
+    border-radius: 50rem;
+    height: 41px;
+    &:hover {
+      background-color: $gray;
+      color: $white;
+      border: 1px solid $white;
+    }
+    &:active {
+      background-color: $gray !important;
+      color: $white;
+      border: 1px solid $white !important;
+    }
+    &:focus {
+      background-color: $gray !important;
+      color: $white;
+      border: 1px solid $white !important;
+    }
+  }
+
+  //toggle sort
+.togglebtn {
+    color: $white;
+    border: none;
+    width: 85%;
+    border-radius: 0;
+    border-bottom: 1px solid $gray;
+    padding: 15px;
+    &:hover {
+      border-bottom: 1px solid $white;
+    }
+  }
+  .selectBtn {
+    width: 100%;
+    margin-top: 50px;
+  }
+@media screen and (max-width: 431px){
+    .offcanvasBtn {
+        background-color: $gray;
+        color: $white;
+        border: none;
+        border-radius: 50rem;
+        height: 25px;
+      }
+}
+  
