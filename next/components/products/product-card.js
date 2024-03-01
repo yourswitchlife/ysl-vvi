@@ -4,6 +4,8 @@ import { FaCartPlus } from 'react-icons/fa'
 import styles from '../../styles/products/product-card.module.scss'
 import heartFill from 'assets/heart-fill.svg'
 import heratIcon from 'assets/heart-white.svg'
+import { FaShop } from 'react-icons/fa6'
+
 
 export default function ProductCard({
   id,
@@ -147,7 +149,7 @@ export default function ProductCard({
           >
             {name}
           </h6>
-          <p className="text-white">{memberIdChange(memberId)}</p>
+          <p className="text-light"><FaShop className="me-1 mb-1"/>{memberIdChange(memberId)}</p>
           <p className="text-white">發行日期 {releaseTime}</p>
           <div className="price d-flex justify-content-between mt-1 align-items-center">
             <h6>

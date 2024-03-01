@@ -118,7 +118,7 @@ export default function Products() {
               return (
                 
                 <div  key={p.id} className="col">
-                <Link href={`/products/${p.id}`}>
+                <Link href={`/products/${p.id}`} className={styles.link}>
                   <ProductCard
                     className="p-5"
                     id={p.id}
