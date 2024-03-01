@@ -35,16 +35,16 @@ export default function FavProduct() {
             }
           >
             <div className={fpStyle.page_check}>
-              <Link href="" className={fpStyle.pagep_btn}>
+              <Link href="/member/fav-product" className={fpStyle.pagep_btn}>
                 商品
               </Link>
               <h3 className={pStyle.gray_text}>|</h3>
-              <Link href="" className={fpStyle.pages_btn}>
+              <Link href="/member/fav-shop" className={fpStyle.pages_btn}>
                 <span></span>賣場
               </Link>
             </div>
             <div className=" container d-flex justify-content-end pt-3 pe-5">
-              <Dropdown className="ps-3 pb-2">
+              <Dropdown className="me-3 pb-2">
                 <Dropdown.Toggle
                   variant="secondary"
                   id="ranking"
