@@ -1,9 +1,10 @@
 import express from 'express';
 const router = express.Router();
 import db from '../configs/db.js';
-
+import authenticate from '../middlewares/authenticate-cookie.js';
 import { generateHash, compareHash } from '../db-helpers/password-hash.js';
-import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken'
+
 
 router.post('/register', async function (req, res) {
   const { account, email } = req.body;
@@ -50,30 +51,48 @@ router.post('/login', async function (req, res) {
 
   try {
     // 檢查使用者是否存在
-    const userQuery = 'SELECT * FROM member WHERE account = ?';
-    const [userResults] = await db.execute(userQuery, [account]);
+    const memberQuery = 'SELECT * FROM member WHERE account = ?';
+    const [memberResults] = await db.execute(memberQuery, [account]);
 
-    if (userResults.length > 0) {
-      const dbPassword = userResults[0].password;
+    if (memberResults.length > 0) {
+      const dbPassword = memberResults[0].password;
       const passwordCompare = await compareHash(password, dbPassword);
-      // console.log('passwordCompare:', passwordCompare);
 
       if (!passwordCompare) {
         return res.status(401).send({ message: '使用者名稱或密碼不正確' });
       }
+      //member資料表
+      const memberData = {
+        id: memberResults[0].id,
+        otp: memberResults[0].otp,
+        google_uid: memberResults[0].google_uid,
+        name: memberResults[0].name,
+        account: memberResults[0].account,
+        phone: memberResults[0].phone,
+        email: memberResults[0].email,
+        address: memberResults[0].address,
+        birthday: memberResults[0].birthday,
+        birthday_month: memberResults[0].birthday_month,
+        gender: memberResults[0].gender,
+        pic: memberResults[0].pic,
+        level_point: memberResults[0].level_point,
+        shop_name: memberResults[0].shop_name,
+        shop_site: memberResults[0].shop_site,
+        shop_cover: memberResults[0].shop_cover,
+        shop_info: memberResults[0].shop_info,
+        shop_valid: memberResults[0].shop_valid,
+        created_at: memberResults[0].created_at,
+        // 
+      };
 
-      // 登入成功的處理
-      // 使用者帳號密碼正確，生成JWT
-      const userId = userResults[0].id; 
-      const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET || 'fallback_secret_key';
-      const token = jwt.sign({ userId }, accessTokenSecret, { expiresIn: '1h' });
+      const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+      const token = jwt.sign(memberData, accessTokenSecret, { expiresIn: '1h' });
 
-      res.cookie('accessToken', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // 建議僅在生產環境中啟用 Secure
-      });
-      
+      // 將JWT存放在HTTP標頭的Authorization中
+      res.header('Authorization', `Bearer ${token}`);
+
       res.status(200).send({ message: '登入成功' });
+
     } else {
       return res.status(401).send({ message: '使用者名稱或密碼不正確' });
     }
@@ -85,9 +104,21 @@ router.post('/login', async function (req, res) {
 });
 
 
+
 // 登出路由
 router.post('/logout', function (req, res) {
   // 登出邏輯...
 });
+
+// 檢查會員狀態(登入or not) 
+router.get('/auth-status', authenticate, (req, res) => {
+  if (req.memberData) {
+    res.json({ isLoggedIn: true, memberData: req.memberData });
+  } else {
+    res.json({ isLoggedIn: false });
+  }
+});
+
+
 
 export default router;

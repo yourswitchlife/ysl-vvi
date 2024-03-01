@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
+import mainCheckLogin from '@/context/member/mainCheckLogin'
 
 import Navbar from '@/components/layout/navbar/navbar'
 import sStyle from '@/styles/member/sign-in.module.scss'
@@ -10,8 +11,9 @@ import { FaUser, FaEnvelope } from 'react-icons/fa'
 import { MdKey } from 'react-icons/md'
 import { Form, InputGroup, Button, FormControl } from 'react-bootstrap'
 
-export default function SignIn() {
+export default function logIn() {
   const router = useRouter()
+
   const [formData, setFormData] = useState({
     account: '',
     password: '',
@@ -51,14 +53,18 @@ export default function SignIn() {
       })
 
       if (response.ok) {
-        const data = await response.json()
-        console.log('登入成功:', data)
+        const getHeader = response.headers.get('Authorization');
+        
+  
+        if (getHeader) {
+          const token = getHeader.replace('Bearer ', '');
+          
+          document.cookie = `token=${token}; max-age=3600; path=/`;
+          
+          console.log('登入成功:');
 
-        const token = data.token
-        AuthService.setToken(data.token)
-        console.log('登入成功:', data)
-
-        router.push('/') //這首頁
+          router.push('/'); 
+        }
       } else {
         // 處理錯誤情況
         const errorData = await response.json()
@@ -77,10 +83,16 @@ export default function SignIn() {
         <div className="d-flex justify-content-center align-items-center vh-100">
           <div className={sStyle.sign_body}>
             <div className="d-flex">
-              <Link href="" className={sStyle.in_togglebtn + ' flex-grow-1'}>
+              <Link
+                href="/member/login"
+                className={sStyle.in_togglebtn + ' flex-grow-1'}
+              >
                 登入
               </Link>
-              <Link href="" className={sStyle.up_togglebtn + ' flex-grow-1'}>
+              <Link
+                href="/member/register"
+                className={sStyle.up_togglebtn + ' flex-grow-1'}
+              >
                 註冊
               </Link>
             </div>
@@ -157,3 +169,8 @@ export default function SignIn() {
     </>
   )
 }
+
+export async function getServerSideProps(context) {
+  return await mainCheckLogin(context)
+}
+
