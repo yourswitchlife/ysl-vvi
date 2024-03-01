@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-import app from '../app';
+import app from '../app.js';
 // 使用debug模組讀取環境變量DEBUG來決定是否輸出調試信息
 import debugLib from 'debug';
 const debug = debugLib('node-express-es6:server')
@@ -87,7 +87,7 @@ function onError(error) {
    onListening()用於當服務器開始監聽時，打印一條消息到控制台
  */
 
-function onListening() {
+/* function onListening() {
   var addr = server.address();
 //如果server.address()傳回的addr是字串，表示伺服器正在監聽一個命名管道（pipe），此時訊息將會是：「Listening on pipe {管道名稱}」。
 // 反之，如果server.address()傳回的addr是Object對象，通常表示伺服器監聽的是一個網頁連接埠（port），此時訊息將是：「Listening on port {連接埠號}」。
@@ -95,4 +95,20 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+} */
+
+function onListening() {
+  var addr = server.address();
+  var bind;
+
+  // 如果 server.address() 傳回的 addr 是字串，表示伺服器正在監聽一個命名管道（pipe）
+  if (typeof addr === 'string') {
+    console.log('Listening on pipe ' + addr);
+  } else {
+    // 如果 server.address() 傳回的 addr 是 Object 對象，通常表示伺服器監聽的是一個網頁連接埠（port）
+    bind = 'http://localhost:' + addr.port;
+    console.log('Listening on ' + bind);
+  }
+
+  debug('express api Listening on ' + bind); 
 }

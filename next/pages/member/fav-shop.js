@@ -31,11 +31,11 @@ export default function FavShop() {
             }
           >
             <div className={fpStyle.page_check + ' pt-5'}>
-              <Link href="" className={fsStyle.pagep_btn}>
+              <Link href="/member/fav-product" className={fsStyle.pagep_btn}>
                 <span></span>商品
               </Link>
               <h3 className={pStyle.gray_text}>|</h3>
-              <Link href="" className={fsStyle.pages_btn}>
+              <Link href="/member/fav-shop" className={fsStyle.pages_btn}>
                 賣場
               </Link>
             </div>
