@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import PRating from '@/components/products/p-rating'
 import { FaRegHeart, FaHeart, FaCartPlus } from 'react-icons/fa'
@@ -12,12 +12,8 @@ export default function ProductList({
   cover,
   type,
 }) {
-  const GameTypeSwitcher = ({type}) => {
-    const [gameType, setGameType] = useState(type)
-    useEffect (()=>{
-      GameTypeChange(type)
-    }, [])
-
+  const GameTypeSwitcher = () => {
+    const [gameType, setGameType] = useState('')
     const GameTypeChange = (v) => {
       let type = ''
       switch (v) {
@@ -49,10 +45,10 @@ export default function ProductList({
           type = 'FTG'
           break
       }
-      setGameType(type)
     }
-    // setGameType(type)
+    setGameType(type)
   }
+
   return (
     <>
       <div className={styles.card}>
@@ -73,7 +69,7 @@ export default function ProductList({
           <div className="d-flex justify-content-between">
             <div className="pb-0 p-2 pt-1 border border-danger border-bottom-0 rounded-end-3 rounded-bottom-0">
               <p className="text-danger">
-                <b>{gameType}</b>
+                <b>{type}</b>
               </p>{' '}
             </div>
             <div>
