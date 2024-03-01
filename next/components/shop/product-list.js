@@ -5,13 +5,13 @@ import { FaRegHeart, FaHeart, FaCartPlus } from 'react-icons/fa'
 import styles from '../../styles/products/product-list.module.scss'
 
 export default function ProductList({
-  name,
-  releaseTime,
-  displayPrice,
-  price,
-  cover,
-  type,
-  memberId,
+  name = "",
+  releaseTime = "",
+  displayPrice = 0,
+  price = 0,
+  cover = "",
+  type = 0,
+  memberId = 0,
 }) {
   const GameTypeSwitcher = () => {
     const [gameType, setGameType] = useState('')
@@ -46,8 +46,9 @@ export default function ProductList({
           type = 'FTG'
           break
       }
+      setGameType(type)
     }
-    setGameType(type)
+    
   }
 
   return (
@@ -89,7 +90,7 @@ export default function ProductList({
           </h6>
           <p className="text-white">{memberId}</p>
           <p className="text-white">發行日期 {releaseTime}</p>
-          <div class="price d-flex justify-content-between mt-1">
+          <div className="price d-flex justify-content-between mt-1">
             <h6>
               <b className="text-danger">NT ${price}</b>{' '}
             </h6>
