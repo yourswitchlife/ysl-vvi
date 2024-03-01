@@ -12,7 +12,7 @@ import styles from '../../styles/products/products.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
 import Navbar from '@/components/layout/navbar/navbar'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
-import data from '@/data/product.json'
+// import data from '@/data/product.json'
 
 export default function Products() {
   
@@ -42,11 +42,32 @@ export default function Products() {
   //   },
   // ]
   // console.log(products)
-  const initState = data.map((p) => {
+  const [products, setProducts] = useState([])
+
+  const getProducts = async () => {
+    try{
+      const res = await fetch ('http://localhost:3005/api/products/list')
+      const data = await res.json()
+      console.log(data)
+
+      if(Array.isArray(data)){
+        setProducts(data)
+      }
+    }catch (e){
+      console.error(e)
+    }
+  }
+  useEffect(()=>{
+    getProducts()
+  },[])
+
+  const initState = products.map((p) => {
     return { ...p, fav: false }
-  })
-  const [products, setProducts] = useState(initState)
-  // console.log(initState)
+  }
+  )
+  
+  // const [products, setProducts] = useState(initState)
+  console.log(initState)
   const handleToggleFav = (id) => {
     const newProducts = products.map((p) => {
       if (p.id === id) return { ...p, fav: !p.fav }
@@ -97,19 +118,22 @@ export default function Products() {
               return (
                 
                 <div  key={p.id} className="col">
+                <Link href={`/products/${p.id}`}>
                   <ProductCard
                     className="p-5"
                     id={p.id}
                     name={p.name}
                     price={p.price}
                     displayPrice={p.display_price}
-                    releaseTime={p.release_time}
+                    releaseTime={p.release_time.split('T')[0]}
                     cover={p.img_cover}
                     type={p.type_id}
                     ratingId={p.rating_id}
                     fav={p.fav}
                     handleToggleFav={handleToggleFav}
+                    memberId={p.member_id}
                   />
+                  </Link>
                 </div>
               )
             })}

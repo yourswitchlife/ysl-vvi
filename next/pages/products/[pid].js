@@ -22,36 +22,74 @@ import PHistory from '@/components/products/p-history'
 export default function ProductDetail() {
   const router = useRouter()
 
+  // id: '',
+  // type_id: '',
+  // name: '',
+  // product_quanty: 0,
+  // fav: '',
+  // display_price: 0,
+  // price: 0,
+  // img_cover: '',
+  // img_1: '',
+  // img_2: '',
+  // img_3: '',
+  // release_time: '',
+  // language: [],
+  // rating_id: '3',
+  // co_op_valid: '0',
+  // description: '',
+  // member_id: '',
+  // valid: '',
+  // launch_valid: '',
+  // created_at: '',
+  
   const [product, setProduct] = useState({
     id: '',
-    type_id: '',
-    name: '',
-    product_quanty: 0,
-    fav: '',
-    display_price: 0,
-    price: 0,
-    img_cover: '',
-    img_1: '',
-    img_2: '',
-    img_3: '',
-    release_time: '',
-    language: [],
-    rating_id: '3',
-    co_op_valid: '0',
-    description: '',
-    member_id: '',
-    valid: '',
-    launch_valid: '',
-    created_at: '',
+  type_id: '',
+  name: '',
+  product_quanty: "0",
+  fav: '',
+  display_price: "",
+  price: "",
+  img_cover: '',
+  img_1: '',
+  img_2: '',
+  img_3: '',
+  release_time: '',
+  language: [],
+  rating_id: '3',
+  co_op_valid: '0',
+  description: '',
+  member_id: '',
+  valid: '',
+  launch_valid: '',
+  created_at: '',
   })
+  const [ben,setBen]=useState(false)
+
+  // const [product, setProduct] = useState([])
+  const getProduct = async (pid) => {
+    try{
+      const res = await fetch (`http://localhost:3005/api/products/${pid}`)
+      const data = await res.json()
+      // console.log(data[0])
+
+      if(data[0].name){
+        setProduct(data[0])
+      }
+    }catch (e){
+      console.error(e)
+    }
+  }
+
+  useEffect(() => {
+    if(router.isReady){
+      const {pid}=router.query
+      getProduct(pid)
+    }
+  },[router.isReady])
   // let imgAry = [img2, img3, img3]
-  // useEffect(() => {
-  //   if (router.isReady) {
-  //     const { pid } = router.query
-  //     console.log(pid)
-  //     getProduct(pid)
-  //   }
-  // }, [])
+ 
 
   return (
     <>
@@ -82,8 +120,14 @@ export default function ProductDetail() {
                 >
                   <b>-</b>
                 </button>
-                <div className='d-flex align-items-center'>
-                  <input type="text" className={styles.input} max="3" min="1" value={1} />
+                <div className="d-flex align-items-center">
+                  <input
+                    type="text"
+                    className={styles.input}
+                    max="3"
+                    min="1"
+                    value={1}
+                  />
                 </div>
                 <button
                   className={`btn btn-secondary ${styles.counterBtn}`}
@@ -109,21 +153,18 @@ export default function ProductDetail() {
             <div className="d-flex justify-content-between align-items-end">
               <h5 className="text-white-50">
                 促銷價{' '}
-                <span className="text-decoration-line-through">NT$1000</span>
+                <span className="text-decoration-line-through">NT$ {product.display_price}</span>
               </h5>
               <h5 className="text-white">
                 折扣價NT
                 <span className="h3 text-danger">
-                  <b> $990</b>
+                  <b> $ {product.price}</b>
                 </span>
               </h5>
             </div>
             <hr className="text-white border-3" />
             <h5 className="text-white pb-lg-4 mb-lg-5 pb-0 mb-0 mt-4">
-              「角落小夥伴」是以「喜歡縮在牆角來享受安全感」
-              這樣有些害羞內向且獨具個性的角色設定及故事，而廣受來自各種族群的支持及喜愛。
-              本作品《角落小夥伴
-              大家的節奏派對》，藉此讓玩家們享受風格迥異的音樂跟充滿趣味的影像等要素的節奏遊戲。
+              {product.description}
             </h5>
             <div className="d-lg-flex d-none justify-content-evenly">
               <button type="button" className="btn btn-info">
@@ -137,7 +178,7 @@ export default function ProductDetail() {
               </button>
             </div>
 
-            <div className={`row d-lg-none m-0 ${styles.btns}`}>
+            <div className={`row d-lg-none m-0 ${styles.btns} ${ben?"active":""}`} onClick={()=>{setBen(true)}}>
               <div typeof="button" className="col btn btn-info rounded-0 py-1">
                 <FaCartPlus className="text-light" /> <p>加入購物車</p>
               </div>

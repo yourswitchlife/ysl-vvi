@@ -14,6 +14,7 @@ export default function ProductCard({
   cover,
   type,
   ratingId,
+  memberId,
   fav,
   handleToggleFav,
 }) {
@@ -76,6 +77,31 @@ export default function ProductCard({
     return type
   }
 
+  const memberIdChange = (v) => {
+    let memberId =''
+    switch (Number(v)) {
+      case 1:
+        memberId = '玩具熊的小窩'
+        break
+        case 2:
+        memberId = '煞氣欸路易吉'
+        break
+        case 3:
+        memberId = '碧姬公主的玩具城堡'
+        break
+        case 4:
+        memberId = '栗寶寶好物站'
+        break
+        case 5:
+        memberId = '庫巴很酷吧'
+        break
+        case 6:
+        memberId = '紅色死神的遊戲收藏'
+        break
+      }
+      return memberId
+  }
+
   // const HeartIcon = fav === '0' ? FaRegHeart : FaHeart
   return (
     <>
@@ -121,7 +147,7 @@ export default function ProductCard({
           >
             {name}
           </h6>
-          <p className="text-white">member_id</p>
+          <p className="text-white">{memberIdChange(memberId)}</p>
           <p className="text-white">發行日期 {releaseTime}</p>
           <div className="price d-flex justify-content-between mt-1 align-items-center">
             <h6>
