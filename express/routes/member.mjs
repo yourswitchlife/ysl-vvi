@@ -61,33 +61,13 @@ router.post('/login', async function (req, res) {
       if (!passwordCompare) {
         return res.status(401).send({ message: '使用者名稱或密碼不正確' });
       }
-      //member資料表
-      const memberData = {
-        id: memberResults[0].id,
-        otp: memberResults[0].otp,
-        google_uid: memberResults[0].google_uid,
-        name: memberResults[0].name,
-        account: memberResults[0].account,
-        phone: memberResults[0].phone,
-        email: memberResults[0].email,
-        address: memberResults[0].address,
-        birthday: memberResults[0].birthday,
-        birthday_month: memberResults[0].birthday_month,
-        gender: memberResults[0].gender,
-        pic: memberResults[0].pic,
-        level_point: memberResults[0].level_point,
-        shop_name: memberResults[0].shop_name,
-        shop_site: memberResults[0].shop_site,
-        shop_cover: memberResults[0].shop_cover,
-        shop_info: memberResults[0].shop_info,
-        shop_valid: memberResults[0].shop_valid,
-        created_at: memberResults[0].created_at,
-        // 
-      };
+      //member ID
+       const memberId = memberResults[0].id;
 
-      const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
-      const token = jwt.sign(memberData, accessTokenSecret, { expiresIn: '1h' });
+       const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 
+       const token = jwt.sign({ id: memberId }, accessTokenSecret, { expiresIn: '3h' });
+      // 過期後的做法待做
       // 將JWT存放在HTTP標頭的Authorization中
       res.header('Authorization', `Bearer ${token}`);
 
@@ -118,9 +98,36 @@ router.post('/logout', function (req, res) {
 // 檢查會員狀態(登入or not) 
 router.get('/auth-status', authenticate, (req, res) => {
   if (req.memberData) {
-    res.json({ isLoggedIn: true, memberData: req.memberData });
+    const memberId = req.memberData.id;
+    res.json({ isLoggedIn: true, memberId: memberId });
+    
   } else {
     res.json({ isLoggedIn: false });
+  }
+});
+
+
+// 查詢並更新會員資料
+router.get('/info/:id', async (req, res) => {
+  const memberId = req.params.id;
+
+  // 使用 MySQL 查詢會員資料
+  const query = `SELECT * FROM member WHERE id = ?`;
+
+  try {
+    const [results] = await db.execute(query, [memberId]);
+
+    if (results.length > 0) {
+      // 如果找到資料，返回給前端
+      res.status(200).json({ memberData: results[0] });
+    } else {
+      // 如果找不到資料，返回錯誤訊息
+      res.status(404).json({ error: 'Member not found.' });
+    }
+  } catch (error) {
+    // 錯誤處理
+    console.error('Error fetching member data:', error);
+    res.status(500).json({ error: 'Internal server error.' });
   }
 });
 

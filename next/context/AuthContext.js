@@ -9,17 +9,15 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [loginStatus, setLoginStatus] = useState({
+  const [authState, setAuthState] = useState({
     isLoggedIn: false,
-    memberData: null,
+    memberId: null,
+    memberData: null, // 新增狀態來儲存會員詳細信息
   });
   const router = useRouter();
 
   useEffect(() => {
-    const token = document.cookie.replace(
-      /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
-      '$1'
-    );
+    const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1');
 
     if (token) {
       fetch('http://localhost:3005/api/member/auth-status', {
@@ -31,32 +29,59 @@ export const AuthProvider = ({ children }) => {
         credentials: 'include',
       })
         .then((response) => response.json())
-        .then((data) => {
+        .then(async (data) => {
           if (data.isLoggedIn) {
-            setLoginStatus({ isLoggedIn: true, memberData: data.memberData });
+            const memberId = data.memberId;
+            // console.log('Updated MemberId:', memberId);
+            const memberData = await fetchMemberData(memberId, token);
+            console.log('Updated Member Data:', memberData);authState
+            setAuthState({
+              isLoggedIn: true,
+              memberId: memberId,
+              memberData: memberData, // 更新會員資料
+            });
           } else {
-            setLoginStatus({ isLoggedIn: false, memberData: null });
-            // 這裡就不寫跳轉路由了 因為有的人需要條件式渲染 請自行在自己的前端FETCH裡撰寫
-            // router.push('/member/login');
+            setAuthState({ isLoggedIn: false, memberId: null, memberData: null });
           }
         })
         .catch((error) => {
-          console.error('fetching member data錯誤', error);
+          console.error('Fetching member data error:', error);
         });
     }
   }, [router]);
 
-  return (
-    <AuthContext.Provider value={loginStatus}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>;
 };
+
+
+const fetchMemberData = async (memberId, token) => {
+  try {
+    const response = await fetch(`http://localhost:3005/api/member/info/${memberId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      credentials: 'include',
+    });
+    if (!response.ok) {
+      throw new Error('response不是2XX');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching member data:', error);
+    return null;
+  }
+};
+
+
+
 
 
 //已經導入全站content
 //在任何組件中都可以使用useAuth這個Hook了來獲得兩個東西
-//1.登入與否的布林值 及 
+//1.登入與否的布林值 及
 //2.有登入的話該會員的member資料表所有欄位資料(沒登入的話是空值)。
 //舉例使用方式可以參考navbar我改好的範例
 

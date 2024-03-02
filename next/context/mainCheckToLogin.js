@@ -1,4 +1,4 @@
-export default async function mainCheckLogin(context) {
+export default async function mainCheckToLogin(context) {
   const res = await fetch('http://localhost:3005/api/member/auth-status', {
     credentials: 'include',
     headers: {
@@ -9,24 +9,13 @@ export default async function mainCheckLogin(context) {
   const data = await res.json();
   // console.log(data);
 
-/*   if (!data.isLoggedIn) {
+  if (!data.isLoggedIn) {
     return {
       redirect: {
         destination: '/member/login',
         permanent: false,
       },
     };
-  }我這裡沒要用 */
-
-  if (data.isLoggedIn) {
-    if (context.req.url === '/member/login' || context.req.url === '/member/register') {
-      return {
-        redirect: {
-          destination: '/',
-          permanent: false,
-        },
-      };
-    }
   }
 
   return {

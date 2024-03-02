@@ -63,8 +63,7 @@ export default function register() {
           // 處理成功的情況
           const data = await response.json();
           // console.log('註冊成功:', data);
-          // 進行前端路由跳轉到登入
-          router.push('/member/login');
+          router.push('/');
           
         } else {
           // 處理錯誤情況
