@@ -22,26 +22,26 @@ export default function ProductCard({
 }) {
   const ratingStyle = (v) => {
     let ratingId = '',
-      className = ''
+    bgc = ''
     switch (Number(v)) {
       case 1:
         ratingId = '0'
-        className = 'pRating0'
+        bgc = '#65d432'
         break
       case 2:
         ratingId = '6'
-        className = 'pRating6'
+        bgc = '#07a2f0'
         break
       case 3:
         ratingId = '12'
-        className = 'pRating12'
+        bgc = '#ffca00'
         break
       case 4:
         ratingId = '18'
-        className = 'pRating18'
+        bgc = '#ff0000'
         break
     }
-    return { ratingId, className }
+    return { ratingId, bgc }
   }
   const rs = ratingStyle(ratingId)
 
@@ -158,7 +158,9 @@ export default function ProductCard({
             <p className="text-white-50 text-decoration-line-through">
               NT ${displayPrice}
             </p>
-            <div className={styles[`${rs.className}`]}>{rs.ratingId}⁺</div>
+            {/* <div className={styles[`${rs.className}`]}>{rs.ratingId}⁺</div> */}
+            <div style={{ width: "22px",height: "22px",borderRadius: "5px",fontSize: "13px",textAlign: "center",
+  fontWeight: "700",lineHeight: "22px",color: "black",backgroundColor: rs.bgc}}>{rs.ratingId}⁺</div>
           </div>
         </div>
       </div>

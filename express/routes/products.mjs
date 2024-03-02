@@ -31,7 +31,6 @@ router.get('/:pid', async (req, res) => {
       pid,
     ])
     // console.log(result)
-    // && result.id === parseInt(pid) 這句要再想想
     if (result) {
       res.json(result)
       // return true

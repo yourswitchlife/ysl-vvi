@@ -16,5 +16,8 @@
       },
       "emmet.syntaxProfiles": {
         "javascript": "jsx"
+      },
+      "[javascript]": {
+        "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
       }
 }
