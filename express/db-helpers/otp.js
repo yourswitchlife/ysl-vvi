@@ -3,7 +3,7 @@ import { generateToken } from '#configs/otp.js'
 
 // 資料庫使用
 import { QueryTypes } from 'sequelize'
-import sequelize from '#configs/db.js'
+import sequelize from '##/configs/db.mjs'
 const { User, Otp } = sequelize.models
 
 // 判斷token是否到期, true代表到期

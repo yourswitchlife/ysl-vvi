@@ -10,7 +10,7 @@
       "#middlewares/*": ["./middlewares/*"],
       "#services/*": ["./services/*"],
       "#utils/*": ["./utils/*"]
-    },
+    }
   },
   "exclude": ["node_modules"]
 }
