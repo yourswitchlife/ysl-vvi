@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import React, { useState } from 'react';
+
 import styles from '@/components/layout/navbar/navbar.module.scss'
 import yslLogoSm from '@/public/images/logo/logo-sm.svg'
 import yslLogoXs from '@/public/images/logo/logo-xs.svg'
@@ -8,12 +9,17 @@ import Image from 'next/image'
 import Link from 'next/link'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 import { FaHeart, FaShoppingCart, FaBell, FaStore } from 'react-icons/fa'
+import Dropdown from 'react-bootstrap/Dropdown';
 import BurgerMenu from './burgermenu'
-//hooks
-import checkLogin from '@/hooks/checkLogin'
+//登出邏輯
+import handleLogout from '@/services/logout';
+//context hooks
+import { useAuth } from '@/context/AuthContext';
+
 
 export default function Navbar() {
-  const { isLoggedIn, memberData } = checkLogin()
+  const { isLoggedIn, memberData } = useAuth();
+  const [isHovered, setIsHovered] = useState(false);
   return (
     <>
       <div className="d-none d-lg-block">
@@ -41,49 +47,65 @@ export default function Navbar() {
           {isLoggedIn ? (
             // 登入後顯示
             <div className="d-flex align-items-center">
-              <Link href="" className={styles.loginIcon}>
+              <Link href="/member/fav-product" className={styles.loginIcon}>
                 <FaHeart />
               </Link>
               <Link href="" className={styles.loginIcon}>
                 <FaShoppingCart />
               </Link>
-              <Link href="" className={styles.loginIcon}>
+              <Link href="/member/notify-order" className={styles.loginIcon}>
                 <FaBell />
               </Link>
-              <Link href="" className={styles.loginIconEnd}>
+              <Link href="/" className={styles.loginIconEnd}>
                 <FaStore />
               </Link>
             </div>
           ) : (
             // 未登入時顯示
-            <div className="d-none">
-              <Link href="" className={styles.link}>
+            <div>
+              <Link href="/member/login" className={styles.link}>
                 登入
               </Link>
               <span className={styles.unlogin}>|</span>
-              <Link href="" className={styles.link}>
+              <Link href="/member/register" className={styles.link}>
                 註冊
               </Link>
             </div>
           )}
 
           <div
-            className={styles.circleCut}
             style={{ display: isLoggedIn && memberData ? 'block' : 'none' }}
           >
             {isLoggedIn ? (
-              <Link href="/member/account">
-                <Image
-                  src={memberData.pic || profilePhoto}
-                  alt="Member Avatar"
-                  width="100%"
-                  height="100%"
-                  style={{
-                    objectFit: 'cover',
-                    objectPosition: 'center center',
-                  }}
-                />
-              </Link>
+              <Dropdown >
+                <Dropdown.Toggle className={`${styles.member_drop} ${isHovered ? 'hover_toggle' : ''}`} variant="black" id="dropdown-basic">
+                  <div className={styles.circleCut}>
+                    <Image
+                      src={memberData.pic || profilePhoto}
+                      alt="Member Avatar"
+                      width="100%"
+                      height="100%"
+                      style={{
+                        objectFit: 'cover',
+                        objectPosition: 'center center',
+                      }}
+                    />
+                  </div>
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}>
+                  <Link style={{ textDecoration: 'none' }} href="/member/points" passHref>
+                    <Dropdown.Item as="a">會員專區</Dropdown.Item>
+                  </Link>
+                  <Dropdown.Item as="button" onClick={handleLogout} className={styles.logoutButton}>
+                    登出
+                  </Dropdown.Item>
+
+                </Dropdown.Menu>
+              </Dropdown>
+
+
             ) : null}
           </div>
         </header>

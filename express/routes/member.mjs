@@ -107,8 +107,13 @@ router.post('/login', async function (req, res) {
 
 // 登出路由
 router.post('/logout', function (req, res) {
-  // 登出邏輯...
+  res.cookie('token', '', { expires: new Date(0) });
+
+  // 如果您是依賴客戶端來刪除令牌（例如存儲在localStorage），則可以僅返回一個登出成功的訊息
+  res.status(200).send({ message: '登出成功' });
 });
+
+
 
 // 檢查會員狀態(登入or not) 
 router.get('/auth-status', authenticate, (req, res) => {

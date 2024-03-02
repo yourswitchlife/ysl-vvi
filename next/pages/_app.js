@@ -3,6 +3,8 @@ import { useEffect } from 'react'
 import '@/styles/globals.scss'
 
 import DefaultLayout from '@/components/layout/default-layout'
+//身分驗證
+import { AuthProvider } from '@/context/AuthContext'; 
 
 export default function MyApp({ Component, pageProps }) {
   // 導入bootstrap的JS函式庫
@@ -15,5 +17,12 @@ export default function MyApp({ Component, pageProps }) {
   const getLayout =
     Component.getLayout || ((page) => <DefaultLayout>{page}</DefaultLayout>)
 
-  return getLayout(<Component {...pageProps} />)
+  // 我把AuthProvider放在最外面 所有應用都能用
+  return (
+    <AuthProvider>
+      {getLayout(<Component {...pageProps} />)}
+    </AuthProvider>
+  );
 }
+
+

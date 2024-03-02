@@ -14,19 +14,21 @@ export default function authenticate(req, res, next) {
 
   // if no token
   if (!token) {
-    return res.json({
+    /* return res.json({
       status: 'error',
       message: '授權失敗，沒有存取令牌',
-    })
+    }) */
+    return next();
   }
 
   // verify的callback會帶有decoded payload(解密後的有效資料)，就是user的資料
   jsonwebtoken.verify(token, accessTokenSecret, (err, user) => {
     if (err) {
-      return res.json({
+      /* return res.json({
         status: 'error',
         message: '不合法的存取令牌',
-      })
+      }) */
+      return next();
     }
 
     // 將user資料加到req中
