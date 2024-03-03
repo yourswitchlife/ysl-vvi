@@ -31,6 +31,11 @@
     text-underline-offset: 5px;
   }
 }
+.link{
+  text-decoration: none ;
+  // color: black;
+}
+
 
 @media (max-width: 576px) {
   .guessLike {

@@ -6,7 +6,6 @@ import styles from '@/styles/products/product-detail.module.scss'
 import img1 from '@/public/images/product/HOPSTEPDANCE.jpg'
 import img2 from '@/public/images/product/MonsterFarm-1.jpg'
 import img3 from '@/public/images/product/MonsterFarm-1.jpg'
-import img4 from '@/public/images/product/MonsterFarm-1.jpg'
 
 export default function PImgs() {
   let imgAry = [img1, img2, img3, img3]
@@ -17,8 +16,14 @@ export default function PImgs() {
     <>
       <div className="container">
         <div className="row d-flex justify-content-center align-items-center mb-2">
-          <div className={`col-1 prev text-white d-flex justify-content-center align-items-center ${styles.ImgBtnhover}`}>
-            <FaAngleLeft />
+          <div
+            className={`col-1 prev text-white d-flex justify-content-center align-items-center ${styles.ImgBtnhover}`}
+          >
+            <FaAngleLeft
+              onClick={(e) => {
+                console.log("123")
+              }}
+            />
           </div>
           <div className="col-10">
             <div className={styles.h450px}>
@@ -28,14 +33,15 @@ export default function PImgs() {
                 // width={450}
                 // height={250}
                 priority={true}
-                className={styles.objFit}
+                className={`cover ${styles.objFit}`}
                 // layout="intrinsic"
               />
             </div>
-         
           </div>
-          <div className={`col-1 next text-white d-flex justify-content-center align-items-center ${styles.ImgBtnhover}`}>
-            <FaAngleRight />
+          <div
+            className={`col-1 next text-white d-flex justify-content-center align-items-center ${styles.ImgBtnhover}`}
+          >
+            <FaAngleRight onClick={() => {}} />
           </div>
         </div>
         <div className="row align-items-center py-2">
@@ -48,7 +54,6 @@ export default function PImgs() {
                 height={100}
                 priority={true}
                 className={styles.objFitC}
-
               />
             </div>
           </div>
