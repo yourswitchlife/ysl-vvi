@@ -1,0 +1,111 @@
+@import '../valuable.scss';
+
+.card {
+  margin: 0 auto;
+  background-color: $primary-black;
+  width: 190px;
+  height: 385px;
+  &:hover {
+    background-color: rgb(51, 51, 51);
+  }
+  .card-body {
+    border-radius: 0 0 5px 5px;
+  }
+}
+.textEllipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.Chover {
+  &:hover {
+    color: rgb(60, 200, 255) !important;
+  }
+}
+
+.pLanguageBig {
+  border: 1px solid $danger;
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  h5 {
+    color: $danger;
+    text-align: center;
+    line-height: 35px;
+  }
+}
+// .rating0{
+//   background-color: rgb(101, 212, 50);
+// }
+// .rating6{
+//   background-color: rgb(7, 162, 240);
+// }
+// .rating12{
+//   background-color: rgb(255, 202, 0);
+// }
+// .rating15{
+//   background-color: rgb(252, 137, 29);
+// }
+// .rating18{
+//   background-color: rgb(255, 0, 0);
+// }
+.pRating0{
+  background-color: rgb(101, 212, 50);
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 700;
+  line-height: 22px;
+  color: black;
+}
+.pRating6{
+  background-color: rgb(7, 162, 240);
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 700;
+  line-height: 22px;
+  color: black;
+}
+.pRating12 {
+  background-color: rgb(255, 202, 0);
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 700;
+  line-height: 22px;
+  color: black;
+}
+
+.pRating18 {
+  background-color: rgb(255, 0, 0);
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 700;
+  line-height: 22px;
+  color: black;
+}
+
+
+
+.pRatingBig {
+  background-color: $yellow;
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  h5 {
+    color: $primary-black;
+    text-align: center;
+    line-height: 35px;
+  }
+}
