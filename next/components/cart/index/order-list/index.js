@@ -3,6 +3,9 @@ import Order from './order'
 import Image from 'next/image'
 import Link from 'next/link'
 
+// 引入use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
+
 // 引用優惠券選擇區
 import UseCoupon from './order/use-coupon'
 
@@ -12,6 +15,7 @@ import CouponStar from '@/public/images/cart/couponStar.svg'
 import coupon from '@/public/images/cart/coupon.svg'
 
 export default function OrderList() {
+  const {cartItems, handleAllCheckboxChange} = useCart()
   return (
     <>
       <section className="container">
@@ -19,12 +23,15 @@ export default function OrderList() {
         <div className="bg-white py-3 px-4 rounded-4 mb-5">
           <div className="row mb-3">
             <div className="col">
+            {/* 選擇全部 */}
               <div className={`form-check ${styles.selectAllBar}`}>
                 <input
                   className={`form-check-input me-3 ${styles.checkBox}`}
                   type="checkbox"
-                  value=""
                   id="selectAll"
+                  value={cartItems}
+                  checked={(cartItems.every((item)=> item.userSelect === true)) ? true : false}
+                  onChange={()=>{handleAllCheckboxChange(cartItems)}}
                 />
                 <label className="form-check-label fs-5" htmlFor="selectAll">
                   選擇全部
@@ -35,7 +42,6 @@ export default function OrderList() {
           <div className="row gx-0">
             <div className={`col-8 ${styles.orderListBar}`}>
               {/* 單一賣場訂單 */}
-              <Order />
               <Order />
             </div>
             {/* 電腦版訂單總覽 */}
@@ -76,11 +82,11 @@ export default function OrderList() {
                       <div className={styles.totalText}>訂單總金額</div>
                       <div className={styles.totalPrice}>$1920</div>
                     </div>
-                    <div className={styles.payBtnBar}>
+                    <Link href="/cart/checkout" className={styles.payBtnBar}>
                       <button className={`btn btn-danger ${styles.btnPay}`}>
-                        <span>去買單</span>
+                        去買單
                       </button>
-                    </div>
+                    </Link>
                   </div>
                 </div>
               </div>

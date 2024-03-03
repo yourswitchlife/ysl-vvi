@@ -125,6 +125,7 @@ export default function Products() {
                     name={p.name}
                     price={p.price}
                     displayPrice={p.display_price}
+                    productQuanty={p.product_quanty}
                     releaseTime={p.release_time.split('T')[0]}
                     cover={p.img_cover}
                     type={p.type_id}

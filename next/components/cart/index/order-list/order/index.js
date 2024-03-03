@@ -42,7 +42,6 @@ export default function Order() {
         </div>
         <div className={styles.pContainer}>
           <CartProduct isEditing={isEditing} />
-          <CartProduct isEditing={isEditing} />
         </div>
       </div>
     </>

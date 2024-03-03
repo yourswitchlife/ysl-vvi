@@ -6,6 +6,8 @@ import heartFill from 'assets/heart-fill.svg'
 import heratIcon from 'assets/heart-white.svg'
 import { FaShop } from 'react-icons/fa6'
 
+// 引入use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
 
 export default function ProductCard({
   id,
@@ -13,6 +15,7 @@ export default function ProductCard({
   releaseTime,
   displayPrice,
   price,
+  productQuanty,
   cover,
   type,
   ratingId,
@@ -104,6 +107,10 @@ export default function ProductCard({
       return memberId
   }
 
+  const {cartItems, addItem, notifySuccess} = useCart()
+
+  console.log(cartItems)
+
   // const HeartIcon = fav === '0' ? FaRegHeart : FaHeart
   return (
     <>
@@ -136,10 +143,24 @@ export default function ProductCard({
                   handleToggleFav(id)
                 }}
               />
-
+              {/* 加入購物車 */}
               <FaCartPlus
                 className={`text-light h5 ${styles.Chover}`}
-                onClick={() => {}}
+                onClick={() => {
+                  addItem({
+                  name,
+                  releaseTime,
+                  displayPrice,
+                  price,
+                  cover,
+                  type,
+                  id,
+                  memberId,
+                  fav,
+                  productQuanty
+                })
+                notifySuccess()
+                }}
               />
             </div>
           </div>

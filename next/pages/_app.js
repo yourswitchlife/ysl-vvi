@@ -4,6 +4,9 @@ import '@/styles/globals.scss'
 
 import DefaultLayout from '@/components/layout/default-layout'
 
+// 導入購物車Provider
+import { CartProvider } from '@/hooks/use-cart'
+
 export default function MyApp({ Component, pageProps }) {
   // 導入bootstrap的JS函式庫
   useEffect(() => {
@@ -15,5 +18,10 @@ export default function MyApp({ Component, pageProps }) {
   const getLayout =
     Component.getLayout || ((page) => <DefaultLayout>{page}</DefaultLayout>)
 
-  return getLayout(<Component {...pageProps} />)
+  return (
+    <CartProvider>
+      getLayout(
+      <Component {...pageProps} />)
+    </CartProvider>
+  )
 }
