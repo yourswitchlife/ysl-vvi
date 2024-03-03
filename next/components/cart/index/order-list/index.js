@@ -15,7 +15,7 @@ import CouponStar from '@/public/images/cart/couponStar.svg'
 import coupon from '@/public/images/cart/coupon.svg'
 
 export default function OrderList() {
-  const {cartItems, handleAllCheckboxChange} = useCart()
+  const { cartItems, handleAllCheckboxChange } = useCart()
   return (
     <>
       <section className="container">
@@ -23,15 +23,21 @@ export default function OrderList() {
         <div className="bg-white py-3 px-4 rounded-4 mb-5">
           <div className="row mb-3">
             <div className="col">
-            {/* 選擇全部 */}
+              {/* 選擇全部 */}
               <div className={`form-check ${styles.selectAllBar}`}>
                 <input
                   className={`form-check-input me-3 ${styles.checkBox}`}
                   type="checkbox"
                   id="selectAll"
                   value={cartItems}
-                  checked={(cartItems.every((item)=> item.userSelect === true)) ? true : false}
-                  onChange={()=>{handleAllCheckboxChange(cartItems)}}
+                  checked={
+                    cartItems.every((item) => item.userSelect === true)
+                      ? true
+                      : false
+                  }
+                  onChange={() => {
+                    handleAllCheckboxChange(cartItems)
+                  }}
                 />
                 <label className="form-check-label fs-5" htmlFor="selectAll">
                   選擇全部
@@ -58,11 +64,11 @@ export default function OrderList() {
                       <div className={styles.summaryItemLine}></div>
                       <div className={styles.summaryItemPrice}>$1920</div>
                     </div>
-                    <div className={styles.summaryItem}>
+                    {/* <div className={styles.summaryItem}>
                       <div className={styles.summaryItemLabel}>運費總計</div>
                       <div className={styles.summaryItemLine}></div>
                       <div className={styles.summaryItemPrice}>$120</div>
-                    </div>
+                    </div> */}
                     <div className={styles.summaryItem}>
                       <div className={styles.summaryItemLabel}>商品折抵</div>
                       <div className={styles.summaryItemLine}></div>
@@ -70,13 +76,13 @@ export default function OrderList() {
                         $200
                       </div>
                     </div>
-                    <div className={styles.summaryItem}>
+                    {/* <div className={styles.summaryItem}>
                       <div className={styles.summaryItemLabel}>運費折抵</div>
                       <div className={styles.summaryItemLine}></div>
                       <div className={`text-danger ${styles.summaryItemPrice}`}>
                         $60
                       </div>
-                    </div>
+                    </div> */}
                     <UseCoupon />
                     <div className={styles.summeryTotal}>
                       <div className={styles.totalText}>訂單總金額</div>

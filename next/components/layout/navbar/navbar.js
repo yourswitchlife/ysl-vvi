@@ -10,81 +10,86 @@ import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 import { FaHeart, FaShoppingCart, FaBell, FaStore } from 'react-icons/fa'
 import BurgerMenu from './burgermenu'
 
-export default function Navbar() {
+// 引入use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
 
+export default function Navbar() {
+  const {totalProducts} = useCart()
   return (
     <>
-    <div className='d-none d-lg-block'>
-      <header
-        className={styles.navbar}
-      >
-        <div // logo
-        >
-          <Link href="/index.js">
-            <Image src={yslLogoSm} alt="ysl-logo" />
-          </Link>
-        </div>
-        <div className={styles.links}>
-          <Link href="" className={styles.linkPr}>
-            商品專區
-          </Link>
-          <Link href="" className={styles.linkPr}>
-            優惠報報
-          </Link>
-          <Link href="" className={styles.link}>
-            最新攻略
-          </Link>
-        </div>
-        <div className="">
-          <SearchBar />
-        </div>
-        {/* 未登入時顯示 */}
-        <div className="d-none">
-          <Link href="" className={styles.link}>
-            登入
-          </Link>
-          <span className={styles.unlogin}>|</span>
-          <Link href="" className={styles.link}>
-            註冊
-          </Link>
-        </div>
-        {/* 登入後顯示 */}
-        <div className="d-flex align-items-center">
-          <Link href="" className={styles.loginIcon}>
-            <FaHeart />
-          </Link>
-          <Link href="" className={styles.loginIcon}>
-            <FaShoppingCart />
-          </Link>
-          <Link href="" className={styles.loginIcon}>
-            <FaBell />
-          </Link>
-          <Link href="" className={styles.loginIconEnd}>
-            <FaStore />
-          </Link>
-        </div>
-        <div className={styles.circleCut}>
-          <Link href="">
-            <Image src={profilePhoto} alt="profile-photo" />
-          </Link>
-        </div>
-      </header>
+      <div className="d-none d-lg-block">
+        <header className={styles.navbar}>
+          <div // logo
+          >
+            <Link href="/index.js">
+              <Image src={yslLogoSm} alt="ysl-logo" />
+            </Link>
+          </div>
+          <div className={styles.links}>
+            <Link href="" className={styles.linkPr}>
+              商品專區
+            </Link>
+            <Link href="" className={styles.linkPr}>
+              優惠報報
+            </Link>
+            <Link href="" className={styles.link}>
+              最新攻略
+            </Link>
+          </div>
+          <div className="">
+            <SearchBar />
+          </div>
+          {/* 未登入時顯示 */}
+          <div className="d-none">
+            <Link href="" className={styles.link}>
+              登入
+            </Link>
+            <span className={styles.unlogin}>|</span>
+            <Link href="" className={styles.link}>
+              註冊
+            </Link>
+          </div>
+          {/* 登入後顯示 */}
+          <div className="d-flex align-items-center">
+            <Link href="" className={styles.loginIcon}>
+              <FaHeart className={styles.icon} />
+            </Link>
+            <Link href="/cart" className={`${styles.loginIcon} position-relative`}>
+              <FaShoppingCart className={styles.icon} />
+              <span class="position-absolute top-0 start-99 translate-middle badge rounded-pill bg-danger">
+                {totalProducts}
+                <span className="visually-hidden">unread messages</span>
+              </span>
+            </Link>
+            <Link href="" className={styles.loginIcon}>
+              <FaBell className={styles.icon} />
+            </Link>
+            <Link href="" className={styles.loginIconEnd}>
+              <FaStore className={styles.icon} />
+            </Link>
+          </div>
+          <div className={styles.circleCut}>
+            <Link href="">
+              <Image src={profilePhoto} alt="profile-photo" />
+            </Link>
+          </div>
+        </header>
       </div>
       {/* RWD */}
-      <div className='d-flex flex-column d-lg-none'>
-      <header className={styles.navbarB}>
-        <div // logo
-        >
-          <Link href="/index.js">
-            <Image src={yslLogoXs} alt="ysl-logo" />
-          </Link>
-        </div>
-        
-        <div className="">
-          <SearchBarB />
-        </div>
-        <BurgerMenu />
-      </header>
+      <div className="d-flex flex-column d-lg-none">
+        <header className={styles.navbarB}>
+          <div // logo
+          >
+            <Link href="/index.js">
+              <Image src={yslLogoXs} alt="ysl-logo" />
+            </Link>
+          </div>
+
+          <div className="">
+            <SearchBarB />
+          </div>
+          <BurgerMenu />
+        </header>
       </div>
     </>
   )

@@ -47,6 +47,7 @@ export function CartProvider({ children }) {
   // 當cartItems變化，就保存到localStorage裡面
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems))
+    console.log(cartItems)
   }, [cartItems])
 
   // SweetAlert2
@@ -80,11 +81,43 @@ export function CartProvider({ children }) {
     })
   }
 
+
+  const notifyOrder = (id) => {
+    MySwal.fire({
+      title: '確定移除賣場所有商品嗎?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#E41E49',
+      cancelButtonColor: '#676767',
+      confirmButtonText: '確定',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDeleteOrder(id)
+        Swal.fire({
+          title: '刪除成功',
+          text: '賣場商品已從購物車中移除',
+          icon: 'success',
+        })
+      }
+    })
+  }
+
   const notifyOK = (productQuanty) => {
     MySwal.fire({
       text: `抱歉，此件商品最多只能買${productQuanty}件喔`,
       confirmButtonColor: '#E41E49',
     })
+  }
+
+  // 計算購物車總商品件數
+  const totalProducts = cartItems.length
+  console.log(totalProducts)
+
+
+  // 刪除整筆賣場訂單
+  const handleDeleteOrder = (id) => {
+    const filterItems = cartItems.filter((item) => item.memberId !== id)
+    setCartItems(filterItems)
   }
 
   // 選取全部checkbox
@@ -196,6 +229,8 @@ export function CartProvider({ children }) {
         handleAllCheckboxChange,
         notifySuccess,
         notifyAlert,
+        notifyOrder,
+        totalProducts,
       }}
     >
       {children}
