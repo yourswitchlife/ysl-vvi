@@ -9,7 +9,7 @@ import Hit from '@/components/seller/hit'
 import productList from '@/public/images/card/product-list.png'
 import SearchbarB from '@/components/seller/searchbar-b'
 import Pagination from '@/components/common/pagination'
-import ProductList from '@/components/products/product-list'
+import ProductList from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
 import SortDropdown from '@/components/common/sortDropdown'
 import Form from 'react-bootstrap/Form'
@@ -275,18 +275,18 @@ export default function Shop() {
             <Collapse in={openSort}>
               <div id="sort-collapse-text">
                 <div className="d-flex flex-column align-items-center pt-2">
-                {typeName.map((t) => {
-                  return (
-                    <div key={t.id}>
-                    <Form.Check // prettier-ignore
-                    type="checkbox"
-                    id={t.id}
-                    label={t.name}
-                    className="my-1"
-                  />
-                    </div>
-                  )
-                })}
+                  {typeName.map((t) => {
+                    return (
+                      <div key={t.id}>
+                        <Form.Check // prettier-ignore
+                          type="checkbox"
+                          id={t.id}
+                          label={t.name}
+                          className="my-1"
+                        />
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </Collapse>
@@ -304,18 +304,18 @@ export default function Shop() {
             <Collapse in={openRate}>
               <div id="rate-collapse-text">
                 <div className="d-flex flex-column align-items-center pt-2">
-                {ratings.map((r) => {
-                  return (
-                    <div key={r.id}>
-                    <Form.Check // prettier-ignore
-                    type="checkbox"
-                    id={r.id}
-                    label={r.name}
-                    className="my-1"
-                  />
-                    </div>
-                  )
-                })}
+                  {ratings.map((r) => {
+                    return (
+                      <div key={r.id}>
+                        <Form.Check // prettier-ignore
+                          type="checkbox"
+                          id={r.id}
+                          label={r.name}
+                          className="my-1"
+                        />
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </Collapse>

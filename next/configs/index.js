@@ -20,6 +20,8 @@ export const pathsLocaleMap = {
     'news':'新聞',
     'about': '關於我們',
     'product': '商品管理',
+    'products': '商品首頁',
+    'detail': '商品細節',
     'type': '分類',
     'list': '列表',
     'mobile': '手機',
@@ -33,4 +35,4 @@ export const pathsLocaleMap = {
     'order': '訂單管理',
     'new': '新增商品'
   }
-  /* eslint-enable */
+/* eslint-enable */

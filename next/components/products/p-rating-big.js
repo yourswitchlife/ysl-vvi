@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from '../../styles/products/product-list.module.scss'
+import styles from '../../styles/products/product-card.module.scss'
 
 export default function PRatingBig() {
   return (

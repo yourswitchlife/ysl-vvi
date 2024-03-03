@@ -1,53 +1,57 @@
 import express from 'express';
 const router = express.Router();
-import db from '../configs/db.js';
+import db from '../configs/db.mjs';
 import authenticate from '../middlewares/authenticate-cookie.js';
 import { generateHash, compareHash } from '../db-helpers/password-hash.js';
 import jwt from 'jsonwebtoken'
 
 
 router.post('/register', async function (req, res) {
-  const { account, email } = req.body;
-  let { password } = req.body;
-  const level_point = 0; // 預設積分
-  const shop_valid = 0; // 預設賣場沒上架
-  const created_at = new Date(); // 註冊時間
-
+  const { account, email } = req.body
+  let { password } = req.body
+  const level_point = 0 // 預設積分
+  const shop_valid = 0 // 預設賣場沒上架
+  const created_at = new Date() // 註冊時間
 
   try {
     // 檢查使用者名稱
-    const accountCheckQuery = 'SELECT * FROM member WHERE account = ?';
-    const [accountResults] = await db.execute(accountCheckQuery, [account]);
+    const accountCheckQuery = 'SELECT * FROM member WHERE account = ?'
+    const [accountResults] = await db.execute(accountCheckQuery, [account])
 
     if (accountResults.length > 0) {
-      return res.status(400).send({ message: '使用者名稱已經存在' });
+      return res.status(400).send({ message: '使用者名稱已經存在' })
     }
     // 檢查信箱
-    const emailCheckQuery = 'SELECT * FROM member WHERE email = ?';
-    const [emailResults] = await db.execute(emailCheckQuery, [email]);
+    const emailCheckQuery = 'SELECT * FROM member WHERE email = ?'
+    const [emailResults] = await db.execute(emailCheckQuery, [email])
 
     if (emailResults.length > 0) {
-      return res.status(400).send({ message: '信箱已經存在' });
+      return res.status(400).send({ message: '信箱已經存在' })
     }
     //
 
-    password = await generateHash(password); // hash加密密碼
+    password = await generateHash(password) // hash加密密碼
 
-    const Query = `INSERT INTO member (account, password, email, level_point, shop_valid, created_at) VALUES (?, ?, ?, ?, ?, ?)`;
-    await db.execute(Query, [account, password, email, level_point, shop_valid, created_at]);
+    const Query = `INSERT INTO member (account, password, email, level_point, shop_valid, created_at) VALUES (?, ?, ?, ?, ?, ?)`
+    await db.execute(Query, [
+      account,
+      password,
+      email,
+      level_point,
+      shop_valid,
+      created_at,
+    ])
 
-    res.status(201).send({ message: '會員註冊成功' });
-
+    res.status(201).send({ message: '會員註冊成功' })
   } catch (error) {
-    res.status(500).send({ message: '註冊失敗' });
-    console.error('數據庫相關錯誤:', error);
+    res.status(500).send({ message: '註冊失敗' })
+    console.error('數據庫相關錯誤:', error)
   }
-});
-
+})
 
 // 登入路由
 router.post('/login', async function (req, res) {
-  const { account, password } = req.body;
+  const { account, password } = req.body
 
   try {
     // 檢查使用者是否存在
@@ -59,7 +63,7 @@ router.post('/login', async function (req, res) {
       const passwordCompare = await compareHash(password, dbPassword);
 
       if (!passwordCompare) {
-        return res.status(401).send({ message: '使用者名稱或密碼不正確' });
+        return res.status(401).send({ message: '使用者名稱或密碼不正確' })
       }
       //member ID
        const memberId = memberResults[0].id;
@@ -74,12 +78,13 @@ router.post('/login', async function (req, res) {
       res.status(200).send({ message: '登入成功' });
 
     } else {
-      return res.status(401).send({ message: '使用者名稱或密碼不正確' });
+      return res.status(401).send({ message: '使用者名稱或密碼不正確' })
     }
-
   } catch (error) {
-    console.error('登入路由發生錯誤:', error);
-    res.status(500).send({ message: '登入失敗，內部伺服器錯誤', error: error.message });
+    console.error('登入路由發生錯誤:', error)
+    res
+      .status(500)
+      .send({ message: '登入失敗，內部伺服器錯誤', error: error.message })
   }
 });
 
@@ -89,7 +94,7 @@ router.post('/login', async function (req, res) {
 router.post('/logout', function (req, res) {
   res.cookie('token', '', { expires: new Date(0) });
 
-  // 如果您是依賴客戶端來刪除令牌（例如存儲在localStorage），則可以僅返回一個登出成功的訊息
+  
   res.status(200).send({ message: '登出成功' });
 });
 
@@ -133,4 +138,4 @@ router.get('/info/:id', async (req, res) => {
 
 
 
-export default router;
+export default router

@@ -1,5 +1,5 @@
 import React from 'react'
-import style from '@/styles/products/product-list.module.scss'
+import style from '@/styles/products/product-card.module.scss'
 
 export default function PLanguageBig() {
   return (
