@@ -119,7 +119,7 @@ router.get('/info/:id', async (req, res) => {
 
     if (results.length > 0) {
       // 如果找到資料，返回給前端
-      res.status(200).json({ memberData: results[0] });
+      res.status(200).json(results[0]);
     } else {
       // 如果找不到資料，返回錯誤訊息
       res.status(404).json({ error: 'Member not found.' });

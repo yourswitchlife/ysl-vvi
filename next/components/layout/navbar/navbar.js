@@ -16,6 +16,9 @@ import handleLogout from '@/services/logout';
 //context hooks
 import { useAuth } from '@/context/AuthContext';
 
+//我做完的組件 可以用到評論上 已套用會員等級框
+import NavPic from '@/hooks/nav-pic';
+
 
 export default function Navbar() {
   const { isLoggedIn, memberData } = useAuth();
@@ -79,18 +82,7 @@ export default function Navbar() {
             {isLoggedIn ? (
               <Dropdown >
                 <Dropdown.Toggle className={`${styles.member_drop} ${isHovered ? 'hover_toggle' : ''}`} variant="black" id="dropdown-basic">
-                  <div className={styles.circleCut}>
-                    <Image
-                      src={memberData.pic || profilePhoto}
-                      alt="Member Avatar"
-                      width="100%"
-                      height="100%"
-                      style={{
-                        objectFit: 'cover',
-                        objectPosition: 'center center',
-                      }}
-                    />
-                  </div>
+                  <NavPic />
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu onMouseEnter={() => setIsHovered(true)}

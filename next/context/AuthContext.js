@@ -34,7 +34,8 @@ export const AuthProvider = ({ children }) => {
             const memberId = data.memberId;
             // console.log('Updated MemberId:', memberId);
             const memberData = await fetchMemberData(memberId, token);
-            console.log('Updated Member Data:', memberData);authState
+            // console.log('Updated Member Data:', memberData); 
+            
             setAuthState({
               isLoggedIn: true,
               memberId: memberId,
