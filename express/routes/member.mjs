@@ -66,15 +66,15 @@ router.post('/login', async function (req, res) {
         return res.status(401).send({ message: '使用者名稱或密碼不正確' })
       }
       //member ID
-       const memberId = memberResults[0].id;
+      const memberId = memberResults[0].id;
 
-       const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+      const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 
-       const token = jwt.sign({ id: memberId }, accessTokenSecret, { expiresIn: '3h' });
+      const token = jwt.sign({ id: memberId }, accessTokenSecret, { expiresIn: '3h' });
       // 過期後的做法待做
       // 將JWT存放在HTTP標頭的Authorization中
-      res.header('Authorization', `Bearer ${token}`);
-
+      // res.header('Authorization', `Bearer ${token}`);
+      res.cookie('token', token, { httpOnly: true })
       res.status(200).send({ message: '登入成功' });
 
     } else {
@@ -89,12 +89,68 @@ router.post('/login', async function (req, res) {
 });
 
 
+// google登入路由
+router.post('/google-login', async function (req, res) {
+  const { uid, email, displayName, photoURL } = req.body;
+
+  const google_uid = uid;
+  const account = displayName;
+  const pic = photoURL;
+  const level_point = 0; // 預設積分
+  const shop_valid = 0; // 預設店沒上架
+  const created_at = new Date();
+
+  try {
+    // 使用google_uid来检查用户是否已存在
+    const gmCheckQuery = 'SELECT * FROM member WHERE google_uid = ?';
+    const [gmResults] = await db.execute(gmCheckQuery, [google_uid]);
+
+    let memberId;
+
+    if (gmResults.length > 0) {
+      // 已用GOOGLE登入過
+      memberId = gmResults[0].id;
+    } else {
+      // 沒 先註冊再登入
+      const creategmQuery = `INSERT INTO member (account, email, google_uid, pic, level_point, shop_valid, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+      const [createResult] = await db.execute(creategmQuery, [
+        account,
+        email,
+        google_uid,
+        pic,
+        level_point,
+        shop_valid,
+        created_at,
+      ]);
+      memberId = createResult.insertId;
+    }
+
+    const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+    const token = jwt.sign({ id: memberId }, accessTokenSecret, { expiresIn: '3h' });
+
+    // res.header('Authorization', `Bearer ${token}`);
+    res.cookie('token', token, { httpOnly: true })
+    return res.json({
+      status: 'success',
+      data: {
+        token,
+      },
+    })
+
+  } catch (error) {
+    console.error('GOOGLELOGIN ERROR:', error);
+    res.status(500).send({ message: 'GOOGLELOGIN ERROR', error: error.message });
+  }
+});
+
+
+
 
 // 登出路由
 router.post('/logout', function (req, res) {
   res.cookie('token', '', { expires: new Date(0) });
 
-  
+
   res.status(200).send({ message: '登出成功' });
 });
 
@@ -105,7 +161,7 @@ router.get('/auth-status', authenticate, (req, res) => {
   if (req.memberData) {
     const memberId = req.memberData.id;
     res.json({ isLoggedIn: true, memberId: memberId });
-    
+
   } else {
     res.json({ isLoggedIn: false });
   }

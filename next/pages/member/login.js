@@ -6,13 +6,21 @@ import Navbar from '@/components/layout/navbar/navbar'
 import sStyle from '@/styles/member/sign-in.module.scss'
 import Link from 'next/link'
 
+//google api
+import { signInWithRedirect } from "firebase/auth";
+import { auth, googleAuthProvider } from '@/utils/firebaseConfig';
 import { FcGoogle } from 'react-icons/fc'
+
 import { FaUser, FaEnvelope } from 'react-icons/fa'
 import { MdKey } from 'react-icons/md'
 import { Form, InputGroup, Button, FormControl } from 'react-bootstrap'
 
 export default function logIn() {
   const router = useRouter()
+
+  const handleGoogleLogin = () => {
+    signInWithRedirect(auth, googleAuthProvider);
+  };
 
   const [formData, setFormData] = useState({
     account: '',
@@ -50,21 +58,22 @@ export default function logIn() {
           account: formData.account,
           password: formData.password,
         }),
+        credentials: 'include',
       })
 
       if (response.ok) {
-        const getHeader = response.headers.get('Authorization');
+        // const getHeader = response.headers.get('Authorization');
         
   
-        if (getHeader) {
-          const token = getHeader.replace('Bearer ', '');
+        // if (getHeader) {
+          // const token = getHeader.replace('Bearer ', '');
           
-          document.cookie = `token=${token}; max-age=3600; path=/`;
+          // document.cookie = `token=${token}; max-age=3600; path=/`;
           
           console.log('登入成功:');
 
           router.push('/'); 
-        }
+        // }
       } else {
         // 處理錯誤情況
         const errorData = await response.json()
@@ -150,7 +159,7 @@ export default function logIn() {
                   開始探索
                 </Button>
                 <Button
-                  className={sStyle.sign_btn + ' h5 d-flex align-items-center'}
+                  className={sStyle.sign_btn + ' h5 d-flex align-items-center'} onClick={handleGoogleLogin}
                 >
                   <FcGoogle className="me-2" />
                   以Google帳號登入

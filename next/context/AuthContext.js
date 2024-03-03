@@ -3,7 +3,15 @@
 // context/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+//google api
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import firebaseConfig from '@/utils/firebaseConfig';
 
+//Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+//context
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
@@ -12,19 +20,41 @@ export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState({
     isLoggedIn: false,
     memberId: null,
-    memberData: null, // 新增狀態來儲存會員詳細信息
+    memberData: null,
+    gmember: null, 
   });
   const router = useRouter();
 
   useEffect(() => {
-    const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1');
 
-    if (token) {
+    // 有無Firebase
+    // const unsubscribe = onAuthStateChanged(auth, (user) => {
+    //   if (user) {
+    //     // 使用Firebase UID来获取会员数据
+    //     fetchMemberData(user.uid)
+    //       .then(memberData => {
+    //         setAuthState(prevState => ({
+    //           ...prevState,
+    //           isLoggedIn: true,
+    //           gmember: user, // 直接使用Firebase用户对象
+    //           memberData: memberData, // 从后端获取的会员详细信息
+    //         }));
+    //       })
+    //       .catch(error => {
+    //         console.error('Error fetching member data with Firebase UID:', error);
+    //       });
+    //   }
+    // });
+
+    //原TOKEN
+    /* const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1'); */
+
+    // if (token) {
       fetch('http://localhost:3005/api/member/auth-status', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
         },
         credentials: 'include',
       })
@@ -32,9 +62,9 @@ export const AuthProvider = ({ children }) => {
         .then(async (data) => {
           if (data.isLoggedIn) {
             const memberId = data.memberId;
-            // console.log('Updated MemberId:', memberId);
-            const memberData = await fetchMemberData(memberId, token);
-            // console.log('Updated Member Data:', memberData); 
+            console.log('Updated MemberId:', memberId);
+            const memberData = await fetchMemberData(memberId);
+            console.log('Updated Member Data:', memberData); 
             
             setAuthState({
               isLoggedIn: true,
@@ -48,20 +78,22 @@ export const AuthProvider = ({ children }) => {
         .catch((error) => {
           console.error('Fetching member data error:', error);
         });
-    }
+    // }
+
+    // return () => unsubscribe();//結束監聽
   }, [router]);
 
   return <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>;
 };
 
 
-const fetchMemberData = async (memberId, token) => {
+const fetchMemberData = async (memberId) => {
   try {
     const response = await fetch(`http://localhost:3005/api/member/info/${memberId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        // Authorization: `Bearer ${token}`,
       },
       credentials: 'include',
     });
