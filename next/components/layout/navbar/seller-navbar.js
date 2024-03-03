@@ -85,14 +85,14 @@ export default function SellerNavbar() {
       <header className={styles.navbarB}>
         <div // logo
         >
-          <Link href="/index.js">
+          <Link href="/">
             <Image src={yslLogoXs} alt="" />
           </Link>
         </div>
         <div className="">
           <h5 className='mb-0'>我的賣場</h5>
         </div>
-        <Link href="/index.js" className="text-white ps-5">
+        <Link href="/" className="text-white ps-5">
           <FaSearch />
         </Link>
       </header>

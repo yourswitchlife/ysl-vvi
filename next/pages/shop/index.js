@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react'
 import Navbar from '@/components/layout/navbar/navbar'
+import BreadCrumb from '@/components/common/breadcrumb'
 import Cover from '@/components/seller/cover'
 import Image from 'next/image'
 import profileImg from '@/public/images/profile-photo/peach.png'
-import Sortbar from '@/components/seller/sortbar'
-import Coupon from '@/components/seller/coupon'
-import Hit from '@/components/seller/hit'
-import productList from '@/public/images/card/product-list.png'
-import SearchbarB from '@/components/seller/searchbar-b'
+import Sortbar from '@/components/shop/sortbar'
+import Coupon from '@/components/shop/coupon'
+import SearchbarB from '@/components/shop/searchbar-b'
 import Pagination from '@/components/common/pagination'
-import ProductList from '@/components/products/product-card'
+import ProductCard from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
 import SortDropdown from '@/components/common/sortDropdown'
 import Form from 'react-bootstrap/Form'
@@ -42,24 +41,61 @@ export default function Shop() {
     }
   }, [])
 
-  // console.log(products)
-
-
-  //offcanvas const
+  //offcanvas的展示狀態
   const [show, setShow] = useState(false)
-
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
 
-  //toggle
+  //toggle的展示狀態
   const [openSort, setOpenSort] = useState(false)
   const [openRate, setOpenRate] = useState(false)
 
-  //賣場商品
-  const [shopProducts, setShopProducts] = useState(products)
+  //賣場商品狀態
+  const initState = products.map((p) => {
+    return { ...p, fav: false }
+  }
+  )
+  const [shopProducts, setShopProducts] = useState(initState)
   // console.log(shopProducts)
   const shopitems = shopProducts.filter(s => s.member_id === "3")
   // console.log(shopitems)
+  const totalProducts = shopitems.length
+  // console.log(totalProducts)
+  //處理我的最愛
+  const handleToggleFav = (id) => {
+    const newProducts = shopProducts.map((p) => {
+      if (p.id === id) return { ...p, fav: !p.fav }
+      else return p
+    })
+    setShopProducts(newProducts)
+  }
+  //商品總數量
+
+  //Hit 展示隨機五項商品
+  const [hit, setHit] = useState([])
+  const getRandomHit = (items, num) => {
+    // 先shuffle副本
+    const shuffled = [...items].sort(() => 0.5 - Math.random())
+    // 返回前num筆資料
+    return shuffled.slice(0, num)
+  }
+  const randomItems = getRandomHit(shopitems, 5)
+  // setHit(randomItems)
+  // console.log(randomItems)
+  useEffect(() => {
+    setHit(randomItems)
+  }, [])
+  //處理我的最愛
+  const handleHitToggleFav = (id) => {
+    const newProducts = hit.map((p) => {
+      if (p.id === id) return { ...p, fav: !p.fav }
+      else return p
+    })
+    setHit(newProducts)
+  }
+
+  
+
   //篩選3號賣家資料
   const [shopInfo, setShopInfo] = useState(member)
   // console.log(shopInfo)
@@ -79,39 +115,41 @@ export default function Shop() {
       {/* shop info */}
       <div className="container">
         <div className="d-none d-lg-block">
+        <div className='mt-2'><BreadCrumb /></div>
           <div className="d-flex justify-content-around mb-5 mt-5">
+          
             {/* seller detail */}
             <div className={styles.profile}>
               <Image src={profileImg} alt="" className={styles.fit} />
             </div>
-            <div className="d-flex flex-column align-items-start justify-content-center">
+            <div className="d-flex flex-column align-items-start justify-content-between">
               <h3>碧姬公主的玩具城堡</h3>
-              <h6>@princepeach8888</h6>
+              <h5>@princepeach8888</h5>
               <div className="d-flex">
                 {/* star rating */}
-                <p className="pe-2">5.0</p>
-                <p className="text-warning">
+                <h6 className="pe-2">5.0</h6>
+                <h6 className="text-warning">
                   <FaStar />
                   <FaStar />
                   <FaStar />
                   <FaStar />
                   <FaStar />
-                </p>
-                <p className="ps-2">(150)</p>
+                </h6>
+                <h6 className="ps-2">(150)</h6>
               </div>
               <div className="d-flex">
                 {/* little dashboard */}
                 <div className="d-flex flex-column align-items-center pe-4">
                   <h6>商品數量</h6>
-                  <p>28</p>
+                  <h6 className='text-danger fw-bold'>{totalProducts}</h6>
                 </div>
                 <div className="d-flex flex-column align-items-center pe-4">
                   <h6>已賣出件數</h6>
-                  <p>18</p>
+                  <h6 className='text-danger fw-bold'>18</h6>
                 </div>
                 <div className="d-flex flex-column align-items-center">
                   <h6>關注人數</h6>
-                  <p>186</p>
+                  <h6 className='text-danger fw-bold'>186</h6>
                 </div>
               </div>
               <button
@@ -191,10 +229,45 @@ export default function Shop() {
         <div className="d-none d-md-block">
           <Coupon />
         </div>
-        <Hit />
+        <div className={styles.hit}>
+        <h4 className="mb-5 d-none d-md-block">焦點遊戲熱賣中</h4>
+        <h5 className="mb-4 d-block d-md-none ps-4">焦點遊戲熱賣中</h5>
+        <div className={`justify-content-md-around align-items-md-center ${styles.scroller}`}>
+        {hit.map((v) => {
+          return (
+            <div className={styles.insideScr} key={v.id}>
+            <Link href={`/products/${v.id}`} className='text-decoration-none'>
+          <ProductCard
+          id={v.id} 
+          name={v.name}
+          releaseTime={v.release_time}
+          displayPrice={v.display_price}
+          price={v.price}
+          cover={v.img_cover}
+          type={v.type_id}
+          ratingId={v.rating_id}
+          memberId={v.member_id}
+          fav={v.fav}
+          handleToggleFav={handleHitToggleFav}
+          /></Link>
+          </div>
+          )
+        })}</div>
+        </div>
+        
+        {/* <Hit id={hit.id} 
+          name={hit.name}
+          releaseTime={hit.release_time}
+          displayPrice={hit.display_price}
+          price={hit.price}
+          cover={hit.img_cover}
+          type={hit.type_id}
+          ratingId={hit.rating_id}
+          memberId={hit.member_id}
+          fav={hit.fav} handleToggleFav={handleToggleFav}/> */}
         <div className="d-flex d-md-none flex-column ps-4 pe-4">
           <h5 className="fw-bold mb-2">賣場商品</h5>
-          <h6 className="mb-3">共66項</h6>
+          <h6 className="mb-3">共{totalProducts}項</h6>
         </div>
         <div className="d-flex justify-content-between">
           <div className="d-none d-md-block">
@@ -214,7 +287,18 @@ export default function Shop() {
         {shopitems.map((p)=> {
           return (
             <div key={p.id} className='col-6 col-md-2 mb-3'>
-              <ProductList className="p-5" name={p.name} price={p.price} displayPrice={p.display_price} releaseTime={p.release_time} cover={p.img_cover} type={p.type_id} />
+              <ProductCard className="p-5" 
+              id={p.id}
+              name={p.name} 
+              price={p.price} 
+              displayPrice={p.display_price} releaseTime={p.release_time} 
+              cover={p.img_cover} 
+              type={p.type_id} 
+              ratingId={p.rating_id}
+              fav={p.fav}
+              handleToggleFav={handleToggleFav}
+              memberId={p.member_id}
+              />
             </div>
           )
         })}
