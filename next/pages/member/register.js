@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import mainCheckLogin from '@/context/member/mainCheckLogin'
 
 import Navbar from '@/components/layout/navbar/navbar'
 import sStyle from '@/styles/member/sign-up.module.scss'
@@ -12,7 +13,7 @@ import { Form, InputGroup, Button, FormControl } from 'react-bootstrap'
 
 import SignupExam from '@/hooks/member/sign-up-exam'
 
-export default function SignUp() {
+export default function register() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -62,8 +63,7 @@ export default function SignUp() {
           // 處理成功的情況
           const data = await response.json();
           // console.log('註冊成功:', data);
-          // 進行前端路由跳轉到登入
-          router.push('/member/login');
+          router.push('/');
           
         } else {
           // 處理錯誤情況
@@ -88,10 +88,10 @@ export default function SignUp() {
         <div className="d-flex justify-content-center align-items-center vh-100">
           <div className={sStyle.sign_body}>
             <div className="d-flex">
-              <Link href="" className={sStyle.in_togglebtn + ' flex-grow-1'}>
+              <Link href="/member/login" className={sStyle.in_togglebtn + ' flex-grow-1'}>
                 登入
               </Link>
-              <Link href="" className={sStyle.up_togglebtn + ' flex-grow-1'}>
+              <Link href="/member/register" className={sStyle.up_togglebtn + ' flex-grow-1'}>
                 註冊
               </Link>
             </div>
@@ -194,4 +194,8 @@ export default function SignUp() {
       </div>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  return await mainCheckLogin(context);
 }
