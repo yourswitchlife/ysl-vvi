@@ -16,8 +16,7 @@ import Form from 'react-bootstrap/Form'
 import typeName from '@/data/type.json'
 import ratings from '@/data/rating.json'
 import TypeFilter from '@/components/shop/type-filter'
-import products from '@/data/product.json'
-import member from '@/data/member.json'
+// import products from '@/data/product.json'
 //Offcanvas
 // import Button from 'react-bootstrap/Button'
 import Offcanvas from 'react-bootstrap/Offcanvas'
@@ -32,7 +31,7 @@ import Link from 'next/link'
 
 
 export default function ShopPage() {
-  //body style
+  //處理背景樣式
   useEffect(() => {
     // 當元件掛載時添加樣式
     document.body.classList.add(styles.bodyStyleB)
@@ -43,7 +42,7 @@ export default function ShopPage() {
     }
   }, [])
 
-  //連接資料庫
+  //連接資料表(member) +router
   const demoShopInfo = [
     {
       id:"",
@@ -74,7 +73,7 @@ export default function ShopPage() {
     try{
       const res = await fetch (`http://localhost:3005/api/shop/${shop_site}`)
       const data = await res.json()
-      console.log(data[0])
+      // console.log(data[0])
   
       if(data[0].shop_site){
         setShopSite(data[0])
@@ -89,28 +88,48 @@ export default function ShopPage() {
       getShop(shop_site)
     }
   },[router.isReady])
-  
 
-  //offcanvas的展示狀態
-  const [show, setShow] = useState(false)
-  const handleClose = () => setShow(false)
-  const handleShow = () => setShow(true)
+  //連接資料表（product）
+  const [products, setProducts] = useState([])
+  // console.log(products)
+  const getProducts = async () => {
+    try{
+      const res = await fetch ('http://localhost:3005/api/products/list')
+      const data = await res.json()
+      console.log(data)
 
-  //toggle的展示狀態
-  const [openSort, setOpenSort] = useState(false)
-  const [openRate, setOpenRate] = useState(false)
-
-  //賣場商品狀態
-  const initState = products.map((p) => {
-    return { ...p, fav: false }
+      if(Array.isArray(data)){
+        setProducts(data)
+      }
+    }catch(e){
+      console.error(e)
+    }
   }
-  )
-  const [shopProducts, setShopProducts] = useState(initState)
+  useEffect(()=>{
+    getProducts()
+  }, [])
+
+  // const initState = products.map((p) => {
+  //   return { ...p, fav: false }
+  // })
+  //賣家資料在這裡
+  const {id, shop_name, shop_site, shop_cover, shop_info} = shopSite
+  // console.log(id)
+  useEffect(() => {
+    //確保在products更新且shopSite.id 有效時進行篩選
+    if(products.length > 0 && id){
+      const thisShopItems = products.filter(p => p.member_id === id).map( p => ({...p, fav: false}))
+      setShopProducts(thisShopItems)
+      // console.log(thisShopItems)
+    }
+  }, [products, id])
+  const [shopProducts, setShopProducts] = useState(products)
   // console.log(shopProducts)
-  const shopitems = shopProducts.filter(s => s.member_id === "3")
+  // console.log(id)
+ 
   // console.log(shopitems)
-  const totalProducts = shopitems.length
-  // console.log(totalProducts)
+  const shopTotalItems = shopProducts.length
+  // console.log(shopTotalItems)
   //處理我的最愛
   const handleToggleFav = (id) => {
     const newProducts = shopProducts.map((p) => {
@@ -121,40 +140,38 @@ export default function ShopPage() {
   }
   //商品總數量
 
-  //Hit 展示隨機五項商品
-  const [hit, setHit] = useState([])
-  const getRandomHit = (items, num) => {
-    // 先shuffle副本
-    const shuffled = [...items].sort(() => 0.5 - Math.random())
-    // 返回前num筆資料
-    return shuffled.slice(0, num)
-  }
-  const randomItems = getRandomHit(shopitems, 5)
-  // setHit(randomItems)
-  // console.log(randomItems)
-  useEffect(() => {
-    setHit(randomItems)
-  }, [])
-  //處理我的最愛
-  const handleHitToggleFav = (id) => {
-    const newProducts = hit.map((p) => {
-      if (p.id === id) return { ...p, fav: !p.fav }
-      else return p
-    })
-    setHit(newProducts)
-  }
-
-  
-
-  //篩選3號賣家資料
-  const [shopInfo, setShopInfo] = useState(member)
-  // console.log(shopInfo)
-  const newShopInfo = shopInfo.filter((v) => {
-    return v.id === "3" 
+//Hit 展示隨機五項商品
+const [hit, setHit] = useState([])
+const getRandomHit = (items, num) => {
+  // 先shuffle副本
+  const shuffled = [...items].sort(() => 0.5 - Math.random())
+  // 返回前num筆資料
+  return shuffled.slice(0, num)
+}
+const randomItems = getRandomHit(shopProducts, 5)
+// setHit(randomItems)
+// console.log(randomItems)
+useEffect(() => {
+  setHit(randomItems)
+}, [shopProducts])
+//處理我的最愛
+const handleHitToggleFav = (id) => {
+  const newProducts = hit.map((p) => {
+    if (p.id === id) return { ...p, fav: !p.fav }
+    else return p
   })
-  // {"id":"3","name":"林雅琳","account":"lin.yl","password":"202CB962AC59075B964B07152D234B70","phone":"934567891","email":"lin.yl@email.com","address":"高雄市前鎮區興仁路 15 號","birthday":"1994-09-08","birthday_month":"9","created_at":"2022-01-08","gender":"Female","pic":"","level_point":"0","google_uid":"","shop_name":"碧姬公主的玩具城堡","shop_site":"princess-toy-castle","shop_cover":"princess-peach.avif","shop_info":"這裡是碧姬公主的遊戲城堡，我們提供了品質最優良的二手遊戲，讓您可以獲得物超所值的商品們，享受遊戲帝國的美好！","shop_valid":"1"},
-  // console.log(newShopInfo)
- 
+  setHit(newProducts)
+}
+
+  //offcanvas的展示狀態
+  const [show, setShow] = useState(false)
+  const handleClose = () => setShow(false)
+  const handleShow = () => setShow(true)
+
+  //toggle的展示狀態
+  const [openSort, setOpenSort] = useState(false)
+  const [openRate, setOpenRate] = useState(false)
+
   return (
     <>
       {/* navbar */}
@@ -170,11 +187,21 @@ export default function ShopPage() {
           
             {/* seller detail */}
             <div className={styles.profile}>
-              <Image src={profileImg} alt="" className={styles.fit} />
+              <Image src={profileImg} alt="profile-photo" className={styles.fit} />
+              {/* <Image
+                      src={memberData.pic || profilePhoto}
+                      alt="Member Avatar"
+                      width="100%"
+                      height="100%"
+                      style={{
+                        objectFit: 'cover',
+                        objectPosition: 'center center',
+                      }}
+                    /> */}
             </div>
             <div className="d-flex flex-column align-items-start justify-content-between">
-              <h3>碧姬公主的玩具城堡</h3>
-              <h5>@princepeach8888</h5>
+              <h3>{shop_name}</h3>
+              <h5>@{shop_site}</h5>
               <div className="d-flex">
                 {/* star rating */}
                 <h6 className="pe-2">5.0</h6>
@@ -191,7 +218,7 @@ export default function ShopPage() {
                 {/* little dashboard */}
                 <div className="d-flex flex-column align-items-center pe-4">
                   <h6>商品數量</h6>
-                  <h6 className='text-danger fw-bold'>{totalProducts}</h6>
+                  <h6 className='text-danger fw-bold'>{shopTotalItems}</h6>
                 </div>
                 <div className="d-flex flex-column align-items-center pe-4">
                   <h6>已賣出件數</h6>
@@ -214,7 +241,7 @@ export default function ShopPage() {
               {/* shop detail */}
               <h5 className={styles.detailTitle}>賣場介紹</h5>
               <h6 className={`fw-normal ${styles.textarea}`}>
-                這裡是碧姬公主的遊戲城堡，我們提供了品質最優良的二手遊戲，讓您可以獲得物超所值的商品們，享受遊戲帝國的美好！在這裡，您將發現從經典到最新的遊戲，全部都以令人驚喜的價格提供。我們精心挑選和維護每一片遊戲，確保您帶回家的不僅是遊戲，還有最佳的遊玩體驗。
+                {shop_info}
               </h6>
             </div>
           </div>
@@ -317,7 +344,7 @@ export default function ShopPage() {
           fav={hit.fav} handleToggleFav={handleToggleFav}/> */}
         <div className="d-flex d-md-none flex-column ps-4 pe-4">
           <h5 className="fw-bold mb-2">賣場商品</h5>
-          <h6 className="mb-3">共{totalProducts}項</h6>
+          <h6 className="mb-3">共{shopTotalItems}項</h6>
         </div>
         <div className="d-flex justify-content-between">
           <div className="d-none d-md-block">
@@ -334,7 +361,7 @@ export default function ShopPage() {
           </div>
         </div>
         <div className="row justify-content-start text-start mt-5">
-        {shopitems.map((p)=> {
+        {shopProducts.map((p)=> {
           return (
             <div key={p.id} className='col-6 col-md-2 mb-3'>
               <ProductCard className="p-5" 

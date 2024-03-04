@@ -3,14 +3,14 @@ const router = express.Router()
 import db from '../configs/db.mjs'
 
 // 商品詳細頁 ([0-9]+)
-try {
-  const [results, fields] = await db.execute(
-    'SELECT * FROM `member` WHERE `id` = 1'
-  )
-  console.log(results)
-} catch (error) {
-  console.error(error)
-}
+// try {
+//   const [results, fields] = await db.execute(
+//     'SELECT * FROM `member` WHERE `id` = 1'
+//   )
+//   console.log(results)
+// } catch (error) {
+//   console.error(error)
+// }
 
 //我的商場
 router.get('/:shop_site', async (req, res) => {
