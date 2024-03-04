@@ -26,30 +26,6 @@ export const AuthProvider = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-
-    // 有無Firebase
-    // const unsubscribe = onAuthStateChanged(auth, (user) => {
-    //   if (user) {
-    //     // 使用Firebase UID来获取会员数据
-    //     fetchMemberData(user.uid)
-    //       .then(memberData => {
-    //         setAuthState(prevState => ({
-    //           ...prevState,
-    //           isLoggedIn: true,
-    //           gmember: user, // 直接使用Firebase用户对象
-    //           memberData: memberData, // 从后端获取的会员详细信息
-    //         }));
-    //       })
-    //       .catch(error => {
-    //         console.error('Error fetching member data with Firebase UID:', error);
-    //       });
-    //   }
-    // });
-
-    //原TOKEN
-    /* const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1'); */
-
-    // if (token) {
       fetch('http://localhost:3005/api/member/auth-status', {
         method: 'GET',
         headers: {
@@ -78,9 +54,7 @@ export const AuthProvider = ({ children }) => {
         .catch((error) => {
           console.error('Fetching member data error:', error);
         });
-    // }
-
-    // return () => unsubscribe();//結束監聽
+        
   }, [router]);
 
   return <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>;

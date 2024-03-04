@@ -8,7 +8,7 @@ import sStyle from '@/styles/member/sign-in.module.scss'
 import pStyle from '@/styles/member/points.module.scss'
 import ProgressBar from 'react-bootstrap/ProgressBar'
 
-import mainCheckToLogin from '@/context/mainCheckToLogin'
+import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 
 
 import brutal from '@/public/images/member/brutal.png'

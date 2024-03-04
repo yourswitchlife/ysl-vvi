@@ -11,7 +11,7 @@ import { FaUser, FaEnvelope } from 'react-icons/fa'
 import { MdKey } from 'react-icons/md'
 import { Form, InputGroup, Button, FormControl } from 'react-bootstrap'
 
-import SignupExam from '@/hooks/member/sign-up-exam'
+import SignupExam from '@/context/member/sign-up-exam'
 
 export default function register() {
   const router = useRouter();

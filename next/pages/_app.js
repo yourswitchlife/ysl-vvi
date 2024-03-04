@@ -5,7 +5,7 @@ import '@/styles/globals.scss'
 
 import DefaultLayout from '@/components/layout/default-layout'
 //身分驗證
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider } from '@/hooks/use-Auth';
 import { getRedirectResult } from "firebase/auth";
 import { auth } from '@/utils/firebaseConfig';
 
@@ -24,6 +24,7 @@ export default function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   useEffect(() => {
+    
     getRedirectResult(auth)
       .then((result) => {
         if (result) {
@@ -33,6 +34,7 @@ export default function MyApp({ Component, pageProps }) {
             headers: {
               'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify({
               uid: gmember.uid,
               email: gmember.email,

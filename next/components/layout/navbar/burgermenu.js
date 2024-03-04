@@ -10,7 +10,7 @@ import Offcanvas from 'react-bootstrap/Offcanvas'
 //登出邏輯
 import handleLogout from '@/services/logout';
 //context hooks
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/use-Auth';
 
 export default function BurgerMenu() {
   const { isLoggedIn, memberData } = useAuth();
