@@ -5,7 +5,7 @@ import '@/styles/globals.scss'
 
 import DefaultLayout from '@/components/layout/default-layout'
 //身分驗證
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider } from '@/hooks/use-Auth';
 import { getRedirectResult } from "firebase/auth";
 import { auth } from '@/utils/firebaseConfig';
 

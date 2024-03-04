@@ -68,7 +68,7 @@ export default function Navbar() {
               <Link href="/member/notify-order" className={styles.loginIcon}>
                 <FaBell className={styles.icon}/>
               </Link>
-              <Link href="/" className={styles.loginIconEnd}>
+              <Link href="/seller" className={styles.loginIconEnd}>
                 <FaStore className={styles.icon} />
               </Link>
             </div>
