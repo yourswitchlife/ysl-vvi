@@ -4,6 +4,7 @@ import Footer from '@/components/layout/footer/footer-front'
 import style from '@/styles/article/list.module.scss'
 import { FaSearch } from 'react-icons/fa'
 import Link from 'next/link'
+import Pagination from 'react-bootstrap/Pagination';
 export default function list() {
   return (
     <>
@@ -13,8 +14,12 @@ export default function list() {
           className={`container d-flex justify-content-between px-lg-5 ${style.tag_link}`}
         >
           <div className={`align-items-center d-flex ${style.index_padding}`}>
-            <Link href="index.html" className='text-decoration-none text-white' >首頁&gt;</Link>
-            <Link href="list.html" className='text-decoration-none text-white'>熱門標籤</Link>
+            <Link href="index.html" className="text-decoration-none text-white">
+              首頁&gt;
+            </Link>
+            <Link href="list.html" className="text-decoration-none text-white">
+              熱門標籤
+            </Link>
           </div>
           <div className="search">
             <form className="d-flex" role="search">
@@ -35,14 +40,22 @@ export default function list() {
         </div>
         <div className="container">
           <ul className={style.ul}>
-            <li className={style.li} >
+            <li className={style.li}>
               <div className={`${style.list} mt-5`}>
-                <a href="article_main.html" className={`d-flex text-decoration-none text-white ${style.li}`}>
+                <a
+                  href="article_main.html"
+                  className={`d-flex text-decoration-none text-white ${style.li}`}
+                >
                   <div className={style.pic}>
-                    <img src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000" alt="" />
+                    <img
+                      src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
+                      alt=""
+                    />
                   </div>
                   <div className={`${style.txt} mx-4 p-3`}>
-                    <div className= {`badge text-bg-secondary mb-3 ${style.tag_btn}`}>
+                    <div
+                      className={`badge text-bg-secondary mb-3 ${style.tag_btn}`}
+                    >
                       <h5 className={`${style.h5} mb-0`}>冒險類</h5>
                     </div>
                     <div>
@@ -59,14 +72,22 @@ export default function list() {
                 </a>
               </div>
             </li>
-            <li className={style.li} >
+            <li className={style.li}>
               <div className={`${style.list} mt-5`}>
-                <a href="article_main.html" className={`d-flex text-decoration-none text-white ${style.li}`}>
+                <a
+                  href="article_main.html"
+                  className={`d-flex text-decoration-none text-white ${style.li}`}
+                >
                   <div className={style.pic}>
-                    <img src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000" alt="" />
+                    <img
+                      src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
+                      alt=""
+                    />
                   </div>
                   <div className={`${style.txt} mx-4 p-3`}>
-                    <div className= {`badge text-bg-secondary mb-3 ${style.tag_btn}`}>
+                    <div
+                      className={`badge text-bg-secondary mb-3 ${style.tag_btn}`}
+                    >
                       <h5 className={`${style.h5} mb-0`}>冒險類</h5>
                     </div>
                     <div>
@@ -83,14 +104,22 @@ export default function list() {
                 </a>
               </div>
             </li>
-            <li className={style.li} >
+            <li className={style.li}>
               <div className={`${style.list} mt-5`}>
-                <a href="article_main.html" className={`d-flex text-decoration-none text-white ${style.li}`}>
+                <a
+                  href="article_main.html"
+                  className={`d-flex text-decoration-none text-white ${style.li}`}
+                >
                   <div className={style.pic}>
-                    <img src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000" alt="" />
+                    <img
+                      src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
+                      alt=""
+                    />
                   </div>
                   <div className={`${style.txt} mx-4 p-3`}>
-                    <div className= {`badge text-bg-secondary mb-3 ${style.tag_btn}`}>
+                    <div
+                      className={`badge text-bg-secondary mb-3 ${style.tag_btn}`}
+                    >
                       <h5 className={`${style.h5} mb-0`}>冒險類</h5>
                     </div>
                     <div>
@@ -109,6 +138,23 @@ export default function list() {
             </li>
           </ul>
         </div>
+        <Pagination className="justify-content-center mt-3 pt-3">
+          <Pagination.First />
+          <Pagination.Prev />
+          <Pagination.Item>{1}</Pagination.Item>
+          <Pagination.Ellipsis />
+
+          <Pagination.Item>{10}</Pagination.Item>
+          <Pagination.Item>{11}</Pagination.Item>
+          <Pagination.Item active>{12}</Pagination.Item>
+          <Pagination.Item>{13}</Pagination.Item>
+          <Pagination.Item disabled>{14}</Pagination.Item>
+
+          <Pagination.Ellipsis />
+          <Pagination.Item>{20}</Pagination.Item>
+          <Pagination.Next />
+          <Pagination.Last />
+        </Pagination>
       </main>
       <Footer />
     </>

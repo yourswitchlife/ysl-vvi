@@ -47,21 +47,31 @@
   .tag_btn {
     border-radius: 5px;
     padding: 5px 10px;
+    align-self: start;
   }
 
   .txt {
     width: 100%;
     box-sizing: border-box;
     letter-spacing: 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
-    h4 {
-      margin: 0;
-    }
+    
     p {
       margin: 0;
       margin-top: 10px;
       font-size: 12px;
       color: white;
+    }
+    h6,p {
+      overflow: hidden; 
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      text-overflow: ellipsis; 
+      white-space: normal; 
     }
   }
 }
@@ -91,15 +101,6 @@
     }
   }
   .txt {
-    // width: 50%;
     margin: 0 !important;
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-    max-width: 300px;
-
-    h4 {
-      margin: 0;
-    }
   }
 }

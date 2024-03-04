@@ -60,7 +60,7 @@ export default function index() {
                   >
                     NEW
                   </div>
-                  <p className={style.date}>2024/2/11</p>
+                  <p className="text-white d-flex align-items-center">2024/2/11</p>
                 </div>
                 <a href="article_main.html" className={style.a}>
                   <p>
@@ -162,7 +162,7 @@ export default function index() {
                   <div className={`btn btn-outline-danger ${style.custom_btn}`}>
                     Hot
                   </div>
-                  <p className={style.date}>2024/2/11</p>
+                  <p className="text-white d-flex align-items-center">2024/2/11</p>
                 </div>
                 <a href="article_main.html" className={style.a}>
                   <p>
