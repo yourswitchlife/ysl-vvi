@@ -22,7 +22,8 @@ export default function AddPhoto({
           className="d-none"
           id="reviewPhoto"
           // setReviewPhoto={reviewPhoto}
-          value={reviewPhoto.reviewPhoto}
+          name="reviewPhoto"
+          // value={reviewPhoto.reviewPhoto}
           onChange={fieldChange}
           accept="image/"
         />

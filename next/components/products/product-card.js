@@ -6,7 +6,6 @@ import heartFill from 'assets/heart-fill.svg'
 import heratIcon from 'assets/heart-white.svg'
 import { FaShop } from 'react-icons/fa6'
 
-
 export default function ProductCard({
   id,
   name,
@@ -19,10 +18,11 @@ export default function ProductCard({
   memberId,
   fav,
   handleToggleFav,
+  cardIcon = () => {},
 }) {
   const ratingStyle = (v) => {
     let ratingId = '',
-    bgc = ''
+      bgc = ''
     switch (Number(v)) {
       case 1:
         ratingId = '0'
@@ -80,29 +80,33 @@ export default function ProductCard({
   }
 
   const memberIdChange = (v) => {
-    let memberId =''
+    let memberId = ''
     switch (Number(v)) {
       case 1:
         memberId = '玩具熊的小窩'
         break
-        case 2:
+      case 2:
         memberId = '煞氣欸路易吉'
         break
-        case 3:
+      case 3:
         memberId = '碧姬公主的玩具城堡'
         break
-        case 4:
+      case 4:
         memberId = '栗寶寶好物站'
         break
-        case 5:
+      case 5:
         memberId = '庫巴很酷吧'
         break
-        case 6:
+      case 6:
         memberId = '紅色死神的遊戲收藏'
         break
-      }
-      return memberId
+    }
+    return memberId
   }
+
+  // const cardIcon = (e) => {
+  //   e.stopPropagation()
+  // }
 
   // const HeartIcon = fav === '0' ? FaRegHeart : FaHeart
   return (
@@ -116,7 +120,7 @@ export default function ProductCard({
             height={244}
             // priority={true}
             className="px-2 pb-3 pt-1"
-            layout="fixed"
+            // layout="fixed"
           />
         </div>
 
@@ -127,18 +131,19 @@ export default function ProductCard({
                 <b>{typeChange(type)}</b>
               </p>{' '}
             </div>
-            <div>
-              <Image
-                src={fav ? heartFill : heratIcon}
-                className="me-2"
-                alt=""
-                onClick={() => {
-                  handleToggleFav(id)
-                }}
-              />
-
+            <div className='d-flex justify-content-center align-items-center' onClick={cardIcon}>
+              <div onClick={(e) => {cardIcon(e)}} className='pb-1 p-0'>
+                <Image
+                  src={fav ? heartFill : heratIcon}
+                  className="me-2"
+                  alt=""
+                  onClick={() => {
+                    handleToggleFav(id)
+                  }}
+                />
+              </div>
               <FaCartPlus
-                className={`text-light h5 ${styles.Chover}`}
+                className={`text-light h5 pb-1 ${styles.Chover}`}
                 onClick={() => {}}
               />
             </div>
@@ -149,7 +154,10 @@ export default function ProductCard({
           >
             {name}
           </h6>
-          <p className="text-light"><FaShop className="me-1 mb-1"/>{memberIdChange(memberId)}</p>
+          <p className="text-light">
+            <FaShop className="me-1 mb-1" />
+            {memberIdChange(memberId)}
+          </p>
           <p className="text-white">發行日期 {releaseTime}</p>
           <div className="price d-flex justify-content-between mt-1 align-items-center">
             <h6>
@@ -159,8 +167,21 @@ export default function ProductCard({
               NT ${displayPrice}
             </p>
             {/* <div className={styles[`${rs.className}`]}>{rs.ratingId}⁺</div> */}
-            <div style={{ width: "22px",height: "22px",borderRadius: "5px",fontSize: "13px",textAlign: "center",
-  fontWeight: "700",lineHeight: "22px",color: "black",backgroundColor: rs.bgc}}>{rs.ratingId}⁺</div>
+            <div
+              style={{
+                width: '22px',
+                height: '22px',
+                borderRadius: '5px',
+                fontSize: '13px',
+                textAlign: 'center',
+                fontWeight: '700',
+                lineHeight: '22px',
+                color: 'black',
+                backgroundColor: rs.bgc,
+              }}
+            >
+              {rs.ratingId}⁺
+            </div>
           </div>
         </div>
       </div>

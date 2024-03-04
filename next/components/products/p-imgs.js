@@ -7,7 +7,7 @@ import img0 from '@/public/images/product/details/BigBrainAcademy-0.jpg'
 import img1 from '@/public/images/product/details/BigBrainAcademy-1.jpg'
 import img2 from '@/public/images/product/details/BigBrainAcademy-2.jpg'
 
-export default function PImgs() {
+export default function PImgs({cover}) {
   const imgAry = [{id:0,v:imgc},{id:1,v:img0},{id:2,v:img1},{id:3,v:img2}]
   const [sliderData,setSliderData] = useState(imgAry[0])
   const clickImg = (i) => {
@@ -47,12 +47,14 @@ export default function PImgs() {
             <div className={`col-10 ${styles.h450px}`}>
               <Image
                 src={sliderData.v}
+                // src={`/images/product/cover/${sliderData.v}`}
                 alt="product"
-                // width={450}
-                // height={250}
+                // width={100%}
+                // height={100%}
                 priority={true}
                 className={styles.objFit}
-                // layout="intrinsic"
+                // layout="fill"
+                objectFit='contain'
               />
             </div>
           <div

@@ -67,6 +67,7 @@ export default function ProductDetail() {
   })
   const [ben,setBen]=useState(false)
 
+  const [historyRecords, setHistoryRecords] = useState([])
   // const [product, setProduct] = useState([])
   const getProduct = async (pid) => {
     try{
@@ -87,9 +88,24 @@ export default function ProductDetail() {
       const {pid}=router.query
       getProduct(pid)
     }
-  },[router.isReady])
+  },[router.isReady, router.query])
   // let imgAry = [img2, img3, img3]
- 
+//  console.log(product)
+
+// 取得瀏覽紀錄
+useEffect(() => {
+  const historyRecordArr = localStorage.getItem("readProduct")
+  let recordArr = historyRecordArr ? JSON.parse(historyRecordArr) : []
+  if(!Array.isArray(recordArr)){
+    recordArr = []
+  }
+  setHistoryRecords(recordArr)
+},[])
+
+useEffect(() => {
+  console.log(historyRecords)
+},[historyRecords])
+// console.log(historyRecords)
 
   return (
     <>
@@ -97,14 +113,14 @@ export default function ProductDetail() {
       <PhoneTabNav />
 
       <div className={`d-lg-block d-none ${styles.pHistory}`}>
-        <PHistory />
+        <PHistory historyRecords={historyRecords}/>
       </div>
 
       <div className="container mt-5 pt-4 px-lg-5 px-4">
         <BreadCrumb />
         <section className="p-detail-sec1 row mt-4">
           <div className="col-lg col pe-5-lg pe-2-lg">
-            <PImgs />
+            <PImgs cover={product.img_cover}/>
           </div>
           <div className="col-lg-6 col-12 mt-lg-0 mt-3">
             <h4 className="text-white mb-0">{product.name}</h4>

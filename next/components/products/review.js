@@ -7,9 +7,9 @@ export default function Review() {
   const [review, setReview] = useState({
     rating: '',
     review: '',
-    // reviewPhoto: '' 
+    reviewPhoto: '' 
   })
-  const [reviewPhoto, setReviewPhoto] = useState({ reviewPhoto: '' })
+  // const [reviewPhoto, setReviewPhoto] = useState({ reviewPhoto: '' })
   const fieldChange = (e) => {
     setReview({ ...review, [e.target.name]: e.target.value })
   }
