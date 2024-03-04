@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import CartNavbar from '@/components/layout/navbar/cart-navbar'
 import Footer from '@/components/layout/footer/footer-front'
 import { FaCircleInfo } from 'react-icons/fa6'
@@ -9,7 +10,16 @@ import styles from '@/styles/cart/coupon.module.scss'
 import Image from 'next/image'
 import Link from 'next/link'
 
+
+
 export default function Coupon() {
+
+  const router = useRouter()
+
+  // 點擊確認返回上一頁
+  const handleConfirmBtn = () => {
+    router.back()
+  }
   return (
     <>
       <CartNavbar />
@@ -172,9 +182,7 @@ export default function Coupon() {
               </div>
             </div>
           </div>
-          <Link href="/cart/checkout" className={styles.confirmBtn}>
-            確認
-          </Link>
+          <div className={styles.confirmBtn} onClick={handleConfirmBtn}>確認</div>
         </div>
       </section>
       <Footer />

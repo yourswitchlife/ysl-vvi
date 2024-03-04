@@ -554,6 +554,9 @@
       min-height: 77px;
       .textContent,
       .checkoutBtn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         min-height: 77px;
       }
       .textContent {

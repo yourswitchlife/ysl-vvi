@@ -468,6 +468,10 @@
 
   .receiveInfo {
     display: none;
+
+    .infoBar{
+      display: none;
+    }
   }
 
   // 電腦版商品圖
@@ -564,6 +568,11 @@
 
   // 新增常用地址按鈕區塊
   .addHomeAdrBtn {
+    display: none;
+  }
+
+  // 新增超商地址區塊
+  .addAdr{
     display: none;
   }
 

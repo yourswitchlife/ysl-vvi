@@ -136,11 +136,11 @@ export default function OrderList() {
               </div>
               <div className={styles.totalQuantity}>共 {totalProducts} 件商品</div>
             </div>
-            <button
+            <Link href="/cart/checkout"
               className={`btn btn-danger rounded-0 ${styles.checkoutBtn}`}
             >
               去買單
-            </button>
+            </Link>
           </div>
         </div>
       </div>

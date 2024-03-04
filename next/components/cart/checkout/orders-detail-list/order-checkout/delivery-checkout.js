@@ -14,6 +14,20 @@ export default function DeliveryCheckout() {
   // 用戶是否有新增常用地址資料
   const [hasCommonAddr, setHasCommonAddr] = useState(false)
 
+  const [windowWidth, setWindowWidth] = useState(null);
+
+  useEffect(() => {
+    // 确保这段代码只在客户端运行
+    if (typeof window !== "undefined") {
+      const updateWindowWidth = () => {
+        setWindowWidth(window.innerWidth);
+      };
+      updateWindowWidth();
+      window.addEventListener("resize", updateWindowWidth);
+      return () => window.removeEventListener("resize", updateWindowWidth);
+    }
+  }, []);
+
   // 選擇物流方式下拉選單值
   const handleSelectChange = (e) => {
     setSelectAddrOption(e.target.value)
@@ -116,7 +130,7 @@ export default function DeliveryCheckout() {
           {/* 新增超商地址按鈕(寄送資訊) */}
           <div
             className={`flex-column align-items-center mt-3 ${
-              selectAddrOption === '1' ? 'd-flex' : 'd-none'
+              selectAddrOption === '1' && windowWidth > 431 ? 'd-flex' : 'd-none'
             }`}
           >
             <Link href="">
@@ -336,7 +350,7 @@ export default function DeliveryCheckout() {
             </Link>
           </div>
           {/* 有選擇收件地址後顯示地址細項 */}
-          <div className={`d-block ${styles.infoBar}`}>
+          <div className={`${styles.infoBar}`}>
             <div>7-ELEVEN 華泰城門市</div>
             <div>桃園市中壢區春德路159號86櫃位</div>
             <div>

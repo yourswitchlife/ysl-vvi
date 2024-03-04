@@ -159,7 +159,6 @@ export default function ProductCard({
                   fav,
                   productQuanty
                 })
-                notifySuccess()
                 }}
               />
             </div>

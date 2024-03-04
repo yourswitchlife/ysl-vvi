@@ -190,7 +190,7 @@ export function CartProvider({ children }) {
   const increment = (cartItems, item) => {
     const newItems = cartItems.map((p) => {
       if (p.id === item.id) {
-        if (item.quantity + 1 <= item.productQuanty) {
+        if (item.quantity + 1 < item.productQuanty) {
           // 如果購物車數量+1時小於當前商品庫存量
           return { ...p, quantity: p.quantity + 1 }
         } else {
@@ -217,6 +217,7 @@ export function CartProvider({ children }) {
       const newItem = { ...item, quantity: 1 }
       const newItems = [newItem, ...cartItems]
       setCartItems(newItems)
+      notifySuccess()
     }
   }
 
