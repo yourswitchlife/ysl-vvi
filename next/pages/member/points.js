@@ -157,6 +157,7 @@ export default function points() {
     </>
   )
 }
+
 export async function getServerSideProps(context) {
   return await mainCheckToLogin(context);
 }

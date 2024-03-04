@@ -194,24 +194,24 @@ router.get('/info/:id', async (req, res) => {
 
 
 // google查詢並更新會員資料
-router.get('/api/member/google-info/:uid', async (req, res) => {
-  const google_uid = req.params.uid;
-  const query = `SELECT * FROM member WHERE google_uid = ?`;
+// router.get('/api/member/google-info/:uid', async (req, res) => {
+//   const google_uid = req.params.uid;
+//   const query = `SELECT * FROM member WHERE google_uid = ?`;
   
-  try {
-    const [results] = await db.execute(query, [google_uid]);
-    if (results.length > 0) {
-      res.status(200).json(results[0]);
-    } else {
-      // 找不到資料，返回錯誤訊息
-      res.status(404).json({ error: 'gMember not found.' });
-    }
-  } catch (error) {
-    // 錯誤處理
-    console.error('Error fetching member data:', error);  
-    res.status(500).json({ error: 'Internal server error.' });
-  }
-});
+//   try {
+//     const [results] = await db.execute(query, [google_uid]);
+//     if (results.length > 0) {
+//       res.status(200).json(results[0]);
+//     } else {
+//       // 找不到資料，返回錯誤訊息
+//       res.status(404).json({ error: 'gMember not found.' });
+//     }
+//   } catch (error) {
+//     // 錯誤處理
+//     console.error('Error fetching member data:', error);  
+//     res.status(500).json({ error: 'Internal server error.' });
+//   }
+// });
 
 
 
