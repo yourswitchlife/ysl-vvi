@@ -1,17 +1,27 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
+import mainCheckLogin from '@/context/member/mainCheckLogin'
 
 import Navbar from '@/components/layout/navbar/navbar'
 import sStyle from '@/styles/member/sign-in.module.scss'
 import Link from 'next/link'
 
+//google api
+import { signInWithRedirect } from "firebase/auth";
+import { auth, googleAuthProvider } from '@/utils/firebaseConfig';
 import { FcGoogle } from 'react-icons/fc'
+
 import { FaUser, FaEnvelope } from 'react-icons/fa'
 import { MdKey } from 'react-icons/md'
 import { Form, InputGroup, Button, FormControl } from 'react-bootstrap'
 
-export default function SignIn() {
-  const router = useRouter();
+export default function logIn() {
+  const router = useRouter()
+
+  const handleGoogleLogin = () => {
+    signInWithRedirect(auth, googleAuthProvider);
+  };
+
   const [formData, setFormData] = useState({
     account: '',
     password: '',
@@ -32,10 +42,10 @@ export default function SignIn() {
   }
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!formData.account || !formData.password) {
-      setErrorMessage('所有欄位不得為空');
-      return;
+      setErrorMessage('所有欄位不得為空')
+      return
     }
 
     try {
@@ -48,17 +58,27 @@ export default function SignIn() {
           account: formData.account,
           password: formData.password,
         }),
+        credentials: 'include',
       })
 
       if (response.ok) {
-        const data = await response.json()
-        console.log('登入成功:', data)
-        router.push('/'); //這首頁
+        // const getHeader = response.headers.get('Authorization');
+        
+  
+        // if (getHeader) {
+          // const token = getHeader.replace('Bearer ', '');
+          
+          // document.cookie = `token=${token}; max-age=3600; path=/`;
+          
+          console.log('登入成功:');
+
+          router.push('/'); 
+        // }
       } else {
         // 處理錯誤情況
         const errorData = await response.json()
         console.error('登入失敗:', errorData.message)
-        setErrorMessage(errorData.message);
+        setErrorMessage(errorData.message)
       }
     } catch (error) {
       console.error('登入請求失敗:', error)
@@ -72,10 +92,16 @@ export default function SignIn() {
         <div className="d-flex justify-content-center align-items-center vh-100">
           <div className={sStyle.sign_body}>
             <div className="d-flex">
-              <Link href="" className={sStyle.in_togglebtn + ' flex-grow-1'}>
+              <Link
+                href="/member/login"
+                className={sStyle.in_togglebtn + ' flex-grow-1'}
+              >
                 登入
               </Link>
-              <Link href="" className={sStyle.up_togglebtn + ' flex-grow-1'}>
+              <Link
+                href="/member/register"
+                className={sStyle.up_togglebtn + ' flex-grow-1'}
+              >
                 註冊
               </Link>
             </div>
@@ -120,7 +146,7 @@ export default function SignIn() {
                 />
               </Form.Group>
               <div className={sStyle.error + ' px-4'}>
-              {errorMessage && <h6>{errorMessage}</h6>}
+                {errorMessage && <h6>{errorMessage}</h6>}
               </div>
 
               <div
@@ -133,7 +159,7 @@ export default function SignIn() {
                   開始探索
                 </Button>
                 <Button
-                  className={sStyle.sign_btn + ' h5 d-flex align-items-center'}
+                  className={sStyle.sign_btn + ' h5 d-flex align-items-center'} onClick={handleGoogleLogin}
                 >
                   <FcGoogle className="me-2" />
                   以Google帳號登入
@@ -152,3 +178,8 @@ export default function SignIn() {
     </>
   )
 }
+
+export async function getServerSideProps(context) {
+  return await mainCheckLogin(context)
+}
+

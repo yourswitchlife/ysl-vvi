@@ -7,8 +7,13 @@ import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 import { FaHeart, FaShoppingCart, FaBell, FaStore } from 'react-icons/fa'
 import { IoMenu } from 'react-icons/io5'
 import Offcanvas from 'react-bootstrap/Offcanvas'
+//登出邏輯
+import handleLogout from '@/services/logout';
+//context hooks
+import { useAuth } from '@/context/AuthContext';
 
 export default function BurgerMenu() {
+  const { isLoggedIn, memberData } = useAuth();
     const [showMenu, setShowMenu] = useState(false)
 
     const handleCloseMenu = () => setShowMenu(false)
@@ -53,18 +58,29 @@ export default function BurgerMenu() {
             <div
               className={`d-flex flex-column justify-content-center ${styles.selectBtn}`}
             >
-              {/* 未登入時顯示 */}
+              {isLoggedIn ? (
               <div className={`d-flex justify-content-end`}>
-                <Link href="" className={`text-white ${styles.linkstyle}`}>
-                  登入
-                </Link>
+                <button className={`text-white ${styles.linkStyle}`} onClick={handleLogout} style={{ background: 'none', border: 'none', padding: 0, color: 'blue', textDecoration: 'none', cursor: 'pointer' }}>
+        登出
+      </button>
                 <span className={`text-white ps-2 pe-2 ${styles.linkstyle}`}>
                   |
                 </span>
-                <Link href="" className={`text-white ${styles.linkstyle}`}>
+                <Link href="/member/points" className={`text-white ${styles.linkstyle}`}>
                   會員專區
                 </Link>
-              </div>
+              </div>) : (
+              <div className={`d-flex justify-content-end`}>
+              <Link href="/member/login" className={`text-white ${styles.linkstyle}`}>
+                登入
+              </Link>
+              <span className={`text-white ps-2 pe-2 ${styles.linkstyle}`}>
+                |
+              </span>
+              <Link href="/member/register" className={`text-white ${styles.linkstyle}`}>
+                註冊
+              </Link>
+            </div>)}
             </div>
           </Offcanvas.Body>
         </Offcanvas>
