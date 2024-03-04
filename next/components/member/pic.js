@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image'
 import head_pic from '@/public/images/member/profile-pic/mario.webp'
 import Style from '@/styles/member/pic.module.scss'
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/use-Auth';
 
 
 export default function Pic() {

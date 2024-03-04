@@ -14,10 +14,10 @@ import BurgerMenu from './burgermenu'
 //登出邏輯
 import handleLogout from '@/services/logout';
 //context hooks
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/use-Auth';
 
 //我做完的組件 可以用到評論上 已套用會員等級框
-import NavPic from '@/hooks/nav-pic';
+import NavPic from '@/hooks/use-navpic';
 
 
 // 引入use-cart鉤子

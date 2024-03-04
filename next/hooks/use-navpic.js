@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image'
-import head_pic from '@/public/images/member/profile-pic/mario.webp'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 import Style from '@/styles/member/pic.module.scss'
 //hooks
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/use-Auth';
 
 
 export default function navPic() {
@@ -15,10 +14,12 @@ export default function navPic() {
 
   useEffect(() => {
     if (isLoggedIn && memberData) {
-      const picUrl = memberData.pic ? `/images/member/profile-pic/${memberData.pic}` : profilePhoto;
+      const picUrl = memberData.pic
+        ? (memberData.pic.startsWith("https://") ? memberData.pic : `/images/member/profile-pic/${memberData.pic}`)
+        : profilePhoto;
 
-      setNavPic(picUrl); 
-      
+      setNavPic(picUrl);
+
       const { level_point } = memberData;
       // console.log(level_point)
 
