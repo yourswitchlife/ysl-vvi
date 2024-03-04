@@ -9,6 +9,8 @@ import SellerFooter from '@/components/layout/footer/footer-backstage'
 import Form from 'react-bootstrap/Form'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 
+
+
 export default function ShopSetting() {
   //body style
   useEffect(() => {

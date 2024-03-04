@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import Navbar from '@/components/layout/navbar/navbar'
 import BreadCrumb from '@/components/common/breadcrumb'
 import Cover from '@/components/seller/cover'
@@ -29,7 +30,8 @@ import styles from '@/components/seller/seller.module.scss'
 import { FaPlus, FaAngleDown, FaFilter, FaStar } from 'react-icons/fa'
 import Link from 'next/link'
 
-export default function Shop() {
+
+export default function ShopPage() {
   //body style
   useEffect(() => {
     // 當元件掛載時添加樣式
@@ -40,6 +42,54 @@ export default function Shop() {
       document.body.classList.remove(styles.bodyStyleB)
     }
   }, [])
+
+  //連接資料庫
+  const demoShopInfo = [
+    {
+      id:"",
+      name:"",
+      account:"",
+      password:"",
+      phone:"",
+      email:"",
+      address:"",
+      birthday:"",
+      birthday_month:"",
+      created_at:"",
+      gender:"",
+      pic:"",
+      level_point:"0",
+      google_uid:"",
+      shop_name:"",
+      shop_site:"",
+      shop_cover:"",
+      shop_info:"",
+      shop_valid:"0",
+    }
+  ]
+  const router = useRouter()
+  const [shopSite, setShopSite] = useState(demoShopInfo)
+  
+  const getShop = async (shop_site) => {
+    try{
+      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}`)
+      const data = await res.json()
+      console.log(data[0])
+  
+      if(data[0].shop_site){
+        setShopSite(data[0])
+      }
+    }catch (e){
+      console.error(e)
+    }
+  }
+  useEffect(()=>{
+    if(router.isReady){
+      const {shop_site} = router.query
+      getShop(shop_site)
+    }
+  },[router.isReady])
+  
 
   //offcanvas的展示狀態
   const [show, setShow] = useState(false)

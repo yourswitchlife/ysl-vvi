@@ -48,7 +48,7 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 // fileStore的選項 session-cookie使用
-const fileStoreOptions = { logFn: function () { } }
+const fileStoreOptions = { logFn: function () {} }
 app.use(
   session({
     store: new FileStore(fileStoreOptions), // 使用檔案記錄session
@@ -68,13 +68,13 @@ const routePath = path.join(__dirname, 'routes')
 const filenames = await fs.promises.readdir(routePath)
 
 for (const filename of filenames) {
-  const item = await import(pathToFileURL(path.join(routePath, filename)));
-  const slug = filename.split('.')[0];
-  const route = `${apiPath}/${slug === 'index' ? '' : slug}`;
+  const item = await import(pathToFileURL(path.join(routePath, filename)))
+  const slug = filename.split('.')[0]
+  // const route = `${apiPath}/${slug === 'index' ? '' : slug}`
 
-  app.use(route, item.default);
+  app.use(`${apiPath}/${slug === 'index' ? '' : slug}`, item.default)
 
-  console.log(`已註冊的api路由: ${route}`);
+  // console.log(`已註冊的api路由: ${route}`)
 }
 // 載入routes中的各路由檔案，並套用api路由 END
 
@@ -94,6 +94,5 @@ app.use(function (err, req, res, next) {
   // 更改為錯誤訊息預設為JSON格式
   res.status(500).send({ error: err })
 })
-
 
 export default app
