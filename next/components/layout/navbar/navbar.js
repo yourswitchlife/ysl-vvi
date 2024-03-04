@@ -18,11 +18,14 @@ import { useAuth } from '@/hooks/use-Auth';
 
 //我做完的組件 可以用到評論上 已套用會員等級框
 import NavPic from '@/hooks/use-navpic';
+// 引入use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
 
 
 export default function Navbar() {
   const { isLoggedIn, memberData } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
+  const {totalProducts} = useCart()
   return (
     <>
     <div className='d-none d-lg-block'>
@@ -53,16 +56,20 @@ export default function Navbar() {
             // 登入後顯示
             <div className="d-flex align-items-center">
               <Link href="/member/fav-product" className={styles.loginIcon}>
-                <FaHeart />
+                <FaHeart className={styles.icon}/>
               </Link>
-              <Link href="/cart" className={styles.loginIcon}>
-                <FaShoppingCart />
+              <Link href="/cart" className={`${styles.loginIcon} position-relative`}>
+                <FaShoppingCart className={styles.icon} />
+                <span class="position-absolute top-0 start-99 translate-middle badge rounded-pill bg-danger">
+                {totalProducts}
+                <span className="visually-hidden">unread messages</span>
+              </span>
               </Link>
               <Link href="/member/notify-order" className={styles.loginIcon}>
-                <FaBell />
+                <FaBell className={styles.icon}/>
               </Link>
               <Link href="/" className={styles.loginIconEnd}>
-                <FaStore />
+                <FaStore className={styles.icon} />
               </Link>
             </div>
           ) : (
