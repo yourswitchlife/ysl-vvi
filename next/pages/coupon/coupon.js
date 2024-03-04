@@ -31,19 +31,19 @@ import sellerCTA from '@/public/images/coupon/CTA-seller.png'
 import missionBG from '@/public/images/coupon/galaxy-night-panorama.png'
 import finalPic from '@/public/images/coupon/CTA-text&pics.png'
 
-fetch(
-  'http://localhost:3005/api/coupon/23', //server url
-  console.log(fetch)
+// fetch(
+//   'http://localhost:3005/api/coupon/23', //server url
+//   console.log(fetch)
   
-)
-  .then((response) => response.json())
-  .then((result) => {
-    console.log('Success:', result)
-    setImgServerUrl('http://localhost:3005/coupon/16' + result.data.name)
-  })
-  .catch((error) => {
-    console.error('Error:', error)
-  })
+// )
+//   .then((response) => response.json())
+//   .then((result) => {
+//     console.log('Success:', result)
+//     setImgServerUrl('http://localhost:3005/coupon/16' + result.data.name)
+//   })
+//   .catch((error) => {
+//     console.error('Error:', error)
+//   })
 
 
 export default function CouponPage() {

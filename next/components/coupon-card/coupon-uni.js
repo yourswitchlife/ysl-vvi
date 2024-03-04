@@ -6,9 +6,9 @@ import logo from '@/public/images/coupon/logominiFig.png'
 
 export default function CouponTest() {
   const [claimed, setclamied ] = useState(false);
-  if(Token){
+  // if(Token){
 
-  }
+  // }
   return (
     <>
       {/* 電腦版 */}
@@ -98,7 +98,7 @@ export default function CouponTest() {
                     <button
                       className={`${styles.btnCTA} btn btn-lg btn-danger ms-3 col-6}`}
                     >
-                      <h5 className="">{Claimed? "立即領取" : "已領取"}</h5>
+                      <h5 className="">立即領取</h5>
                     </button>
                   </div>
 
