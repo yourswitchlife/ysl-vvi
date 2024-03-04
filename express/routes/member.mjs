@@ -1,7 +1,10 @@
-import express from 'express'
-const router = express.Router()
-import db from '../configs/db.mjs'
-import { generateHash, compareHash } from '../db-helpers/password-hash.js'
+import express from 'express';
+const router = express.Router();
+import db from '../configs/db.mjs';
+import authenticate from '../middlewares/authenticate-cookie.js';
+import { generateHash, compareHash } from '../db-helpers/password-hash.js';
+import jwt from 'jsonwebtoken'
+
 
 router.post('/register', async function (req, res) {
   const { account, email } = req.body
@@ -47,26 +50,33 @@ router.post('/register', async function (req, res) {
 })
 
 // 登入路由
-// 登入路由
 router.post('/login', async function (req, res) {
   const { account, password } = req.body
 
   try {
     // 檢查使用者是否存在
-    const userQuery = 'SELECT * FROM member WHERE account = ?'
-    const [userResults] = await db.execute(userQuery, [account])
+    const memberQuery = 'SELECT * FROM member WHERE account = ?';
+    const [memberResults] = await db.execute(memberQuery, [account]);
 
-    if (userResults.length > 0) {
-      const dbPassword = userResults[0].password
-      const passwordCompare = await compareHash(password, dbPassword)
-      // console.log('passwordCompare:', passwordCompare);
+    if (memberResults.length > 0) {
+      const dbPassword = memberResults[0].password;
+      const passwordCompare = await compareHash(password, dbPassword);
 
       if (!passwordCompare) {
         return res.status(401).send({ message: '使用者名稱或密碼不正確' })
       }
+      //member ID
+      const memberId = memberResults[0].id;
 
-      // 登入成功的處理
-      res.status(200).send({ message: '登入成功' })
+      const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+
+      const token = jwt.sign({ id: memberId }, accessTokenSecret, { expiresIn: '3h' });
+      // 過期後的做法待做
+      // 將JWT存放在HTTP標頭的Authorization中
+      // res.header('Authorization', `Bearer ${token}`);
+      res.cookie('token', token, { httpOnly: true })
+      res.status(200).send({ message: '登入成功' });
+
     } else {
       return res.status(401).send({ message: '使用者名稱或密碼不正確' })
     }
@@ -76,11 +86,133 @@ router.post('/login', async function (req, res) {
       .status(500)
       .send({ message: '登入失敗，內部伺服器錯誤', error: error.message })
   }
-})
+});
+
+
+// google登入路由
+router.post('/google-login', async function (req, res) {
+  const { uid, email, displayName, photoURL } = req.body;
+
+  const google_uid = uid;
+  const account = displayName;
+  const pic = photoURL;
+  const level_point = 0; // 預設積分
+  const shop_valid = 0; // 預設店沒上架
+  const created_at = new Date();
+
+  try {
+    // 使用google_uid来检查用户是否已存在
+    const gmCheckQuery = 'SELECT * FROM member WHERE google_uid = ?';
+    const [gmResults] = await db.execute(gmCheckQuery, [google_uid]);
+
+    let memberId;
+
+    if (gmResults.length > 0) {
+      // 已用GOOGLE登入過
+      memberId = gmResults[0].id;
+    } else {
+      // 沒 先註冊再登入
+      const creategmQuery = `INSERT INTO member (account, email, google_uid, pic, level_point, shop_valid, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+      const [createResult] = await db.execute(creategmQuery, [
+        account,
+        email,
+        google_uid, 
+        pic,
+        level_point,
+        shop_valid,
+        created_at,
+      ]);
+      memberId = createResult.insertId;
+    }
+
+    const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+    const token = jwt.sign({ id: memberId }, accessTokenSecret, { expiresIn: '3h' });
+
+    // res.header('Authorization', `Bearer ${token}`);
+    res.cookie('token', token, { httpOnly: true })
+    return res.json({
+      status: 'success',
+      data: {
+        token,
+      },
+    })
+
+  } catch (error) {
+    console.error('GOOGLELOGIN ERROR:', error);
+    res.status(500).send({ message: 'GOOGLELOGIN ERROR', error: error.message });
+  }
+});
+
+
+
 
 // 登出路由
 router.post('/logout', function (req, res) {
-  // 登出邏輯...
-})
+  res.cookie('token', '', { expires: new Date(0) });
+
+
+  res.status(200).send({ message: '登出成功' });
+});
+
+
+
+// 檢查會員狀態(登入or not) 
+router.get('/auth-status', authenticate, (req, res) => {
+  if (req.memberData) {
+    const memberId = req.memberData.id;
+    res.json({ isLoggedIn: true, memberId: memberId });
+
+  } else {
+    res.json({ isLoggedIn: false });
+  }
+});
+
+
+// 查詢並更新會員資料
+router.get('/info/:id', async (req, res) => {
+  const memberId = req.params.id;
+
+  // 使用 MySQL 查詢會員資料
+  const query = `SELECT * FROM member WHERE id = ?`;
+
+  try {
+    const [results] = await db.execute(query, [memberId]);
+
+    if (results.length > 0) {
+      // 如果找到資料，返回給前端
+      res.status(200).json(results[0]);
+    } else {
+      // 如果找不到資料，返回錯誤訊息
+      res.status(404).json({ error: 'Member not found.' });
+    }
+  } catch (error) {
+    // 錯誤處理
+    console.error('Error fetching member data:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
+
+// google查詢並更新會員資料
+router.get('/api/member/google-info/:uid', async (req, res) => {
+  const google_uid = req.params.uid;
+  const query = `SELECT * FROM member WHERE google_uid = ?`;
+  
+  try {
+    const [results] = await db.execute(query, [google_uid]);
+    if (results.length > 0) {
+      res.status(200).json(results[0]);
+    } else {
+      // 找不到資料，返回錯誤訊息
+      res.status(404).json({ error: 'gMember not found.' });
+    }
+  } catch (error) {
+    // 錯誤處理
+    console.error('Error fetching member data:', error);  
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
+
 
 export default router

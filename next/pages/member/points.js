@@ -8,6 +8,9 @@ import sStyle from '@/styles/member/sign-in.module.scss'
 import pStyle from '@/styles/member/points.module.scss'
 import ProgressBar from 'react-bootstrap/ProgressBar'
 
+import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+
+
 import brutal from '@/public/images/member/brutal.png'
 import cracked from '@/public/images/member/cracked.png'
 import elf from '@/public/images/member/elf.png'
@@ -31,11 +34,11 @@ export default function points() {
                 <h6 className="flex-grow-1">目前累積積分</h6>
                 <h4 className={pStyle.red_text}>3,098</h4>
                 <h6 className="px-3">/</h6>
-                <h6 className="flex-grow-1">5000</h6>
+                <h6 className="flex-grow-1">6000</h6>
                 <h6 className={pStyle.red_text + ' px-5'}>
                   再消費1,902可解鎖下一等級
                 </h6>
-                <Link className={pStyle.shop_btn} href="">
+                <Link className={pStyle.shop_btn+" fw-bold"} href="">
                   去逛逛
                 </Link>
               </div>
@@ -90,12 +93,12 @@ export default function points() {
                       </div>
                     </div>
                     <h6 className={pStyle.blue_text}>
-                      積分 &lt;&nbsp;&nbsp; 5000
+                      積分 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0
                     </h6>
                   </div>
-                  <h5 className={pStyle.white_text}>
+                  <h6 className={pStyle.white_text}>
                     歡迎您，勇者！初來乍到，盡情探索ysl世界吧！探險之旅，每一步都是成長的開始。
-                  </h5>
+                  </h6>
                 </div>
 
                 <div className={pStyle.border_bm + '  pb-3'}>
@@ -107,12 +110,12 @@ export default function points() {
                       </div>
                     </div>
                     <h6 className={pStyle.second_text}>
-                      積分 &lt;&nbsp;&nbsp; 9000
+                      積分 &nbsp;&nbsp;&nbsp; 6000
                     </h6>
                   </div>
-                  <h5 className={pStyle.white_text}>
+                  <h6 className={pStyle.white_text}>
                     恭喜您晉升為高手！您已經展翅高飛，挑戰更高的領域，無限可能的成就等著您發現！
-                  </h5>
+                  </h6>
                 </div>
 
                 <div className={pStyle.border_bm + '  pb-3'}>
@@ -123,11 +126,11 @@ export default function points() {
                         <h6 className={pStyle.level_text}>目前等級</h6>
                       </div>
                     </div>
-                    <h6 className={pStyle.white_text}>積分 &lt; 13000</h6>
+                    <h6 className={pStyle.white_text}>積分 &nbsp; 13000</h6>
                   </div>
-                  <h5 className={pStyle.white_text}>
+                  <h6 className={pStyle.white_text}>
                     看來您已經成為菁英之一！在這個圈子裡，與您一同追求卓越的夥伴期待與您互動、挑戰極致。
-                  </h5>
+                  </h6>
                 </div>
 
                 <div className={pStyle.border_bm + '  pb-3 border-0'}>
@@ -138,11 +141,11 @@ export default function points() {
                         <h6 className={pStyle.level_text}>目前等級</h6>
                       </div>
                     </div>
-                    <h6 className={pStyle.master_text}>積分 &lt; 20000</h6>
+                    <h6 className={pStyle.master_text}>積分 &nbsp; 20000</h6>
                   </div>
-                  <h5 className={pStyle.white_text}>
+                  <h6 className={pStyle.white_text}>
                     我們迎來了一位大師！您的智慧如光芒閃耀，大師降臨，智慧共享之旅展開。引領巔峰。
-                  </h5>
+                  </h6>
                 </div>
               </div>
             </div>
@@ -153,4 +156,7 @@ export default function points() {
       </div>
     </>
   )
+}
+export async function getServerSideProps(context) {
+  return await mainCheckToLogin(context);
 }
