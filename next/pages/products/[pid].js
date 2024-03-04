@@ -19,6 +19,9 @@ import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import PHistory from '@/components/products/p-history'
 // import { Link,useParams } from 'react-router-dom'
 
+// 引入use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
+
 export default function ProductDetail() {
   const router = useRouter()
 
@@ -42,54 +45,65 @@ export default function ProductDetail() {
   // valid: '',
   // launch_valid: '',
   // created_at: '',
-  
+
   const [product, setProduct] = useState({
     id: '',
-  type_id: '',
-  name: '',
-  product_quanty: "0",
-  fav: '',
-  display_price: "",
-  price: "",
-  img_cover: '',
-  img_1: '',
-  img_2: '',
-  img_3: '',
-  release_time: '',
-  language: [],
-  rating_id: '3',
-  co_op_valid: '0',
-  description: '',
-  member_id: '',
-  valid: '',
-  launch_valid: '',
-  created_at: '',
+    type_id: '',
+    name: '',
+    product_quanty: '0',
+    fav: '',
+    display_price: '',
+    price: '',
+    img_cover: '',
+    img_1: '',
+    img_2: '',
+    img_3: '',
+    release_time: '',
+    language: [],
+    rating_id: '3',
+    co_op_valid: '0',
+    description: '',
+    member_id: '',
+    valid: '',
+    launch_valid: '',
+    created_at: '',
   })
-  const [ben,setBen]=useState(false)
+  const [ben, setBen] = useState(false)
+  // 數量
+  const [quantity, setQuantity] = useState(1)
+
+  // 商品數量+1(測試)
+  const incrementQuantity = (productQuanty)=>{
+    if(productQuanty > quantity){
+      const newQuantity = quantity + 1
+      setQuantity(newQuantity)
+    }
+  }
 
   // const [product, setProduct] = useState([])
   const getProduct = async (pid) => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/products/${pid}`)
+    try {
+      const res = await fetch(`http://localhost:3005/api/products/${pid}`)
       const data = await res.json()
       // console.log(data[0])
 
-      if(data[0].name){
+      if (data[0].name) {
         setProduct(data[0])
       }
-    }catch (e){
+    } catch (e) {
       console.error(e)
     }
   }
 
   useEffect(() => {
-    if(router.isReady){
-      const {pid}=router.query
+    if (router.isReady) {
+      const { pid } = router.query
       getProduct(pid)
     }
-  },[router.isReady])
+  }, [router.isReady])
   // let imgAry = [img2, img3, img3]
- 
+
+  console.log(product)
 
   return (
     <>
@@ -124,14 +138,12 @@ export default function ProductDetail() {
                   <input
                     type="text"
                     className={styles.input}
-                    max="3"
-                    min="1"
-                    value={1}
+                    value={quantity}
                   />
                 </div>
                 <button
                   className={`btn btn-secondary ${styles.counterBtn}`}
-                  typeof="button"
+                  typeof="button" onClick={()=>{incrementQuantity(product.product_quanty)}}
                 >
                   <b>+</b>
                 </button>
@@ -153,7 +165,9 @@ export default function ProductDetail() {
             <div className="d-flex justify-content-between align-items-end">
               <h5 className="text-white-50">
                 促銷價{' '}
-                <span className="text-decoration-line-through">NT$ {product.display_price}</span>
+                <span className="text-decoration-line-through">
+                  NT$ {product.display_price}
+                </span>
               </h5>
               <h5 className="text-white">
                 折扣價NT
@@ -178,7 +192,14 @@ export default function ProductDetail() {
               </button>
             </div>
 
-            <div className={`row d-lg-none m-0 ${styles.btns} ${ben?"active":""}`} onClick={()=>{setBen(true)}}>
+            <div
+              className={`row d-lg-none m-0 ${styles.btns} ${
+                ben ? 'active' : ''
+              }`}
+              onClick={() => {
+                setBen(true)
+              }}
+            >
               <div typeof="button" className="col btn btn-info rounded-0 py-1">
                 <FaCartPlus className="text-light" /> <p>加入購物車</p>
               </div>

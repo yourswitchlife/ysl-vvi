@@ -81,7 +81,6 @@ export function CartProvider({ children }) {
     })
   }
 
-
   const notifyOrder = (id) => {
     MySwal.fire({
       title: '確定移除賣場所有商品嗎?',
@@ -109,10 +108,14 @@ export function CartProvider({ children }) {
     })
   }
 
+  // 計算被勾選的商品總價
+  
+  const filterItems = cartItems.filter((item) => item.userSelect === true)
+  let totalPrice = 0
+  filterItems.forEach((item) => (totalPrice += Number(item.price)))
+
   // 計算購物車總商品件數
   const totalProducts = cartItems.length
-  console.log(totalProducts)
-
 
   // 刪除整筆賣場訂單
   const handleDeleteOrder = (id) => {
@@ -231,6 +234,7 @@ export function CartProvider({ children }) {
         notifyAlert,
         notifyOrder,
         totalProducts,
+        totalPrice,
       }}
     >
       {children}

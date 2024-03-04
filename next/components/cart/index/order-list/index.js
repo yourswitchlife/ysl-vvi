@@ -15,7 +15,8 @@ import CouponStar from '@/public/images/cart/couponStar.svg'
 import coupon from '@/public/images/cart/coupon.svg'
 
 export default function OrderList() {
-  const { cartItems, handleAllCheckboxChange } = useCart()
+  const { cartItems, handleAllCheckboxChange, totalProducts, totalPrice } =
+    useCart()
   return (
     <>
       <section className="container">
@@ -56,13 +57,17 @@ export default function OrderList() {
                 <div className={styles.cartFrame}>
                   <div className={styles.framHeader}>
                     <h5 className={styles.title}>訂單總覽</h5>
-                    <div className={styles.totalQuantity}>共 5 件商品</div>
+                    <div className={styles.totalQuantity}>
+                      共 {totalProducts} 件商品
+                    </div>
                   </div>
                   <div className={styles.frameBody}>
                     <div className={styles.summaryItem}>
                       <div className={styles.summaryItemLabel}>商品總計</div>
                       <div className={styles.summaryItemLine}></div>
-                      <div className={styles.summaryItemPrice}>$1920</div>
+                      <div className={styles.summaryItemPrice}>
+                        ${totalPrice}
+                      </div>
                     </div>
                     {/* <div className={styles.summaryItem}>
                       <div className={styles.summaryItemLabel}>運費總計</div>
@@ -126,10 +131,10 @@ export default function OrderList() {
               <div className={styles.totalPrice}>
                 總金額{' '}
                 <span className="text-danger">
-                  <b>$7516</b>
+                  <b>${totalPrice}</b>
                 </span>
               </div>
-              <div className={styles.totalQuantity}>共 5 件商品</div>
+              <div className={styles.totalQuantity}>共 {totalProducts} 件商品</div>
             </div>
             <button
               className={`btn btn-danger rounded-0 ${styles.checkoutBtn}`}

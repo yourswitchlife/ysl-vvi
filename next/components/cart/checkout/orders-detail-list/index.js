@@ -31,7 +31,6 @@ export default function OrdersDetailList() {
           <div className={styles.mainTitle}>訂單詳情</div>
           {/* 單一賣場訂單 */}
           <OrderCheckout />
-          <OrderCheckout />
         </div>
         {/* 選擇優惠券/付款詳情區塊 */}
         <div className={`${styles.pcBg} ${styles.paymentPC}`}>

@@ -3,18 +3,23 @@ import styles from '../orders-detail.module.scss'
 import Link from 'next/link'
 import Image from 'next/image'
 
-export default function ProductConfirm() {
+// 引用use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
+
+export default function ProductCheckout({ item }) {
+  const { totalProducts, totalPrice } = useCart()
+
   return (
     <>
-      <div className={styles.product}>
+      <div className={styles.product} key={item.id}>
         {/* 手機板商品圖 */}
         <Link href="" className={styles.pImgMobile}>
           <Image
-            src="https://tshop.r10s.com/9d8/189/0ce7/b2d8/4078/5eba/1119/1117eb82f60242ac110006.jpg"
+            src={`/images/product/cover/${item.cover}`}
             width={65}
             height={105}
             layout="fixed"
-            alt=""
+            alt={item.name}
           />
         </Link>
         <div className={styles.pInfoFrame}>
@@ -23,42 +28,70 @@ export default function ProductConfirm() {
             <div className="d-flex">
               <Link href="" className={styles.pImg}>
                 <Image
-                  src="https://tshop.r10s.com/9d8/189/0ce7/b2d8/4078/5eba/1119/1117eb82f60242ac110006.jpg"
+                  src={`/images/product/cover/${item.cover}`}
                   width={85}
                   height={140}
                   layout="fixed"
-                  alt=""
+                  alt={item.name}
                 />
               </Link>
               <div className={styles.pDetailFrame}>
                 <div className={styles.pNameMobile}>
                   <Link href="" className={styles.pName}>
-                    PUI PUI 天竺鼠車車 一起來！天竺鼠車車派對！
+                    {item.name}
                   </Link>
                   <h6 className={styles.language}>中文版</h6>
                 </div>
-                <h6 className={styles.discount}>8折</h6>
+                {item.displayPrice ? (
+                  <>
+                    <h6 className={styles.discount}>
+                      {Math.round((item.price / item.displayPrice) * 10)}折
+                    </h6>
+                  </>
+                ) : (
+                  <></>
+                )}
                 <div className={styles.priceQuanMobile}>
                   {/* 商品金額 */}
                   <div className={styles.priceBar}>
-                    <span className={`d-none ${styles.price}`}>$1200</span>
-                    <span className={styles.prePrice}>$1200</span>
-                    <span className={styles.discountPrice}>$960</span>
+                    {item.displayPrice ? (
+                      <>
+                        <span className={styles.prePrice}>
+                          ${item.displayPrice}
+                        </span>
+                        <span className={styles.discountPrice}>
+                          ${item.price}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className={`${styles.price}`}>${item.price}</span>
+                      </>
+                    )}
                   </div>
                   {/* 購買數量 */}
-                  <div className={styles.control}>x 1</div>
+                  <div className={styles.control}>x {item.quantity}</div>
                 </div>
               </div>
             </div>
           </div>
           {/* 商品金額 */}
           <div className={`${styles.priceBar} ${styles.ab}`}>
-            <span className={`d-none ${styles.price}`}>$1200</span>
-            <span className={styles.prePrice}>$1200</span>
-            <span className={styles.discountPrice}>$960</span>
+            {item.displayPrice ? (
+              <>
+                <span className={styles.prePrice}>${item.displayPrice}</span>
+                <span className={styles.discountPrice}>${item.price}</span>
+              </>
+            ) : (
+              <>
+                <span className={`${styles.price}`}>${item.price}</span>
+              </>
+            )}
           </div>
           {/* 購買數量 */}
-          <div className={`${styles.control} ${styles.qb}`}>1</div>
+          <div className={`${styles.control} ${styles.qb}`}>
+            {item.quantity}
+          </div>
 
           {/* 總金額 */}
           <div className={`${styles.totalBar} ${styles.sb}`}>

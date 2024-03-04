@@ -20,7 +20,7 @@ export default function Order() {
     return group
   }, {})
 
-  console.log(orderGroup)
+  // console.log(orderGroup)
 
   // 對應連線server端取得賣場名稱
   useEffect(() => {
