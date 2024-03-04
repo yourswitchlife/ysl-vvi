@@ -91,7 +91,7 @@
 .ImgBtnhover {
   height: 75px;
   &:hover {
-    background-color: rgb(51, 51, 51);
+    background-color: rgb(64, 64, 64);
     border-radius: 5px;
   }
 }
@@ -108,6 +108,25 @@
 .f14 {
   font-size: 14px;
 }
+.counter{
+  border:  1px solid rgb(169, 169, 169);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.counterBtn{
+  border-radius: 0;
+  // background-color: #515151;
+  padding: 4px 12px;
+}
+.input{
+  text-align: center;
+  border: 0;
+  width: 40px;
+  &:focus{
+    outline: none;
+  }
+}
+
 // ------------------------------ RWD
 @media (max-width: 576px) {
   .wrap {

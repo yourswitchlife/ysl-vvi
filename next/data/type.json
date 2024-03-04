@@ -1,0 +1,18 @@
+[
+    {"id":"1","name":"RPG - 角色扮演","valid":"1"},
+    {"id":"2","name":"AVG - 冒險遊戲","valid":"1"},
+    {"id":"3","name":"ETC - 其他類型","valid":"1"},
+    {"id":"4","name":"ACT - 動作遊戲","valid":"1"},
+    {"id":"5","name":"SLG - 策略遊戲","valid":"1"},
+    {"id":"6","name":"RAC - 競速遊戲","valid":"1"},
+    {"id":"7","name":"SPG - 體育遊戲","valid":"1"},
+    {"id":"8","name":"STG - 射擊遊戲","valid":"1"},
+    {"id":"9","name":"FTG - 格鬥遊戲","valid":"1"}
+]
+
+
+
+
+
+
+
