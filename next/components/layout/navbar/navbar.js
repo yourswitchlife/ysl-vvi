@@ -25,7 +25,8 @@ import { useCart } from '@/hooks/use-cart'
 
 export default function Navbar() {
   const { isLoggedIn, memberData } = useAuth();
-  const [isHovered, setIsHovered] = useState(false);  const {totalProducts} = useCart()
+  const [isHovered, setIsHovered] = useState(false); 
+  const { totalProducts } = useCart()
   return (
     <>
       <div className="d-none d-lg-block">
@@ -57,12 +58,12 @@ export default function Navbar() {
                 <FaHeart className={styles.icon} />
               </Link>
               <Link href="/cart" className={`${styles.loginIcon} position-relative`}>
-              <FaShoppingCart className={styles.icon} />
-              <span class="position-absolute top-0 start-99 translate-middle badge rounded-pill bg-danger">
-                {totalProducts}
-                <span className="visually-hidden">unread messages</span>
-              </span>
-            </Link>
+                <FaShoppingCart className={styles.icon} />
+                <span class="position-absolute top-0 start-99 translate-middle badge rounded-pill bg-danger">
+                  {totalProducts}
+                  <span className="visually-hidden">unread messages</span>
+                </span>
+              </Link>
               <Link href="/member/notify-order" className={styles.loginIcon}>
                 <FaBell className={styles.icon} />
               </Link>

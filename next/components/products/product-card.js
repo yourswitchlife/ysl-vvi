@@ -13,13 +13,13 @@ export default function ProductCard({
   id,
   name,
   releaseTime,
-  displayPrice,
+  display_price,
   price,
-  productQuanty,
-  cover,
+  product_quanty,
+  img_cover,
   type,
   ratingId,
-  memberId,
+  member_id,
   fav,
   handleToggleFav,
 }) {
@@ -83,33 +83,32 @@ export default function ProductCard({
   }
 
   const memberIdChange = (v) => {
-    let memberId =''
+    let memberId = ''
     switch (Number(v)) {
       case 1:
         memberId = '玩具熊的小窩'
         break
-        case 2:
+      case 2:
         memberId = '煞氣欸路易吉'
         break
-        case 3:
+      case 3:
         memberId = '碧姬公主的玩具城堡'
         break
-        case 4:
+      case 4:
         memberId = '栗寶寶好物站'
         break
-        case 5:
+      case 5:
         memberId = '庫巴很酷吧'
         break
-        case 6:
+      case 6:
         memberId = '紅色死神的遊戲收藏'
         break
-      }
-      return memberId
+    }
+    return memberId
   }
 
-  const {cartItems, addItem, notifySuccess} = useCart()
+  const { addItem, notifySuccess } = useCart()
 
-  console.log(cartItems)
 
   // const HeartIcon = fav === '0' ? FaRegHeart : FaHeart
   return (
@@ -117,8 +116,8 @@ export default function ProductCard({
       <div className={styles.card}>
         <div className="d-flex justify-content-center pt-2">
           <Image
-            src={`/images/product/cover/${cover}`}
-            alt={cover}
+            src={`/images/product/cover/${img_cover}`}
+            alt={img_cover}
             width={150}
             height={244}
             // priority={true}
@@ -148,17 +147,19 @@ export default function ProductCard({
                 className={`text-light h5 ${styles.Chover}`}
                 onClick={() => {
                   addItem({
-                  name,
-                  releaseTime,
-                  displayPrice,
-                  price,
-                  cover,
-                  type,
-                  id,
-                  memberId,
-                  fav,
-                  productQuanty
-                })
+                    name,
+                    releaseTime,
+                    display_price,
+                    price,
+                    img_cover,
+                    type,
+                    id,
+                    member_id,
+                    fav,
+                    product_quanty,
+                    quantity: 1,
+                  })
+                  notifySuccess() 
                 }}
               />
             </div>
@@ -169,14 +170,14 @@ export default function ProductCard({
           >
             {name}
           </h6>
-          <p className="text-light"><FaShop className="me-1 mb-1"/>{memberIdChange(memberId)}</p>
+          <p className="text-light"><FaShop className="me-1 mb-1" />{memberIdChange(member_id)}</p>
           <p className="text-white">發行日期 {releaseTime}</p>
           <div className="price d-flex justify-content-between mt-1 align-items-center">
             <h6>
               <b className="text-danger">NT ${price}</b>{' '}
             </h6>
             <p className="text-white-50 text-decoration-line-through">
-              NT ${displayPrice}
+              NT ${display_price}
             </p>
             <div className={styles[`${rs.className}`]}>{rs.ratingId}⁺</div>
           </div>

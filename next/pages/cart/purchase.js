@@ -8,6 +8,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FaCheck } from 'react-icons/fa6'
 
+import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+import { useAuth } from '@/hooks/use-Auth'
+
 export default function Purchase() {
   return (
     <>
@@ -61,4 +64,8 @@ export default function Purchase() {
       <Footer />
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  return await mainCheckToLogin(context);
 }

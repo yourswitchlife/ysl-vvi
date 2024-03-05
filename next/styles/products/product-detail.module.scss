@@ -127,6 +127,13 @@
   }
 }
 
+.quantity{
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 // ------------------------------ RWD
 @media (max-width: 576px) {
   .wrap {

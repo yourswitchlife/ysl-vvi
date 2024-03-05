@@ -42,7 +42,7 @@ export default function ProductCard({ isEditing, item }) {
         {/* 手機板商品圖 */}
         <Link href="" className={styles.pImgMobile}>
           <Image
-            src={`/images/product/cover/${item.cover}`}
+            src={`/images/product/cover/${item.img_cover}`}
             width={65}
             height={105}
             alt={item.name}
@@ -54,7 +54,7 @@ export default function ProductCard({ isEditing, item }) {
             <div className="d-flex">
               <Link href="" className={styles.pImg}>
                 <Image
-                  src={`/images/product/cover/${item.cover}`}
+                  src={`/images/product/cover/${item.img_cover}`}
                   width={85}
                   height={140}
                   alt=""
@@ -67,10 +67,10 @@ export default function ProductCard({ isEditing, item }) {
                   </Link>
                   <div className="d-flex justify-content-between align-items-center">
                     <h6 className={styles.language}>中文版</h6>
-                    {item.displayPrice ? (
+                    {item.display_price ? (
                       <>
                         <h6 className={styles.discount}>
-                          {Math.round((item.price / item.displayPrice) * 10)}折
+                          {Math.round((item.price / item.display_price) * 10)}折
                         </h6>
                       </>
                     ) : (
@@ -88,9 +88,9 @@ export default function ProductCard({ isEditing, item }) {
           {/* 商品金額 */}
           <div className={styles.priceBar}>
             <div className="d-flex flex-wrap">
-              {item.displayPrice ? (
+              {item.display_price ? (
                 <>
-                  <span className={styles.prePrice}>${item.displayPrice}</span>
+                  <span className={styles.prePrice}>${item.display_price}</span>
                   <span className={styles.discountPrice}>${item.price}</span>
                 </>
               ) : (

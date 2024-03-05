@@ -47,7 +47,6 @@ export function CartProvider({ children }) {
   // 當cartItems變化，就保存到localStorage裡面
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems))
-    console.log(cartItems)
   }, [cartItems])
 
   // SweetAlert2
@@ -101,15 +100,29 @@ export function CartProvider({ children }) {
     })
   }
 
-  const notifyOK = (productQuanty) => {
+  const notifyOK = (product_quanty) => {
     MySwal.fire({
-      text: `抱歉，此件商品最多只能買${productQuanty}件喔`,
+      text: `抱歉，此件商品最多只能買${product_quanty}件喔`,
+      confirmButtonColor: '#E41E49',
+    })
+  }
+
+  // 購物車中已有幾件商品，超過購買量
+  const notifyCartQunanty = (quantity) => {
+    MySwal.fire({
+      text: `無法將所選數量加到購物車。因為您的購物車已有 ${quantity} 件商品，請至購物車頁面查看~`,
+      confirmButtonColor: '#E41E49',
+    })
+  }
+  // 購物車中已有幾件商品，超過購買量
+  const notifyMax = () => {
+    MySwal.fire({
+      text: "已達購買上限",
       confirmButtonColor: '#E41E49',
     })
   }
 
   // 計算被勾選的商品總價
-  
   const filterItems = cartItems.filter((item) => item.userSelect === true)
   let totalPrice = 0
   filterItems.forEach((item) => (totalPrice += Number(item.price)))
@@ -119,7 +132,7 @@ export function CartProvider({ children }) {
 
   // 刪除整筆賣場訂單
   const handleDeleteOrder = (id) => {
-    const filterItems = cartItems.filter((item) => item.memberId !== id)
+    const filterItems = cartItems.filter((item) => item.member_id !== id)
     setCartItems(filterItems)
   }
 
@@ -190,11 +203,11 @@ export function CartProvider({ children }) {
   const increment = (cartItems, item) => {
     const newItems = cartItems.map((p) => {
       if (p.id === item.id) {
-        if (item.quantity + 1 < item.productQuanty) {
+        if (item.quantity + 1 <= item.product_quanty) {
           // 如果購物車數量+1時小於當前商品庫存量
           return { ...p, quantity: p.quantity + 1 }
         } else {
-          notifyOK(item.productQuanty)
+          notifyOK(item.product_quanty)
           return p
         }
       } else {
@@ -204,27 +217,48 @@ export function CartProvider({ children }) {
     setCartItems(newItems)
   }
 
+
   // 加入購物車存進狀態內
   const addItem = (item) => {
+    // 成功加入要跳轉頁面
+    let routerPush = true;
     // 先檢查商品的id是否已存在購物車中
     const findIndex = cartItems.findIndex((p) => p.id === item.id)
+    const existingItem = cartItems[findIndex]
+    // 時間戳記紀錄最新加入購物車的賣場
+    const timeStamp = Date.now()
 
-    if (findIndex > -1) {
-      // 存在，商品數量+1
-      increment(cartItems, item)
+    if (existingItem) {
+      // 存在，檢查商品庫存量
+      if (existingItem.quantity + item.quantity <= item.product_quanty) {
+        // 不超過庫存量
+        const updateCartItems = cartItems.map((cartItem) => {
+          if (cartItem.id === item.id) {
+            return { ...cartItem, quantity: cartItem.quantity + item.quantity, timeStamp }
+          }
+          return cartItem
+        })
+        setCartItems(updateCartItems)
+      } else {
+        // 超過庫存量
+        notifyCartQunanty(item.product_quanty)
+        routerPush = false
+      }
+
     } else {
-      // 不存在，執行商品加入購物車列表
-      const newItem = { ...item, quantity: 1 }
+      // 不存在，加到cartItems裡面
+      const newItem = { ...item, quantity: item.quantity || 1, userSelect: item.userSelect || false, timeStamp }
       const newItems = [newItem, ...cartItems]
       setCartItems(newItems)
-      notifySuccess()
     }
+    return routerPush
   }
 
   return (
     <CartContext.Provider
       value={{
         cartItems,
+        setCartItems,
         addItem,
         increment,
         decrement,
@@ -234,6 +268,8 @@ export function CartProvider({ children }) {
         notifySuccess,
         notifyAlert,
         notifyOrder,
+        notifyOK,
+        notifyMax,
         totalProducts,
         totalPrice,
       }}
