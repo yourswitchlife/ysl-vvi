@@ -9,6 +9,9 @@ import { AuthProvider } from '@/hooks/use-Auth';
 import { getRedirectResult } from "firebase/auth";
 import { auth } from '@/utils/firebaseConfig';
 
+// 導入購物車Provider
+import { CartProvider } from '@/hooks/use-cart'
+
 export default function MyApp({ Component, pageProps }) {
   // 導入bootstrap的JS函式庫
   useEffect(() => {
@@ -24,7 +27,6 @@ export default function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   useEffect(() => {
-    
     getRedirectResult(auth)
       .then((result) => {
         if (result) {
@@ -34,7 +36,6 @@ export default function MyApp({ Component, pageProps }) {
             headers: {
               'Content-Type': 'application/json',
             },
-            credentials: 'include',
             body: JSON.stringify({
               uid: gmember.uid,
               email: gmember.email,
@@ -61,7 +62,8 @@ export default function MyApp({ Component, pageProps }) {
   // 我把AuthProvider放在最外面 所有應用都能用
   return (
     <AuthProvider>
-      {getLayout(<Component {...pageProps} />)}
+    <CartProvider>{getLayout(<Component {...pageProps} />)}</CartProvider>
+      
     </AuthProvider>
   );
 }

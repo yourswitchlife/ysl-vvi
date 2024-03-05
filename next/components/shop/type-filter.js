@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import Button from 'react-bootstrap/Button'
 import Offcanvas from 'react-bootstrap/Offcanvas'
 //toggle list from react bootstrap
 import Collapse from 'react-bootstrap/Collapse'
 import styles from '@/components/shop/type-filter.module.scss'
-import { FaPlus, FaAngleDown, FaFilter, FaStar } from 'react-icons/fa'
+import { FaPlus, FaFilter } from 'react-icons/fa'
 import Form from 'react-bootstrap/Form'
 import typeName from '@/data/type.json'
 import ratings from '@/data/rating.json'
@@ -12,13 +11,30 @@ import ratings from '@/data/rating.json'
 export default function TypeFilter() {
   //offcanvas const
   const [show, setShow] = useState(false)
-
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
-
   //toggle
   const [openSort, setOpenSort] = useState(false)
   const [openRate, setOpenRate] = useState(false)
+  //控制表單元件:遊戲類別
+  const newTypeOptions = typeName.map((v, i) => {
+    return {...v, checked: false}
+  }) 
+  const [typeCheck, setTypeCheck] = useState(newTypeOptions)
+  //控制表單元件:遊戲分級
+  const newRateOptions = ratings.map((v, i) => {
+    return {...v, checked: false}
+  }) 
+  const [ratingCheck, setRatingCheck] = useState(newRateOptions)
+  //漏斗選擇項目
+  const toggleCheckbox = (check, id) => {
+    return check.map((v, i) => {
+      // 展開每個成員時，如果符合條件(v.id===id)則反相屬性checked
+      if (v.id === id) return { ...v, checked: !v.checked }
+      else return v
+    })
+  }
+
 
   return (
     <>
@@ -56,13 +72,18 @@ export default function TypeFilter() {
             <Collapse in={openSort}>
               <div id="sort-collapse-text">
                 <div className="d-flex flex-column align-items-center pt-2">
-                {typeName.map((t) => {
+                {typeCheck.map((t) => {
                   return (
                     <div key={t.id}>
                     <Form.Check // prettier-ignore
                     type="checkbox"
+                    checked={t.checked}
+                    value={t.name}
                     id={t.id}
                     label={t.name}
+                    onChange={() => {
+                      setTypeCheck(toggleCheckbox(typeCheck, t.id))
+                    }}
                     className="my-1"
                   />
                     </div>
@@ -85,12 +106,17 @@ export default function TypeFilter() {
             <Collapse in={openRate}>
               <div id="rate-collapse-text">
                 <div className="d-flex flex-column align-items-center pt-2">
-                {ratings.map((r) => {
+                {ratingCheck.map((r) => {
                   return (
                     <div key={r.id}>
                     <Form.Check // prettier-ignore
                     type="checkbox"
                     id={r.id}
+                    checked={r.checked}
+                    value={r.name}
+                    onChange={() => {
+                      setRatingCheck(toggleCheckbox(ratingCheck, r.id))
+                    }}
                     label={r.name}
                     className="my-1"
                   />
@@ -104,7 +130,7 @@ export default function TypeFilter() {
               className={`d-flex justify-content-center ${styles.selectBtn}`}
             >
               <button
-                type="button"
+                type="submit"
                 className="btn btn-danger d-flex align-items-center"
               >
                 篩選商品
