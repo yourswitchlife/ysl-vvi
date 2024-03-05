@@ -29,7 +29,7 @@ export default function Navbar() {
         <header className={styles.navbar}>
           <div // logo
           >
-            <Link href="/index.js">
+            <Link href="/">
               <Image src={yslLogoSm} alt="ysl-logo" />
             </Link>
           </div>

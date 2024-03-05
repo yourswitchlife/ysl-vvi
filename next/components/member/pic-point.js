@@ -10,7 +10,6 @@ import brutal from '@/public/images/member/brutal.png';
 import cracked from '@/public/images/member/cracked.png';
 import elf from '@/public/images/member/elf.png';
 import warlord from '@/public/images/member/warlord.png';
-
 import { useAuth } from '@/hooks/use-Auth';
 
 
@@ -23,6 +22,8 @@ export default function BigPic() {
   const [BigPic, setBigPic] = useState(profilePhoto);
   const [pointIcon, setpointIcon] = useState(cracked);
   const [levelText, setLevelText] = useState("新手");
+  // const [levelPoint, setlevelPoint] = useState("6000");
+
   
   useEffect(() => {
     
@@ -33,31 +34,34 @@ export default function BigPic() {
       
       setBigPic(picUrl);
       const { level_point } = memberData;
-      console.log(level_point)
+      // console.log(level_point)
 
       if (level_point < 6000) {
         setFrameStyle(Style.blue_frame) // 新手
         setpointStyle(dStyle.blue_text)
         setpointIcon(cracked)
         setLevelText("新手")
+        // setlevelPoint("6000")
 
       } else if (level_point >= 6000 && level_point <= 12999) {
         setFrameStyle(Style.brown_frame)
         setpointStyle(dStyle.brown_text) // 高手
         setpointIcon(brutal)
         setLevelText("高手")
+        // setlevelPoint("13000")
 
       } else if (level_point >= 13000 && level_point <= 19999) {
         setFrameStyle(Style.silver_frame)
         setpointStyle(dStyle.silver_text) // 菁英
         setpointIcon(warlord)
         setLevelText("菁英")
+        // setlevelPoint("20000")
 
       } else if (level_point >= 20000) {
         setFrameStyle(Style.gold_frame)
         setpointStyle(dStyle.gold_text) // 大師
         setpointIcon(elf)
-        setLevelText("大師")
+        // setlevelPoint("MAX")
       }
     }
   }, [memberData]);

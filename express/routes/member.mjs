@@ -116,7 +116,7 @@ router.post('/google-login', async function (req, res) {
       const [createResult] = await db.execute(creategmQuery, [
         account,
         email,
-        google_uid, 
+        google_uid,
         pic,
         level_point,
         shop_valid,
@@ -172,47 +172,48 @@ router.get('/auth-status', authenticate, (req, res) => {
 router.get('/info/:id', async (req, res) => {
   const memberId = req.params.id;
 
-  // 使用 MySQL 查詢會員資料
   const query = `SELECT * FROM member WHERE id = ?`;
 
   try {
     const [results] = await db.execute(query, [memberId]);
 
     if (results.length > 0) {
-      // 如果找到資料，返回給前端
       res.status(200).json(results[0]);
     } else {
-      // 如果找不到資料，返回錯誤訊息
       res.status(404).json({ error: 'Member not found.' });
     }
   } catch (error) {
-    // 錯誤處理
     console.error('Error fetching member data:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
 
-// google查詢並更新會員資料
-// router.get('/api/member/google-info/:uid', async (req, res) => {
-//   const google_uid = req.params.uid;
-//   const query = `SELECT * FROM member WHERE google_uid = ?`;
-  
-//   try {
-//     const [results] = await db.execute(query, [google_uid]);
-//     if (results.length > 0) {
-//       res.status(200).json(results[0]);
-//     } else {
-//       // 找不到資料，返回錯誤訊息
-//       res.status(404).json({ error: 'gMember not found.' });
-//     }
-//   } catch (error) {
-//     // 錯誤處理
-//     console.error('Error fetching member data:', error);  
-//     res.status(500).json({ error: 'Internal server error.' });
-//   }
-// });
+//修改個人資料account
+router.put('/account/:memberId', async (req, res) => {
+  const memberId = req.params.memberId;
+  const { name, gender, address, birthday, phone, birthday_month } = req.body;
 
+
+  const updateQuery = `UPDATE member SET name = ?, gender = ?, address = ?, birthday = ?, birthday_month = ?, phone = ? WHERE id = ?`;
+  
+  try {
+    const [updateResults] = await db.execute(updateQuery, [name, gender, address, birthday, birthday_month, phone, memberId]);
+
+    if (updateResults.affectedRows > 0) {
+      // 更新成功
+      const [results] = await db.execute(`SELECT * FROM member WHERE id = ?`, [memberId]);
+      res.status(200).json(results[0]);
+    } else {
+      // 更新失敗
+      res.status(404).json({ error: 'member not found.' });
+    }
+  } catch (error) {
+    console.error('Error updating member data:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+
+});
 
 
 export default router
