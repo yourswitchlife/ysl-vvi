@@ -196,6 +196,29 @@ $nav-black: #161719ae;
     overflow: hidden;
   }
 }
+.member_drop{
+  border: none;
+  background-color: #16171900;
+  display: flex;
+  align-items: center;
+  width: 100px;
+  height: 50px;
+  &:hover{
+    background-color: #16171900;
+  }
+  &:active{
+    background-color: #16171900 !important;
+
+  }
+}
+.hover_toggle{
+  background-color: #16171900;
+}
+.logout{
+  width: 100;
+  border: none;
+  background-color: none;
+}
 
 //searchBar
 .display {

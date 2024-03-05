@@ -24,7 +24,7 @@ extendLog()
 // 建立 Express 應用程式
 const app = express()
 
-// cors設定，參數為必要，注意不要只寫`app.use(cors())`
+// cors設定，參數為必要，注意不要只寫`app.use(cors())` 跨域用設定
 app.use(
   cors({
     origin: ['http://localhost:3000', 'https://localhost:9000'],
@@ -32,6 +32,11 @@ app.use(
     credentials: true,
   })
 )
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Expose-Headers', 'Authorization');
+  next();
+});
 
 // 視圖引擎設定
 app.set('views', path.join(__dirname, 'views'))
