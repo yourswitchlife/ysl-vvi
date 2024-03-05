@@ -59,6 +59,18 @@
             background: $white;
         }
     }
+    .shop_link{
+        color: $red-secondary;
+        text-decoration: none;
+        transition: .2s;
+        width: 268px;
+        height: 47px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(240, 248, 255, 0);
+        border: none;
+    }
 }
 
 .blue_text {

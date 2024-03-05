@@ -111,7 +111,7 @@ export default function account() {
 
   const handleaccount = (e) => {
     const { name, value } = e.target;
-  
+
     // 如果是生日欄位，提取月份
     if (name === "birthday") {
       const selectedDate = new Date(value);
@@ -132,7 +132,7 @@ export default function account() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // 使用 SweetAlert 提示確認
     Swal.fire({
       title: "確定儲存嗎？",
@@ -160,7 +160,6 @@ export default function account() {
             }),
             credentials: 'include',
           });
-  
           if (response.ok) {
             // 更新成功，顯示成功訊息
             Swal.fire({
@@ -192,7 +191,7 @@ export default function account() {
       }
     });
   };
-  
+
 
 
   return (
@@ -222,6 +221,8 @@ export default function account() {
                         onChange={handleaccount}
                         name="name"
                         placeholder="真實姓名"
+                        value={memberData?.name}
+                        disabled={!!memberData?.name}
                       />
                     </InputGroup>
 
@@ -229,7 +230,7 @@ export default function account() {
                       <InputGroup.Text>
                         <FaTransgender />
                       </InputGroup.Text>
-                      <Form.Select onChange={handleaccount} name="gender">
+                      <Form.Select onChange={handleaccount} name="gender" value={memberData?.gender}>
                         <option>生理性別</option>
                         <option value="male">生理男</option>
                         <option value="female">生理女</option>
@@ -260,6 +261,7 @@ export default function account() {
                       onChange={handleaccount}
                       name="address"
                       placeholder="聯絡地址"
+                      value={memberData?.address}
                     />
                   </InputGroup>
                   <div className="d-flex flex-row mb-3">
@@ -271,6 +273,8 @@ export default function account() {
                         onChange={handleaccount}
                         name="birthday"
                         type="date"
+                        disabled={!!memberData?.birthday}
+                        value={memberData?.birthday?.split('T')[0]}
                       />
                     </InputGroup>
                     <InputGroup className={mStyle.text_input}>
@@ -281,11 +285,14 @@ export default function account() {
                         onChange={handleaccount}
                         name="phone"
                         placeholder="手機號碼"
+                        value={memberData?.phone}
                       />
                     </InputGroup>
                   </div>
                   <div className='pb-4"'>
-                    <h6 className={mStyle.text_error}>* 生日及真實姓名保存後不可修改，請謹慎輸入！</h6>
+                    {(!memberData?.name || !memberData?.birthday) && (
+                      <h6 className={mStyle.text_warning}>* 生日及真實姓名保存後不可修改，請謹慎輸入！</h6>
+                    )}
                   </div>
                   <div className='pt-3'>
                     <RePassword />

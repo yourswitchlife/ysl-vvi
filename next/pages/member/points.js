@@ -68,9 +68,12 @@ export default function points() {
               <h4 className={pStyle.red_text}>{memberData?.level_point}</h4>
               <h6 className="px-3">/</h6>
               <h6 className="flex-grow-1">{levelPoint}</h6>
-              <h6 className={pStyle.red_text + ' px-5'}>
-                再消費1,902可解鎖下一等級
+              <h6 className={`${pStyle.red_text} px-5`}>
+                {memberData?.level_point >= 20000 ?
+                  "恭喜您解鎖最高等級！" :
+                  `再消費 $${levelPoint - (memberData?.level_point)} 可解鎖下一等級`}
               </h6>
+
               <Link className={pStyle.shop_btn + " fw-bold"} href="/products">
                 去逛逛
               </Link>

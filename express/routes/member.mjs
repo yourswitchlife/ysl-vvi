@@ -195,6 +195,7 @@ router.put('/account/:memberId', async (req, res) => {
   const { name, gender, address, birthday, phone, birthday_month } = req.body;
 
 
+
   const updateQuery = `UPDATE member SET name = ?, gender = ?, address = ?, birthday = ?, birthday_month = ?, phone = ? WHERE id = ?`;
   
   try {
