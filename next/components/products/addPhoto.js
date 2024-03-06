@@ -1,15 +1,12 @@
-import React,{useState} from 'react'
+import React, { useState, useEffect } from 'react'
 import { MdAddPhotoAlternate } from 'react-icons/md'
 import styles from '@/styles/products/product-detail.module.scss'
 
 export default function AddPhoto({
   // setReviewPhoto = '',
   fieldChange = () => {},
+  changHandler = () => {},
 }) {
-
-  const [reviewPhoto, setReviewPhoto] = useState({ reviewPhoto: '' })
-
- 
   return (
     <>
       <div className="d-flex justify-content-center">
@@ -21,11 +18,12 @@ export default function AddPhoto({
           type="file"
           className="d-none"
           id="reviewPhoto"
-          // setReviewPhoto={reviewPhoto}
           name="reviewPhoto"
-          // value={reviewPhoto.reviewPhoto}
-          onChange={fieldChange}
-          accept="image/"
+          onChange={(e) => {
+            fieldChange(e)
+            changHandler(e)
+          }}
+          accept="image/*"
         />
       </div>
     </>

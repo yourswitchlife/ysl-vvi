@@ -15,5 +15,10 @@
   "typescript.preferences.importModuleSpecifierEnding": "js",
   "[javascript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
-  }
+  },
+  "console-ninja.toolsToEnableSupportAutomaticallyFor": {
+    "live-server-extension": true,
+    "live-preview-extension": true
+  },
+  "console-ninja.output.showErrors": false
 }

@@ -5,7 +5,6 @@ import { IoReorderFour } from 'react-icons/io5'
 import ProductCard from '@/components/products/product-card'
 import BreadCrumb from '@/components/common/breadcrumb'
 import Pagination from '@/components/common/pagination'
-import BtnOutline from '@/components/products/btn-outline'
 import Link from 'next/link'
 import styles from '../../styles/products/products.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
@@ -47,23 +46,6 @@ export default function Products() {
     setProducts(newProducts)
   }
 
-  // const historyRecord = (p) => {
-  //   localStorage.setItem("readProduct",JSON.stringify(p))
-
-  //   const recordArr = localStorage.getItem("readProduct")
-  //   // console.log(historyRecordArr)
-  //   const historyRecordArr = recordArr ? [JSON.parse(recordArr)] : {record:[]}
-  //   historyRecordArr.record.unshift(p)
-  //   // if(Array.isArray(historyRecordArr)){
-  //   //   historyRecordArr = []
-  //   // }
-  //   if(historyRecordArr.length > 7){
-  //     historyRecordArr.pop()
-  //   }
-  //   // historyRecordArr.unshift(p)
-  //   localStorage.setItem("readProduct", JSON.stringify(historyRecordArr))
-  // }
-
   // 設定瀏覽紀錄
 
   const historyRecord = (p) => {
@@ -96,27 +78,6 @@ export default function Products() {
   useEffect(() => {
     historyRecord()
   }, [])
-
-  // const historyRecord = (p) => {
-  //   localStorage.setItem("readProduct",JSON.stringify(p))
-
-  //   const extingRecordArr = localStorage.getItem("readProduct")
-  //    let recordArr
-
-  //    if(extingRecordArr){
-  //      recordArr = JSON.parse(extingRecordArr)
-  //      if(!Array.isArray(recordArr)){
-  //        recordArr = [p]
-  //    }
-  //  }else{
-  //    recordArr = [p]
-  //  }
-  //  recordArr.unshift(p)
-  //  if(recordArr.length > 7){
-  //    recordArr.pop()
-  //  }
-  //    localStorage.setItem("newReadProduct", JSON.stringify(recordArr))
-  //  }
 
   // const pagination = (products) => {
   //   const dataTotal = products.length
@@ -216,6 +177,7 @@ export default function Products() {
                       handleToggleFav={handleToggleFav}
                       memberId={p.member_id}
                       cardIcon={cardIcon}
+                      imgDetails={p.img_details}
                     />
                   </Link>
                 </div>
