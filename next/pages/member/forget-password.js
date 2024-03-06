@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react';
 import Navbar from '@/components/layout/navbar/navbar'
 import sStyle from '@/styles/member/sign-up.module.scss'
 import Link from 'next/link'
@@ -8,7 +8,29 @@ import { FaUser, FaEnvelope } from 'react-icons/fa'
 import { MdKey } from 'react-icons/md'
 import { Form, InputGroup, Button, FormControl } from 'react-bootstrap'
 
-export default function SignUp() {
+export default function forgetPassword() {
+
+  const [email, setEmail] = useState('');
+
+
+  const handleGetCode = async () => {
+    try {
+      const response = await fetch('http://localhost:3005/api/member/get-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+
+
+
   return (
     <>
       <div className={sStyle.forgetbg}>
@@ -16,10 +38,10 @@ export default function SignUp() {
         <div className="d-flex justify-content-center align-items-center vh-100">
           <div className={sStyle.sign_body}>
             <div className="d-flex">
-              <Link href="" className={sStyle.in_togglebtn + ' flex-grow-1'}>
+              <Link href="/member/login" className={sStyle.in_togglebtn + ' flex-grow-1'}>
                 登入
               </Link>
-              <Link href="" className={sStyle.in_togglebtn + ' flex-grow-1 bg-info'}>
+              <Link href="/member/register" className={sStyle.in_togglebtn + ' flex-grow-1 bg-info'}>
                 註冊
               </Link>
             </div>
@@ -34,7 +56,10 @@ export default function SignUp() {
                 <Form.Control className={sStyle.input}
                   type="email"
                   placeholder="信箱@example.com"
+                  name="email"
+                  value={email}
                   style={{ width: '180px' }}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </InputGroup>
 
@@ -51,7 +76,7 @@ export default function SignUp() {
                   placeholder="請輸入信箱驗證碼"
                   style={{ width: '180px' }}
                 />
-                <Button className={sStyle.auth_btn}>取得驗証碼</Button>
+                <Button className={sStyle.auth_btn} onClick={handleGetCode}>取得驗証碼</Button>
               </InputGroup>
                 <div className={sStyle.error+ " mt-2 ps-4"}>
                   請輸入驗証碼。
@@ -96,12 +121,7 @@ export default function SignUp() {
               </div>
             </Form>
 
-            <div className="d-flex justify-content-center mb-3">
-              <h6 className="me-5">還沒加入YSL嗎?</h6>
-              <Link href="" className={sStyle.sign_link}>
-                立即快速註冊
-              </Link>
-            </div>
+            
           </div>
         </div>
       </div>

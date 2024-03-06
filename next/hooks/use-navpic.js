@@ -15,7 +15,7 @@ export default function navPic() {
   useEffect(() => {
     if (isLoggedIn && memberData) {
       const picUrl = memberData.pic
-        ? (memberData.pic.startsWith("https://") ? memberData.pic : `/images/member/profile-pic/${memberData.pic}`)
+        ? (memberData.pic.startsWith("https://") ? memberData.pic : `http://localhost:3005/uploadImg/profile-pic/${memberData.pic}`)
         : profilePhoto;
 
       setNavPic(picUrl);

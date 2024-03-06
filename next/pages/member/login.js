@@ -106,7 +106,7 @@ export default function logIn() {
               </Link>
             </div>
             <h5 className={sStyle.spe_text}>Welcome home.</h5>
-            <Form className="mt-3" onSubmit={handleLogin}>
+            <Form className="mt-3 align-items-center" onSubmit={handleLogin}>
               <InputGroup className="mb-3 px-4">
                 <InputGroup.Text>
                   <FaUser />
@@ -118,7 +118,7 @@ export default function logIn() {
                   placeholder="使用者名稱"
                   value={formData.account}
                   onChange={handleChange}
-                  style={{ width: '330px' }}
+                  style={{ width: '250px' }}
                 />
               </InputGroup>
 
@@ -135,7 +135,7 @@ export default function logIn() {
                     value={formData.password}
                     onChange={handleChange}
                     autoFocus
-                    style={{ width: '330px' }}
+                    style={{ width: '250px' }}
                   />
                 </InputGroup>
                 <Form.Check

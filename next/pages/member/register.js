@@ -63,7 +63,7 @@ export default function register() {
           // 處理成功的情況
           const data = await response.json();
           // console.log('註冊成功:', data);
-          router.push('/');
+          router.push('/member/login');
           
         } else {
           // 處理錯誤情況
