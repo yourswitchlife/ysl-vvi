@@ -3,21 +3,24 @@
     "activityBar.background": "#045273",
     "titleBar.activeBackground": "#045273",
     "titleBar.activeForeground": "#FBFAFA"
-  },
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.configPath": ".prettierrc.json",
-  "editor.formatOnSave": false,
-  "editor.codeActionsOnSave": ["source.formatDocument", "source.fixAll.eslint"],
-  "emmet.includeLanguages": {
-    "javascript": "javascriptreact"
-  },
-  "emmet.syntaxProfiles": {
-    "javascript": "jsx"
-  },
-  "[scss]": {
-    "editor.defaultFormatter": "vscode.css-language-features"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
-  }
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.configPath": ".prettierrc.json",
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": [
+        "source.formatDocument",
+        "source.fixAll.eslint"
+    ],
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact"
+      },
+      "emmet.syntaxProfiles": {
+        "javascript": "jsx"
+      },
+      "[scss]": {
+        "editor.defaultFormatter": "vscode.css-language-features"
+      },
+      "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+      }
 }

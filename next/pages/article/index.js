@@ -3,6 +3,7 @@ import style from '@/styles/article/index.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
 import Navbar from '@/components/layout/navbar/navbar'
 import { FaSearch } from 'react-icons/fa'
+import Link from 'next/link'
 
 export default function index() {
   return (
@@ -208,7 +209,7 @@ export default function index() {
             查看更多...
           </h5>
           <div className={`${style.more} pt-3 pb-3`}>
-            <a href="article_main.html">
+            <Link href="/article/article_main">
               <div className={style.card}>
                 <img
                   src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
@@ -220,7 +221,7 @@ export default function index() {
                   </p>
                 </div>
               </div>
-            </a>
+            </Link>
             <a href="article_main.html">
               <div className={style.card}>
                 <img
