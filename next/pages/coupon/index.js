@@ -5,90 +5,106 @@ import Image from 'next/image'
 import styles from '@/styles/coupon/coupon.module.scss'
 
 //components
-import CouponCard from '@/components/coupon-card/coupon-card'
 import GoTopButton from '@/components/go-to-top/go-top-button'
-import CouponTest from '@/components/coupon-card/coupon-test'
-// import GoGo from '@/components/go-to-top/go-button'
+import CouponUni from '@/components/coupon/coupon-uni'
 
 //pictures
 import banner from '@/public/images/coupon/tryout.png'
-// import bannerTitle from '@/public/images/coupon/banner-title.png'
-import bannerCTA from '@/public/images/coupon/bannerCTA.png'
-import bannerSub1 from '@/public/images/coupon/banner-sub11.png'
-import bannerSub2 from '@/public/images/coupon/banner-sub22.png'
-import bannerSub3 from '@/public/images/coupon/banner-sub33.png'
-import console from '@/public/images/coupon/sectionTwo.png'
-// import consoleTitle from '@/public/images/coupon/section2-headline.png'
-// import consoleSub from '@/public/images/coupon/section2-headline&Des.png'
-import sellerCTA from '@/public/images/coupon/CTA-seller.png'
-import missionBG from '@/public/images/coupon/galaxy-night-panorama.png'
-import finalPic from '@/public/images/coupon/CTA-text&pics.png'
+
+import titleA from '@/public/images/coupon/title1.png'
+import titleB from '@/public/images/coupon/title2.png'
+import titleC from '@/public/images/coupon/title3.png'
+
+import titleAm from '@/public/images/coupon/titleAm.png'
+import titleBm from '@/public/images/coupon/titleBm.png'
+import titleCm from '@/public/images/coupon/titleCm.png'
+
+import player from '@/public/images/coupon/sectionTwo.png'
+
+fetch(
+  'http://localhost:3005/api/coupon/23', //server url
+  
+)
+  .then((response) =>response.json())
+  .then((result) => {
+   
+    // console.log('Success:', result[0].title)
+    // setImgServerUrl('http://localhost:3005/api/coupon/16' + result.title)
+    // console.log(setImgServerUrl)
+    
+  })
+  .catch((error) => {
+    console.log('Error:', error)
+  })
 
 
 export default function CouponPage() {
   return (
     <>
       <Navbar />
-      <section
-        className={`${styles.wrapper} d-flex justify-content-center align-items-center container-field flex-column pt-5`}
-      >
-        <div className={`${styles.banner} position-relative container-fluid`}>
-          <Image src={banner} alt="ysl coupon" />
+      <section className={`${styles.wrapper}  container-field`}>
+        <div className={`${styles.banner} position-relative`}>
+          <Image src={banner} alt="ysl coupon" className={styles.main_img} />
+          <div className={styles.title_action}>
+            <div className={styles.title_frame}>
+              <div>
+                <Image src={titleA} alt="免" className={styles.img} />
+              </div>
 
-          <div
-            className={`d-flex justify-content-center align-items-center ${styles.titles}`}
-          >
-            <h1 className={`text-white  ${styles.title_action}`}>免</h1>
+              <div>
+                <Image src={titleB} alt="費" className={styles.img} />
+              </div>
 
-            <h1 className={`text-white  ${styles.title_action}`}>費</h1>
+              <div>
+                <Image src={titleC} alt="領" className={styles.img} />
+              </div>
+            </div>
+            <div className={styles.title_frame_mobile}>
+              <div>
+                <Image src={titleAm} alt="免" className={styles.img} />
+              </div>
 
-            <h1 className={`text-white  ${styles.title_action}`}>領</h1>
+              <div>
+                <Image src={titleBm} alt="費" className={styles.img} />
+              </div>
+
+              <div>
+                <Image src={titleCm} alt="領" className={styles.img} />
+              </div>
+            </div>
           </div>
 
-          <div className=" ">
-            <button className={`btn btn-light  ${styles.title_CTAbtn}`}>
-              <h3 className={styles.title_CTA}>加入會員</h3>
-            </button>
+          {/* 加入會員按鈕區塊 */}
+          <div className={styles.addMember_btn}>
+            <div className={styles.btn_frame}>
+              <button className={`btn btn-light ${styles.title_CTA}`}>
+                加入會員
+              </button>
+            </div>
           </div>
         </div>
-
-
       </section>
-
-      <section className={styles.couponMember}>
-        <div className={`${styles.console} container-fluid position-relative`}>
-          <Image src={console} alt="Be YSL member!" />
-
-          {/* <div className='d-flex justify-content-center mb-5 '> */}
-          <button
-            className={`btn btn-lg btn-primary position-absolute ${styles.btnCTA}`}
-          >
-            趕緊加入會員
-          </button>
-
-          
-          {/* </div> */}
+      <section className={styles.get_coupon_bg_frame}>
+        <div className={`${styles.get_coupon_bg} container`}>
+          <Image
+            src={player}
+            width={1124}
+            height={462}
+            layout="responsive"
+            alt="加入會員"
+          />
+          <button className={`btn btn-info ${styles.btn}`}>趕緊加入會員</button>
         </div>
 
         <div>
-          <CouponTest />
+          <CouponUni/>
+          {/* <CouponCard/> */}
         </div>
-
-        {/* </div> */}
-
       </section>
-
-      {/* <div className='d-flex justify-content-center container-fluid  w-25 mt-3 mb-3'>
-          <Image src={sellerCTA}/>
-          <h3 className=''>賣家募集中！</h3>
-      </div> */}
 
       <section className="text-white">
         <div className={`${styles.missionBG} `}>
-          {/* <Image src={missionBG} alt='mission'/> */}
-
-          {/* <div className='d-flex justify-content-end align-items-center me-3 mt-3'> */}
-          <div className="d-flex flex-column justify-content-center align-items-center pt-5">
+          <div className="d-flex flex-column justify-content-center align-items-center pt-3">
             <h4 className={`${styles.missionHeader} ms-5 pt-5`}>
               加入會員，解會員任務，送優惠券
             </h4>
@@ -110,7 +126,7 @@ export default function CouponPage() {
         </div>
       </section>
 
-      <GoTopButton/>
+      <GoTopButton />
       {/* <GoGo/> */}
       <Footer />
     </>

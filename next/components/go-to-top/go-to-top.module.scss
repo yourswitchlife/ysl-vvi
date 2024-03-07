@@ -1,9 +1,9 @@
 .btn{
     position: fixed;
-    bottom: 50px;
-    right: 50px;
-    height: 90px;
-    width: 90px;
+    bottom: 20px;
+    right: 5px;
+    height: 65px;
+    width: 65px;
     font-size: 50px;
     background-color: transparent;
     border-radius: 50%;
@@ -20,8 +20,8 @@
 
     @media screen and (max-width: 431px) {
         .btn{
-        right: 20px;
-        height: 60px;
+        right: 5px;
+        height: 50px;
         width: 60px;
     }
 }

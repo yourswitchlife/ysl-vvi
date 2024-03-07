@@ -5,10 +5,11 @@ import Image from 'next/image'
 import Swal from 'sweetalert2'
 
 //scss
-import styles from './coupon-uni.module.scss'
+import styles from './coupon-seller.module.scss'
 
 //pics
 import logo from '@/public/images/coupon/logominiFig.png'
+
 
 export default function Test() {
   // const [couponName, setCouponName] = useState([])
@@ -40,47 +41,36 @@ export default function Test() {
   }, [])
 
   const handleGet = (id) => {
-    const memberID = '77'
     const didClaimed = claimed.some((coupon) => coupon.id === id && coupon.get)
 
     if (didClaimed) {
       //如果領過，按領取按鈕就導頁
       router.push('')
     } else {
-      fetch('http://localhost:3005/api/coupon/insert', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ memberID, couponID: id }),
-      }).then(response => response.json())
-      .then(data => {
-        console.log(data)
-        if(data){
-          const updatedGet = claimed.map((v) => {
-            if (v.id === id && !v.get) {
-              const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-center',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                  toast.onmouseenter = Swal.stopTimer
-                  toast.onmouseleave = Swal.resumeTimer
-                },
-              })
-              Toast.fire({
-                icon: 'success',
-                title: '優惠券領取成功',
-              })
-              return { ...v, get: true }
-            } else {
-              return v
-            }
-          })
-          setClaimed(updatedGet)
+      const updatedGet = claimed.map((v) => {
+        if (v.id === id && !v.get) {
+        
+            const Toast = Swal.mixin({
+              toast: true,
+              position: "top-center",
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+              }
+            });
+            Toast.fire({
+              icon: "success",
+              title: "優惠券領取成功"
+            });
+          return { ...v, get: true }
+        } else {
+          return v
         }
       })
-    
+      setClaimed(updatedGet)
     }
   }
 
@@ -174,13 +164,11 @@ export default function Test() {
                   </h2>
                   <button
                     className={`${styles.btnCTA} btn btn-sm ${
-                      !coupon.get ? 'btn-danger' : 'btn-info'
-                    } col-5 ms-5`}
-                    onClick={() => handleGet(coupon.id)}
+                          !coupon.get ? 'btn-danger' : 'btn-info'
+                        } col-5 ms-5`}
+                    onClick= {()=>handleGet(coupon.id)}
                   >
-                    <p className={`${styles.btnCTA}`}>
-                      {!coupon.get ? '立即領取' : '去逛一下'}
-                    </p>
+                    <p className={`${styles.btnCTA}`}>{!coupon.get ? '立即領取' : '去逛一下'}</p>
                   </button>
                 </div>
               </div>
