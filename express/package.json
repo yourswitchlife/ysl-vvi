@@ -10,6 +10,7 @@
     "debug-win": "set DEBUG=express:* & node ./bin/www"
   },
   "dependencies": {
+    "@sweetalert2/themes": "^5.0.16",
     "app-root-path": "^3.1.0",
     "bcrypt": "^5.1.1",
     "bluebird": "^3.7.2",
