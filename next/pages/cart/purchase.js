@@ -8,10 +8,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FaCheck } from 'react-icons/fa6'
 
+import useRequireCart from '@/hooks/use-require-cart'
+
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import { useAuth } from '@/hooks/use-Auth'
 
 export default function Purchase() {
+  useRequireCart()
   return (
     <>
       <CartNavbar />

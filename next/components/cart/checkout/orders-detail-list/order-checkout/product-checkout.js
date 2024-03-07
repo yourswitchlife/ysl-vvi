@@ -15,7 +15,7 @@ export default function ProductCheckout({ item }) {
         {/* 手機板商品圖 */}
         <Link href="" className={styles.pImgMobile}>
           <Image
-            src={`/images/product/cover/${item.cover}`}
+            src={`/images/product/cover/${item.img_cover}`}
             width={65}
             height={105}
             layout="fixed"
@@ -28,7 +28,7 @@ export default function ProductCheckout({ item }) {
             <div className="d-flex">
               <Link href="" className={styles.pImg}>
                 <Image
-                  src={`/images/product/cover/${item.cover}`}
+                  src={`/images/product/cover/${item.img_cover}`}
                   width={85}
                   height={140}
                   layout="fixed"
@@ -40,12 +40,12 @@ export default function ProductCheckout({ item }) {
                   <Link href="" className={styles.pName}>
                     {item.name}
                   </Link>
-                  <h6 className={styles.language}>中文版</h6>
+                  <h6 className={styles.language}>{item.language}版</h6>
                 </div>
-                {item.displayPrice ? (
+                {item.display_price ? (
                   <>
                     <h6 className={styles.discount}>
-                      {Math.round((item.price / item.displayPrice) * 10)}折
+                      {Math.round((item.price / item.display_price) * 10)}折
                     </h6>
                   </>
                 ) : (
@@ -54,10 +54,10 @@ export default function ProductCheckout({ item }) {
                 <div className={styles.priceQuanMobile}>
                   {/* 商品金額 */}
                   <div className={styles.priceBar}>
-                    {item.displayPrice ? (
+                    {item.display_price ? (
                       <>
                         <span className={styles.prePrice}>
-                          ${item.displayPrice}
+                          ${item.display_price}
                         </span>
                         <span className={styles.discountPrice}>
                           ${item.price}
@@ -77,9 +77,9 @@ export default function ProductCheckout({ item }) {
           </div>
           {/* 商品金額 */}
           <div className={`${styles.priceBar} ${styles.ab}`}>
-            {item.displayPrice ? (
+            {item.display_price ? (
               <>
-                <span className={styles.prePrice}>${item.displayPrice}</span>
+                <span className={styles.prePrice}>${item.display_price}</span>
                 <span className={styles.discountPrice}>${item.price}</span>
               </>
             ) : (
@@ -95,7 +95,7 @@ export default function ProductCheckout({ item }) {
 
           {/* 總金額 */}
           <div className={`${styles.totalBar} ${styles.sb}`}>
-            <span className={styles.total}>$1920</span>
+            <span className={styles.total}>${item.price * item.quantity}</span>
           </div>
         </div>
       </div>

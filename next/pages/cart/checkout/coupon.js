@@ -10,9 +10,13 @@ import styles from '@/styles/cart/coupon.module.scss'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import useRequireCart from '@/hooks/use-require-cart'
+
 
 
 export default function Coupon() {
+
+  useRequireCart()
 
   const router = useRouter()
 

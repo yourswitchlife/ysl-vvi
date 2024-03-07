@@ -66,7 +66,7 @@ export default function ProductCard({ isEditing, item }) {
                     {item.name}
                   </Link>
                   <div className="d-flex justify-content-between align-items-center">
-                    <h6 className={styles.language}>中文版</h6>
+                    <h6 className={styles.language}>{item.language}版</h6>
                     {item.display_price ? (
                       <>
                         <h6 className={styles.discount}>

@@ -19,7 +19,7 @@
 }
 
 .selectAllBar {
-  padding-left: 2.5rem;
+  padding-left: 63px;
 }
 
 .shop {
@@ -29,6 +29,10 @@
   border-bottom: 2px solid $light-gray;
   padding-bottom: 10px;
   margin-bottom: 20px;
+  .shopNameFrame{
+    display: flex;
+    padding-left: 20px;
+  }
   .shopName {
     display: flex;
 

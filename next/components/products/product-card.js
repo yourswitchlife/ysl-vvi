@@ -22,6 +22,7 @@ export default function ProductCard({
   member_id,
   fav,
   handleToggleFav,
+  language,
 }) {
   const ratingStyle = (v) => {
     let ratingId = '',
@@ -157,6 +158,7 @@ export default function ProductCard({
                     member_id,
                     fav,
                     product_quanty,
+                    language,
                     quantity: 1,
                   })
                   notifySuccess() 

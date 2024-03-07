@@ -6,7 +6,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FaAngleRight, FaAngleDown, FaCircleQuestion } from 'react-icons/fa6'
 
+import useRequireCart from '@/hooks/use-require-cart'
+
 export default function Delivery() {
+  useRequireCart()
+
   const [showForm, setShowForm] = useState(false)
 
   const toggleForm = () => {

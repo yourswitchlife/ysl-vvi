@@ -18,9 +18,9 @@ export default function OrderCheckout() {
 
   // 根據商品的memberId進行訂單分組
   const orderGroup = payingItems.reduce((group, item) => {
-    const { memberId } = item
-    group[memberId] = group[memberId] || []
-    group[memberId].push(item)
+    const { member_id } = item
+    group[member_id] = group[member_id] || []
+    group[member_id].push(item)
     return group
   }, {})
 
@@ -29,7 +29,7 @@ export default function OrderCheckout() {
   // 對應連線server端取得賣場名稱
   useEffect(() => {
     // console.log(cartItems)
-    const memberIds = payingItems.map((item) => item.memberId).join(',')
+    const memberIds = payingItems.map((item) => item.member_id).join(',')
     if (memberIds) {
       fetch(`http://localhost:3005/api/cart/shop-names?memberIds=${memberIds}`)
         .then((response) => response.json())
@@ -45,16 +45,16 @@ export default function OrderCheckout() {
 
   return (
     <>
-      {Object.entries(orderGroup).map(([memberId, items]) => {
+      {Object.entries(orderGroup).map(([member_id, items]) => {
         return (
-          <div key={memberId} className={styles.orderList}>
+          <div key={member_id} className={styles.orderList}>
             {/* 單一賣場購買商品清單 */}
             <div className={styles.topFrame}>
               <div className={styles.shop}>
                 <div className={styles.shopName}>
                   <FaShopify className={styles.icon} />
                   <h5>
-                    <b>{shopName[memberId]}</b>
+                    <b>{shopName[member_id]}</b>
                   </h5>
                 </div>
               </div>

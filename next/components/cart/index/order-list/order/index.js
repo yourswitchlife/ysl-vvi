@@ -8,7 +8,7 @@ import { FaCheck } from 'react-icons/fa6'
 import { useCart } from '@/hooks/use-cart'
 
 export default function Order() {
-  const { cartItems, notifyOrder } = useCart()
+  const { cartItems, setCartItems, notifyOrder } = useCart()
 
   const [shopName, setShopName] = useState({})
 
@@ -20,13 +20,7 @@ export default function Order() {
     return group
   }, {})
 
-  // 根據賣場的最後添加時間戳排序賣場顯示
-const sortedCartItems = Object.entries(orderGroup).sort((a, b) => {
-  const lastAddedA = Math.max(...a[1].map(item => item.lastAdded || 0));
-  const lastAddedB = Math.max(...b[1].map(item => item.lastAdded || 0));
-  return lastAddedB - lastAddedA; // 降序排列
-});
-
+  console.log(orderGroup)
 
   // 對應連線server端取得賣場名稱
   useEffect(() => {
@@ -52,19 +46,44 @@ const sortedCartItems = Object.entries(orderGroup).sort((a, b) => {
     setisEditing(!isEditing)
   }
 
+  const handleShopSelect = (member_id) => {
+    const updatedCartItems = cartItems.map((item) => {
+      if (item.member_id === member_id) {
+        return { ...item, userSelect: !orderGroup[member_id].every(item => item.userSelect) };
+      }
+      return item;
+    });
+    setCartItems(updatedCartItems);
+  };
+
+
+
   return (
     <>
       {/* 單一賣場訂單 */}
       {Object.entries(orderGroup).map(([member_id, items]) => {
+        console.log(orderGroup[member_id])
         return (
           <div key={member_id} className={styles.orderList}>
             {/* 單一賣場購買商品清單 */}
             <div className={styles.shop}>
-              <div className={styles.shopName}>
-                <FaShopify className={styles.icon} />
-                <h5>
-                  <b>{shopName[member_id]}</b>
-                </h5>
+              <div className={styles.shopNameFrame}>
+                {/* 賣場勾選框框 */}
+                <div className={styles.checkBoxBar}>
+                  <input
+                    className={`form-check-input ${styles.checkBox}`}
+                    type="checkbox"
+                    checked={items.every((item) => item.userSelect)}
+                    onChange={() => handleShopSelect(member_id)}
+                  />
+
+                </div>
+                <div className={styles.shopName}>
+                  <FaShopify className={styles.icon} />
+                  <h5>
+                    <b>{shopName[member_id]}</b>
+                  </h5>
+                </div>
               </div>
               {/* 電腦版垃圾桶 */}
               <FaTrashAlt

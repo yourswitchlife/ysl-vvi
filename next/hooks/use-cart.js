@@ -30,6 +30,9 @@ export function CartProvider({ children }) {
   // 加入購物車的項目
   const [cartItems, setCartItems] = useState([])
 
+  const router = useRouter()
+
+
   // 在元件掛載時讀取 localStorage 中的購物車狀態
   useEffect(() => {
     const cartData = localStorage.getItem('cartItems')
@@ -48,6 +51,8 @@ export function CartProvider({ children }) {
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems))
   }, [cartItems])
+
+
 
   // SweetAlert2
   const notifySuccess = () => {
@@ -130,11 +135,16 @@ export function CartProvider({ children }) {
   // 計算購物車總商品件數
   const totalProducts = cartItems.length
 
+
   // 刪除整筆賣場訂單
   const handleDeleteOrder = (id) => {
     const filterItems = cartItems.filter((item) => item.member_id !== id)
     setCartItems(filterItems)
   }
+
+  // 選取全部賣場商品
+
+
 
   // 選取全部checkbox
   const handleAllCheckboxChange = (cartItems) => {

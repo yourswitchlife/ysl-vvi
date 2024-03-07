@@ -78,7 +78,7 @@ export default function OrderList() {
                       <div className={styles.summaryItemLabel}>商品折抵</div>
                       <div className={styles.summaryItemLine}></div>
                       <div className={`text-danger ${styles.summaryItemPrice}`}>
-                        $200
+                        $0
                       </div>
                     </div>
                     {/* <div className={styles.summaryItem}>
@@ -91,7 +91,7 @@ export default function OrderList() {
                     <UseCoupon />
                     <div className={styles.summeryTotal}>
                       <div className={styles.totalText}>訂單總金額</div>
-                      <div className={styles.totalPrice}>$1920</div>
+                      <div className={styles.totalPrice}>${totalPrice}</div>
                     </div>
                     <Link href="/cart/checkout" className={styles.payBtnBar}>
                       <button className={`btn btn-danger ${styles.btnPay}`}>

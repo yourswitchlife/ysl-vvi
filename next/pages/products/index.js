@@ -133,6 +133,7 @@ export default function Products() {
                     fav={p.fav}
                     handleToggleFav={handleToggleFav}
                     member_id={p.member_id}
+                    language = {p.language}
                   />
                   </Link>
                 </div>
