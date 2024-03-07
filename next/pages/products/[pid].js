@@ -42,69 +42,87 @@ export default function ProductDetail() {
   // valid: '',
   // launch_valid: '',
   // created_at: '',
-  
+
   const [product, setProduct] = useState({
     id: '',
-  type_id: '',
-  name: '',
-  product_quanty: "0",
-  fav: '',
-  display_price: "",
-  price: "",
-  img_cover: '',
-  img_1: '',
-  img_2: '',
-  img_3: '',
-  release_time: '',
-  language: [],
-  rating_id: '3',
-  co_op_valid: '0',
-  description: '',
-  member_id: '',
-  valid: '',
-  launch_valid: '',
-  created_at: '',
+    type_id: '',
+    name: '',
+    product_quanty: "0",
+    fav: '',
+    display_price: "",
+    price: "",
+    img_cover: '',
+    img_details: [],
+    release_time: '',
+    language: [],
+    rating_id: '3',
+    co_op_valid: '0',
+    description: '',
+    member_id: '',
+    valid: '',
+    launch_valid: '',
+    created_at: '',
   })
-  const [ben,setBen]=useState(false)
+  const [ben, setBen] = useState(false)
 
+  const [historyRecords, setHistoryRecords] = useState([])
   // const [product, setProduct] = useState([])
   const getProduct = async (pid) => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/products/${pid}`)
+    try {
+      const res = await fetch(`http://localhost:3005/api/products/${pid}`)
       const data = await res.json()
       // console.log(data[0])
+      console.log(data[0].img_details)
+      // console.log(data[0].img_details.split(",")[0])
 
-      if(data[0].name){
+      if (data[0].name) {
         setProduct(data[0])
       }
-    }catch (e){
+    } catch (e) {
       console.error(e)
     }
   }
 
   useEffect(() => {
-    if(router.isReady){
-      const {pid}=router.query
+    if (router.isReady) {
+      const { pid } = router.query
       getProduct(pid)
     }
-  },[router.isReady])
-  // let imgAry = [img2, img3, img3]
- 
+  }, [router.isReady, router.query])
 
+
+  // 取得瀏覽紀錄
+  useEffect(() => {
+    const historyRecordArr = localStorage.getItem("readProduct")
+    let recordArr = historyRecordArr ? JSON.parse(historyRecordArr) : []
+    if (!Array.isArray(recordArr)) {
+      recordArr = []
+    }
+    setHistoryRecords(recordArr)
+  }, [])
+
+  useEffect(() => {
+    console.log(historyRecords)
+  }, [historyRecords])
+  // console.log(historyRecords)
+  // let imgAry = [product.img_details.split(",")[0], product.img_details.split(",")[1], product.img_details.split(",")[2]]
+  let imgsArr = [product.img_details]
+  {product.img_details == "" ? console.log("HI") : console.log(imgsArr)}
+  // console.log(product)
   return (
     <>
       <Navbar />
       <PhoneTabNav />
 
       <div className={`d-lg-block d-none ${styles.pHistory}`}>
-        <PHistory />
+        <PHistory historyRecords={historyRecords} />
       </div>
 
       <div className="container mt-5 pt-4 px-lg-5 px-4">
         <BreadCrumb />
         <section className="p-detail-sec1 row mt-4">
           <div className="col-lg col pe-5-lg pe-2-lg">
-            <PImgs />
+            <PImgs cover={product.img_cover} />
           </div>
           <div className="col-lg-6 col-12 mt-lg-0 mt-3">
             <h4 className="text-white mb-0">{product.name}</h4>
@@ -136,17 +154,6 @@ export default function ProductDetail() {
                   <b>+</b>
                 </button>
               </div>
-              {/* <div>
-                <select
-                  className="form-select form-select-sm"
-                  aria-label="Large select example"
-                >
-                  <option selected>amount</option>
-                  <option value="1">One</option>
-                  <option value="2">Two</option>
-                  <option value="3">Three</option>
-                </select>
-              </div> */}
             </div>
 
             <hr className="text-white border-3" />
@@ -178,7 +185,7 @@ export default function ProductDetail() {
               </button>
             </div>
 
-            <div className={`row d-lg-none m-0 ${styles.btns} ${ben?"active":""}`} onClick={()=>{setBen(true)}}>
+            <div className={`row d-lg-none m-0 ${styles.btns} ${ben ? "active" : ""}`} onClick={() => { setBen(true) }}>
               <div typeof="button" className="col btn btn-info rounded-0 py-1">
                 <FaCartPlus className="text-light" /> <p>加入購物車</p>
               </div>
@@ -227,7 +234,22 @@ export default function ProductDetail() {
                 <PRatingBig></PRatingBig>
               </div>
             </div>
-            <Image
+            { }
+            {/* {product.img_details == "" ? console.log("HI") : console.log(product.img_details)} */}
+            {/* {product.img_details == "" ? "" : product.img_details.splice(",").map((v, i) => {
+              return (
+                <div>
+                  <Image
+                    src={pImgDetail}
+                    alt="product-detail"
+                    width={670}
+                    height={400}
+                    priority={true}
+                    className="my-3 w-100 h-auto"
+                  /></div>
+              ) */}
+            {/* })} */}
+            {/* <Image
               src={pImgDetail}
               alt="product-detail"
               width={670}
@@ -250,7 +272,7 @@ export default function ProductDetail() {
               height={400}
               priority={true}
               className="my-3 w-100 h-auto"
-            />
+            /> */}
           </div>
           <div className="col px-lg-3">
             <h5 className="mb-2 text-white">關於本店</h5>

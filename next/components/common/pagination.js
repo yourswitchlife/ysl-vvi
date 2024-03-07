@@ -15,16 +15,7 @@ export default function Pagination() {
               1
             </a>
           </li>
-          <li className="page-item ms-2 me-2 active">
-            <a className="page-link" href="#">
-              2
-            </a>
-          </li>
-          <li className="page-item ms-2 me-2">
-            <a className="page-link" href="#">
-              3
-            </a>
-          </li>
+        
           <li className="page-item ms-2 me-2">
             <a className="page-link" href="#" aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
