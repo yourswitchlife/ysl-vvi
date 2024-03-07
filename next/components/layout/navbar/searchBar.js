@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
 import styles from '@/components/layout/navbar/navbar.module.scss'
 
 const SearchBar = () => {
+  //控制搜尋元件
+  const [searchItem, setSearchItem] = useState('')
   return (
     <>
       <div className={styles.display}>
@@ -13,6 +15,9 @@ const SearchBar = () => {
           text="search"
           placeholder="搜尋所有商品..."
           className={styles.search}
+          value={searchItem}
+          onChange={(e) => {
+            setSearchItem(e.target.value)}}
         />
       </div>
     </>

@@ -1,10 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
 import styles from '@/components/seller/seller.module.scss'
-import { FaStar } from 'react-icons/fa'
-import Link from 'next/link'
 import profileImg from '@/public/images/profile-photo/peach.png'
 import defaultHead from '@/public/images/profile-photo/default-profile-img.svg'
 import gameCover from '@/public/images/seller/product-cover/crymachina.jpg'
@@ -13,12 +11,9 @@ import SellerFooter from '@/components/layout/footer/footer-backstage'
 import InputGroup from 'react-bootstrap/InputGroup'
 import { FaCalendarAlt } from 'react-icons/fa'
 import Form from 'react-bootstrap/Form'
-import Nav from 'react-bootstrap/Nav'
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Pagination from '@/components/common/pagination'
-import Button from 'react-bootstrap/Button'
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Card from 'react-bootstrap/Card'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
@@ -35,6 +30,10 @@ export default function Order() {
       document.body.classList.remove(styles.bodyStyleA)
     }
   }, [])
+  // 表單控制狀態
+  const orderOptions = ['訂單編號', '會員名稱']
+  const [orderSelect, setOrderSelect] = useState('訂單編號')
+  const [searchText, setSearchText] = useState('')
 
   // function handleSubmit(e) {
   //   e.prevent.default()
@@ -105,19 +104,27 @@ export default function Order() {
                     <InputGroup className="mb-3">
                       <DropdownButton
                         variant="dark"
-                        title="訂單編號"
+                        title={orderSelect}
+                        value={orderSelect}
+                        onChange={(e) => {
+                          setOrderSelect(e.target.value)
+                        }}
                         id="searchAreaBtn"
+                        className={styles.borderRadius}
                       >
-                        <Dropdown.Item href="#">訂單編號</Dropdown.Item>
-                        <Dropdown.Item href="#">會員名稱</Dropdown.Item>
+                      {orderOptions.map((v,i) => {
+                        return (<Dropdown.Item key={i} value={v} href="#">{v}</Dropdown.Item>)
+                      })}
                       </DropdownButton>
-                      <Form.Control aria-label="searchAreaText" />
+                      <Form.Control aria-label="searchAreaText" value={searchText} onChange={(e) => {
+                        setSearchText(e.target.value)
+                      }} />
                     </InputGroup>
                     <div className="d-flex justify-content-center">
                       <button type="button" className="btn btn-danger me-2">
                         搜尋
                       </button>
-                      <button type="button" className="btn btn-danger">
+                      <button type="button" className={`btn btn-danger ${styles.btnDangerOutlined}`}>
                         取消
                       </button>
                     </div>

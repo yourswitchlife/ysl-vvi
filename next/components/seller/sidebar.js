@@ -38,7 +38,7 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="seller/shop"
+              href="./shop"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <FaStore className={`${styles.navText} me-2`} />
@@ -47,7 +47,7 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="seller/product"
+              href="./product"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <IoGameController className={`${styles.navText} me-2`} />
@@ -56,7 +56,7 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="seller/order"
+              href="./order"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <FaFileAlt className={`${styles.navText} me-2`} />
@@ -65,7 +65,7 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="seller/comment"
+              href="./comment"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <FaStar className={`${styles.navText} me-2`} />
