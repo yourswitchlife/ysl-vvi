@@ -86,7 +86,7 @@ export default function CouponPage() {
         </div>
       </section>
 
-      <section className="text-white">
+      <section className="text-white mt-3">
         <div className={`${styles.missionBG} `}>
           <div className="d-flex flex-column justify-content-center align-items-center pt-3">
             <h4 className={`${styles.missionHeader} ms-5 pt-5`}>

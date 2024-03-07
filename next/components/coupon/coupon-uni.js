@@ -10,10 +10,29 @@ import styles from './coupon-uni.module.scss'
 //pics
 import logo from '@/public/images/coupon/logominiFig.png'
 
+//hooks
+import { useAuth } from '@/hooks/use-Auth'
+import logIn from '@/pages/member/login'
+
 export default function Test() {
-  // const [couponName, setCouponName] = useState([])
   const [claimed, setClaimed] = useState([])
   const router = useRouter()
+  const { isLoggedIn, memberId } = useAuth()
+
+  //領取成功通知
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-center',
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer
+      toast.onmouseleave = Swal.resumeTimer
+    },
+  })
+
+  
 
   useEffect(() => {
     fetch('http://localhost:3005/api/coupon/')
@@ -40,34 +59,28 @@ export default function Test() {
   }, [])
 
   const handleGet = (id) => {
-    const memberID = '77'
-    const didClaimed = claimed.some((coupon) => coupon.id === id && coupon.get)
+    // const memberID = ''
 
+    if(!isLoggedIn){
+      router.push('/member/login')
+      return 
+    }
+    const didClaimed = claimed.some((coupon) => coupon.id === id && coupon.get)
+    
     if (didClaimed) {
       //如果領過，按領取按鈕就導頁
-      router.push('')
+      router.push('/member/coupon-product')
     } else {
       fetch('http://localhost:3005/api/coupon/insert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ memberID, couponID: id }),
+        body: JSON.stringify({ memberID: memberId, couponID: id }),
       }).then(response => response.json())
       .then(data => {
         console.log(data)
         if(data){
           const updatedGet = claimed.map((v) => {
             if (v.id === id && !v.get) {
-              const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-center',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                  toast.onmouseenter = Swal.stopTimer
-                  toast.onmouseleave = Swal.resumeTimer
-                },
-              })
               Toast.fire({
                 icon: 'success',
                 title: '優惠券領取成功',
