@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import db from '../configs/db.js'
+import db from '../configs/db.mjs'
 import multer from 'multer'
 const upload = multer()
 

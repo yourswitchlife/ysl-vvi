@@ -21,22 +21,6 @@ import titleCm from '@/public/images/coupon/titleCm.png'
 
 import player from '@/public/images/coupon/sectionTwo.png'
 
-fetch(
-  'http://localhost:3005/api/coupon/23', //server url
-  
-)
-  .then((response) =>response.json())
-  .then((result) => {
-   
-    // console.log('Success:', result[0].title)
-    // setImgServerUrl('http://localhost:3005/api/coupon/16' + result.title)
-    // console.log(setImgServerUrl)
-    
-  })
-  .catch((error) => {
-    console.log('Error:', error)
-  })
-
 
 export default function CouponPage() {
   return (
