@@ -267,53 +267,118 @@ router.put('/pic/:memberId', upload.single('file'), async (req, res) => {
 // forget password
 //-拿驗證碼
 // 郵件寄送(基於SMTP得API)
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'yslife.project@gmail.com',
-    pass: 'yslteammfee442024'
-  }
-});
 
-// 生成OTP n6
-const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
-
-// 发送OTP的路由处理函数
-router.post('/api/member/get-code', async (req, res) => {
+router.post('/get-code', async (req, res) => {
   const { email } = req.body;
-  if (!email) {
-    return res.status(400).send('Email is required');
-  }
-  const otp = generateOTP();
-  const expTimestamp = new Date();
-  expTimestamp.setMinutes(expTimestamp.getMinutes() + 10); // 10mins
+  console.log('email:', email);
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.SMTP_TO_EMAIL,
+      pass: process.env.SMTP_TO_PASSWORD,
+    }
+  });
+  await transporter.verify();
+
+  // 生成OTP n6
+  const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
   try {
-    // 插入或更新数据库中的OTP记录
-    await db.execute(
-      `INSERT INTO otp (member_id, email, token, exp_timestamp) VALUES ((SELECT id FROM member WHERE email = ?), ?, ?, ?)
-           ON DUPLICATE KEY UPDATE token = ?, exp_timestamp = ?`,
-      [email, email, otp, expTimestamp, otp, expTimestamp]
+    // 檢查特定email 
+    const [existingEmail] = await db.execute(
+      'SELECT email FROM member WHERE email = ?',
+      [email]
     );
+    if (existingEmail.length === 0) {
+      // 如果 email 不存在於資料表中，返回相應的錯誤訊息
+      return res.status(400).json({ error: ' 請輸入有效的註冊會員電子郵件地址。' });
+    }
+    if (!email) {
+      return res.status(400).json({ error: '請輸入email。' });
+    }
+    const otp = generateOTP();
+    const expTimestamp = new Date();
+    expTimestamp.setMinutes(expTimestamp.getMinutes() + 10); // 10mins
 
-    // 寄信
-    await transporter.sendMail({
-      from: 'yslife.project@gmail.com',
-      to: email,
-      subject: '哈囉！此信為您的重設密碼請求。',
-      html: `我們收到了您的密碼重設請求，請於頁面上輸入OTP驗證碼：<br>
-      <div style="color: red; font-size: 25px; font-weight: bold;">${otp}</div><br>
-      此驗證碼十分鐘內有效，如果您並沒有進行重設密碼請求，請盡速聯繫YSL團隊客服。<br><br><br>
-      YSL全體祝福您有個愉快的一天。<br>
-      BE GAMER, BE HAPPIER! :)`
-    });
+    try {
+      // 插入或更新数据库中的OTP记录
+      await db.execute(
+        `INSERT INTO otp (member_id, email, token, exp_timestamp) VALUES ((SELECT id FROM member WHERE email = ?), ?, ?, ?)
+             ON DUPLICATE KEY UPDATE token = ?, exp_timestamp = ?`,
+        [email, email, otp, expTimestamp, otp, expTimestamp]
+      );
 
-    await db.end();
-    res.send('OTP sent to your email.');
-  } catch (error) {
-    console.error('Failed to send OTP:', error);
-    res.status(500).send('Failed to send OTP.');
+      // 寄信
+      const mailOptions = {
+        from: process.env.SMTP_TO_EMAIL,
+        to: email,
+        subject: '哈囉！此信為您的重設密碼請求。',
+        html: `我們收到了您的密碼重設請求，請於頁面上輸入OTP驗證碼：<br>
+        <div style="color: red; font-size: 25px; font-weight: bold;">${otp}</div><br>
+        此驗證碼十分鐘內有效，如果您並沒有進行重設密碼請求，請盡速聯繫YSL團隊客服。<br><br><br>
+        YSL全體祝福您有個愉快的一天。<br>
+        BE GAMER, BE HAPPIER! :)`
+      };
+
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).send('Error sending email')
+        }
+        console.log(info);
+        res.send('OTP sent to your email.');
+      });
+    } catch (error) {
+      console.error('Error executing MySQL query:', error);
+      res.status(500).json({ error: error.message });
+    }
+  } catch (outerError) {
+    console.error('Error in outer try-catch block:', outerError);
+    res.status(500).json({ error: outerError.message });
   }
 });
+
+// reset password
+router.post('/reset-password', async (req, res) => {
+  const { email, verificationCode, newPassword } = req.body;
+
+  try {
+    // 檢查驗證碼是否符合
+    
+    const [otpRecord] = await db.execute(
+      'SELECT * FROM otp WHERE email = ? AND token = ? ORDER BY id DESC LIMIT 1',
+      [email, verificationCode]
+    );
+    console.log('otpRecord:', otpRecord); // 
+    console.log('Exp timestamp:', otpRecord.exp_timestamp);
+    console.log('Parsed date:', new Date(otpRecord.exp_timestamp));
+
+    if (!otpRecord || new Date() > new Date(otpRecord.exp_timestamp)) {
+      return res.status(400).json({ error: '驗證碼無效或已過期' });
+    }
+
+    // 修改密碼
+    await db.execute(
+      'UPDATE member m ' +
+      'JOIN otp o ON m.id = o.member_id ' +
+      'SET m.password = ? ' +
+      'WHERE o.id = ?',
+      [newPassword, otpRecord.id]
+    );
+
+    // 刪除使用過的 OTP
+    await db.execute('DELETE FROM otp WHERE id = ?', [otpRecord.id]);
+
+    console.log('Executing SQL update to change password:', 'UPDATE member m JOIN otp o ON m.id = o.member_id SET m.password = ? WHERE o.id = ?', [newPassword, otpRecord.id]);
+    console.log('Executing SQL delete to remove used OTP record:', 'DELETE FROM otp WHERE id = ?', [otpRecord.id]);
+
+    return res.status(200).json({ message: '密碼修改成功' });
+  } catch (error) {
+    console.error('Error during password reset:', error);
+    return res.status(500).json({ error: '內部伺服器錯誤' });
+  }
+});
+
+
 
 export default router
