@@ -76,7 +76,7 @@ export default function New() {
     } else setNewP({ ...newP, [e.target.name]: e.target.value })
   }
 
-  const handleNewP = async (e) => {
+  const handleForm = async (e) => {
     e.preventDefault()
     if (
       !newP.pName ||
@@ -90,8 +90,17 @@ export default function New() {
     ) {
       setErrorMsg('請檢查是否輸入完整欄位資訊')
       return
+    }else{
+      const fd = new FormData(newP)
+      fetch('http://localhost:3005/api/products/addNewProduct',{
+        method: 'POST',
+        body: JSON.stringify(fd)
+      })
+      .then(res => res.json())
+      .then(data => console.log(data))
     }
   }
+  console.log(newP)
 
   return (
     <>
@@ -121,7 +130,7 @@ export default function New() {
                 method="post"
                 action={'/addNewProduct'}
                 encType="multipart/form-data"
-                onSubmit={handleNewP}
+                onSubmit={handleForm}
               >
                 <div className="row">
                   {/* 商品名稱 */}

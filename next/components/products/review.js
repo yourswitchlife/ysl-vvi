@@ -47,7 +47,7 @@ export default function Review() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const formData = new FormData()
+    const formData = new FormData(review)
 
     formData.append('reviewPhoto',selectFile)
 

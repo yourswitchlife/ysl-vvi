@@ -22,14 +22,17 @@ router.get('/list', async (req, res) => {
   }
 })
 
+router.post('/addNewP', (req, res) => {})
+
 // router.get('/uploadReviewForm', (req, res) => {
 //   res.render('uploadReviewForm')
 // })
+
 // 單檔上傳
 router.post('/reviewPhoto', upload.single('reviewPhoto'), async (req, res) => {
   let timeStamp = Date.now()
   let newName = timeStamp + extname(req.file.originalname)
-  renameSync(req.file.path, resolve(__dirname, '../public/uploadImg', newName))
+  // renameSync(req.file.path, resolve(__dirname, '../public/uploadImg', newName))
   req.body.reviewPhoto = newName
 
   if (req.files) {
@@ -50,6 +53,7 @@ router.post('/reviewPhoto', upload.single('reviewPhoto'), async (req, res) => {
 // } catch (error) {
 //   console.error(error)
 // }
+
 // 商品詳細頁 ([0-9]+)
 router.get('/:pid', async (req, res) => {
   try {

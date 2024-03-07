@@ -12,26 +12,49 @@ import Navbar from '@/components/layout/navbar/navbar'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 // import data from '@/data/product.json'
 import TypeFilter from '@/components/shop/type-filter'
+import { useRouter } from 'next/router'
 
 export default function Products() {
   const [products, setProducts] = useState([])
+  const [totalPages, setTotalPages] = useState(0)
+  const router = useRouter()
+  const {page} = router.query 
+  const currentPage = parseInt(page) || 1
+  const limit = 20
 
-  const getProducts = async () => {
-    try {
-      const res = await fetch('http://localhost:3005/api/products/list')
-      const data = await res.json()
-      console.log(data)
-
-      if (Array.isArray(data)) {
-        setProducts(data)
-      }
-    } catch (e) {
-      console.error(e)
-    }
-  }
   useEffect(() => {
+    // console.log("page Changed: " + currentPage)
+    const getProducts = async () => {
+      try {
+        const res = await fetch('http://localhost:3005/api/products/list')
+        const data = await res.json()
+        console.log(data)
+        if (Array.isArray(data)) {
+          setProducts(data)
+          setTotalPages(Math.ceil(data.length / limit))
+          // console.log(data.length / limit)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
     getProducts()
-  }, [])
+  }, [currentPage])
+
+  const updatePage = (newPage) => {
+    router.push(`/?page=${newPage}`)
+  }
+
+  let items = [];
+  for (let number = 1; number <= totalPages; number++) {
+    items.push(
+      <Pagination.Item key={number} active={number === currentPage} onClick={() => updatePage(number)}>
+        {number}
+      </Pagination.Item>
+    );
+  }
+  console.error(items)
+  
 
   const initState = products.map((p) => {
     return { ...p, fav: false }
@@ -47,14 +70,12 @@ export default function Products() {
   }
 
   // 設定瀏覽紀錄
-
   const historyRecord = (p) => {
     if (!p) {
       return
     }
     const existingRecordsStr = localStorage.getItem('readProduct')
     let historyRecordArr
-
     if (existingRecordsStr) {
       historyRecordArr = JSON.parse(existingRecordsStr)
       if (!Array.isArray(historyRecordArr)) {
@@ -145,7 +166,7 @@ export default function Products() {
       <div className="container pt-3 px-lg-5 px-4">
         <BreadCrumb />
         <div className="d-flex justify-content-between mb-3">
-          <TypeFilter/>
+          <TypeFilter />
           <div>
             <FaBorderAll className="text-white me-2 h5" />
             <IoReorderFour className="text-white h4 mb-0" />
@@ -185,7 +206,32 @@ export default function Products() {
             })}
           </div>
         </div>
-        <Pagination />
+        {/* {page >1 && <a href={`/?page=${page - 1}`}>prev</a>}
+        頁數{page}
+        {page < totalPages && <a href={`/?page=${page + 1}`}>next</a>} */}
+        {/* <nav aria-label="Page navigation example">
+            <ul className="pagination">
+              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                <a className="page-link" onClick={() => updatePage(currentPage - 1)}>Prev</a>
+              </li>
+              {[...Array(totalPages).keys()].map(number => (
+                <li key={number} className={`page-item ${currentPage === number + 1 ? 'active' : ''}`}>
+                  <a className="page-link" onClick={() => updatePage(number + 1)}>{number + 1}</a>
+                </li>
+              ))}
+              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                <a className="page-link" onClick={() => updatePage(currentPage + 1)}>Next</a>
+              </li>
+            </ul>
+          </nav> */}
+        
+        {/* <Pagination /> */}
+
+        <Pagination>
+            <Pagination.Prev onClick={() => currentPage > 1 && updatePage(currentPage - 1)} />
+            {items}
+            <Pagination.Next onClick={() => currentPage < totalPages && updatePage(currentPage + 1)} />
+          </Pagination>
 
         <div>
           <h4 className="text-white mx-3 ">猜你喜歡</h4>
