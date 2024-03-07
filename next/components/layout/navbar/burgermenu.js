@@ -48,7 +48,7 @@ export default function BurgerMenu() {
               <Link href="/products" className={`text-white pt-2 pb-2 ${styles.linkstyle}`}>
                 <h5>商品專區</h5>
               </Link>
-              <Link href="/coupon/coupon-page" className={`text-white pt-2 pb-2 ${styles.linkstyle}`}>
+              <Link href="/coupon" className={`text-white pt-2 pb-2 ${styles.linkstyle}`}>
               <h5>優惠報報</h5>
               </Link>
               <Link href="/article" className={`text-white pt-2 pb-2 ${styles.linkstyle}`}>
