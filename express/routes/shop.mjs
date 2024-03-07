@@ -16,7 +16,7 @@ import db from '../configs/db.mjs'
 router.get('/:shop_site', async (req, res) => {
   try {
     let { shop_site } = req.params
-    console.log(`shop_site = ${shop_site}`)
+    // console.log(`shop_site = ${shop_site}`)
     let [result] = await db.execute(
       'SELECT * FROM `member-shop` WHERE `shop_site` = ?',
       [shop_site]
@@ -24,7 +24,7 @@ router.get('/:shop_site', async (req, res) => {
     console.log(result)
 
     if (result) {
-      res.json(result)
+      res.json(result) //解析json物件
       // return true
     } else {
       res.status(404)
