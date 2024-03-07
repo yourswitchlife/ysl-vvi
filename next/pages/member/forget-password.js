@@ -10,9 +10,10 @@ import { FaUser, FaEnvelope } from 'react-icons/fa'
 import { MdKey } from 'react-icons/md'
 import { Form, InputGroup, Button, FormControl } from 'react-bootstrap'
 import ForgetExam from '@/context/member/forget-exam'
-import { Router } from 'next/router';
+import { useRouter } from 'next/router'
 
 export default function forgetPassword() {
+  const router = useRouter()
   const [isCountingDown, setIsCountingDown] = useState(false);
   const initialCountdown = 600;
   const [countdown, setCountdown] = useState(600); // 初始值為10分鐘，以秒為單位
@@ -67,9 +68,9 @@ export default function forgetPassword() {
 
       if (!response.ok) {
         const errorJson = await response.json();
-        console.error('Server returned an error:', errorJson.error);
         setErrorState(errorJson.error)
       } else {
+
         console.log("成功寄信")
         setErrorState('');
         startCountdown();
@@ -82,7 +83,7 @@ export default function forgetPassword() {
           imageAlt: "mail",
           confirmButtonColor: "#43B0FF",
           confirmButtonText: "好的",
-        });
+        })
       }
     } catch (error) {
       console.error('Error:', error);

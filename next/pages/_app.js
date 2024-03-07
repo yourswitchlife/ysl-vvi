@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router';
 // 樣式
 import '@/styles/globals.scss'
-
+import Swal from 'sweetalert2';
 import DefaultLayout from '@/components/layout/default-layout'
 //身分驗證
 import { AuthProvider } from '@/hooks/use-Auth';
@@ -24,10 +24,16 @@ export default function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   useEffect(() => {
-    
     getRedirectResult(auth)
       .then((result) => {
         if (result) {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "登入成功！歡迎您！",
+            showConfirmButton: false,
+            timer: 1300
+          });
           const gmember = result.user;
           fetch('http://localhost:3005/api/member/google-login', {
             method: 'POST',
@@ -54,6 +60,7 @@ export default function MyApp({ Component, pageProps }) {
       })
       .catch((error) => {
         console.error('登入錯誤:', error);
+        Swal.close();
       });
   }, [router]);
 

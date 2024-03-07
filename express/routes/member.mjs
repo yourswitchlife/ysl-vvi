@@ -349,30 +349,26 @@ router.post('/reset-password', async (req, res) => {
       'SELECT * FROM otp WHERE email = ? AND token = ? ORDER BY id DESC LIMIT 1',
       [email, verificationCode]
     );
-    console.log('otpRecord:', otpRecord); // 
-    console.log('Exp timestamp:', otpRecord.exp_timestamp);
-    console.log('Parsed date:', new Date(otpRecord.exp_timestamp));
+    const otpResult = otpRecord[0];
 
-    if (!otpRecord || new Date() > new Date(otpRecord.exp_timestamp)) {
+    if (!otpResult || new Date() > new Date(otpResult.exp_timestamp)) {
       return res.status(400).json({ error: '驗證碼無效或已過期' });
     }
 
     // 修改密碼
+    const password = await generateHash(newPassword); // hash加密密碼
     await db.execute(
       'UPDATE member m ' +
       'JOIN otp o ON m.id = o.member_id ' +
       'SET m.password = ? ' +
       'WHERE o.id = ?',
-      [newPassword, otpRecord.id]
+      [password, otpResult.id]
     );
 
     // 刪除使用過的 OTP
-    await db.execute('DELETE FROM otp WHERE id = ?', [otpRecord.id]);
-
-    console.log('Executing SQL update to change password:', 'UPDATE member m JOIN otp o ON m.id = o.member_id SET m.password = ? WHERE o.id = ?', [newPassword, otpRecord.id]);
-    console.log('Executing SQL delete to remove used OTP record:', 'DELETE FROM otp WHERE id = ?', [otpRecord.id]);
-
+    await db.execute('DELETE FROM otp WHERE id = ?', [otpResult.id]);
     return res.status(200).json({ message: '密碼修改成功' });
+
   } catch (error) {
     console.error('Error during password reset:', error);
     return res.status(500).json({ error: '內部伺服器錯誤' });

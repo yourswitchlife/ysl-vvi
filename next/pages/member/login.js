@@ -5,6 +5,7 @@ import mainCheckLogin from '@/context/member/mainCheckLogin'
 import Navbar from '@/components/layout/navbar/navbar'
 import sStyle from '@/styles/member/sign-in.module.scss'
 import Link from 'next/link'
+import Swal from 'sweetalert2';
 
 //google api
 import { signInWithRedirect } from "firebase/auth";
@@ -63,16 +64,19 @@ export default function logIn() {
 
       if (response.ok) {
         // const getHeader = response.headers.get('Authorization');
-        
-  
         // if (getHeader) {
-          // const token = getHeader.replace('Bearer ', '');
-          
-          // document.cookie = `token=${token}; max-age=3600; path=/`;
-          
-          console.log('登入成功:');
+        // const token = getHeader.replace('Bearer ', '');
 
-          router.push('/'); 
+        // console.log('登入成功:');
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "登入成功！歡迎您！",
+          showConfirmButton: false,
+          timer: 1300
+        });
+
+        router.replace('/'); 
         // }
       } else {
         // 處理錯誤情況
