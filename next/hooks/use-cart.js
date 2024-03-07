@@ -7,15 +7,7 @@ import { useRouter } from 'next/router'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
-import { createContext, useContext, useEffect, useState } from 'react'
 
-//使用路由鉤子導頁
-import { useRouter } from 'next/router'
-
-//使用SweetAlert2 API
-import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
-const MySwal = withReactContent(Swal)
 
 // 導出createContext方法
 export const CartContext = createContext()

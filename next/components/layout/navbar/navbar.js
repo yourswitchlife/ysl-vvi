@@ -22,9 +22,6 @@ import NavPic from '@/hooks/use-navpic';
 import { useCart } from '@/hooks/use-cart'
 
 
-// 引入use-cart鉤子
-import { useCart } from '@/hooks/use-cart'
-
 export default function Navbar() {
   const { isLoggedIn, memberData } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
