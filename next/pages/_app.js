@@ -27,7 +27,6 @@ export default function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   useEffect(() => {
-    
     getRedirectResult(auth)
       .then((result) => {
         if (result) {
@@ -37,7 +36,6 @@ export default function MyApp({ Component, pageProps }) {
             headers: {
               'Content-Type': 'application/json',
             },
-            credentials: 'include',
             body: JSON.stringify({
               uid: gmember.uid,
               email: gmember.email,

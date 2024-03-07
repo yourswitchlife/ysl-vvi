@@ -6,23 +6,23 @@ export default function Sortbar() {
   return (
     <>
       <div className={`${styles.sortbarStyle}`}>
-        <Link href="/seller/shop" className={styles.sortbar}>
+        <Link href="/shop" className={styles.sortbar}>
           <h5 className={`d-none d-md-block ${styles.list}`}>賣場首頁</h5>
           <h6 className={`d-block d-md-none ${styles.list}`}>賣場首頁</h6>
         </Link>
-        <Link href="/shop" className={styles.sortbar}>
+        <Link href="/shop/all" className={styles.sortbar}>
           <h5 className={`d-none d-md-block ${styles.list}`}>所有商品</h5>
           <h6 className={`d-block d-md-none ${styles.list}`}>所有商品</h6>
         </Link>
-        <Link href="/shop" className={styles.sortbar}>
+        <Link href="/shop/new" className={styles.sortbar}>
           <h5 className={`d-none d-md-block ${styles.list}`}>最新上架</h5>
           <h6 className={`d-block d-md-none ${styles.list}`}>最新上架</h6>
         </Link>
-        <Link href="/seller/shop" className={styles.sortbar}>
+        <Link href="/shop" className={styles.sortbar}>
           <h5 className={`d-none d-md-block ${styles.list}`}>期間優惠</h5>
           <h6 className={`d-block d-md-none ${styles.list}`}>期間優惠</h6>
         </Link>
-        <Link href="/shop" className={styles.sortbar}>
+        <Link href="/shop/hit" className={styles.sortbar}>
           <h5 className={`d-none d-md-block ${styles.list}`}>熱銷排行</h5>
           <h6 className={`d-block d-md-none ${styles.list}`}>熱銷排行</h6>
         </Link>

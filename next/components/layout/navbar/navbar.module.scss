@@ -57,9 +57,16 @@ $nav-black: #161719ae;
   .loginIcon {
     color: $white;
     padding-right: 25px;
+    padding-right: 25px;
   }
   .loginIconEnd {
     color: $white;
+  }
+  .loginIcon, .loginIconEnd{
+    .icon{
+      width: 25px;
+      height: 25px;
+    }
   }
   .loginIcon, .loginIconEnd{
     .icon{
@@ -182,10 +189,16 @@ $nav-black: #161719ae;
   }
   .loginIcon {
     color: $white;
-    padding-right: 15px;
+    padding-right: 25px;
   }
   .loginIconEnd {
     color: $white;
+  }
+  .loginIcon, .loginIconEnd{
+    .icon{
+      width: 25px;
+      height: 25px;
+    }
   }
   .cartRight {
     display: flex;

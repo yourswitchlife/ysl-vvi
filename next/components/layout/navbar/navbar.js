@@ -18,6 +18,8 @@ import { useAuth } from '@/hooks/use-Auth';
 
 //我做完的組件 可以用到評論上 已套用會員等級框
 import NavPic from '@/hooks/use-navpic';
+// 引入use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
 
 
 // 引入use-cart鉤子
@@ -25,49 +27,51 @@ import { useCart } from '@/hooks/use-cart'
 
 export default function Navbar() {
   const { isLoggedIn, memberData } = useAuth();
-  const [isHovered, setIsHovered] = useState(false); 
-  const { totalProducts } = useCart()
+  const [isHovered, setIsHovered] = useState(false);
+  const {totalProducts} = useCart()
   return (
     <>
-      <div className="d-none d-lg-block">
-        <header className={styles.navbar}>
-          <div // logo
-          >
-            <Link href="/index.js">
-              <Image src={yslLogoSm} alt="ysl-logo" />
-            </Link>
-          </div>
-          <div className={styles.links}>
-            <Link href="" className={styles.linkPr}>
-              商品專區
-            </Link>
-            <Link href="" className={styles.linkPr}>
-              優惠報報
-            </Link>
-            <Link href="" className={styles.link}>
-              最新攻略
-            </Link>
-          </div>
-          <div className="">
-            <SearchBar />
-          </div>
-          {isLoggedIn ? (
+    <div className='d-none d-lg-block'>
+      <header
+        className={styles.navbar}
+      >
+        <div // logo
+        >
+          <Link href="/">
+            <Image src={yslLogoSm} alt="ysl-logo" />
+          </Link>
+        </div>
+        <div className={styles.links}>
+          <Link href="/products" className={styles.linkPr}>
+            商品專區
+          </Link>
+          <Link href="/coupon/coupon-page" className={styles.linkPr}>
+            優惠報報
+          </Link>
+          <Link href="/article" className={styles.link}>
+            最新攻略
+          </Link>
+        </div>
+        <div className="">
+          <SearchBar />
+        </div>
+        {isLoggedIn ? (
             // 登入後顯示
             <div className="d-flex align-items-center">
               <Link href="/member/fav-product" className={styles.loginIcon}>
-                <FaHeart className={styles.icon} />
+                <FaHeart className={styles.icon}/>
               </Link>
               <Link href="/cart" className={`${styles.loginIcon} position-relative`}>
                 <FaShoppingCart className={styles.icon} />
                 <span class="position-absolute top-0 start-99 translate-middle badge rounded-pill bg-danger">
-                  {totalProducts}
-                  <span className="visually-hidden">unread messages</span>
-                </span>
+                {totalProducts}
+                <span className="visually-hidden">unread messages</span>
+              </span>
               </Link>
               <Link href="/member/notify-order" className={styles.loginIcon}>
-                <FaBell className={styles.icon} />
+                <FaBell className={styles.icon}/>
               </Link>
-              <Link href="/" className={styles.loginIconEnd}>
+              <Link href="/seller" className={styles.loginIconEnd}>
                 <FaStore className={styles.icon} />
               </Link>
             </div>
@@ -107,24 +111,23 @@ export default function Navbar() {
 
 
             ) : null}
-          </div>
-        </header>
+        </div>
+      </header>
       </div>
       {/* RWD */}
-      <div className="d-flex flex-column d-lg-none">
-        <header className={styles.navbarB}>
-          <div // logo
-          >
-            <Link href="/index.js">
-              <Image src={yslLogoXs} alt="ysl-logo" />
-            </Link>
-          </div>
-
-          <div className="">
-            <SearchBarB />
-          </div>
-          <BurgerMenu />
-        </header>
+      <div className='d-flex flex-column d-lg-none'>
+      <header className={styles.navbarB}>
+        <div // logo
+        >
+          <Link href="/">
+            <Image src={yslLogoXs} alt="ysl-logo" />
+          </Link>
+        </div>
+        <div className="">
+          <SearchBarB />
+        </div>
+        <BurgerMenu />
+      </header>
       </div>
     </>
   )

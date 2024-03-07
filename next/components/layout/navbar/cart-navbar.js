@@ -9,19 +9,20 @@ import Link from 'next/link'
 import { FaHeart, FaBell, FaStore, FaArrowRight } from 'react-icons/fa'
 import Dropdown from 'react-bootstrap/Dropdown';
 import BurgerMenu from './burgermenu'
-
 //登出邏輯
 import handleLogout from '@/services/logout';
-
 //context hooks
 import { useAuth } from '@/hooks/use-Auth';
 
+//我做完的組件 可以用到評論上 已套用會員等級框
 import NavPic from '@/hooks/use-navpic';
-
+// 引入use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
 
 export default function CartNavbar() {
   const { isLoggedIn, memberData } = useAuth();
-  const [isHovered, setIsHovered] = useState(false); 
+  const [isHovered, setIsHovered] = useState(false);
+  const {totalProducts} = useCart()
   return (
     <>
     <div className='d-none d-lg-block'>
@@ -101,7 +102,7 @@ export default function CartNavbar() {
           </Link>
         </div>
           <h5 className='mb-0'>結帳</h5>
-        <Link href="/index.js" className="text-white ps-5">
+        <Link href="/" className="text-white ps-5">
           <FaArrowRight />
         </Link>
       </header>

@@ -7,10 +7,34 @@ import { useRouter } from 'next/router'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
+import { createContext, useContext, useEffect, useState } from 'react'
+
+//使用路由鉤子導頁
+import { useRouter } from 'next/router'
+
+//使用SweetAlert2 API
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
 
 // 導出createContext方法
 export const CartContext = createContext()
 
+// 預設模板
+// 加入購物車的商品物件
+// cartItems = {
+//   id:0,
+//   name:"",
+//   language:[],
+//   product_quanty=0
+//   price:0,
+//   display_price:0,
+//   quantity:1
+//   total_price:0,
+//   user_select:false
+// }
+
+// 導出全站Provider 元件，集中要使用的狀態及邏輯函式
 // 預設模板
 // 加入購物車的商品物件
 // cartItems = {

@@ -34,9 +34,9 @@ app.use(
 )
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Expose-Headers', 'Authorization');
-  next();
-});
+  res.header('Access-Control-Expose-Headers', 'Authorization')
+  next()
+})
 
 // 視圖引擎設定
 app.set('views', path.join(__dirname, 'views'))
@@ -75,11 +75,11 @@ const filenames = await fs.promises.readdir(routePath)
 for (const filename of filenames) {
   const item = await import(pathToFileURL(path.join(routePath, filename)))
   const slug = filename.split('.')[0]
-  const route = `${apiPath}/${slug === 'index' ? '' : slug}`
+  // const route = `${apiPath}/${slug === 'index' ? '' : slug}`
 
-  app.use(route, item.default)
+  app.use(`${apiPath}/${slug === 'index' ? '' : slug}`, item.default)
 
-  console.log(`已註冊的api路由: ${route}`)
+  // console.log(`已註冊的api路由: ${route}`)
 }
 // 載入routes中的各路由檔案，並套用api路由 END
 
