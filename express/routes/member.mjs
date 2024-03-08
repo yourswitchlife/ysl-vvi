@@ -229,7 +229,7 @@ router.put('/account/:memberId', async (req, res) => {
 //pic改按鈕上傳
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/uploadImg/profile-pic'); // 存放上傳檔案的資料夾
+    cb(null, 'public/profile-pic'); // 存放上傳檔案的資料夾
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname)); // 以時間戳記作為檔名

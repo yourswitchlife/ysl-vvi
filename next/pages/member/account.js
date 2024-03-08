@@ -59,7 +59,7 @@ export default function account() {
 
     if (isLoggedIn && memberData) {
       const picUrl = memberData.pic
-        ? (memberData.pic.startsWith("https://") ? memberData.pic : `http://localhost:3005/uploadImg/profile-pic/${memberData.pic}`)
+        ? (memberData.pic.startsWith("https://") ? memberData.pic : `http://localhost:3005/profile-pic/${memberData.pic}`)
         : profilePhoto;
       setBigPic(picUrl);
 
@@ -146,7 +146,7 @@ export default function account() {
               confirmButtonColor: "#43B0FF",
               confirmButtonText: "好的"
             });
-            window.location.reload()
+            window.location.href = '/member/account';
             // console.log('資料更新成功！');
           } else {
             // 更新失敗，顯示錯誤訊息
@@ -276,7 +276,7 @@ export default function account() {
                       <InputGroup.Text>
                         <FaTransgender />
                       </InputGroup.Text>
-                      <Form.Select onChange={handleaccount} name="gender" value={formData.gender}>
+                      <Form.Select onChange={handleaccount} name="gender" value={formData.gender.toLowerCase()}>
                         <option disabled>生理性別</option>
                         <option value="male">生理男</option>
                         <option value="female">生理女</option>
