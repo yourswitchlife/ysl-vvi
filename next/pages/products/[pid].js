@@ -20,6 +20,9 @@ import PHistory from '@/components/products/p-history'
 import pImages from '@/components/products/p-images'
 // import { Link,useParams } from 'react-router-dom'
 
+// 引入use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
+
 export default function ProductDetail() {
   const router = useRouter()
 
@@ -45,6 +48,44 @@ export default function ProductDetail() {
   })
   const [ben, setBen] = useState(false)
 
+  // 商品數量+1
+  const handleIncrement = () => {
+    // 查看當前購物車的該商品數量
+    const currentQuantyInCart = cartItems.find((item) => item.id === product.id)?.quantity || 0
+    const newQuanty = product.quantity + 1
+    if (currentQuantyInCart + newQuanty > product.product_quanty) {
+      notifyMax()
+    } else {
+      setProduct(prevProduct => ({
+        ...prevProduct, quantity: newQuanty
+      }))
+    }
+  }
+
+  // 商品數量-1
+  const reduce = () => {
+    setProduct((prevProduct) => {
+      if (prevProduct.quantity > 1) {
+        return { ...prevProduct, quantity: prevProduct.quantity - 1 }
+      } else {
+        return prevProduct
+      }
+    })
+  }
+
+  // 立即結帳
+  const handleCheckout = () => {
+    const routerPush = addItem(product)
+    // 如果有成功加入購物車，在跳轉到購物車頁面
+    if (routerPush) {
+      router.push('/cart')
+    }
+  }
+
+
+  const { addItem, cartItems, notifyMax, notifySuccess } = useCart()
+
+
   const [historyRecords, setHistoryRecords] = useState([])
   // const [product, setProduct] = useState([])
   const getProduct = async (pid) => {
@@ -56,7 +97,7 @@ export default function ProductDetail() {
       // console.log(data[0].img_details.split(",")[0])
 
       if (data[0].name) {
-        setProduct(data[0])
+        setProduct({ ...data[0], quantity: 1, userSelect: false })
       }
     } catch (e) {
       console.error(e)
@@ -115,23 +156,15 @@ export default function ProductDetail() {
               <div className={`${styles.counter} d-flex bg-light`}>
                 <button
                   className={`btn btn-secondary ${styles.counterBtn}`}
-                  typeof="button"
-                >
+                  typeof="button" onClick={() => { reduce(product) }}>
                   <b>-</b>
                 </button>
                 <div className="d-flex align-items-center">
-                  <input
-                    type="text"
-                    className={styles.input}
-                    max="3"
-                    min="1"
-                    value={1}
-                  />
+                  <div className={styles.quantity}>{product.quantity}</div>
                 </div>
                 <button
                   className={`btn btn-secondary ${styles.counterBtn}`}
-                  typeof="button"
-                >
+                  typeof="button" onClick={handleIncrement}>
                   <b>+</b>
                 </button>
               </div>
@@ -141,7 +174,9 @@ export default function ProductDetail() {
             <div className="d-flex justify-content-between align-items-end">
               <h5 className="text-white-50">
                 促銷價{' '}
-                <span className="text-decoration-line-through">NT$ {product.display_price}</span>
+                <span className="text-decoration-line-through">
+                  NT$ {product.display_price}
+                </span>
               </h5>
               <h5 className="text-white">
                 折扣價NT
@@ -155,13 +190,16 @@ export default function ProductDetail() {
               {product.description}
             </h5>
             <div className="d-lg-flex d-none justify-content-evenly">
-              <button type="button" className="btn btn-info">
+              <button type="button" className="btn btn-info" onClick={() => {
+                addItem(product);
+                notifySuccess()
+              }}>
                 <FaCartPlus className="text-light pb-1" /> 加入購物車
               </button>
               <button type="button" className="btn btn-info">
                 <FaRegHeart className="text-light pb-1" /> 加入追蹤
               </button>
-              <button type="button" className="btn btn-danger">
+              <button type="button" className="btn btn-danger" onClick={handleCheckout}>
                 <FaShoppingCart className="text-light pb-1" /> 立即結帳
               </button>
             </div>

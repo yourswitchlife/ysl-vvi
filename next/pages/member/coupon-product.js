@@ -11,11 +11,6 @@ import sStyles from '@/styles/member/mseller.module.scss'
 import cStyles from '@/styles/member/coupon.module.scss'
 
 import Link from 'next/link'
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-
-import PRating from '@/components/products/p-rating'
-// import Type from '@/components/products/type'
 import { FaRegHeart, FaCartPlus } from 'react-icons/fa'
 import whitelog from '@/public/images/logo/logo_White-desktopLogo.svg'
 // import styles from '@/styles/products/product-list.module.scss'

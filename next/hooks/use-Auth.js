@@ -38,9 +38,9 @@ export const AuthProvider = ({ children }) => {
         .then(async (data) => {
           if (data.isLoggedIn) {
             const memberId = data.memberId;
-            console.log('Updated MemberId:', memberId);
+            // console.log('Updated MemberId:', memberId);
             const memberData = await fetchMemberData(memberId);
-            console.log('Updated Member Data:', memberData); 
+            // console.log('Updated Member Data:', memberData); 
             
             setAuthState({
               isLoggedIn: true,

@@ -41,7 +41,7 @@ $nav-black: #161719ae;
   background-color: $nav-black;
   color: $white;
   font-size: 18px;
-  padding: 10px 50px;
+  padding: 15px 50px;
   .linkPr {
     color: $white;
     text-decoration: none;
@@ -57,9 +57,16 @@ $nav-black: #161719ae;
   .loginIcon {
     color: $white;
     padding-right: 25px;
+    padding-right: 25px;
   }
   .loginIconEnd {
     color: $white;
+  }
+  .loginIcon, .loginIconEnd{
+    .icon{
+      width: 25px;
+      height: 25px;
+    }
   }
   .loginIcon, .loginIconEnd{
     .icon{
