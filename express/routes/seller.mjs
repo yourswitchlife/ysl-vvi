@@ -4,7 +4,7 @@ const router = express.Router()
 import db from '../configs/db.mjs'
 import authenticate from '../middlewares/authenticate-cookie.js'
 import multer from 'multer'
-const upload = multer()
+const upload = multer({ dest: 'shopCover/' })
 import moment from 'moment'
 
 //authenticate
@@ -58,47 +58,53 @@ router.get('/shop', authenticate, async (req, res) => {
 //賣場管理 編輯及新增賣場資料
 //注意：新增賣場其實是更新member資料
 //在前端執行：抓取預設值存入 與 實現兩個按鈕：分別是shop_valid = 0 或shop_valid = 1
-router.patch('/shop/add', authenticate, async function (req, res) {
-  const { shopName, shopSite, shopCover, shopInfo, shopValid } = req.body
-  const memberId = req.memberData.id
-  if (!req.memberData) {
-    // 如果memberData不存在，则返回错误信息
-    return res.status(400).json({ message: '找不到member data' })
-  }
-
-  try {
-    //檢查賣場名稱
-    const shopNameCheckQuery = 'SELECT * FROM `member` WHERE `shop_name` = ?'
-    const [shopNameResults] = await db.execute(shopNameCheckQuery, [shopName])
-
-    if (shopNameResults.length > 0) {
-      return res.status(400).send({ message: '賣場名稱已經存在' })
+router.patch(
+  '/shop/add',
+  upload.single('shop_cover'),
+  authenticate,
+  async function (req, res) {
+    const { shopName, shopSite, shopInfo, shopValid } = req.body
+    const shopCover = req.file.path
+    console.log(shopCover)
+    const memberId = req.memberData.id
+    if (!req.memberData) {
+      // 如果memberData不存在，则返回错误信息
+      return res.status(400).json({ message: '找不到member data' })
     }
-    //檢查網址有沒有重複（預設網址是member.account)
-    const shopSiteCheckQuery = 'SELECT * FROM `member` WHERE shop_site = ?'
-    const [shopSiteResults] = await db.execute(shopSiteCheckQuery, [shopSite])
+    try {
+      //檢查賣場名稱
+      const shopNameCheckQuery = 'SELECT * FROM `member` WHERE `shop_name` = ?'
+      const [shopNameResults] = await db.execute(shopNameCheckQuery, [shopName])
 
-    if (shopSiteResults.length > 0) {
-      return res.status(400).send({ message: '賣場網址已經存在' })
+      if (shopNameResults.length > 0) {
+        return res.status(400).send({ message: '賣場名稱已經存在' })
+      }
+      //檢查網址有沒有重複（預設網址是member.account)
+      const shopSiteCheckQuery = 'SELECT * FROM `member` WHERE shop_site = ?'
+      const [shopSiteResults] = await db.execute(shopSiteCheckQuery, [shopSite])
+
+      if (shopSiteResults.length > 0) {
+        return res.status(400).send({ message: '賣場網址已經存在' })
+      }
+
+      //把資料存進去
+      const Query =
+        'UPDATE `member` SET `shop_name` = ?, `shop_site` = ?, `shop_cover` = ?, `shop_info` = ?, `shop_valid` = ? WHERE `id` = ?'
+      await db.execute(Query, [
+        shopName,
+        shopSite,
+        shopCover,
+        shopInfo,
+        shopValid,
+        memberId,
+      ])
+      res.status(201).send({ message: '賣場資料建立成功' })
+    } catch (error) {
+      res.status(500).send({ message: '建立失敗' })
+      console.log('資料庫相關錯誤：', error)
     }
-
-    //把資料存進去
-    const Query =
-      'UPDATE `member` (`id`,`shop_name`, `shop_site`, `shop_cover`, `shop_info`, `shop_valid`) VALUES (?, ?, ?, ?, ?, ?)'
-    await db.execute(Query, [
-      memberId,
-      shopName,
-      shopSite,
-      shopCover,
-      shopInfo,
-      shopValid,
-    ])
-    res.status(201).send({ message: '賣場資料建立成功' })
-  } catch (error) {
-    res.status(500).send({ message: '建立失敗' })
-    console.log('資料庫相關錯誤：', error)
   }
-})
+)
 
 //賣家商品管理
 router.get('/product', authenticate, async (req, res) => {
