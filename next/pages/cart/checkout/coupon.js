@@ -1,15 +1,29 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import CartNavbar from '@/components/layout/navbar/cart-navbar'
 import Footer from '@/components/layout/footer/footer-front'
 import { FaCircleInfo } from 'react-icons/fa6'
 import { FaGamepad, FaShippingFast } from 'react-icons/fa'
-import ProductCoupon from '@/components/cart/product-coupon'
-import DeliveryCoupon from '@/components/cart/delivery-coupon'
+import ProductCoupon from '@/components/cart/coupon-modal/product-coupon'
+import DeliveryCoupon from '@/components/cart/coupon-modal/delivery-coupon'
 import styles from '@/styles/cart/coupon.module.scss'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import useRequireCart from '@/hooks/use-require-cart'
+
+
+
 export default function Coupon() {
+
+  useRequireCart()
+
+  const router = useRouter()
+
+  // 點擊確認返回上一頁
+  const handleConfirmBtn = () => {
+    router.back()
+  }
   return (
     <>
       <CartNavbar />
@@ -172,9 +186,7 @@ export default function Coupon() {
               </div>
             </div>
           </div>
-          <Link href="/cart/checkout" className={styles.confirmBtn}>
-            確認
-          </Link>
+          <div className={styles.confirmBtn} onClick={handleConfirmBtn}>確認</div>
         </div>
       </section>
       <Footer />

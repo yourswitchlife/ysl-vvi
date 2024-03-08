@@ -34,9 +34,9 @@ app.use(
 )
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Expose-Headers', 'Authorization');
-  next();
-});
+  res.header('Access-Control-Expose-Headers', 'Authorization')
+  next()
+})
 
 // 視圖引擎設定
 app.set('views', path.join(__dirname, 'views'))
