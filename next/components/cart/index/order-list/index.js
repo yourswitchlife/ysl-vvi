@@ -1,9 +1,13 @@
-import styles from '../cart/order-list.module.scss'
+import styles from './order-list.module.scss'
 import Order from './order'
 import Image from 'next/image'
+import Link from 'next/link'
+
+// 引入use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
 
 // 引用優惠券選擇區
-import UseCoupon from './use-coupon'
+import UseCoupon from './order/use-coupon'
 
 // 引用星星優惠券
 import CouponStar from '@/public/images/cart/couponStar.svg'
@@ -11,6 +15,8 @@ import CouponStar from '@/public/images/cart/couponStar.svg'
 import coupon from '@/public/images/cart/coupon.svg'
 
 export default function OrderList() {
+  const { cartItems, handleAllCheckboxChange, totalProducts, totalPrice } =
+    useCart()
   return (
     <>
       <section className="container">
@@ -18,12 +24,20 @@ export default function OrderList() {
         <div className="bg-white py-3 px-4 rounded-4 mb-5">
           <div className="row mb-3">
             <div className="col">
+              {/* 選擇全部 */}
               <div className={`form-check ${styles.selectAllBar}`}>
                 <input
                   className={`form-check-input me-3 ${styles.checkBox}`}
                   type="checkbox"
-                  value=""
                   id="selectAll"
+                  value={cartItems}
+                  checked={
+                    cartItems.every((item) => item.userSelect === true)
+                      
+                  }
+                  onChange={() => {
+                    handleAllCheckboxChange(cartItems)
+                  }}
                 />
                 <label className="form-check-label fs-5" htmlFor="selectAll">
                   選擇全部
@@ -35,7 +49,6 @@ export default function OrderList() {
             <div className={`col-8 ${styles.orderListBar}`}>
               {/* 單一賣場訂單 */}
               <Order />
-              <Order />
             </div>
             {/* 電腦版訂單總覽 */}
             <div className={`col-4 ${styles.orderOverviewBar}`}>
@@ -43,43 +56,47 @@ export default function OrderList() {
                 <div className={styles.cartFrame}>
                   <div className={styles.framHeader}>
                     <h5 className={styles.title}>訂單總覽</h5>
-                    <div className={styles.totalQuantity}>共 5 件商品</div>
+                    <div className={styles.totalQuantity}>
+                      共 {totalProducts} 件商品
+                    </div>
                   </div>
                   <div className={styles.frameBody}>
                     <div className={styles.summaryItem}>
                       <div className={styles.summaryItemLabel}>商品總計</div>
                       <div className={styles.summaryItemLine}></div>
-                      <div className={styles.summaryItemPrice}>$1920</div>
+                      <div className={styles.summaryItemPrice}>
+                        ${totalPrice}
+                      </div>
                     </div>
-                    <div className={styles.summaryItem}>
+                    {/* <div className={styles.summaryItem}>
                       <div className={styles.summaryItemLabel}>運費總計</div>
                       <div className={styles.summaryItemLine}></div>
                       <div className={styles.summaryItemPrice}>$120</div>
-                    </div>
-                    <div className={styles.summaryItem}>
+                    </div> */}
+                    {/* <div className={styles.summaryItem}>
                       <div className={styles.summaryItemLabel}>商品折抵</div>
                       <div className={styles.summaryItemLine}></div>
                       <div className={`text-danger ${styles.summaryItemPrice}`}>
-                        $200
+                        $0
                       </div>
-                    </div>
-                    <div className={styles.summaryItem}>
+                    </div> */}
+                    {/* <div className={styles.summaryItem}>
                       <div className={styles.summaryItemLabel}>運費折抵</div>
                       <div className={styles.summaryItemLine}></div>
                       <div className={`text-danger ${styles.summaryItemPrice}`}>
                         $60
                       </div>
-                    </div>
-                    <UseCoupon />
+                    </div> */}
+                    {/* <UseCoupon /> */}
                     <div className={styles.summeryTotal}>
                       <div className={styles.totalText}>訂單總金額</div>
-                      <div className={styles.totalPrice}>$1920</div>
+                      <div className={styles.totalPrice}>${totalPrice}</div>
                     </div>
-                    <div className={styles.payBtnBar}>
+                    <Link href="/cart/checkout" className={styles.payBtnBar}>
                       <button className={`btn btn-danger ${styles.btnPay}`}>
-                        <span>去買單</span>
+                        去買單
                       </button>
-                    </div>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -95,7 +112,9 @@ export default function OrderList() {
               <Image src={CouponStar} />
               <div className={styles.coupon}>優惠券</div>
             </div>
-            <div className={styles.discountRight}>選擇使用優惠券</div>
+            <Link href="/cart/checkout/coupon" className={styles.discountRight}>
+              選擇使用優惠券
+            </Link>
           </div>
           <div className={styles.discountInfo}>
             <div className={styles.infoLeft}>
@@ -111,16 +130,16 @@ export default function OrderList() {
               <div className={styles.totalPrice}>
                 總金額{' '}
                 <span className="text-danger">
-                  <b>$7516</b>
+                  <b>${totalPrice}</b>
                 </span>
               </div>
-              <div className={styles.totalQuantity}>共 5 件商品</div>
+              <div className={styles.totalQuantity}>共 {totalProducts} 件商品</div>
             </div>
-            <button
+            <Link href="/cart/checkout"
               className={`btn btn-danger rounded-0 ${styles.checkoutBtn}`}
             >
               去買單
-            </button>
+            </Link>
           </div>
         </div>
       </div>

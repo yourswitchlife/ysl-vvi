@@ -217,7 +217,7 @@
 .selectFrame {
   display: flex;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 
   & label {
     min-width: 95px;
@@ -239,7 +239,8 @@
 
 .addHomeAdrBtn {
   display: flex;
-  margin-bottom: 10px;
+  justify-content: flex-end;
+  margin-bottom: 20px;
 }
 
 .addHomeAdr {
@@ -259,6 +260,23 @@
   }
 }
 
+// 編輯地址按鈕
+.editHomeAdr{
+  background: $blue-secondary;
+  color: $white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  border-radius: 5px;
+  gap: 5px;
+  cursor: pointer;
+  margin-right: 5px;
+  &:hover{
+    background: $info;
+  }
+}
+
 // 選擇常用地址區塊radio(PC)
 .adressFrame {
   .namePhone {
@@ -271,6 +289,8 @@
   cursor: pointer;
 }
 .addSevevnAdr {
+  text-decoration: none;
+  color: $dark-gray;
   background: $white;
   padding: 3px 8px;
   border-radius: 15px;
@@ -465,6 +485,10 @@
 
   .receiveInfo {
     display: none;
+
+    .infoBar{
+      display: none;
+    }
   }
 
   // 電腦版商品圖
@@ -561,6 +585,11 @@
 
   // 新增常用地址按鈕區塊
   .addHomeAdrBtn {
+    display: none;
+  }
+
+  // 新增超商地址區塊
+  .addAdr{
     display: none;
   }
 
