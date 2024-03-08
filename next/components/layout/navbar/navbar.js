@@ -42,7 +42,7 @@ export default function Navbar() {
           <Link href="/products" className={styles.linkPr}>
             商品專區
           </Link>
-          <Link href="/coupon/coupon-page" className={styles.linkPr}>
+          <Link href="/coupon" className={styles.linkPr}>
             優惠報報
           </Link>
           <Link href="/article" className={styles.link}>
