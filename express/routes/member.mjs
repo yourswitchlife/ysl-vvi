@@ -1,9 +1,19 @@
-import express from 'express'
-const router = express.Router()
-import db from '../configs/db.mjs'
-import authenticate from '../middlewares/authenticate-cookie.js'
-import { generateHash, compareHash } from '../db-helpers/password-hash.js'
+import express from 'express';
+const router = express.Router();
+import db from '../configs/db.mjs';
+
+// middleware
+import authenticate from '../middlewares/authenticate-cookie.js';
+// tools
+import { generateHash, compareHash } from '../db-helpers/password-hash.js';
 import jwt from 'jsonwebtoken'
+// 用來處理上傳的檔案
+import multer from 'multer';
+import path from 'path';
+// OTP NM API
+import nodemailer from 'nodemailer';
+
+
 
 router.post('/register', async function (req, res) {
   const { account, email } = req.body
@@ -164,44 +174,199 @@ router.get('/auth-status', authenticate, (req, res) => {
 router.get('/info/:id', async (req, res) => {
   const memberId = req.params.id
 
-  // 使用 MySQL 查詢會員資料
-  const query = `SELECT * FROM member WHERE id = ?`
+  const query = `SELECT * FROM member WHERE id = ?`;
 
   try {
     const [results] = await db.execute(query, [memberId])
 
     if (results.length > 0) {
-      // 如果找到資料，返回給前端
-      res.status(200).json(results[0])
+      res.status(200).json(results[0]);
     } else {
-      // 如果找不到資料，返回錯誤訊息
-      res.status(404).json({ error: 'Member not found.' })
+      res.status(404).json({ error: 'Member not found.' });
     }
   } catch (error) {
-    // 錯誤處理
-    console.error('Error fetching member data:', error)
-    res.status(500).json({ error: 'Internal server error.' })
+    console.error('Error fetching member data:', error);
+    res.status(500).json({ error: 'Internal server error.' });
   }
 })
 
-// google查詢並更新會員資料
-router.get('/api/member/google-info/:uid', async (req, res) => {
-  const google_uid = req.params.uid
-  const query = `SELECT * FROM member WHERE google_uid = ?`
+//修改個人資料account
+router.put('/account/:memberId', async (req, res) => {
+  const memberId = req.params.memberId;
+  const { name, gender, address, birthday, phone, birthday_month } = req.body;
+
+
+
+  const updateQuery = `UPDATE member SET name = ?, gender = ?, address = ?, birthday = ?, birthday_month = ?, phone = ? WHERE id = ?`;
 
   try {
-    const [results] = await db.execute(query, [google_uid])
-    if (results.length > 0) {
-      res.status(200).json(results[0])
+    const [updateResults] = await db.execute(updateQuery, [name, gender, address, birthday, birthday_month, phone, memberId]);
+
+    if (updateResults.affectedRows > 0) {
+      // 更新成功
+      const [results] = await db.execute(`SELECT * FROM member WHERE id = ?`, [memberId]);
+      res.status(200).json(results[0]);
     } else {
-      // 找不到資料，返回錯誤訊息
-      res.status(404).json({ error: 'gMember not found.' })
+      // 更新失敗
+      res.status(404).json({ error: 'member not found.' });
     }
   } catch (error) {
-    // 錯誤處理
-    console.error('Error fetching member data:', error)
-    res.status(500).json({ error: 'Internal server error.' })
+    console.error('Error updating member data:', error);
+    res.status(500).json({ error: 'Internal server error.' });
   }
-})
+
+});
+
+
+//pic改按鈕上傳
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/profile-pic'); // 存放上傳檔案的資料夾
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); // 以時間戳記作為檔名
+  },
+});
+const upload = multer({ storage: storage });
+
+router.put('/pic/:memberId', upload.single('file'), async (req, res) => {
+  const memberId = req.params.memberId;
+  const filePath = req.file.path; // 上傳後的檔案路徑
+  const filename = path.basename(filePath);
+
+  const picQuery = 'UPDATE member SET pic = ? WHERE id = ?';
+
+  try {
+    // 執行 SQL 更新
+    const [picResults] = await db.execute(picQuery, [filename, memberId]);
+
+    if (picResults.affectedRows > 0) {
+      // 更新成功
+      res.status(200).json({ success: true, message: '照片上傳成功' });
+    } else {
+      // 更新失敗
+      res.status(404).json({ error: '照片上傳失敗' });
+    }
+  } catch (error) {
+    console.error('Error updating member data:', error);
+    res.status(500).json({ error: '上傳途中發生錯誤' });
+  }
+});
+
+
+
+
+// forget password
+//-拿驗證碼
+// 郵件寄送(基於SMTP得API)
+
+router.post('/get-code', async (req, res) => {
+  const { email } = req.body;
+  console.log('email:', email);
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.SMTP_TO_EMAIL,
+      pass: process.env.SMTP_TO_PASSWORD,
+    }
+  });
+  await transporter.verify();
+
+  // 生成OTP n6
+  const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
+
+  try {
+    // 檢查特定email 
+    const [existingEmail] = await db.execute(
+      'SELECT email FROM member WHERE email = ?',
+      [email]
+    );
+    if (existingEmail.length === 0) {
+      // 如果 email 不存在於資料表中，返回相應的錯誤訊息
+      return res.status(400).json({ error: ' 請輸入有效的註冊會員電子郵件地址。' });
+    }
+    if (!email) {
+      return res.status(400).json({ error: '請輸入email。' });
+    }
+    const otp = generateOTP();
+    const expTimestamp = new Date();
+    expTimestamp.setMinutes(expTimestamp.getMinutes() + 10); // 10mins
+
+    try {
+      // 插入或更新数据库中的OTP记录
+      await db.execute(
+        `INSERT INTO otp (member_id, email, token, exp_timestamp) VALUES ((SELECT id FROM member WHERE email = ?), ?, ?, ?)
+             ON DUPLICATE KEY UPDATE token = ?, exp_timestamp = ?`,
+        [email, email, otp, expTimestamp, otp, expTimestamp]
+      );
+
+      // 寄信
+      const mailOptions = {
+        from: process.env.SMTP_TO_EMAIL,
+        to: email,
+        subject: '哈囉！此信為您的重設密碼請求。',
+        html: `我們收到了您的密碼重設請求，請於頁面上輸入OTP驗證碼：<br>
+        <div style="color: red; font-size: 25px; font-weight: bold;">${otp}</div><br>
+        此驗證碼十分鐘內有效，如果您並沒有進行重設密碼請求，請盡速聯繫YSL團隊客服。<br><br><br>
+        YSL全體祝福您有個愉快的一天。<br>
+        BE GAMER, BE HAPPIER! :)`
+      };
+
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).send('Error sending email')
+        }
+        console.log(info);
+        res.send('OTP sent to your email.');
+      });
+    } catch (error) {
+      console.error('Error executing MySQL query:', error);
+      res.status(500).json({ error: error.message });
+    }
+  } catch (outerError) {
+    console.error('Error in outer try-catch block:', outerError);
+    res.status(500).json({ error: outerError.message });
+  }
+});
+
+// reset password
+router.post('/reset-password', async (req, res) => {
+  const { email, verificationCode, newPassword } = req.body;
+
+  try {
+    // 檢查驗證碼是否符合
+    
+    const [otpRecord] = await db.execute(
+      'SELECT * FROM otp WHERE email = ? AND token = ? ORDER BY id DESC LIMIT 1',
+      [email, verificationCode]
+    );
+    const otpResult = otpRecord[0];
+
+    if (!otpResult || new Date() > new Date(otpResult.exp_timestamp)) {
+      return res.status(400).json({ error: '驗證碼無效或已過期' });
+    }
+
+    // 修改密碼
+    const password = await generateHash(newPassword); // hash加密密碼
+    await db.execute(
+      'UPDATE member m ' +
+      'JOIN otp o ON m.id = o.member_id ' +
+      'SET m.password = ? ' +
+      'WHERE o.id = ?',
+      [password, otpResult.id]
+    );
+
+    // 刪除使用過的 OTP
+    await db.execute('DELETE FROM otp WHERE id = ?', [otpResult.id]);
+    return res.status(200).json({ message: '密碼修改成功' });
+
+  } catch (error) {
+    console.error('Error during password reset:', error);
+    return res.status(500).json({ error: '內部伺服器錯誤' });
+  }
+});
+
+
 
 export default router

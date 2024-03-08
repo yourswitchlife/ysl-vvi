@@ -15,7 +15,7 @@ export default function navPic() {
   useEffect(() => {
     if (isLoggedIn && memberData) {
       const picUrl = memberData.pic
-        ? (memberData.pic.startsWith("https://") ? memberData.pic : `/images/member/profile-pic/${memberData.pic}`)
+        ? (memberData.pic.startsWith("https://") ? memberData.pic : `http://localhost:3005/profile-pic/${memberData.pic}`)
         : profilePhoto;
 
       setNavPic(picUrl);
@@ -24,13 +24,13 @@ export default function navPic() {
       // console.log(level_point)
 
       if (level_point < 6000) {
-        setFrameStyle(Style.nblue_frame); // 高手
+        setFrameStyle(Style.nblue_frame); // 新手
       } else if (level_point >= 6000 && level_point <= 12999) {
-        setFrameStyle(Style.nbrown_frame); // 菁英
+        setFrameStyle(Style.nbrown_frame); // 高手
       } else if (level_point >= 13000 && level_point <= 19999) {
-        setFrameStyle(Style.nsilver_frame); // 大師
+        setFrameStyle(Style.nsilver_frame); // 菁英
       } else if (level_point >= 20000) {
-        setFrameStyle(Style.ngold_frame); // 傳說
+        setFrameStyle(Style.ngold_frame); // 大師
       }
     }
   }, [memberData]);
