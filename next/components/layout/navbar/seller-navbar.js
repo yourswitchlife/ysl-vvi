@@ -1,4 +1,4 @@
-import react from 'react'
+import React, { useState } from 'react';
 import styles from '@/components/layout/navbar/navbar.module.scss'
 import yslLogo from '@/public/images/logo/logo-sm.svg'
 import yslLogoXs from '@/public/images/logo/logo-xs.svg'
@@ -6,9 +6,19 @@ import Image from 'next/image'
 import Link from 'next/link'
 import profileImg from '@/public/images/profile-photo/peach.png'
 import { FaArrowRight, FaSearch } from "react-icons/fa";
+//登出邏輯
+import handleLogout from '@/services/logout';
+//context hooks
+import { useAuth } from '@/hooks/use-Auth';
 
+//我做完的組件 可以用到評論上 已套用會員等級框
+import NavPic from '@/hooks/use-navpic';
+// 引入use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
 
 export default function SellerNavbar() {
+  const { isLoggedIn, memberData } = useAuth();
+  const [isHovered, setIsHovered] = useState(false);
   return (
     <>
     <div className='d-none d-lg-block'>
@@ -38,14 +48,15 @@ export default function SellerNavbar() {
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            <Image
+            {/* <Image
               src={profileImg}
               alt=""
               width="32"
               height="32"
               className="rounded-circle me-2"
-            />
-            <strong>Peach princes</strong>
+            /> */}
+            <NavPic />
+            <strong className='ms-2'>Peach princes</strong>
           </Link>
           <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
             <li>
@@ -85,14 +96,14 @@ export default function SellerNavbar() {
       <header className={styles.navbarB}>
         <div // logo
         >
-          <Link href="/index.js">
+          <Link href="/">
             <Image src={yslLogoXs} alt="" />
           </Link>
         </div>
         <div className="">
           <h5 className='mb-0'>我的賣場</h5>
         </div>
-        <Link href="/index.js" className="text-white ps-5">
+        <Link href="/" className="text-white ps-5">
           <FaSearch />
         </Link>
       </header>

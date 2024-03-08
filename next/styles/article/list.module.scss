@@ -47,60 +47,35 @@
   .tag_btn {
     border-radius: 5px;
     padding: 5px 10px;
-    align-self: start;
   }
 
   .txt {
     width: 100%;
     box-sizing: border-box;
-    letter-spacing: 3px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-    
+    h4 {
+      margin: 0;
+    }
     p {
       margin: 0;
       margin-top: 10px;
       font-size: 12px;
       color: white;
     }
-    h6,p {
-      overflow: hidden; 
-      display: -webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      text-overflow: ellipsis; 
-      white-space: normal; 
-    }
   }
 }
 
+// @media screen and (max-width: 430px) {
+//     .main{
+//         margin-inline: 20px !important;
+//     }
+//     .tag_link{
+//         padding-inline: 0 !important;
+//     }
+// }
+
 @media screen and (max-width: 431px) {
   .main {
-    padding-inline: 20px;
+    padding-inline: 20px ;
   }
-  .tag_link {
-    display: flex;
-    flex-direction: column;
-    .index_padding {
-      padding-bottom: 15px;
-    }
-  }
-  .li {
-    display: flex;
-    flex-direction: column;
-  }
-  .pic {
-    width: 100% !important;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-  .txt {
-    margin: 0 !important;
-  }
+  
 }

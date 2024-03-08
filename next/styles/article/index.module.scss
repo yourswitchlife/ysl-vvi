@@ -1,37 +1,15 @@
 @import '../valuable.scss';
 
-.test {
-  padding-top: 60px;
-  .test2 {
-    width: 100%;
-    height: 472px;
-  }
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 0 -100px;
-  }
-}
-.slick-dots li.slick-active button:before {
-  color: #fff;
-}
-.slick-next:before {
-  color: white !important;
-}
-.slick-dots {
-  li.slick-active {
-    button:before {
-      color: white;
-    }
-  }
-}
-
 .custom_btn {
   font-size: 13px;
   padding: 4px;
   border-radius: 5px;
 }
+
+// p {
+//     color: white;
+//     font-size: 16px;
+// }
 .a {
   text-decoration: none;
   color: white;
@@ -47,6 +25,12 @@
 //     object-position: 0 -100px;
 //   }
 // }
+
+.date {
+  font-size: 12px;
+  text-align: right;
+  color: white;
+}
 
 .left_main {
   padding-top: 70px;
@@ -96,6 +80,7 @@
 .hot_main {
   width: 400px;
   display: flex;
+  /* justify-content: space-between; */
   padding-top: 20px;
 }
 
@@ -115,15 +100,6 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  p {
-    letter-spacing: 2px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    text-overflow: ellipsis;
-    white-space: normal;
-  }
 }
 
 .h5 {
@@ -142,7 +118,8 @@
     width: 300px;
   }
 }
-.card2{
+.card2 {
+  padding-top: 60px;
   width: 100%;
   height: 472px;
   position: relative;
@@ -151,7 +128,6 @@
     height: 100%;
     object-fit: cover;
     object-position: 0 -100px;
-
   }
 }
 .text2 {
@@ -165,70 +141,13 @@
 }
 .text3 {
   position: absolute;
-  width: 100%;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.6);
+  width: 100%;
   & h2 {
-    display: flex;
-    justify-content: center;
     color: white;
     margin: 10px;
-  }
-}
-@media screen and (max-width: 440px) {
-  .main_img {
-    padding-top: 60px;
-    width: 100%;
-    height: 300px;
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: 0 0;
-    }
-  }
-  .main_media {
-    display: flex;
-    flex-direction: column;
-    padding-inline: 20px;
-    .right_main {
-      padding: 0;
-    }
-    .h3 {
-      text-align: center;
-    }
-  }
-  .swtich {
     display: flex;
     justify-content: center;
-  }
-  .hot_main_img {
-    width: 45%;
-  }
-  .more_main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .more {
-    display: flex;
-    flex-direction: column;
-  }
-  .card2{
-    width: 100%;
-    height: 300px;
-    position: relative;
-    & img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: 0 0;
-  
-    }
-  }
-  .text3 {
-    & h2 {
-      font-size: 20px;
-    }
   }
 }

@@ -1,11 +1,30 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Navbar from '@/components/layout/navbar/navbar'
 import Footer from '@/components/layout/footer/footer-front'
 import style from '@/styles/article/list.module.scss'
 import { FaSearch } from 'react-icons/fa'
 import Link from 'next/link'
-import Pagination from 'react-bootstrap/Pagination';
+import Pagination from 'react-bootstrap/Pagination'
 export default function list() {
+  const [article, setArticle] = useState([])
+
+  const getArticle = async () => {
+    try{
+      const res = await fetch ('http://localhost:3306/api/article/list')
+      const data = await res.json()
+      console.log(data)
+
+      if(Array.isArray(data)){
+        setArticle(data)
+      }
+    }catch (e){
+      console.error(e)
+    }
+  }
+  useEffect(()=>{
+    getArticle()
+  },[])
+
   return (
     <>
       <Navbar />
@@ -40,10 +59,46 @@ export default function list() {
         </div>
         <div className="container">
           <ul className={style.ul}>
+            {article.map((a) => {
+              return (
+                <li className={style.li}>
+              <div className={`${style.list} mt-5`}>
+                <Link
+                  href=""
+                  className={`d-flex text-decoration-none text-white ${style.li}`}
+                >
+                  <div className={style.pic}>
+                    <img
+                      src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
+                      alt=""
+                    />
+                  </div>
+                  <div className={`${style.txt} mx-4 p-3`}>
+                    <div
+                      className={`badge text-bg-secondary mb-3 ${style.tag_btn}`}
+                    >
+                      <h5 className={`${style.h5} mb-0`}>冒險類{a.id}</h5>
+                    </div>
+                    <div>
+                      <h6>
+                        《OPUS：心相吾山》是一款劇情導向的多結局冒險故事，玩家將扮演迷失在幻境的主角，透過攝影去挖掘世界的種種謎團，最後找到回家的辦法。官方表示，團隊一貫重視本作的音樂音效，由《OPUS》系列作曲家
+                        Triodust、質地有聲製樂所共同操刀；而在遊戲劇情部分由《OPUS：龍脈常歌》編劇、美國獨立遊戲節（Independent
+                        Games Festival）敘事大獎榮譽提名劇本家 Brian Lee 執筆。
+                      </h6>
+                    </div>
+                    <div>
+                      <p>2024/1/18</p>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </li>
+              )
+            })}
             <li className={style.li}>
               <div className={`${style.list} mt-5`}>
-                <a
-                  href="article_main.html"
+                <Link
+                  href=""
                   className={`d-flex text-decoration-none text-white ${style.li}`}
                 >
                   <div className={style.pic}>
@@ -69,7 +124,7 @@ export default function list() {
                       <p>2024/1/18</p>
                     </div>
                   </div>
-                </a>
+                </Link>
               </div>
             </li>
             <li className={style.li}>

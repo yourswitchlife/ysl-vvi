@@ -1,21 +1,99 @@
-import React from 'react'
+import React, { useState, useEffrct } from 'react'
 import style from '@/styles/article/index.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
 import Navbar from '@/components/layout/navbar/navbar'
 import { FaSearch } from 'react-icons/fa'
+import Slider from 'react-slick'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
+import settings from '../article/setting'
+
 
 export default function index() {
+  
   return (
     <>
       <Navbar />
-      <section>
-        <div className={style.main_img}>
-          <img
-            src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-            alt=""
-          />
-        </div>
-      </section>
+      <Slider {...settings} className={`${style.test} test`}>
+        <a href="article_main.html">
+          <div className={style.card2}>
+            <img
+              src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
+              alt=""
+            />
+            <div className={style.text3}>
+              <h2 className={style.bannerTitle}>
+                《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
+              </h2>
+            </div>
+          </div>
+        </a>
+        <a href="article_main.html">
+          <div className={style.card2}>
+            <img
+              src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
+              alt=""
+            />
+            <div className={style.text3}>
+              <h2 className={style.bannerTitle}>
+                《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
+              </h2>
+            </div>
+          </div>
+        </a>
+        <a href="article_main.html">
+          <div className={style.card2}>
+            <img
+              src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
+              alt=""
+            />
+            <div className={style.text3}>
+              <h2 className={style.bannerTitle}>
+                《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
+              </h2>
+            </div>
+          </div>
+        </a>
+        <a href="article_main.html">
+          <div className={style.card2}>
+            <img
+              src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
+              alt=""
+            />
+            <div className={style.text3}>
+              <h2 className={style.bannerTitle}>
+                《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
+              </h2>
+            </div>
+          </div>
+        </a>
+        <a href="article_main.html">
+          <div className={style.card2}>
+            <img
+              src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
+              alt=""
+            />
+            <div className={style.text3}>
+              <h2 className={style.bannerTitle}>
+                《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
+              </h2>
+            </div>
+          </div>
+        </a>
+        <a href="article_main.html">
+          <div className={style.card2}>
+            <img
+              src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
+              alt=""
+            />
+            <div className={style.text3}>
+              <h2 className={style.bannerTitle}>
+                《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
+              </h2>
+            </div>
+          </div>
+        </a>
+      </Slider>
       <main>
         <div
           className={`${style.main_media} container px-lg-5 d-flex justify-content-center`}
@@ -60,7 +138,9 @@ export default function index() {
                   >
                     NEW
                   </div>
-                  <p className="text-white d-flex align-items-center">2024/2/11</p>
+                  <p className="text-white d-flex align-items-center">
+                    2024/2/11
+                  </p>
                 </div>
                 <a href="article_main.html" className={style.a}>
                   <p>
@@ -162,7 +242,9 @@ export default function index() {
                   <div className={`btn btn-outline-danger ${style.custom_btn}`}>
                     Hot
                   </div>
-                  <p className="text-white d-flex align-items-center">2024/2/11</p>
+                  <p className="text-white d-flex align-items-center">
+                    2024/2/11
+                  </p>
                 </div>
                 <a href="article_main.html" className={style.a}>
                   <p>
