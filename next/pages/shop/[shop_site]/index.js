@@ -96,7 +96,7 @@ export default function ShopPage() {
     try{
       const res = await fetch ('http://localhost:3005/api/products/list')
       const data = await res.json()
-      console.log(data)
+      // console.log(data)
 
       if(Array.isArray(data)){
         setProducts(data)
@@ -318,9 +318,9 @@ const handleHitToggleFav = (id) => {
           id={v.id} 
           name={v.name}
           releaseTime={v.release_time.split('T')[0]}
-          displayPrice={v.display_price}
+          display_price={v.display_price}
           price={v.price}
-          cover={v.img_cover}
+          img_cover={v.img_cover}
           type={v.type_id}
           ratingId={v.rating_id}
           memberId={v.member_id}
@@ -369,8 +369,9 @@ const handleHitToggleFav = (id) => {
               id={p.id}
               name={p.name} 
               price={p.price} 
-              displayPrice={p.display_price} releaseTime={p.release_time.split('T')[0]} 
-              cover={p.img_cover} 
+              display_price={p.display_price} 
+              releaseTime={p.release_time.split('T')[0]} 
+              img_cover={p.img_cover} 
               type={p.type_id} 
               ratingId={p.rating_id}
               fav={p.fav}

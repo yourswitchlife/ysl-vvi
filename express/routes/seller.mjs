@@ -4,11 +4,11 @@ const router = express.Router()
 import db from '../configs/db.mjs'
 import authenticate from '../middlewares/authenticate-cookie.js'
 import multer from 'multer'
-const upload = multer({ dest: 'shopCover/' })
+const upload = multer({ dest: 'public/shopCover/' })
 import moment from 'moment'
 
 //authenticate
-//賣家中心後台首頁
+//賣家中心後台首頁(OK): #Read
 router.get('/', authenticate, async (req, res) => {
   // try {
   const memberId = req.memberData.id
@@ -18,7 +18,7 @@ router.get('/', authenticate, async (req, res) => {
   }
 
   let [comments] = await db.execute(
-    'SELECT * FROM `shop_comment` WHERE `member_id` = ?',
+    'SELECT * FROM `shop_comment` WHERE `shop_id` = ?',
     [memberId]
   )
   // console.log(comments)
@@ -35,7 +35,7 @@ router.get('/', authenticate, async (req, res) => {
   // }
 })
 
-//賣場管理 查看資料
+//賣場管理 查看資料OK #Read
 router.get('/shop', authenticate, async (req, res) => {
   try {
     const memberId = req.memberData.id
@@ -55,7 +55,7 @@ router.get('/shop', authenticate, async (req, res) => {
     res.status(500)
   }
 })
-//賣場管理 編輯及新增賣場資料
+//賣場管理 編輯及新增賣場資料OK #Create
 //注意：新增賣場其實是更新member資料
 //在前端執行：抓取預設值存入 與 實現兩個按鈕：分別是shop_valid = 0 或shop_valid = 1
 router.patch(
@@ -64,8 +64,8 @@ router.patch(
   authenticate,
   async function (req, res) {
     const { shopName, shopSite, shopInfo, shopValid } = req.body
-    const shopCover = req.file.path
-    console.log(shopCover)
+    const shop_cover = req.file.path
+    console.log(shop_cover)
     const memberId = req.memberData.id
     if (!req.memberData) {
       // 如果memberData不存在，则返回错误信息
@@ -93,7 +93,7 @@ router.patch(
       await db.execute(Query, [
         shopName,
         shopSite,
-        shopCover,
+        shop_cover,
         shopInfo,
         shopValid,
         memberId,
@@ -106,7 +106,7 @@ router.patch(
   }
 )
 
-//賣家商品管理
+//賣家商品管理OK #Read
 router.get('/product', authenticate, async (req, res) => {
   try {
     const memberId = req.memberData.id
@@ -125,7 +125,6 @@ router.get('/product', authenticate, async (req, res) => {
     res.status(500)
   }
 })
-
 //新增賣家商品
 router.post(
   '/product/new',
@@ -223,7 +222,6 @@ router.post(
     // }
   }
 )
-
 //商品編輯:只改成PUT裡面都還沒修改
 router.put('/product/:pid', authenticate, async (req, res) => {
   const {
@@ -276,7 +274,6 @@ router.put('/product/:pid', authenticate, async (req, res) => {
     console.log('資料庫相關錯誤:', error)
   }
 })
-
 //商品編輯:只改成DELETE裡面都還沒修改
 router.delete('/product/:pid', authenticate, async (req, res) => {
   const {
@@ -330,7 +327,7 @@ router.delete('/product/:pid', authenticate, async (req, res) => {
   }
 })
 
-//賣家評價讀取
+//賣家評價讀取 #Read
 router.get('/comment', authenticate, async (req, res) => {
   try {
     const memberId = req.memberData.id
@@ -349,20 +346,30 @@ router.get('/comment', authenticate, async (req, res) => {
     res.status(500)
   }
 })
-//賣家評價讀取單一資料
+//賣家評價讀取單一資料OK #Read
 router.get('/comment/:cid', authenticate, async (req, res) => {
   const { cid } = req.params
   const memberId = req.memberData.id
   console.log(cid)
   console.log(memberId)
-  let [result] = await db.execute(
-    'SELECT * FROM `shop_comment` WHERE `order_id` = ? AND `shop_id` = ?',
-    [cid, memberId]
+  //先檢查這則評論有沒有存在＆和shop_id匹配
+  const [comments] = await db.execute(
+    'SELECT * FROM `shop_comment` WHERE `id` = ?',
+    [cid]
   )
-  console.log(result)
+  //檢查評論是存在以及shop_id是否匹配
+  if (comments.length === 0) {
+    return res.status(404).send({ message: '評論不存在' })
+  }
+  const comment = comments[0]
+  if (comment.shop_id !== memberId) {
+    //不符合沒有權限修改
+    return res.status(403).send({ message: '無權限查看此評論' })
+  }
+  // console.log(comment)
   try {
-    if (result) {
-      res.json(result) //解析json物件
+    if (comment) {
+      res.json(comment) //解析json物件
       // return true
     } else {
       res.status(404).json({ message: '查無評論資料' })
@@ -373,36 +380,69 @@ router.get('/comment/:cid', authenticate, async (req, res) => {
     res.status(500)
   }
 })
-//賣家評價回覆評價（更新資料表）
-router.put('/comment/:cid', authenticate, async (req, res) => {
-  const { reply, replied_at } = req.body
+//賣家評價回覆評價（更新資料表）OK #Create #Update
+router.patch('/comment/:cid', upload.none(), authenticate, async (req, res) => {
+  const { reply } = req.body
+  const dateString = new Date()
+  const replied_at = moment(dateString).format('YYYY-MM-DD HH:mm:ss')
   const { cid } = req.params
   const memberId = req.memberData.id
-  console.log(cid)
-  console.log(memberId)
-  let [result] = await db.execute(
-    'SELECT * FROM `shop_comment` WHERE `order_id` = ? AND `shop_id` = ?',
-    [cid, memberId]
-  )
-  console.log(result)
+  // console.log(cid)
+  // console.log(memberId)
+  // let [result] = await db.execute(
+  //   'SELECT * FROM `shop_comment` WHERE `order_id` = ? AND `shop_id` = ?',
+  //   [cid, memberId]
+  // )
+  // console.log(result)
   try {
-    if (result) {
-      res.json(result) //解析json物件
-      // return true
-    } else {
-      res.status(404).json({ message: '查無評論資料' })
+    //先檢查這則評論有沒有存在＆和shop_id匹配
+    const [comments] = await db.execute(
+      'SELECT * FROM `shop_comment` WHERE `id` = ?',
+      [cid]
+    )
+    //檢查評論是存在以及shop_id是否匹配
+    if (comments.length === 0) {
+      return res.status(404).send({ message: '評論不存在' })
     }
-    // console.log(comments)
+    const comment = comments[0]
+    if (comment.shop_id !== memberId) {
+      //不符合沒有權限修改
+      return res.status(403).send({ message: '無權限修改此評論' })
+    }
+    const Query =
+      'UPDATE `shop_comment` SET `reply` = ?, `replied_at` = ? WHERE `id` = ? AND `shop_id` = ?'
+    await db.execute(Query, [reply, replied_at, cid, memberId])
+    res.status(200).send({ message: '回應買家評價建立成功' })
+  } catch (error) {
+    res.status(400).send({ message: '不存在的評論，回覆失敗' })
+    console.log('資料庫相關錯誤：', error)
+  }
+})
+
+//讀取賣家訂單OK #Read
+router.get('/order', authenticate, async (req, res) => {
+  try {
+    const memberId = req.memberData.id
+    let [orders] = await db.execute(
+      'SELECT * FROM `orders` WHERE `member_seller_id` = ?',
+      [memberId]
+    )
+    // console.log(orders)
+    res.json(orders)
   } catch (error) {
     console.log(error)
     res.status(500)
   }
 })
 
-//賣家訂單
-router.get('/order', async (req, res) => {
+//更新賣家訂單 #Update 還沒用
+router.patch('/order/:oid', authenticate, async (req, res) => {
   try {
-    let [orders] = await db.execute('SELECT * FROM `orders`')
+    const memberId = req.memberData.id
+    let [orders] = await db.execute(
+      'SELECT * FROM `orders` WHERE `member_seller_id` = ?',
+      [memberId]
+    )
     // console.log(orders)
     res.json(orders)
   } catch (error) {

@@ -83,7 +83,8 @@ export default function SellerNavbar() {
               <hr className="dropdown-divider" />
             </li>
             <li>
-              <Link className="dropdown-item" href="/member/logout">
+            {/* 登出要 */}
+              <Link className="dropdown-item" href="/member/logout" as="button" onClick={handleLogout}>
                 登出
               </Link>
             </li>
