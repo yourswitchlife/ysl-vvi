@@ -1,14 +1,20 @@
 import React from 'react'
 import CartNavbar from '@/components/layout/navbar/navbar'
 import Footer from '@/components/layout/footer/footer-front'
-import CartStep from '@/components/cart/cart-step'
+import CartStep from '@/components/cart/step-progress'
 import ProductList from '@/components/products/product-card'
 import styles from '@/styles/cart/purchase.module.scss'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FaCheck } from 'react-icons/fa6'
 
+import useRequireCart from '@/hooks/use-require-cart'
+
+import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+import { useAuth } from '@/hooks/use-Auth'
+
 export default function Purchase() {
+  useRequireCart()
   return (
     <>
       <CartNavbar />
@@ -61,4 +67,8 @@ export default function Purchase() {
       <Footer />
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  return await mainCheckToLogin(context);
 }
