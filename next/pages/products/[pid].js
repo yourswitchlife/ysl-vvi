@@ -17,6 +17,7 @@ import PImgs from '@/components/products/p-imgs'
 import pImgDetail from '@/public/images/product/MonsterFarm-1.jpg'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import PHistory from '@/components/products/p-history'
+import pImages from '@/components/products/p-images'
 // import { Link,useParams } from 'react-router-dom'
 
 export default function ProductDetail() {
@@ -101,7 +102,8 @@ export default function ProductDetail() {
         <BreadCrumb />
         <section className="p-detail-sec1 row mt-4">
           <div className="col-lg col pe-5-lg pe-2-lg">
-            <PImgs cover={product.img_cover} />
+          <pImages/>
+            {/* <PImgs cover={product.img_cover} /> */}
           </div>
           <div className="col-lg-6 col-12 mt-lg-0 mt-3">
             <h4 className="text-white mb-0">{product.name}</h4>
