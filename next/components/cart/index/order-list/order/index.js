@@ -7,6 +7,7 @@ import { FaCheck } from 'react-icons/fa6'
 // 引入use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
 
+
 export default function Order() {
   const { cartItems, setCartItems, notifyOrder } = useCart()
 
@@ -46,13 +47,18 @@ export default function Order() {
     setisEditing(!isEditing)
   }
 
-  const handleShopSelect = (member_id) => {
+  const handleShopSelect = (member_id, checked) => {
+    console.log(member_id,checked)
+    console.log(cartItems)
     const updatedCartItems = cartItems.map((item) => {
-      if (item.member_id === member_id) {
-        return { ...item, userSelect: !orderGroup[member_id].every(item => item.userSelect) };
+     
+      if (String(item.member_id) === String(member_id)) {
+        return { ...item, userSelect: checked };
+        //return { ...item, userSelect: !orderGroup[member_id].every(item => item.userSelect) };
       }
       return item;
     });
+    console.log(updatedCartItems)
     setCartItems(updatedCartItems);
   };
 
@@ -74,7 +80,7 @@ export default function Order() {
                     className={`form-check-input ${styles.checkBox}`}
                     type="checkbox"
                     checked={items.every((item) => item.userSelect)}
-                    onChange={() => handleShopSelect(member_id)}
+                    onChange={(e) => handleShopSelect(member_id, e.target.checked)}
                   />
 
                 </div>

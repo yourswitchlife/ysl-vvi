@@ -53,8 +53,11 @@ export default function DeliveryCheckout() {
 
   // 紀錄被編輯地址的radio選項
   const [editingAddressIndex, setEditingAddressIndex] = useState(null);
-  // 追蹤選中的地址選項index
+  // 追蹤選中的宅配地址選項index
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(null);
+  // 追蹤選中的7-11地址選項index
+  const [selectedSevenIndex, setSelectedSevenIndex] = useState(null);
+
 
 
 
@@ -84,6 +87,14 @@ export default function DeliveryCheckout() {
     setSelectAddrOption(e.target.value)
   }
 
+  useEffect(() => {
+    if (selectAddrOption === "2" && addresses.homeAddresses.length > 0) {
+      setSelectedAddressIndex(0);
+    } else if (selectAddrOption === "1" && addresses.sevenAddresses.length > 0) {
+      setSelectedSevenIndex(0);
+    }
+  }, [selectAddrOption, addresses]);
+
   // 判斷是新增宅配地址還是編輯宅配地址
   const handleShowForm = (editMode = false) => {
     setshowAddrForm(true);
@@ -101,8 +112,8 @@ export default function DeliveryCheckout() {
     }
   };
 
-   // 編輯/新增地址時點擊取消
-   const handleCancel = () => {
+  // 編輯/新增地址時點擊取消
+  const handleCancel = () => {
     setshowAddrForm(false);
   };
 
@@ -162,6 +173,12 @@ export default function DeliveryCheckout() {
     setSelectedAddressIndex(selectedAddressIndex)
   };
 
+  // 根據被選擇的7-11地址radio選項顯示
+  const handleSevenAddressChange = (index) => {
+    setSelectedSevenIndex(index);
+  };
+
+
   // 點擊編輯地址按鈕
   const handleEditClick = () => {
     if (selectedAddressIndex !== null) {
@@ -208,7 +225,7 @@ export default function DeliveryCheckout() {
         DeliveryTimePreference: deliveryTime,
       },
       // 如果是新增地址就沒有預設欄位
-      homeField: isEditingAddress ? homeField : undefined 
+      homeField: isEditingAddress ? homeField : undefined
     };
     console.log(JSON.stringify(formData))
     console.log(formData);
@@ -245,18 +262,18 @@ export default function DeliveryCheckout() {
     const currentDate = new Date();
     const deliveryStartDate = new Date(currentDate.getTime() + 86400000 * 1); //加1天的毫秒數86400000
     const deliveryEndDate = new Date(currentDate.getTime() + 86400000 * 4); // 加4天
-  
+
     const formatDate = (date) => {
       return `${date.getMonth() + 1}/${date.getDate()}`;
     };
-  
+
     return {
       start: formatDate(deliveryStartDate),
       end: formatDate(deliveryEndDate),
     };
   };
   const { start, end } = calculateDeliveryDates();
-  
+
 
 
 
@@ -399,6 +416,8 @@ export default function DeliveryCheckout() {
                       type="radio"
                       name="seven-address"
                       value={index}
+                      checked={selectedSevenIndex === index}
+                      onChange={() => handleSevenAddressChange(index)}
                     />
                     <label className="form-check-label">
                       <div>{addr.name} {addr.phone}</div>
@@ -418,6 +437,7 @@ export default function DeliveryCheckout() {
                       className="form-check-input me-3"
                       type="radio"
                       name="home-address"
+                      checked={selectedAddressIndex === index}
                       value={index}
                       onChange={() => {
                         handleAddressSelection(index); setSelectedAddressIndex(index);
@@ -629,28 +649,49 @@ export default function DeliveryCheckout() {
 
 
         {/* 手機版 - 寄送資訊明細區塊 */}
-        <Link
-          href="/cart/checkout/delivery"
-          className={`col-12 bg-secondary-subtle rounded-3 p-3 ${styles.deliveryInfoMobile}`}
-        >
+        <Link href="/cart/checkout/delivery" className={`col-12 bg-secondary-subtle rounded-3 p-3 ${styles.deliveryInfoMobile}`}>
           <div className="row align-items-center">
-            <div className="col-10">
-              <div>7-ELEVEN 華泰城門市</div>
-              <div>桃園市中壢區春德路159號86櫃位</div>
-              <div>
-                <span>辦公室</span>｜<span>僅白天可收 (10:00 - 17:00)</span>
-              </div>
-              <div>小哈姆 09123456789</div>
-              <div className={styles.time}>預計到貨時間 1/19 - 1/23</div>
-            </div>
-            <div className="col-2">
-              <FaAngleRight />
-            </div>
-            <div className="col-12 text-end mt-3">
-              <b>運費：$100</b>
-            </div>
+            {selectedAddressIndex !== null && (
+              // 宅配地址被選中時顯示的資訊
+              <>
+                <div className="col-10">
+                  <div>{addresses.homeAddresses[selectedAddressIndex].name}</div>
+                  <div>{addresses.homeAddresses[selectedAddressIndex].address}</div>
+                  <div>
+                    <span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.AddressType}</span>｜
+                    <span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.DeliveryTimePreference}</span>
+                  </div>
+                  <div>{addresses.homeAddresses[selectedAddressIndex].phone}</div>
+                  <div className={styles.time}>預計到貨時間 {start} - {end}</div>
+                </div>
+                <div className="col-2">
+                  <FaAngleRight />
+                </div>
+                <div className="col-12 text-end mt-3">
+                  <b>運費：$100</b>
+                </div>
+              </>
+            )}
+            {selectedSevenIndex !== null && (
+              // 7-11地址被選中時顯示的資訊
+              <>
+                <div className="col-10">
+                  <div>{addresses.sevenAddresses[selectedSevenIndex].name}</div>
+                  <div>{addresses.sevenAddresses[selectedSevenIndex].seventInfo.storeName} ｜ {addresses.sevenAddresses[selectedSevenIndex].seventInfo.address}</div>
+                  <div>{addresses.sevenAddresses[selectedSevenIndex].phone}</div>
+                  <div className={styles.time}>預計到貨時間 {start} - {end}</div>
+                </div>
+                <div className="col-2">
+                  <FaAngleRight />
+                </div>
+                <div className="col-12 text-end mt-3">
+                  <b>運費：$60</b>
+                </div>
+              </>
+            )}
           </div>
         </Link>
+
 
         {/* 收件資訊區塊-電腦版顯示 */}
         <div
@@ -689,22 +730,25 @@ export default function DeliveryCheckout() {
           </div>
           {/* 有選擇收件地址後顯示地址細項 */}
           <div className={`${styles.infoBar}`}>
-          {selectedAddressIndex !== null && (
-            <>
-            <div>{addresses.homeAddresses[selectedAddressIndex].address} </div>
-            <div>
-              <span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.AddressType}</span>｜<span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.DeliveryTimePreference}</span>
-            </div>
-            <div>{addresses.homeAddresses[selectedAddressIndex].name}  {addresses.homeAddresses[selectedAddressIndex].phone} </div>
-            <div className={styles.feeTime}>
-              <div className={styles.time}>預計到貨時間 {start} - {end}</div>
-              <div>
-                <b>運費：{selectAddrOption !== 2 ? '$100' : '$60'}</b>
-              </div>
-            </div>
-            </>
-          )}
-            
+            {selectedAddressIndex !== null && (
+              <>
+                <div>{addresses.homeAddresses[selectedAddressIndex].address} </div>
+                <div>
+                  <span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.AddressType}</span>｜<span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.DeliveryTimePreference}</span>
+                </div>
+                <div>{addresses.homeAddresses[selectedAddressIndex].name}  {addresses.homeAddresses[selectedAddressIndex].phone} </div>
+                <div className={styles.feeTime}>
+                  <div className={styles.time}>預計到貨時間 {start} - {end}</div>
+                  <div>
+                    <b>運費：{selectAddrOption !== 2 ? '$100' : '$60'}</b>
+                  </div>
+                </div>
+              </>
+            )}
+            {selectedSevenIndex !== null && (
+              <><div>{addresses.sevenAddresses[selectedSevenIndex].name} {addresses.sevenAddresses[selectedSevenIndex].phone}</div>
+                <div>{addresses.sevenAddresses[selectedSevenIndex].seventInfo.storeName} ｜{addresses.sevenAddresses[selectedSevenIndex].seventInfo.address}</div></>
+            )}
           </div>
         </div>
         {/* 訂單金額區塊 */}

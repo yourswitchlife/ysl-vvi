@@ -33,8 +33,7 @@ export default function OrderList() {
                   value={cartItems}
                   checked={
                     cartItems.every((item) => item.userSelect === true)
-                      ? true
-                      : false
+                      
                   }
                   onChange={() => {
                     handleAllCheckboxChange(cartItems)
@@ -74,13 +73,13 @@ export default function OrderList() {
                       <div className={styles.summaryItemLine}></div>
                       <div className={styles.summaryItemPrice}>$120</div>
                     </div> */}
-                    <div className={styles.summaryItem}>
+                    {/* <div className={styles.summaryItem}>
                       <div className={styles.summaryItemLabel}>商品折抵</div>
                       <div className={styles.summaryItemLine}></div>
                       <div className={`text-danger ${styles.summaryItemPrice}`}>
                         $0
                       </div>
-                    </div>
+                    </div> */}
                     {/* <div className={styles.summaryItem}>
                       <div className={styles.summaryItemLabel}>運費折抵</div>
                       <div className={styles.summaryItemLine}></div>
@@ -88,7 +87,7 @@ export default function OrderList() {
                         $60
                       </div>
                     </div> */}
-                    <UseCoupon />
+                    {/* <UseCoupon /> */}
                     <div className={styles.summeryTotal}>
                       <div className={styles.totalText}>訂單總金額</div>
                       <div className={styles.totalPrice}>${totalPrice}</div>

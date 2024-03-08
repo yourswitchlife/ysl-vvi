@@ -45,6 +45,8 @@ export const CartContext = createContext()
 export function CartProvider({ children }) {
   // 加入購物車的項目
   const [cartItems, setCartItems] = useState([])
+  // seller ids
+  const [memberIds, setMemberIds] = useState([])
 
   const router = useRouter()
 
@@ -276,6 +278,8 @@ export function CartProvider({ children }) {
       const newItem = { ...item, quantity: item.quantity || 1, userSelect: item.userSelect || false, timeStamp }
       const newItems = [newItem, ...cartItems]
       setCartItems(newItems)
+      // sellers
+      setMemberIds([item.member_id, ...memberIds])
     }
     return routerPush
   }
