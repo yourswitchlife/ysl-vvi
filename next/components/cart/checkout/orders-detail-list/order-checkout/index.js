@@ -67,14 +67,16 @@ export default function OrderCheckout() {
               </div>
               <div className={styles.pContainer}>
                 {/* 商品 */}
-                {items.map((item) => 
+                {items.map((item) =>
                   <ProductCheckout key={item.id} item={item} />
                 )}
               </div>
             </div>
             <div className={styles.deliveryContainer}>
               {/* 寄送資訊、收件資訊 */}
-              <DeliveryCheckout />
+              
+                <DeliveryCheckout items={items} />
+
             </div>
           </div>
         )

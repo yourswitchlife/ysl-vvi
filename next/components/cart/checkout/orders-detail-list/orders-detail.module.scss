@@ -499,14 +499,16 @@
     }
     .pDetailFrame {
       padding-right: 0;
+      // background: #e2fadd;
       .pNameMobile {
+        // background: #eecaca;
         display: flex;
         .pName {
           width: 65%;
           margin-bottom: 5px;
         }
         .language {
-          width: 35%;
+          width:35%;
           text-align: center;
           margin-bottom: 0;
         }
@@ -532,12 +534,40 @@
     }
     .product {
       display: flex;
+      // background: #ff9393;
     }
     // 商品名稱+語言版本 / 單價+數量
     .pInfoFrame {
       flex-direction: column;
     }
   }
+
+  // 選擇使用優惠券
+.useDiscountBar {
+  background: $primary-black;
+  border-radius: 15px;
+  padding: 10px;
+  margin: 20px 0 20px;
+
+  .mainText {
+    padding-bottom: 0;
+  }
+  
+  .discountListBtn {
+    background: $white;
+    color: $gray;
+    margin: 15px 0 0;
+    padding: 5px 8px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    &:hover {
+      color: $dark-gray;
+    }
+  }
+}
 
   // 總金額
   .totalBar,
@@ -581,11 +611,6 @@
         font-size: 20px;
       }
     }
-  }
-
-  // 新增常用地址按鈕區塊
-  .addHomeAdrBtn {
-    display: none;
   }
 
   // 新增超商地址區塊
@@ -644,7 +669,7 @@
       .paymentItem {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 30px;
+        margin-bottom: 10px;
 
         .title {
           display: flex;
@@ -686,6 +711,7 @@
     display: block;
     position: sticky;
     bottom: 0px;
+    z-index: 99;
 
     .checkoutBar {
       background: $white;

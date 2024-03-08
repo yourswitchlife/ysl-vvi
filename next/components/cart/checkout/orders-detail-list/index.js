@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styles from './orders-detail.module.scss'
 import {
   FaCircleQuestion,
@@ -17,12 +17,45 @@ import couponStar from '@/public/images/cart/couponStar.svg'
 // 優惠券長型圖
 import coupon from '@/public/images/cart/coupon.svg'
 
+// 引用use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
+
+
+
 export default function OrdersDetailList() {
-  const [show, setShow] = useState(false)
+  const { cartItems } = useCart()
   const [showInfo, setShowInfo] = useState(false)
+
+  // 付款總金額
+  const [totalPrice, setTotalPrice] = useState(0)
+
+  // 電腦版modal
+  const [showDesktopModal, setShowDesktopModal] = useState(false);
+  const handleShowDesktopModal = () => setShowDesktopModal(true);
+  const handleCloseDesktopModal = () => setShowDesktopModal(false);
+
+  // 手機版modal
+  const [showMobileModal, setShowMobileModal] = useState(false);
+  const handleShowMobileModal = () => setShowMobileModal(true);
+  const handleCloseMobileModal = () => setShowMobileModal(false);
 
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
+
+  // 計算付款總金額
+  const getTotalPrice = () => {
+    const filterItems = cartItems.filter((item) => item.userSelect === true)
+    const total = filterItems.reduce((prices, item) => {
+      return prices + (item.quantity * item.price)
+    }, 0)
+    setTotalPrice(total)
+  }
+
+  useEffect(() => {
+    getTotalPrice();
+  }, [cartItems]);
+
+
   return (
     <>
       <SelectCouponModal />
@@ -59,10 +92,10 @@ export default function OrdersDetailList() {
           </div>
           <div className="border-bottom border-3 border-light py-2">
             <div className={styles.useDiscountBar}>
-              <div className={styles.mainText} onClick={handleShow}>
+              <div className={styles.mainText} onClick={handleShowDesktopModal}>
                 選擇使用優惠券
               </div>
-              <SelectCouponModal show={show} handleClose={handleClose} />
+              <SelectCouponModal show={showDesktopModal} handleClose={handleCloseDesktopModal} />
               <div className={styles.divider}></div>
               <div className={styles.discountListBtn}>
                 <span className={styles.text}>顯示完整折扣細節</span>
@@ -74,7 +107,7 @@ export default function OrdersDetailList() {
             <div className={styles.frameBody}>
               <div className={styles.summaryItem}>
                 <div>商品總金額</div>
-                <div>$1920</div>
+                <div>${totalPrice}</div>
               </div>
               <div className={styles.summaryItem}>
                 <div>運費總金額</div>
@@ -82,12 +115,12 @@ export default function OrdersDetailList() {
               </div>
               <div className={styles.summaryItem}>
                 <div>運費折抵</div>
-                <div className="text-danger">$200</div>
+                <div className="text-danger">$0</div>
               </div>
               <div className={styles.summaryItem}>
                 <div>商品折抵</div>
                 <div className={`text-danger ${styles.summaryItemPrice}`}>
-                  $60
+                  $0
                 </div>
               </div>
               <div className={styles.summeryTotal}>
@@ -108,12 +141,15 @@ export default function OrdersDetailList() {
                 <Image src={couponStar} />
                 <div>優惠券</div>
               </div>
-              <Link
-                href="/cart/checkout/coupon"
-                className={`text-dark ${styles.link}`}
-              >
-                選擇使用優惠券
-              </Link>
+            </div>
+            <div className={styles.useDiscountBar}>
+              <div className='d-flex align-items-center justify-content-between'>
+                <div className={styles.mainText} onClick={handleShowMobileModal}>
+                  選擇使用優惠券
+                </div>
+                <FaAngleRight className='text-white' />
+              </div>
+              <SelectCouponModal show={showMobileModal} handleClose={handleCloseMobileModal} />
             </div>
             {/* 顯示完整優惠折抵區塊 */}
             <div className={styles.paymentItem}>
@@ -150,15 +186,48 @@ export default function OrdersDetailList() {
                 <FaMoneyBillWave className={styles.billIcon} />
                 <div>付款方式</div>
               </div>
-              <div>
-                <Link
-                  href="/cart/checkout/payment"
-                  className={`me-2 text-dark ${styles.link}`}
-                >
-                  請選擇付款方式
-                </Link>
-                <FaAngleRight className="text-dark" />
+            </div>
+            <div className={`${styles.paymentItem} mb-3`}>
+              <div
+                className="btn-group"
+                role="group"
+                aria-label="Basic radio toggle button group"
+              >
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="btnradio"
+                  id="btnradio1"
+                  autoComplete="off"
+                  defaultChecked=""
+                />
+                <label className="btn btn-outline-dark" htmlFor="btnradio1">
+                  貨到付款
+                </label>
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="btnradio"
+                  id="btnradio2"
+                  autoComplete="off"
+                />
+                <label className="btn btn-outline-dark" htmlFor="btnradio2">
+                  信用卡
+                </label>
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="btnradio"
+                  id="btnradio3"
+                  autoComplete="off"
+                />
+                <label className="btn btn-outline-dark" htmlFor="btnradio3">
+                  <span className={styles.linePay}>
+                    LINE PAY
+                  </span>
+                </label>
               </div>
+
             </div>
             {/* 付款詳情 */}
             <div className={`mb-3 ${styles.paymentItem}`}>
@@ -178,7 +247,7 @@ export default function OrdersDetailList() {
               </div>
               <div className={styles.summInfo}>
                 <div>總付款金額</div>
-                <div className="fw-bold text-danger">$7516</div>
+                <div className="fw-bold text-danger">${totalPrice}</div>
               </div>
             </div>
           </div>

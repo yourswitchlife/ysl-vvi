@@ -14,7 +14,7 @@ import taiwanDistricts from '@/data/taiwan_districts.json'
 
 import { useAuth } from '@/hooks/use-Auth'
 
-export default function DeliveryCheckout() {
+export default function DeliveryCheckout({ items }) {
 
   const { memberData } = useAuth();
 
@@ -58,6 +58,10 @@ export default function DeliveryCheckout() {
   // 追蹤選中的7-11地址選項index
   const [selectedSevenIndex, setSelectedSevenIndex] = useState(null);
 
+  // 單筆賣場商品品項數量
+  const [totalProducts, setTotalProducts] = useState(0)
+  // 單筆賣場訂單總價
+  const [orderPrice, setOrderPrice] = useState(0)
 
 
 
@@ -85,6 +89,18 @@ export default function DeliveryCheckout() {
   // 選擇物流方式下拉選單值
   const handleSelectChange = (e) => {
     setSelectAddrOption(e.target.value)
+    // 清除超商地址或宅配地址的選擇
+    if (e.target.value === "1") {
+      setSelectedAddressIndex(null);
+      if (addresses.sevenAddresses.length > 0) {
+        setSelectedSevenIndex(0);
+      }
+    } else if (e.target.value === "2") {
+      setSelectedSevenIndex(null);
+      if (addresses.homeAddresses.length > 0) {
+        setSelectedAddressIndex(0);
+      }
+    }
   }
 
   useEffect(() => {
@@ -94,6 +110,8 @@ export default function DeliveryCheckout() {
       setSelectedSevenIndex(0);
     }
   }, [selectAddrOption, addresses]);
+
+  
 
   // 判斷是新增宅配地址還是編輯宅配地址
   const handleShowForm = (editMode = false) => {
@@ -185,10 +203,17 @@ export default function DeliveryCheckout() {
       // 使用selectedAddressInde來設計表單資料
       const selectedAddress = addresses.homeAddresses[selectedAddressIndex];
       if (selectedAddress) {
+        const { name, phone } = selectedAddress;
+        const { AddressType, DeliveryTimePreference } = selectedAddress.specialPreferences;
         const { city, region, detail } = parseAddress(selectedAddress.address);
+
+        setName(name);
+        setPhone(phone);
         setSelectedCity(city);
         setSelectedRegion(region);
         setDetailAddress(detail);
+        setDeliveryTime(DeliveryTimePreference);
+        setAddressType(AddressType);
         setshowAddrForm(true);
         setIsEditingAddress(true);
       }
@@ -274,6 +299,14 @@ export default function DeliveryCheckout() {
   };
   const { start, end } = calculateDeliveryDates();
 
+
+  // 計算單筆賣場訂單商品總品項數量 + 計算賣場單筆訂單總價
+    useEffect(()=>{
+      let total = items.length
+      let totalPrice = items.reduce((order, item)=> order + (item.quantity * item.price),0)
+       setTotalProducts(total)
+       setOrderPrice(totalPrice)
+    },[items])
 
 
 
@@ -405,7 +438,7 @@ export default function DeliveryCheckout() {
             )
           }
           {/* 選擇常用地址radio 區塊 (block)*/}
-          <div className={`${styles.adressFrame} ${(windowWidth > 430 && !showAddrForm) ? 'd-block' : 'd-none'}`}>
+          <div className={`${styles.adressFrame} ${!showAddrForm ? 'd-block' : 'd-none'}`}>
             {selectAddrOption === '1' && (
               <div>
                 {addresses.sevenAddresses.map((addr, index) => (
@@ -477,10 +510,10 @@ export default function DeliveryCheckout() {
             </Link>
           </div>
         </div>
-        {/* 電腦版-新增宅配地址表單區塊 */}
+        {/* 宅配地址表單區塊 */}
         <div
           className={`col-12 ${styles.addrForm}`}
-          style={{ display: showAddrForm && windowWidth > 431 ? 'block' : 'none' }}
+          style={{ display: showAddrForm ? 'block' : 'none' }}
         >
           {/* 新增/編輯常用地址標題 */}
           <div className="d-flex mt-4">
@@ -649,48 +682,48 @@ export default function DeliveryCheckout() {
 
 
         {/* 手機版 - 寄送資訊明細區塊 */}
-        <Link href="/cart/checkout/delivery" className={`col-12 bg-secondary-subtle rounded-3 p-3 ${styles.deliveryInfoMobile}`}>
-          <div className="row align-items-center">
-            {selectedAddressIndex !== null && (
-              // 宅配地址被選中時顯示的資訊
-              <>
-                <div className="col-10">
-                  <div>{addresses.homeAddresses[selectedAddressIndex].name}</div>
-                  <div>{addresses.homeAddresses[selectedAddressIndex].address}</div>
-                  <div>
-                    <span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.AddressType}</span>｜
-                    <span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.DeliveryTimePreference}</span>
+        {windowWidth <= 431 && !showAddrForm && (
+          <div className={`col-12 bg-secondary-subtle rounded-3 p-3 ${styles.deliveryInfoMobile} $ `}>
+            <div className="row align-items-center">
+              {selectedAddressIndex !== null && (
+                // 宅配地址被選中時顯示的資訊
+                <>
+                  <div className="col-12">
+                    <div>{addresses.homeAddresses[selectedAddressIndex].name}</div>
+                    <div>{addresses.homeAddresses[selectedAddressIndex].address}</div>
+                    <div>
+                      <span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.AddressType}</span>｜
+                      <span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.DeliveryTimePreference}</span>
+                    </div>
+                    <div>{addresses.homeAddresses[selectedAddressIndex].phone}</div>
+                    <div className={styles.time}>預計到貨時間 {start} - {end}</div>
                   </div>
-                  <div>{addresses.homeAddresses[selectedAddressIndex].phone}</div>
-                  <div className={styles.time}>預計到貨時間 {start} - {end}</div>
-                </div>
-                <div className="col-2">
-                  <FaAngleRight />
-                </div>
-                <div className="col-12 text-end mt-3">
-                  <b>運費：$100</b>
-                </div>
-              </>
-            )}
-            {selectedSevenIndex !== null && (
-              // 7-11地址被選中時顯示的資訊
-              <>
-                <div className="col-10">
-                  <div>{addresses.sevenAddresses[selectedSevenIndex].name}</div>
-                  <div>{addresses.sevenAddresses[selectedSevenIndex].seventInfo.storeName} ｜ {addresses.sevenAddresses[selectedSevenIndex].seventInfo.address}</div>
-                  <div>{addresses.sevenAddresses[selectedSevenIndex].phone}</div>
-                  <div className={styles.time}>預計到貨時間 {start} - {end}</div>
-                </div>
-                <div className="col-2">
-                  <FaAngleRight />
-                </div>
-                <div className="col-12 text-end mt-3">
-                  <b>運費：$60</b>
-                </div>
-              </>
-            )}
+                  <div className="col-12 text-end mt-3">
+                    <b>運費：$100</b>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="row align-items-center">
+              {selectedSevenIndex !== null && (
+                // 7-11地址被選中時顯示的資訊
+                <>
+                  <div className="col-12">
+                    <div>{addresses.sevenAddresses[selectedSevenIndex].name}</div>
+                    <div>{addresses.sevenAddresses[selectedSevenIndex].seventInfo.storeName} ｜ {addresses.sevenAddresses[selectedSevenIndex].seventInfo.address}</div>
+                    <div>{addresses.sevenAddresses[selectedSevenIndex].phone}</div>
+                    <div className={styles.time}>預計到貨時間 {start} - {end}</div>
+                  </div>
+                  <div className="col-12 text-end mt-3">
+                    <b>運費：$60</b>
+                  </div>
+                </>
+              )}
+            </div>
+
           </div>
-        </Link>
+        )}
+
 
 
         {/* 收件資訊區塊-電腦版顯示 */}
@@ -704,30 +737,6 @@ export default function DeliveryCheckout() {
             </h5>
             <FaCircleQuestion className={styles.icon} />
           </div>
-          {/* 無7-11常用地址時在收件資訊新增地址 */}
-          <div
-            className="flex-column align-items-center my-2 d-none"
-
-          // className={`flex-column align-items-center my-2 ${
-          //   !hasCommonAddr && selectAddrOption === 2 ? 'd-none' : 'd-flex'
-          // }`}
-          >
-            <Link href="">
-              <Image
-                src="/images/cart/7-eleven.svg"
-                width={50}
-                height={50}
-                alt="選擇7-ELEVEN超商地址"
-                className={styles.sevenimg}
-              />
-            </Link>
-            <Link href="" className={styles.addSevevnAdr}>
-              <span className={styles.iconFrame}>
-                <FaPlus />
-              </span>
-              <span className={styles.text}>新增地址</span>
-            </Link>
-          </div>
           {/* 有選擇收件地址後顯示地址細項 */}
           <div className={`${styles.infoBar}`}>
             {selectedAddressIndex !== null && (
@@ -740,22 +749,28 @@ export default function DeliveryCheckout() {
                 <div className={styles.feeTime}>
                   <div className={styles.time}>預計到貨時間 {start} - {end}</div>
                   <div>
-                    <b>運費：{selectAddrOption !== 2 ? '$100' : '$60'}</b>
+                    <b>運費：$100</b>
                   </div>
                 </div>
               </>
             )}
             {selectedSevenIndex !== null && (
               <><div>{addresses.sevenAddresses[selectedSevenIndex].name} {addresses.sevenAddresses[selectedSevenIndex].phone}</div>
-                <div>{addresses.sevenAddresses[selectedSevenIndex].seventInfo.storeName} ｜{addresses.sevenAddresses[selectedSevenIndex].seventInfo.address}</div></>
+                <div>{addresses.sevenAddresses[selectedSevenIndex].seventInfo.storeName} ｜{addresses.sevenAddresses[selectedSevenIndex].seventInfo.address}</div>
+                <div className={styles.feeTime}>
+                  <div className={styles.time}>預計到貨時間 {start} - {end}</div>
+                  <div>
+                    <b>運費：$60</b>
+                  </div>
+                </div></>
             )}
           </div>
         </div>
         {/* 訂單金額區塊 */}
         <div className={styles.summeryPriceFrame}>
           <span className="d-none d-sm-block">訂單金額：</span>
-          <span className="d-block d-sm-none">訂單金額 (4件商品)</span>
-          <span className="text-danger">$5820</span>
+          <span className="d-block d-sm-none">訂單金額 ({totalProducts}件商品)</span>
+          <span className="text-danger">${orderPrice}</span>
         </div>
       </div>
     </>
