@@ -22,27 +22,6 @@ import PHistory from '@/components/products/p-history'
 export default function ProductDetail() {
   const router = useRouter()
 
-  // id: '',
-  // type_id: '',
-  // name: '',
-  // product_quanty: 0,
-  // fav: '',
-  // display_price: 0,
-  // price: 0,
-  // img_cover: '',
-  // img_1: '',
-  // img_2: '',
-  // img_3: '',
-  // release_time: '',
-  // language: [],
-  // rating_id: '3',
-  // co_op_valid: '0',
-  // description: '',
-  // member_id: '',
-  // valid: '',
-  // launch_valid: '',
-  // created_at: '',
-
   const [product, setProduct] = useState({
     id: '',
     type_id: '',

@@ -1,15 +1,33 @@
 import express from 'express'
 import db from '../configs/db.mjs'
-import { dirname, resolve, extname } from 'path'
-import { fileURLToPath } from 'url'
+// import { dirname, resolve, extname } from 'path'
+// import { fileURLToPath } from 'url'
 import multer from 'multer'
-import { renameSync } from 'fs'
+// import { renameSync } from 'fs'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
+// const __dirname = dirname(fileURLToPath(import.meta.url))
 // console.log(__dirname)
 
-const upload = multer({ dest: resolve(__dirname, '../public') })
 const router = express.Router()
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // console.log('123', file)
+    if (file.fieldname === 'pImgs') {
+      cb(null, './public/productImg/details')
+    } else if (file.fieldname === 'pCover') {
+      cb(null, './public/productImg/cover')
+    } else if (file.fieldname === 'reviewPhoto') {
+      cb(null, './public/reviewImg')
+    }
+  },
+  filename: function (req, file, cb) {
+    // console.log('456', file)
+    const originalname = Date.now() + '-' + file.originalname
+    cb(null, originalname)
+  },
+})
+const upload = multer({ storage: storage })
+
 // 商品列表頁
 router.get('/list', async (req, res) => {
   try {
@@ -22,21 +40,72 @@ router.get('/list', async (req, res) => {
   }
 })
 
-router.post('/addNewP', (req, res) => {})
+// 新增商品
+router.post(
+  '/addNewProduct',
+  upload.fields([
+    { name: 'pCover', maxCount: 1 },
+    { name: 'pImgs', maxCount: 3 },
+  ]),
+  async (req, res) => {
+    if (req.files) {
+      console.log(req.files, req.body)
+      const img = req.files
+      const p = req.body
+      const pCover = img.pCover[0].filename
+      let pImgs = img.pImgs.map((file) => file.filename)
+      pImgs = pImgs.join(',')
+      let pLanguage = p.pLanguage
+      pLanguage = pLanguage.join(',')
+      const created_at = new Date()
+      // const year = date.getFullYear()
+      // const month = date.getMonth()
+      // const day = date.getDate()
+      // const hour = date.getHours()
+      // const minute = date.getMinutes()
+      // const second = date.getSeconds()
+      // const upDateTime = `${year}-${month}-${day} ${hour}:${minute}:${second}`
 
-// router.get('/uploadReviewForm', (req, res) => {
-//   res.render('uploadReviewForm')
-// })
-
+      // const { pCover } = req.files
+      console.log(
+        p.pName,
+        p.pType,
+        p.pPrice,
+        pCover,
+        pImgs,
+        pLanguage,
+        p.pRating,
+        p.pDiscribe,
+        created_at
+      )
+      const query =
+        'INSERT INTO `product` (name,type_id,price,img_cover,img_details,language,rating_id,description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+      await db.execute(query, [
+        p.pName,
+        p.pType,
+        p.pPrice,
+        img.pCover.filename,
+        img.pImgs.filename,
+        p.pLanguage,
+        p.pRating,
+        p.pDiscribe,
+      ])
+      return res.json({ msg: 'success', code: '200' })
+    } else {
+      console.log('no upload')
+      return res.json({ msg: 'fail', code: '409' })
+    }
+  }
+)
 // 單檔上傳
-router.post('/reviewPhoto', upload.single('reviewPhoto'), async (req, res) => {
-  let timeStamp = Date.now()
-  let newName = timeStamp + extname(req.file.originalname)
+router.post('/addReview', upload.single('reviewPhoto'), async (req, res) => {
+  // let timeStamp = Date.now()
+  // let newName = timeStamp + extname(req.file.originalname)
   // renameSync(req.file.path, resolve(__dirname, '../public/uploadImg', newName))
-  req.body.reviewPhoto = newName
+  // req.body.reviewPhoto = newName
 
   if (req.files) {
-    console.log(req.file)
+    console.log(req.files, req.body)
     return res.json({ msg: 'success', code: '200' })
   } else {
     console.log('no upload')

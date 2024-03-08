@@ -77,6 +77,7 @@ export default function New() {
   }
 
   const handleForm = async (e) => {
+    console.log(e.target)
     e.preventDefault()
     if (
       !newP.pName ||
@@ -88,19 +89,38 @@ export default function New() {
       !newP.pImgs ||
       !newP.pType
     ) {
-      setErrorMsg('請檢查是否輸入完整欄位資訊')
+      alert('請檢查是否輸入完整欄位資訊')
       return
-    }else{
-      const fd = new FormData(newP)
-      fetch('http://localhost:3005/api/products/addNewProduct',{
+    } else {
+      const fd = new FormData(e.target)
+      console.log(fd.get('pLanguage'))
+      fetch('http://localhost:3005/api/products/addNewProduct', {
         method: 'POST',
-        body: JSON.stringify(fd)
+        body: fd,
       })
-      .then(res => res.json())
-      .then(data => console.log(data))
+        .then((res) => res.json())
+        .then(
+          (data) => alert('新增成功！'),
+          setTimeout(() => {
+            setNewP({
+              pName: '',
+              pCover: '',
+              pImgs: [],
+              pType: 0,
+              pRating: '',
+              pLanguage: [],
+              pPrice: '',
+              pDiscribe: '',
+            })
+          },1000)
+        )
+        .catch((error) => {
+          console.error('error', error)
+        })
     }
   }
   console.log(newP)
+  // console.log(fd)
 
   return (
     <>
@@ -116,7 +136,7 @@ export default function New() {
           </div>
           <div className={`${styles.dashboardMargin}`}>
             <div className="d-lg-block d-none">
-            <BreadCrumb />
+              <BreadCrumb />
             </div>
 
             <div className={`mb-4 mt-lg-0 ${styles.dashboardStyle}`}>
@@ -127,9 +147,9 @@ export default function New() {
 
               <form
                 className=""
-                method="post"
-                action={'/addNewProduct'}
-                encType="multipart/form-data"
+                // method="post"
+                // action={'/addNewProduct'}
+                // encType="multipart/form-data"
                 onSubmit={handleForm}
               >
                 <div className="row">
@@ -189,7 +209,7 @@ export default function New() {
                         const files = e.target.files
                         if (files.length > 3) {
                           alert('最多只能上傳3張')
-                          setNewP({...newP,pImgs:[]})
+                          setNewP({ ...newP, pImgs: [] })
                           e.target.value = ''
                           return
                         }
