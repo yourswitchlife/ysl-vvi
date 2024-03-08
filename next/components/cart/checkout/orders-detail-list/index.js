@@ -1,6 +1,5 @@
-import React from 'react'
 import { useState } from 'react'
-import styles from '@/components/cart/order-detail.module.scss'
+import styles from './orders-detail.module.scss'
 import {
   FaCircleQuestion,
   FaMoneyBillWave,
@@ -11,14 +10,14 @@ import OrderCheckout from './order-checkout'
 import Image from 'next/image'
 import Link from 'next/link'
 // 選擇優惠券元件
-import SelectCouponModal from './select-coupon-modal'
+import SelectCouponModal from '../../coupon-modal/select-coupon-modal'
 
 // 優惠券星星圖
 import couponStar from '@/public/images/cart/couponStar.svg'
 // 優惠券長型圖
 import coupon from '@/public/images/cart/coupon.svg'
 
-export default function OrderDetail() {
+export default function OrdersDetailList() {
   const [show, setShow] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
 
@@ -31,7 +30,6 @@ export default function OrderDetail() {
         <div className={styles.pcBg}>
           <div className={styles.mainTitle}>訂單詳情</div>
           {/* 單一賣場訂單 */}
-          <OrderCheckout />
           <OrderCheckout />
         </div>
         {/* 選擇優惠券/付款詳情區塊 */}

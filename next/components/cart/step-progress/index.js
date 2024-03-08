@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import styles from '../cart/cart-step.module.scss'
+import styles from './cart-step.module.scss'
 import { FaShoppingCart, FaCreditCard, FaClipboardCheck } from 'react-icons/fa'
 
 export default function CartStep() {
