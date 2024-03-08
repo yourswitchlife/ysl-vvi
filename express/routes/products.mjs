@@ -1,12 +1,6 @@
 import express from 'express'
 import db from '../configs/db.mjs'
-// import { dirname, resolve, extname } from 'path'
-// import { fileURLToPath } from 'url'
 import multer from 'multer'
-// import { renameSync } from 'fs'
-
-// const __dirname = dirname(fileURLToPath(import.meta.url))
-// console.log(__dirname)
 
 const router = express.Router()
 const storage = multer.diskStorage({
@@ -57,7 +51,7 @@ router.post(
       pImgs = pImgs.join(',')
       let pLanguage = p.pLanguage
       pLanguage = pLanguage.join(',')
-      const created_at = new Date()
+      // const created_at = new Date()
       // const year = date.getFullYear()
       // const month = date.getMonth()
       // const day = date.getDate()
@@ -69,25 +63,25 @@ router.post(
       // const { pCover } = req.files
       console.log(
         p.pName,
-        p.pType,
-        p.pPrice,
+        parseInt(p.pType),
+        parseInt(p.pPrice),
         pCover,
         pImgs,
         pLanguage,
-        p.pRating,
-        p.pDiscribe,
-        created_at
+        parseInt(p.pRating),
+        p.pDiscribe
+        // created_at
       )
       const query =
         'INSERT INTO `product` (name,type_id,price,img_cover,img_details,language,rating_id,description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
       await db.execute(query, [
         p.pName,
-        p.pType,
-        p.pPrice,
-        img.pCover.filename,
-        img.pImgs.filename,
-        p.pLanguage,
-        p.pRating,
+        parseInt(p.pType),
+        parseInt(p.pPrice),
+        pCover,
+        pImgs,
+        pLanguage,
+        parseInt(p.pRating),
         p.pDiscribe,
       ])
       return res.json({ msg: 'success', code: '200' })

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
@@ -48,6 +48,13 @@ export default function New() {
 
   const languageOptions = ['中文版', '英文版', '日文版']
 
+  const languageMapping = {
+    '中文版': 'CH',
+    '英文版': 'EN',
+    '日文版': 'JP',
+  };
+  // const fileInputRef = useRef();
+
   const handleChange = (e) => {
     if (e.target.type === 'file') {
       const files = e.target.files
@@ -61,6 +68,7 @@ export default function New() {
         }
       }
     } else if (e.target.type === 'checkbox') {
+      const language = languageMapping[value]
       const tv = e.target.value
       const checked = e.target.checked
       const name = e.target.name
@@ -101,6 +109,7 @@ export default function New() {
         .then((res) => res.json())
         .then(
           (data) => alert('新增成功！'),
+         
           setTimeout(() => {
             setNewP({
               pName: '',
@@ -111,7 +120,10 @@ export default function New() {
               pLanguage: [],
               pPrice: '',
               pDiscribe: '',
-            })
+            });
+            // if (fileInputRef.current) {
+            //   fileInputRef.current.value = '';
+            // }
           },1000)
         )
         .catch((error) => {
@@ -182,6 +194,7 @@ export default function New() {
                       className="form-control"
                       id="pCover"
                       name="pCover"
+                      accept="image/*"
                       // value={newP.pCover}
                       onChange={handleChange}
                     />

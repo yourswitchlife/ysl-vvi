@@ -207,9 +207,9 @@ export default function Products() {
           </div>
         </div>
         {/* {page >1 && <a href={`/?page=${page - 1}`}>prev</a>}
-        頁數{page}
-        {page < totalPages && <a href={`/?page=${page + 1}`}>next</a>} */}
-        {/* <nav aria-label="Page navigation example">
+        頁數{page} */}
+        {page < totalPages && <a href={`/?page=${page + 1}`}>next</a>}
+        <nav aria-label="Page navigation example">
             <ul className="pagination">
               <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                 <a className="page-link" onClick={() => updatePage(currentPage - 1)}>Prev</a>
@@ -223,15 +223,15 @@ export default function Products() {
                 <a className="page-link" onClick={() => updatePage(currentPage + 1)}>Next</a>
               </li>
             </ul>
-          </nav> */}
+          </nav>
         
         {/* <Pagination /> */}
 
-        <Pagination>
+        {/* <Pagination>
             <Pagination.Prev onClick={() => currentPage > 1 && updatePage(currentPage - 1)} />
             {items}
             <Pagination.Next onClick={() => currentPage < totalPages && updatePage(currentPage + 1)} />
-          </Pagination>
+          </Pagination> */}
 
         <div>
           <h4 className="text-white mx-3 ">猜你喜歡</h4>

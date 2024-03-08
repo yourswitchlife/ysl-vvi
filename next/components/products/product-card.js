@@ -122,6 +122,7 @@ export default function ProductCard({
       <div className={styles.card}>
         <div className="d-flex justify-content-center pt-2">
           <Image
+            // src={`/images/product/cover/${img_cover}`}
             src={`/images/product/cover/${img_cover}`}
             alt={img_cover}
             width={150}
