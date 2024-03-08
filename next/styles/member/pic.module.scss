@@ -1,0 +1,114 @@
+@import '../valuable.scss';
+
+.blue_frame {
+  width: 80px; 
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-sizing: border-box;
+  background-image: url('/images/member/blue.webp');
+  background-position: right;
+
+  padding: 6px; 
+}
+
+.brown_frame {
+  width: 80px; 
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-sizing: border-box;
+  
+  background-image: url('/images/member/brown.webp');
+  background-position: bottom;
+
+  padding: 6px; 
+}
+
+.silver_frame {
+  width: 80px; 
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-sizing: border-box;
+  
+  background-image: url('/images/member/silver.webp');
+  background-position: bottom;
+
+  padding: 6px; 
+}
+
+.gold_frame {
+  width: 80px; 
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden; 
+  box-sizing: border-box;
+
+  background-image: url('/images/member/golden.webp');
+  background-position: top;
+
+  padding: 6px; 
+}
+
+.img_fit {
+  width: 100%; 
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%; 
+  display: block;
+  object-position: center center;
+}
+
+//nav-pic
+
+.nblue_frame {
+  width: 45px; 
+  height: 45px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-sizing: border-box;
+  background-image: url('/images/member/blue.webp');
+  background-position: right;
+
+  padding: 5px; 
+}
+
+.nbrown_frame {
+  width: 45px; 
+  height: 45px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-sizing: border-box;
+  
+  background-image: url('/images/member/brown.webp');
+  background-position: bottom;
+
+  padding: 5px; 
+}
+
+.nsilver_frame {
+  width: 45px; 
+  height: 45px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-sizing: border-box;
+  
+  background-image: url('/images/member/silver.webp');
+  background-position: bottom;
+
+  padding: 5px; 
+}
+
+.ngold_frame {
+  width: 45px; 
+  height: 45px;
+  border-radius: 50%;
+  overflow: hidden; 
+  box-sizing: border-box;
+
+  background-image: url('/images/member/golden.webp');
+  background-position: top;
+
+  padding: 5px; 
+}

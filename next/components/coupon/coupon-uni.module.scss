@@ -1,0 +1,49 @@
+@import '../../styles/valuable.scss';
+
+
+.cardBG{
+    background: url('/images/coupon/coupon-03.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 550px;
+    height: 230px;
+
+    .font{
+        font-family: "Noto Sans TC SemiBold";
+        font-size: 80px;
+    }
+
+    .btnCTA{
+        width: auto;
+
+        }
+        
+    }
+
+
+@media screen and (max-width: 431px) {
+    .cardBG {
+      width: 300px;
+      height: 130px;
+
+      .btnCTA{
+        font-size: 12px; 
+        width: auto;  
+        display: inline-block;
+        padding: 2px 5px;
+    }
+    }
+}
+   
+//改sweetalert手機板
+// @media (max-width: 431px) {
+//     .swal2-small {
+//       width: 20% !important;
+//       font-size: 14px !important
+//     }
+//   }
+    
+
+
+

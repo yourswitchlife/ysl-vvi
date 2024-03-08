@@ -1,0 +1,168 @@
+@import '../valuable.scss';
+
+.pages_btn {
+  padding: 5px 0;
+  padding-inline: 80px;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: verdana;
+  letter-spacing: 4px;
+  text-decoration: none;
+  color: $red-secondary;
+  cursor: default;
+  border-bottom: 2px solid $red-secondary;
+}
+
+.pagep_btn {
+  transform: translate(1%, 5%);
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  font-weight: bold;
+  color: $gray;
+  font-size: 20px;
+  font-family: verdana;
+  letter-spacing: 4px;
+  padding-inline: 80px;
+  padding-block: 5px;
+  transition: 0.5s;
+
+
+  &:hover {
+    color: $red-secondary;
+  }
+
+  &::before,
+  &::after,
+  span::before,
+  span::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: transparent;
+    transition: 1s;
+    width: 0;
+    height: 0;
+
+  }
+
+  &::before {
+    top: -2px;
+    left: -2px;
+    /* border-top: 2px solid $red-secondary;
+      border-left: 2px solid $red-secondary; */
+  }
+
+  &::after {
+    top: -2px;
+    right: -2px;
+    /* border-top: 2px solid $red-secondary;
+      border-right: 2px solid $red-secondary; */
+  }
+
+  span::before {
+    bottom: -2px;
+    left: -2px;
+    border-bottom: 2px solid $red-secondary;
+    /* border-left: 2px solid $red-secondary; */
+  }
+
+  span::after {
+    bottom: -2px;
+    right: -2px;
+    border-bottom: 2px solid $red-secondary;
+    /* border-right: 2px solid $red-secondary; */
+  }
+
+  &:hover::before,
+  &:hover::after,
+  &:hover span::before,
+  &:hover span::after {
+    width: calc(295px / 2);
+    height: calc(60px / 2);
+  }
+}
+
+@media (max-width: 430px) {
+
+  .pagep_btn {
+    padding: 5px 30px;
+  }
+
+
+
+.pages_btn {
+  padding-inline: 30px;
+
+
+  &:hover {
+    color: $red-secondary;
+  }
+
+  &::before,
+  &::after,
+  span::before,
+  span::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: transparent;
+    transition: 1s;
+    width: 0;
+    height: 0;
+
+  }
+
+  &::before {
+    top: -2px;
+    left: -2px;
+    /* border-top: 2px solid $red-secondary;
+        border-left: 2px solid $red-secondary; */
+  }
+
+  &::after {
+    top: -2px;
+    right: -2px;
+    /* border-top: 2px solid $red-secondary;
+        border-right: 2px solid $red-secondary; */
+  }
+
+  span::before {
+    bottom: -2px;
+    left: -2px;
+    border-bottom: 2px solid $red-secondary;
+    /* border-left: 2px solid $red-secondary; */
+  }
+
+  span::after {
+    bottom: -2px;
+    right: -2px;
+    border-bottom: 2px solid $red-secondary;
+    /* border-right: 2px solid $red-secondary; */
+  }
+
+  &:hover::before,
+  &:hover::after,
+  &:hover span::before,
+  &:hover span::after {
+    width: calc(140px / 2);
+    height: calc(60px / 2);
+  }
+}
+
+.card {
+  padding: 0;
+  padding-top: 20px;
+  background-color: $white;
+  margin-inline: 10px !important;
+  width: 182px;
+  height: 430px;
+  transition: 0.4s;
+
+  &:hover {
+    background-color: $light-gray;
+  }
+}
+}

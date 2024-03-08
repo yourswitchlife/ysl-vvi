@@ -1,0 +1,217 @@
+@import '../valuable.scss';
+
+.p-detail-sec1 > div:first-child {
+  width: 150px;
+  height: 150px;
+}
+.pDiscount {
+  width: fit-content;
+}
+.myshop {
+  background-color: $dark-gray;
+  border-radius: 10px;
+  border: 2px solid $gray;
+}
+.wrap {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+
+.h450px {
+  height: 450px;
+  // width: 420px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.objFit {
+  object-fit: contain;
+  height: 100%;
+  width: 100%;
+}
+
+// .objFitC {
+//   object-fit: cover;
+//   // overflow: hidden;
+//   height: 100%;
+//   width: 100%;
+// }
+.h100px {
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid rgb(62, 62, 62);
+  border-radius: 5px;
+  overflow: hidden;
+  padding: 4px;
+  &:hover {
+    border: 1px solid gray;
+    background-color: #393939;
+  }
+}
+.imgActive{
+  height: 115px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  overflow: hidden;
+  padding: 4px;
+  border: 2px solid rgb(255, 255, 255);
+  background-color: #393939;
+}
+
+.historyUpDown:hover {
+  background-color: rgb(51, 51, 51);
+}
+
+.h100100px {
+  height: 100px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #9f9f9f;
+  border-radius: 5px;
+  overflow: hidden;
+  padding: 4px;
+  margin: 0 4px;
+}
+.formStyle {
+  background-color: white;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  .btnSubmit {
+    text-align: center;
+    height: 116px;
+    width: 80px;
+    background: $info;
+    color: $white;
+    border-radius: 0 5px 5px 0;
+    &:hover {
+      background: rgb(0, 88, 204);
+    }
+  }
+}
+.ImgBtnhover {
+  height: 75px;
+  &:hover {
+    background-color: rgb(64, 64, 64);
+    border-radius: 5px;
+  }
+}
+.pHistory {
+  position: fixed;
+  bottom: 50px;
+  right: 20px;
+  // background-color: #15505e;
+}
+.historyUpDown:hover {
+  background-color: rgb(86, 86, 86);
+  color: rgb(255, 255, 255) !important;
+}
+.f14 {
+  font-size: 14px;
+}
+.counter{
+  border:  1px solid rgb(169, 169, 169);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.counterBtn{
+  border-radius: 0;
+  // background-color: #515151;
+  padding: 4px 12px;
+}
+.input{
+  text-align: center;
+  border: 0;
+  width: 40px;
+  &:focus{
+    outline: none;
+  }
+}
+
+.quantity{
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// ------------------------------ RWD
+@media (max-width: 576px) {
+  .wrap {
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    margin: 0 8px;
+    flex-wrap: nowrap;
+  }
+  .h450px {
+    height: 280px;
+    // width: 420px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .h100px {
+    height: 80px;
+  }
+  .imgActive{
+    height: 100px;
+  }
+  .h100100px {
+    height: 75px;
+    width: 75px;
+  }
+}
+
+.btns {
+  z-index: 5;
+  height: 30px;
+  width: 100%;
+  bottom: 112px;
+  right: 0;
+  position: fixed;
+}
+
+//--------------------------------------------addPhoto
+.myLabel {
+  display: inline-block;
+  position: relative;
+  height: 100px;
+  width: 100px;
+  border: 2px dashed $light-gray;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.myLabel .icon {
+  position: absolute;
+  right: 28px;
+  bottom: 28px;
+  width: 40px;
+  height: 40px;
+  // background-color: rgb(232, 163, 255);
+  color: $light-gray;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px 0 0 0;
+}
+.myLabel .img {
+  width: 100%;
+  height: 100%;
+}
+.myLabel .img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

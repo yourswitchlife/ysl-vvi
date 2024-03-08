@@ -2,13 +2,15 @@ import React from 'react'
 import ControlledCarousel from '@/components/common/ControlledCarousel'
 import styles from '../styles/index.module.scss'
 import Image from 'next/image'
-import ProductList from '@/components/products/product-list'
+import Navbar from '@/components/layout/navbar/navbar'
+import ProductList from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
 // import Navbar from '@/components/layout/navbar/navbar'
 
 export default function Index() {
   return (
     <>
+    <Navbar />
       <div
         className={`${styles.headTitleCard} z-1 position-absolute d-inline-flex flex-column justify-content-center`}
       >
