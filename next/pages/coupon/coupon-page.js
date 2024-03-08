@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from '@/components/layout/navbar/navbar'
-import Footer from '@/components/layout/footer/footer-b'
+import Footer from '@/components/layout/footer/footer-front'
 import Image from 'next/image'
 import styles from '@/styles/coupon/coupon.module.scss'
 

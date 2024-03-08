@@ -41,7 +41,7 @@ $nav-black: #161719ae;
   background-color: $nav-black;
   color: $white;
   font-size: 18px;
-  padding: 10px 50px;
+  padding: 15px 50px;
   .linkPr {
     color: $white;
     text-decoration: none;
@@ -56,10 +56,23 @@ $nav-black: #161719ae;
   }
   .loginIcon {
     color: $white;
-    padding-right: 18px;
+    padding-right: 25px;
+    padding-right: 25px;
   }
   .loginIconEnd {
     color: $white;
+  }
+  .loginIcon, .loginIconEnd{
+    .icon{
+      width: 25px;
+      height: 25px;
+    }
+  }
+  .loginIcon, .loginIconEnd{
+    .icon{
+      width: 25px;
+      height: 25px;
+    }
   }
   .circleCut {
     width: 40px;
@@ -176,10 +189,16 @@ $nav-black: #161719ae;
   }
   .loginIcon {
     color: $white;
-    padding-right: 15px;
+    padding-right: 25px;
   }
   .loginIconEnd {
     color: $white;
+  }
+  .loginIcon, .loginIconEnd{
+    .icon{
+      width: 25px;
+      height: 25px;
+    }
   }
   .cartRight {
     display: flex;
@@ -315,3 +334,18 @@ $nav-black: #161719ae;
 //   color: #ED5260;
 //   text-decoration: $red-secondary;
 // }
+
+.cartBadge{
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background:$danger;
+  color: $white;
+  font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  right: 5px;
+}

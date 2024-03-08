@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import mainCheckLogin from '@/context/member/mainCheckLogin'
+import Swal from 'sweetalert2';
 
 import Navbar from '@/components/layout/navbar/navbar'
 import sStyle from '@/styles/member/sign-up.module.scss'
@@ -63,6 +64,13 @@ export default function register() {
           // 處理成功的情況
           const data = await response.json();
           // console.log('註冊成功:', data);
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "註冊成功！為您導航至登入頁面。",
+            showConfirmButton: false,
+            timer: 1300
+          });
           router.push('/member/login');
           
         } else {

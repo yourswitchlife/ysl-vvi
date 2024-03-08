@@ -5,177 +5,198 @@
   src: url('Cubic_11_1.100_R.woff') format('woff');
 }
 
+// hero背景區塊
 .wrapper {
   background: #0d548b;
+  padding-top: 20px;
+
   .banner {
-    // width: 90%;
-    // position: relative;
-        & img {
+    position: relative;
+    .main_img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .title_action {
+      // background: #d391ff94;
+      position: absolute;
+      width: 45%;
+      // 高度設置在中間且距離優惠神券間距
+      top: 50%;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top:20px;
+      
+
+      .title_frame {
+        // background: #eadb57;
+        display: flex;
+
+        .img {
           width: 100%;
           height: 100%;
-          object-fit: cover;
-    }
-
-    .bannerTitle{
-      width: 30%;
-      & img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        // aspect-ratio: 12 / 4;
+          object-fit: contain;
+        }
+      }
+      .title_frame_mobile {
+        display: none;
       }
     }
+  }
 
-    .bannerSub{
-      margin-top:50px;
-      margin-inline: 50px;
-      width: 90%;
-      & img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
+  // Banner 加入會員button區塊
+  .addMember_btn {
+    // background: #17441f;
+    position: absolute;
+    width: 45%;
+    bottom: calc(17% - 14px);
+    left: 31.8%;
+    .btn_frame {
+      display: flex;
+      justify-content: center;
+
+      .title_CTA {
+        padding: 15px 100px;
+        font-size: 1.75rem;
       }
     }
-
-    .bannerCTA{
-      width: 18%;
-
-      & img{
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-      }
-    }
-  
+  }
 }
 
-
-
-
-
-  .title {
+// 馬上加入會員區塊
+.get_coupon_bg_frame {
+  background: linear-gradient(180deg, #0d548b, $primary-black);
+  .get_coupon_bg {
+    // background: #bd7a7a;
+    // padding-block: 90px;
+    padding: 40px;
+    display: grid;
+    place-items: center;
     position: relative;
-    // text-align: center;
-    left: calc(20% - 56px);
-    // bottom: calc(100% - 300px);
-    font-family: 'cubic 11';
-    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-      1px 1px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000,
-      2px 2px 0 #000;
-    // text-shadow:
-    // 7px 3px 0 #000,
-    // -7px -1px 0 #000,
-    // 7px -7px 0 #000,
-    // -7px -7px 0 #000,
-  }
-
-  .title_action {
-    font-family: 'cubic 11';
-    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-      1px 1px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000,
-      2px 2px 0 #000;
-  }
-
-  .title_CTAbtn{
-    :hover {
-      background-color: red;
-      transition: 0.5s;
-
-  }
-  
-    .title_CTA {
-      font-family: 'cubic 11';
-    }
-  }
-}
-
-.couponMember {
-  background: linear-gradient(to bottom, #0d548b, black);
-  min-height: 800px;
-
-
-  // .consoleBG{
-  //   background-color: #0F2D45;
-  //   border-radius: 80px;
-  //   height: 415px;
-  //   width: 80%;
-  //   // z-index: 99;
-  // }
-  
-  .console{
-    // height: 30%;
-    max-width: 80%;
-    // position: relative;
-    // object-fit: cover;
-    // display: flex;
-    // justify-content: center;
-    // align-items: center;
-    // background: url('../../public/images/coupon/section-ctaBG.png');
-    // width:50%;
-    // height:50%;
-    // background-repeat: no-repeat;
-    // background-size: cover;
-    // background-position: center;
-    // margin: auto;
-
-    & img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-
-
-  .consoleTitle{
-    max-width: 80%;
-    // left: calc(100% - 400px);
-    // top:85px;
-
-
-    & img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-   
-  }
-
-  .consoleSub{
-    max-width: 80%;
-    & img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  .btnCTA{
     
+    .btn {
+      position: absolute;
+      width: 230px;
+      // bottom: 27%;
+      bottom:24%;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      font-size: 1.75rem;
+    }
   }
 }
 
 
+.missionBG {
+  background: url(../../public/images/coupon/galaxy-night-panorama.png);
+  min-height: 495px;
+  background-size: cover;
 
-
-.title1 {
-  display: flex;
-  font-family: 'cubic 11';
-  justify-content: center;
-  align-items: center;
-  color:white;
-}
-
-
-
-
-
-.missionBG{
-  max-width: 30%
-    & img{
+  .finalPic {
+    height: 470px;
+    margin-top: 10px;
+    & img {
+      object-fit: cover;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+    }
+  }
+}
+
+@media screen and (max-width: 431px) {
+  .wrapper {
+    padding-top: 50px;
+    .banner {
+      .title_action {
+        margin-top: 0px;
+        margin-top: 3px;
+        .title_frame {
+          display: none;
+        }
+        .title_frame_mobile {
+          display: flex;
+          .img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+        }
+      }
     }
 
+    // 加入會員button區塊
+    .addMember_btn {
+      bottom: calc(15.8%);
+      .btn_frame {
+        .title_CTA {
+          padding: 0px 15px;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+  // 馬上加入會員區塊
+  .get_coupon_bg_frame {
+    .get_coupon_bg {
+      padding-top: 30px;
+      padding-bottom: 60px;
+
+      .btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 120px;
+        height: 25px;
+        bottom: 36%;
+        font-size: 13px;
+      }
+    }
+  }
+
+
+  
+
+  .missionBG {
+    min-height: 305px;
+
+    .missionHeader {
+      font-size: 18px;
+      // margin-right: 100px;
+      margin: auto;
+      // text-align: start;
+    }
+
+    .missionDes {
+      font-size: 12px;
+      // word-break: break-all;
+      // flex-wrap: wrap;
+      margin-right: 48px;
+      text-align: start;
+      // margin:auto;
+      line-height: 200%;
+      // margin-inline:auto;
+    }
+
+    .missionBTN {
+      padding: 0.3rem 0.5rem;
+      font-size: 16px;
+      // background-color: ;
+      margin-right: 250px;
+      // margin:auto;
+      // text-align: center;
+    }
+
+    // .finalPic{
+    //   & img {
+    //     display: none;
+    //   }
+    // }
+  
+  }
 }
