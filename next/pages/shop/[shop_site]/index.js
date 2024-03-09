@@ -73,6 +73,8 @@ export default function ShopPage() {
   const router = useRouter()
   const [shopSite, setShopSite] = useState([])
   const [products, setProducts] = useState([])
+  const [searchResults, setSearchResults] = useState([])
+  const [searchQuery, setSearchQuery] = useState("") //用來看有沒有搜尋的值（來決定要不要渲染搜尋結果）
   
   const getShop = async (shop_site) => {
     try{
@@ -84,9 +86,10 @@ export default function ShopPage() {
       // 確保返回的數據結構正確，並更新狀態
       if (data && data.shop && data.shopProducts) {
         // 這裡假設後端返回的數據結構是 { shop: {...}, shopProducts: [...] }
-        setShopSite(data.shop[0]);
+        setShopSite(data.shop[0])
         // 可能需要另一個狀態來存儲商品資訊
-        setProducts(data.shopProducts);
+        setProducts(data.shopProducts)
+        // setSearchResults(data.shopProducts)
       }
     }catch (e){
       console.error(e)
@@ -152,6 +155,28 @@ const handleHitToggleFav = (id) => {
   setHit(newProducts)
 }
 
+//搜尋商品
+// const [searchText, setSearchText] = useState('')
+const handleSearch = (searchQuery) => {
+  if(!searchQuery.trim()){
+    setSearchResults([]) 
+    setSearchQuery("")
+  }else{
+    const filteredResults = products.filter(product => product.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    setSearchResults(filteredResults)
+    setSearchQuery(searchQuery)
+  }
+}
+// console.log(searchResults)
+// console.log(searchResults.length)
+//處理搜尋的我的最愛
+const handleSearchToggleFav = (id) => {
+  const newProducts = searchResults.map((p) => {
+    if (p.id === id) return { ...p, fav: !p.fav }
+    else return p
+  })
+  setSearchResults(newProducts)
+}
   //offcanvas的展示狀態
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
@@ -338,7 +363,7 @@ const handleHitToggleFav = (id) => {
         </div>
         <div className="d-flex justify-content-between">
           <div className="d-none d-md-block">
-            <SearchbarB />
+            <SearchbarB onSearch={handleSearch}/>
           </div>
           <div className="d-none d-md-flex justify-content-end">
             {/* offcanvas btn */}
@@ -350,7 +375,37 @@ const handleHitToggleFav = (id) => {
             <SortDropdown />
           </div>
         </div>
+        <div className="row justify-content-start text-start mt-2">
+        { searchQuery && searchResults.length > 0 ? (
+          <>
+          <h5 className='mb-3'>搜尋結果：共有{searchResults.length}項商品</h5>
+        {searchResults.map((p) => {
+          return (
+            <div key={p.id} className='col-6 col-md-2 mb-3'>
+              <ProductCard className="p-5" 
+              id={p.id}
+              name={p.name} 
+              price={p.price} 
+              display_price={p.display_price} 
+              releaseTime={p.release_time.split('T')[0]} 
+              img_cover={p.img_cover} 
+              type={p.type_id} 
+              ratingId={p.rating_id}
+              fav={p.fav}
+              handleToggleFav={handleSearchToggleFav}
+              memberId={p.member_id}
+              imgDetails={p.img_details}
+              />
+            </div>
+          )
+        })}</>)
+         : searchQuery && !searchResults.length ? (
+          <h5>沒有找到相關商品</h5>
+        ) : null
+        }
+        </div>
         <div className="row justify-content-start text-start mt-5">
+        <h4 className="mb-3">賣場所有商品</h4>
         {products.map((p)=> {
           return (
             <div key={p.id} className='col-6 col-md-2 mb-3'>
