@@ -11,7 +11,7 @@ const { User, Otp } = sequelize.models
 //   return Date.now() > expTimestamp
 // }
 
-// 判斷是否可以重設token, true代表可以重設
+// 判斷是否可以重設token, true代表可以重設 
 const shouldReset = (expTimestamp, exp, limit = 60) => {
   const createdTimestamp = expTimestamp - exp * 60 * 1000
   return Date.now() - createdTimestamp > limit * 1000
