@@ -47,31 +47,32 @@ export default function ShopPage() {
   }, [])
 
   //連接資料表(member) +router
-  // const demoShopInfo = [
-  //   {
-  //     id:"",
-  //     name:"",
-  //     account:"",
-  //     password:"",
-  //     phone:"",
-  //     email:"",
-  //     address:"",
-  //     birthday:"",
-  //     birthday_month:"",
-  //     created_at:"",
-  //     gender:"",
-  //     pic:"",
-  //     level_point:"0",
-  //     google_uid:"",
-  //     shop_name:"",
-  //     shop_site:"",
-  //     shop_cover:"",
-  //     shop_info:"",
-  //     shop_valid:"0",
-  //   }
-  // ]
+  const demoShopInfo = [
+    {
+      id:"",
+      name:"",
+      account:"",
+      password:"",
+      phone:"",
+      email:"",
+      address:"",
+      birthday:"",
+      birthday_month:"",
+      created_at:"",
+      gender:"",
+      pic:"",
+      level_point:"0",
+      google_uid:"",
+      shop_name:"",
+      shop_site:"",
+      shop_cover:"",
+      shop_info:"",
+      shop_valid:"0",
+    }
+  ]
   const router = useRouter()
-  const [shopSite, setShopSite] = useState("")
+  const [shopSite, setShopSite] = useState([])
+  const [products, setProducts] = useState([])
   
   const getShop = async (shop_site) => {
     try{
@@ -80,33 +81,15 @@ export default function ShopPage() {
         throw new Error('網路請求失敗，找不到此賣場')
       }
       const data = await res.json()
-      // console.log(data[0])
-      if(data.length === 0){
-        //如果沒有找到對應的賣場資訊，或是重新導引到其他頁面
-        // alert(`找不到賣場:${shop_site}，即將前往產品頁面`)
-        Swal.fire({
-          title: `找不到賣場:${shop_site}`,
-          text: "即將前往產品頁面",
-          icon: 'error',
-          comfirmButtonText: '確認'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            router.push('/products')
-          }
-        })
-        // console.log(`找不到賣場${shop_site}`)
-        // setErrorMessage(`找不到賣場:${shop_site}`)
-        // setTimeout(() => {
-          // router.push('/products')
-        // }, 2000)
-      }else{
-        setShopSite(data[0])
+      // 確保返回的數據結構正確，並更新狀態
+      if (data && data.shop && data.shopProducts) {
+        // 這裡假設後端返回的數據結構是 { shop: {...}, shopProducts: [...] }
+        setShopSite(data.shop[0]);
+        // 可能需要另一個狀態來存儲商品資訊
+        setProducts(data.shopProducts);
       }
     }catch (e){
       console.error(e)
-      // setTimeout(() => {
-      //   router.push('/products')
-      // }, 2000)
       Swal.fire({
         title: `找不到賣場:${shop_site}`,
         text: "前往產品頁面",
@@ -129,56 +112,22 @@ export default function ShopPage() {
     }
   },[router.isReady])
 
-  //連接資料表（product）
-  const [products, setProducts] = useState([])
-  // console.log(products)
-  const getProducts = async () => {
-    try{
-      const res = await fetch ('http://localhost:3005/api/products/list')
-      const data = await res.json()
-      // console.log(data)
-
-      if(Array.isArray(data)){
-        setProducts(data)
-      }
-    }catch(e){
-      console.error(e)
-    }
-  }
-  useEffect(()=>{
-    getProducts()
-  }, [])
-
-  // const initState = products.map((p) => {
-  //   return { ...p, fav: false }
-  // })
-  //賣家資料在這裡
+  //解構賦值需要的資料
+  //賣家資料
   const {id, shop_name, shop_site, shop_cover, shop_info} = shopSite
-  // console.log(id)
-  useEffect(() => {
-    //確保在products更新且shopSite.id 有效時進行篩選
-    if(products.length > 0 && id){
-      const thisShopItems = products.filter(p => p.member_id === id).map( p => ({...p, fav: false}))
-      setShopProducts(thisShopItems)
-      // console.log(thisShopItems)
-    }
-  }, [products, id])
-  const [shopProducts, setShopProducts] = useState(products)
-  // console.log(shopProducts)
-  // console.log(id)
- 
-  // console.log(shopitems)
-  const shopTotalItems = shopProducts.length
+  // console.log(id, shop_name, shop_site, shop_cover, shop_info)
+  //商品資料：products
+  //賣家總商品數
+  const shopTotalItems = products.length
   // console.log(shopTotalItems)
   //處理我的最愛
   const handleToggleFav = (id) => {
-    const newProducts = shopProducts.map((p) => {
+    const newProducts = products.map((p) => {
       if (p.id === id) return { ...p, fav: !p.fav }
       else return p
     })
-    setShopProducts(newProducts)
+    setProducts(newProducts)
   }
-  //商品總數量
 
 //Hit 展示隨機五項商品
 const [hit, setHit] = useState([])
@@ -188,12 +137,12 @@ const getRandomHit = (items, num) => {
   // 返回前num筆資料
   return shuffled.slice(0, num)
 }
-const randomItems = getRandomHit(shopProducts, 5)
+const randomItems = getRandomHit(products, 5)
 // setHit(randomItems)
 // console.log(randomItems)
 useEffect(() => {
   setHit(randomItems)
-}, [shopProducts])
+}, [products])
 //處理我的最愛
 const handleHitToggleFav = (id) => {
   const newProducts = hit.map((p) => {
@@ -402,7 +351,7 @@ const handleHitToggleFav = (id) => {
           </div>
         </div>
         <div className="row justify-content-start text-start mt-5">
-        {shopProducts.map((p)=> {
+        {products.map((p)=> {
           return (
             <div key={p.id} className='col-6 col-md-2 mb-3'>
               <ProductCard className="p-5" 
