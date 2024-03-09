@@ -29,6 +29,10 @@ import styles from '@/components/seller/seller.module.scss'
 import { FaPlus, FaAngleDown, FaFilter, FaStar } from 'react-icons/fa'
 import Link from 'next/link'
 
+//sweetalert
+import Swal from 'sweetalert2'
+import 'animate.css/animate.min.css'
+
 
 export default function ShopPage() {
   //處理背景樣式
@@ -43,43 +47,79 @@ export default function ShopPage() {
   }, [])
 
   //連接資料表(member) +router
-  const demoShopInfo = [
-    {
-      id:"",
-      name:"",
-      account:"",
-      password:"",
-      phone:"",
-      email:"",
-      address:"",
-      birthday:"",
-      birthday_month:"",
-      created_at:"",
-      gender:"",
-      pic:"",
-      level_point:"0",
-      google_uid:"",
-      shop_name:"",
-      shop_site:"",
-      shop_cover:"",
-      shop_info:"",
-      shop_valid:"0",
-    }
-  ]
+  // const demoShopInfo = [
+  //   {
+  //     id:"",
+  //     name:"",
+  //     account:"",
+  //     password:"",
+  //     phone:"",
+  //     email:"",
+  //     address:"",
+  //     birthday:"",
+  //     birthday_month:"",
+  //     created_at:"",
+  //     gender:"",
+  //     pic:"",
+  //     level_point:"0",
+  //     google_uid:"",
+  //     shop_name:"",
+  //     shop_site:"",
+  //     shop_cover:"",
+  //     shop_info:"",
+  //     shop_valid:"0",
+  //   }
+  // ]
   const router = useRouter()
-  const [shopSite, setShopSite] = useState(demoShopInfo)
+  const [shopSite, setShopSite] = useState("")
   
   const getShop = async (shop_site) => {
     try{
       const res = await fetch (`http://localhost:3005/api/shop/${shop_site}`)
+      if(!res.ok){
+        throw new Error('網路請求失敗，找不到此賣場')
+      }
       const data = await res.json()
       // console.log(data[0])
-  
-      if(data[0].shop_site){
+      if(data.length === 0){
+        //如果沒有找到對應的賣場資訊，或是重新導引到其他頁面
+        // alert(`找不到賣場:${shop_site}，即將前往產品頁面`)
+        Swal.fire({
+          title: `找不到賣場:${shop_site}`,
+          text: "即將前往產品頁面",
+          icon: 'error',
+          comfirmButtonText: '確認'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            router.push('/products')
+          }
+        })
+        // console.log(`找不到賣場${shop_site}`)
+        // setErrorMessage(`找不到賣場:${shop_site}`)
+        // setTimeout(() => {
+          // router.push('/products')
+        // }, 2000)
+      }else{
         setShopSite(data[0])
       }
     }catch (e){
       console.error(e)
+      // setTimeout(() => {
+      //   router.push('/products')
+      // }, 2000)
+      Swal.fire({
+        title: `找不到賣場:${shop_site}`,
+        text: "前往產品頁面",
+        icon: 'error',
+        comfirmButtonText: '確認',
+        hideClass: {
+          popup: 'animate__animated animate__fadeOutUp'
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push('/products')
+        }
+      })
     }
   }
   useEffect(()=>{
@@ -252,8 +292,8 @@ const handleHitToggleFav = (id) => {
               <Image src={profileImg} alt="" className={styles.fit} />
             </div>
             <div className="d-flex flex-column align-items-start justify-content-center">
-              <h5 className="mb-1">碧姬公主的玩具城堡</h5>
-              <p className="mb-1">@princepeach8888</p>
+              <h5 className="mb-1">{shop_name}</h5>
+              <p className="mb-1">@{shop_site}</p>
               <div className="d-flex">
                 {/* star rating */}
                 <p className="pe-2 mb-0">5.0</p>
@@ -273,7 +313,7 @@ const handleHitToggleFav = (id) => {
             {/* little dashboard */}
             <div className="d-flex flex-column align-items-center pe-4">
               <h6>商品數量</h6>
-              <h6 className="text-danger mb-0">28</h6>
+              <h6 className="text-danger mb-0">{shopTotalItems}</h6>
             </div>
             <div className="d-flex flex-column align-items-center pe-4">
               <h6>已賣出件數</h6>
@@ -289,7 +329,7 @@ const handleHitToggleFav = (id) => {
             {/* shop detail */}
             <h5 className="mb-3">賣場介紹</h5>
             <p className="mb-0 ps-2 pe-2">
-              這裡是碧姬公主的遊戲城堡，我們提供了品質最優良的二手遊戲，讓您可以獲得物超所值的商品們，享受遊戲帝國的美好！在這裡，您將發現從經典到最新的遊戲，全部都以令人驚喜的價格提供。我們精心挑選和維護每一片遊戲，確保您帶回家的不僅是遊戲，還有最佳的遊玩體驗。
+            {shop_info}
             </p>
           </div>
           <div className="d-flex justify-content-center mb-4">
