@@ -21,7 +21,7 @@ router.get('/:shop_site', async (req, res) => {
       'SELECT * FROM `member` WHERE `shop_site` = ?',
       [shop_site]
     )
-    console.log(shop)
+    // console.log(shop)
     //檢查查詢結果是否為空值
     if (shop.length === 0) {
       return res.status(404).send({ message: '查無此賣場' })
@@ -33,7 +33,7 @@ router.get('/:shop_site', async (req, res) => {
       WHERE member.shop_site = ?`,
       [shop_site]
     )
-    console.log(shopProducts)
+    // console.log(shopProducts)
     if (shopProducts.length > 0) {
       // 如果找到了商品信息
       res.json({ shop, shopProducts }) // 解析json对象
@@ -44,6 +44,63 @@ router.get('/:shop_site', async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(500).send({ message: 'Server error' })
+  }
+})
+
+//讀取此賣場訂單
+router.get('/:shop_site/order', async (req, res) => {
+  let { shop_site } = req.params
+  let [shopOrders] = await db.execute(
+    `SELECT orders.* FROM orders 
+    INNER JOIN member ON orders.member_seller_id = member.id
+    WHERE member.shop_site = ?`,
+    [shop_site]
+  )
+  // console.log(shopOrders)
+  if (shopOrders.length > 0) {
+    // 如果找到了訂單訊息
+    res.json(shopOrders) // 解析json对象
+  } else {
+    // 如果会员存在但没有找到訂單訊息
+    res.status(404).send({ message: '查無此賣場商品訂單' })
+  }
+})
+
+//讀取此賣場收藏人數
+router.get('/:shop_site/fav_shop', async (req, res) => {
+  let { shop_site } = req.params
+  let [shopFav] = await db.execute(
+    `SELECT fav_shop.* FROM fav_shop 
+    INNER JOIN member ON fav_shop.seller_id = member.id
+    WHERE member.shop_site = ?`,
+    [shop_site]
+  )
+  // console.log(shopOrders)
+  if (shopFav.length > 0) {
+    // 如果找到了收藏的人
+    res.json(shopFav) // 解析json对象
+  } else {
+    // 如果会员存在但没有找到訂單訊息
+    res.status(404).send({ message: '查無此賣場收藏者' })
+  }
+})
+
+//讀取此賣場評價
+router.get('/:shop_site/shop_comment', async (req, res) => {
+  let { shop_site } = req.params
+  let [shopComment] = await db.execute(
+    `SELECT shop_comment.* FROM shop_comment 
+    INNER JOIN member ON shop_comment.shop_id = member.id
+    WHERE member.shop_site = ?`,
+    [shop_site]
+  )
+  // console.log(shopOrders)
+  if (shopComment.length > 0) {
+    // 如果找到了評價
+    res.json(shopComment) // 解析json对象
+  } else {
+    // 如果会员存在但没有找到評價
+    res.status(404).send({ message: '查無此賣場評價' })
   }
 })
 
@@ -72,7 +129,7 @@ router.get('/:shop_site/search', async (req, res) => {
       'SELECT * FROM `product` WHERE `member_id` = ? AND `name` LIKE ?',
       [memberId, key]
     )
-    console.log(products)
+    // console.log(products)
     if (products.length > 0) {
       res.json(products)
     } else {

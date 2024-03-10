@@ -1,40 +1,61 @@
+//hooks
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
+//components
 import Navbar from '@/components/layout/navbar/navbar'
 import BreadCrumb from '@/components/common/breadcrumb'
-import Cover from '@/components/seller/cover'
-import Image from 'next/image'
-import profileImg from '@/public/images/profile-photo/peach.png'
 import Sortbar from '@/components/shop/sortbar'
-import Coupon from '@/components/shop/coupon'
 import SearchbarB from '@/components/shop/searchbar-b'
 import Pagination from '@/components/common/pagination'
 import ProductCard from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
 import SortDropdown from '@/components/common/sortDropdown'
-import Form from 'react-bootstrap/Form'
+import TypeFilter from '@/components/shop/type-filter'
+import Star from '@/components/shop/star'
+//images
+import cover from '@/public/images/shopCover/default-cover.jpg'
+import Image from 'next/image'
+import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
+import Coupon from '@/components/shop/coupon'
+//styles
+import styles from '@/components/seller/seller.module.scss'
+import 'animate.css/animate.min.css'
+//data
 import typeName from '@/data/type.json'
 import ratings from '@/data/rating.json'
-import TypeFilter from '@/components/shop/type-filter'
-// import products from '@/data/product.json'
-//Offcanvas
-// import Button from 'react-bootstrap/Button'
-import Offcanvas from 'react-bootstrap/Offcanvas'
-
-//toggle list from react bootstrap
-import Collapse from 'react-bootstrap/Collapse'
-
-// 引入seller.module.scss
-import styles from '@/components/seller/seller.module.scss'
+//icon
 import { FaPlus, FaAngleDown, FaFilter, FaStar } from 'react-icons/fa'
-import Link from 'next/link'
-
+//React-bootstrap
+import Form from 'react-bootstrap/Form'
+import Offcanvas from 'react-bootstrap/Offcanvas'
+import Collapse from 'react-bootstrap/Collapse'
 //sweetalert
 import Swal from 'sweetalert2'
-import 'animate.css/animate.min.css'
-
 
 export default function ShopPage() {
+  const router = useRouter()
+  const [shopSite, setShopSite] = useState([])
+  const {id, shop_name, shop_site, shop_cover, shop_info} = shopSite //解構賦值賣家資料
+  const [products, setProducts] = useState([])
+  const [searchResults, setSearchResults] = useState([])
+  const [searchQuery, setSearchQuery] = useState("") //用來看有沒有搜尋的值（來決定要不要渲染搜尋結果）
+  const [hit, setHit] = useState([]) //Hit 展示隨機五項商品
+  //offcanvas的展示狀態
+  const [show, setShow] = useState(false)
+  const handleClose = () => setShow(false)
+  const handleShow = () => setShow(true)
+  //toggle的展示狀態
+  const [openSort, setOpenSort] = useState(false)
+  const [openRate, setOpenRate] = useState(false)
+  const [bigPic, setBigPic] = useState(profilePhoto)
+  const [shopCover, setShopCover] = useState(cover)
+  const [shopOrderNum, setShopOrderNum] = useState(0)
+  const [shopFavNum, setShopFavNum] = useState(0)
+  const [shopRating, setShopRating] = useState("尚無評價")
+  const [commentNum, setCommentNum] = useState(0)
+  const [roundedRating, setRoundedRating] = useState(0)
+
   //處理背景樣式
   useEffect(() => {
     // 當元件掛載時添加樣式
@@ -46,36 +67,6 @@ export default function ShopPage() {
     }
   }, [])
 
-  //連接資料表(member) +router
-  const demoShopInfo = [
-    {
-      id:"",
-      name:"",
-      account:"",
-      password:"",
-      phone:"",
-      email:"",
-      address:"",
-      birthday:"",
-      birthday_month:"",
-      created_at:"",
-      gender:"",
-      pic:"",
-      level_point:"0",
-      google_uid:"",
-      shop_name:"",
-      shop_site:"",
-      shop_cover:"",
-      shop_info:"",
-      shop_valid:"0",
-    }
-  ]
-  const router = useRouter()
-  const [shopSite, setShopSite] = useState([])
-  const [products, setProducts] = useState([])
-  const [searchResults, setSearchResults] = useState([])
-  const [searchQuery, setSearchQuery] = useState("") //用來看有沒有搜尋的值（來決定要不要渲染搜尋結果）
-  
   const getShop = async (shop_site) => {
     try{
       const res = await fetch (`http://localhost:3005/api/shop/${shop_site}`)
@@ -90,6 +81,10 @@ export default function ShopPage() {
         // 可能需要另一個狀態來存儲商品資訊
         setProducts(data.shopProducts)
         // setSearchResults(data.shopProducts)
+        const picUrl = data.shop[0].pic ? (data.shop[0].pic.startsWith("https://") ? data.shop[0].pic : `http://localhost:3005/profile-pic/${data.shop[0].pic}`) : profilePhoto
+        setBigPic(picUrl)
+        const coverUrl = data.shop[0].shop_cover ? (data.shop[0].shop_cover.startsWith("https://") ? data.shop[0].shop_cover : `http://localhost:3005/shopCover/${data.shop[0].shop_cover}`) : cover
+        setShopCover(coverUrl)
       }
     }catch (e){
       console.error(e)
@@ -112,79 +107,125 @@ export default function ShopPage() {
     if(router.isReady){
       const {shop_site} = router.query
       getShop(shop_site)
+      getShopOrder(shop_site)
+      getShopFav(shop_site)
+      getShopRating(shop_site)
     }
   },[router.isReady])
+  const shopTotalItems = products.length //賣家總商品數
 
-  //解構賦值需要的資料
-  //賣家資料
-  const {id, shop_name, shop_site, shop_cover, shop_info} = shopSite
-  // console.log(id, shop_name, shop_site, shop_cover, shop_info)
-  //商品資料：products
-  //賣家總商品數
-  const shopTotalItems = products.length
-  // console.log(shopTotalItems)
+  const getRandomHit = (items, num) => {
+  // 先shuffle副本
+  const shuffled = [...items].sort(() => 0.5 - Math.random())
+  // 返回前num筆資料
+  return shuffled.slice(0, num)
+  }
+  const randomItems = getRandomHit(products, 5)
+
+  useEffect(() => {
+    setHit(randomItems)
+  }, [products])
+
+  const getShopOrder = async (shop_site) => {
+    try{
+      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/order`)
+      if(!res.ok){
+        throw new Error('網路請求失敗，找不到此賣場')
+      }
+      const data = await res.json()
+      // 確保返回的數據結構正確，並更新狀態
+      if (data) {
+        //取得加總數字
+        let totalQty = data.reduce((total, order) => 
+          total + order.quantity, 0)
+        // console.log(totalQty)
+        setShopOrderNum(totalQty)
+      }
+    }catch(e){
+      console.error(e)
+    }
+  }
+
+  const getShopFav = async (shop_site) => {
+    try{
+      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/fav_shop`)
+      if(!res.ok){
+        throw new Error('網路請求失敗，找不到此賣場')
+      }
+      const data = await res.json()
+      // 確保返回的數據結構正確，並更新狀態
+      if (data) {
+        //取得加總數字
+        let totalFav = data.length
+        // console.log(totalFav)
+        setShopFavNum(totalFav)
+      }
+    }catch(e){
+      console.error(e)
+    }
+  }
+  const getShopRating = async (shop_site) => {
+    try{
+      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/shop_comment`)
+      if(!res.ok){
+        throw new Error('網路請求失敗，找不到此賣場')
+      }
+      const data = await res.json()
+      // 確保返回的數據結構正確，並更新狀態
+      if (data && data.length > 0) {
+        //取得評價平均(要有小數點一位)
+        const totalRating = data.reduce((acc, cur) => acc + cur.rating, 0);
+        const averageRating = (totalRating / data.length).toFixed(1); // 保留一位小數
+        // console.log(`平均評價: ${averageRating}`);
+        const roundedRating = Math.round(averageRating);
+        setShopRating(averageRating)
+        setCommentNum(data.length)
+        setRoundedRating(roundedRating)
+      } else {
+        console.log("沒有找到評價數據");
+      }
+    }catch(e){
+      console.error(e)
+    }
+  }
+  
+ 
+
+  
+  //搜尋商品
+  // const [searchText, setSearchText] = useState('')
+  const handleSearch = (searchQuery) => {
+    if(!searchQuery.trim()){
+      setSearchResults([]) 
+      setSearchQuery("")
+    }else{
+      const filteredResults = products.filter(product => product.name.toLowerCase().includes(searchQuery.toLowerCase()));
+      setSearchResults(filteredResults)
+      setSearchQuery(searchQuery)
+    }
+  }
   //處理我的最愛
   const handleToggleFav = (id) => {
     const newProducts = products.map((p) => {
       if (p.id === id) return { ...p, fav: !p.fav }
       else return p
+      })
+      setProducts(newProducts)
+    }
+  const handleHitToggleFav = (id) => {
+    const newProducts = hit.map((p) => {
+      if (p.id === id) return { ...p, fav: !p.fav }
+      else return p
+      })
+      setHit(newProducts)
+    }
+  const handleSearchToggleFav = (id) => {
+    const newProducts = searchResults.map((p) => {
+      if (p.id === id) return { ...p, fav: !p.fav }
+      else return p
     })
-    setProducts(newProducts)
+    setSearchResults(newProducts)
   }
-
-//Hit 展示隨機五項商品
-const [hit, setHit] = useState([])
-const getRandomHit = (items, num) => {
-  // 先shuffle副本
-  const shuffled = [...items].sort(() => 0.5 - Math.random())
-  // 返回前num筆資料
-  return shuffled.slice(0, num)
-}
-const randomItems = getRandomHit(products, 5)
-// setHit(randomItems)
-// console.log(randomItems)
-useEffect(() => {
-  setHit(randomItems)
-}, [products])
-//處理我的最愛
-const handleHitToggleFav = (id) => {
-  const newProducts = hit.map((p) => {
-    if (p.id === id) return { ...p, fav: !p.fav }
-    else return p
-  })
-  setHit(newProducts)
-}
-
-//搜尋商品
-// const [searchText, setSearchText] = useState('')
-const handleSearch = (searchQuery) => {
-  if(!searchQuery.trim()){
-    setSearchResults([]) 
-    setSearchQuery("")
-  }else{
-    const filteredResults = products.filter(product => product.name.toLowerCase().includes(searchQuery.toLowerCase()));
-    setSearchResults(filteredResults)
-    setSearchQuery(searchQuery)
-  }
-}
-// console.log(searchResults)
-// console.log(searchResults.length)
-//處理搜尋的我的最愛
-const handleSearchToggleFav = (id) => {
-  const newProducts = searchResults.map((p) => {
-    if (p.id === id) return { ...p, fav: !p.fav }
-    else return p
-  })
-  setSearchResults(newProducts)
-}
-  //offcanvas的展示狀態
-  const [show, setShow] = useState(false)
-  const handleClose = () => setShow(false)
-  const handleShow = () => setShow(true)
-
-  //toggle的展示狀態
-  const [openSort, setOpenSort] = useState(false)
-  const [openRate, setOpenRate] = useState(false)
 
   return (
     <>
@@ -192,7 +233,9 @@ const handleSearchToggleFav = (id) => {
       <Navbar />
       {/* <CartNavbar /> */}
       {/* cover */}
-      <Cover />
+      <div className={styles.cover}>
+        <Image height={330} width={1440} src={shopCover} alt="shop-cover" className={styles.fit} />
+      </div>
       {/* shop info */}
       <div className="container">
         <div className="d-none d-lg-block">
@@ -201,7 +244,7 @@ const handleSearchToggleFav = (id) => {
           
             {/* seller detail */}
             <div className={styles.profile}>
-              <Image src={profileImg} alt="profile-photo" className={styles.fit} />
+              <Image width={250} height={250} src={bigPic} alt="profile-photo" className={styles.fit} />
               {/* <Image
                       src={memberData.pic || profilePhoto}
                       alt="Member Avatar"
@@ -214,35 +257,32 @@ const handleSearchToggleFav = (id) => {
                     /> */}
             </div>
             <div className="d-flex flex-column align-items-start justify-content-between">
-              <h3>{shop_name}</h3>
-              <h5>@{shop_site}</h5>
-              <div className="d-flex">
+              <h3 className='fw-bold'>{shop_name}</h3>
+              <div>
+              <h5 className='fw-light'>@{shop_site}</h5>
+              <div className="d-flex align-items-center">
                 {/* star rating */}
-                <h6 className="pe-2">5.0</h6>
-                <h6 className="text-warning">
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                </h6>
-                <h6 className="ps-2">(150)</h6>
+                <h6 className="pe-2">{shopRating}</h6>
+                <Star avgRating={roundedRating} />
+                <h6 className="ps-2">({commentNum})</h6>
               </div>
-              <div className="d-flex">
+              </div>
+              <div className="d-flex my-2">
                 {/* little dashboard */}
                 <div className="d-flex flex-column align-items-center pe-4">
-                  <h6>商品數量</h6>
-                  <h6 className='text-danger fw-bold'>{shopTotalItems}</h6>
+                  <h5>商品數量</h5>
+                  <h5 className='text-danger fw-bold'>{shopTotalItems}</h5>
                 </div>
                 <div className="d-flex flex-column align-items-center pe-4">
-                  <h6>已賣出件數</h6>
-                  <h6 className='text-danger fw-bold'>18</h6>
+                  <h5>已賣出件數</h5>
+                  <h5 className='text-danger fw-bold'>{shopOrderNum}</h5>
                 </div>
                 <div className="d-flex flex-column align-items-center">
-                  <h6>關注人數</h6>
-                  <h6 className='text-danger fw-bold'>186</h6>
+                  <h5>關注人數</h5>
+                  <h5 className='text-danger fw-bold'>{shopFavNum}</h5>
                 </div>
               </div>
+              {/* 這裡要加上登入判斷：沒登入跳出modal導向登入，有登入要判斷這個有沒有加入收藏 */}
               <button
                 type="button"
                 className="btn btn-danger d-flex align-items-center"
@@ -263,22 +303,16 @@ const handleSearchToggleFav = (id) => {
         <div className="d-flex flex-column d-lg-none ps-4 pe-4">
           <div className="d-flex justify-content-center align-items-center mt-4 mb-2">
             <div className={`me-4 ${styles.profile}`}>
-              <Image src={profileImg} alt="" className={styles.fit} />
+              <Image width={250} height={250} src={bigPic} alt="profile-photo" className={styles.fit} />
             </div>
             <div className="d-flex flex-column align-items-start justify-content-center">
               <h5 className="mb-1">{shop_name}</h5>
               <p className="mb-1">@{shop_site}</p>
-              <div className="d-flex">
+              <div className="d-flex align-items-center">
                 {/* star rating */}
-                <p className="pe-2 mb-0">5.0</p>
-                <p className="text-warning mb-0">
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                </p>
-                <p className="ps-2 mb-0">(150)</p>
+                <p className="pe-2 mb-0">{shopRating}</p>
+                <Star avgRating={roundedRating} />
+                <p className="ps-2 mb-0">({commentNum})</p>
               </div>
             </div>
           </div>
@@ -291,11 +325,11 @@ const handleSearchToggleFav = (id) => {
             </div>
             <div className="d-flex flex-column align-items-center pe-4">
               <h6>已賣出件數</h6>
-              <h6 className="text-danger mb-0">18</h6>
+              <h6 className="text-danger mb-0">{shopOrderNum}</h6>
             </div>
             <div className="d-flex flex-column align-items-center">
               <h6>關注人數</h6>
-              <h6 className="text-danger mb-0">186</h6>
+              <h6 className="text-danger mb-0">{shopFavNum}</h6>
             </div>
           </div>
           <hr />
@@ -337,7 +371,7 @@ const handleSearchToggleFav = (id) => {
           img_cover={v.img_cover}
           type={v.type_id}
           ratingId={v.rating_id}
-          memberId={v.member_id}
+          member_id={v.member_id}
           fav={v.fav}
           handleToggleFav={handleHitToggleFav}
           imgDetails={v.img_details}
@@ -346,21 +380,11 @@ const handleSearchToggleFav = (id) => {
           )
         })}</div>
         </div>
-        
-        {/* <Hit id={hit.id} 
-          name={hit.name}
-          releaseTime={hit.release_time}
-          displayPrice={hit.display_price}
-          price={hit.price}
-          cover={hit.img_cover}
-          type={hit.type_id}
-          ratingId={hit.rating_id}
-          memberId={hit.member_id}
-          fav={hit.fav} handleToggleFav={handleToggleFav}/> */}
         <div className="d-flex d-md-none flex-column ps-4 pe-4">
           <h5 className="fw-bold mb-2">賣場商品</h5>
           <h6 className="mb-3">共{shopTotalItems}項</h6>
         </div>
+        <h4 className="d-none d-md-block mb-4">賣場所有商品</h4>
         <div className="d-flex justify-content-between">
           <div className="d-none d-md-block">
             <SearchbarB onSearch={handleSearch}/>
@@ -375,13 +399,14 @@ const handleSearchToggleFav = (id) => {
             <SortDropdown />
           </div>
         </div>
-        <div className="row justify-content-start text-start mt-2">
         { searchQuery && searchResults.length > 0 ? (
           <>
-          <h5 className='mb-3'>搜尋結果：共有{searchResults.length}項商品</h5>
+          <h5 className='my-1'>"{searchQuery}"的搜尋結果：共有{searchResults.length}項商品</h5>
+          <div className='row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-0'>
         {searchResults.map((p) => {
           return (
             <div key={p.id} className='col-6 col-md-2 mb-3'>
+            <Link href={`/products/${p.id}`} className='text-decoration-none'>
               <ProductCard className="p-5" 
               id={p.id}
               name={p.name} 
@@ -393,22 +418,22 @@ const handleSearchToggleFav = (id) => {
               ratingId={p.rating_id}
               fav={p.fav}
               handleToggleFav={handleSearchToggleFav}
-              memberId={p.member_id}
+              member_id={p.member_id}
               imgDetails={p.img_details}
-              />
+              /></Link>
             </div>
           )
-        })}</>)
+        })}</div>
+        </>)
          : searchQuery && !searchResults.length ? (
-          <h5>沒有找到相關商品</h5>
-        ) : null
-        }
-        </div>
-        <div className="row justify-content-start text-start mt-5">
-        <h4 className="mb-3">賣場所有商品</h4>
+          <h5 className='mb-3'>"{searchQuery}"的搜尋結果：沒有找到相關商品</h5>
+        ) : (<>
+          
+          <div className='row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-0'>
         {products.map((p)=> {
           return (
-            <div key={p.id} className='col-6 col-md-2 mb-3'>
+            <div key={p.id} className='col mb-3'>
+            <Link href={`/products/${p.id}`} className='text-decoration-none'>
               <ProductCard className="p-5" 
               id={p.id}
               name={p.name} 
@@ -420,14 +445,14 @@ const handleSearchToggleFav = (id) => {
               ratingId={p.rating_id}
               fav={p.fav}
               handleToggleFav={handleToggleFav}
-              memberId={p.member_id}
+              member_id={p.member_id}
               imgDetails={p.img_details}
-              />
+              /></Link>
             </div>
           )
-        })}
-        </div>
-      
+        })}</div>
+        </>)
+        }
         <div>
           <Pagination />
         </div>
