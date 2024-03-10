@@ -50,6 +50,9 @@ router.post(
       let pImgs = img.pImgs.map((file) => file.filename)
       pImgs = pImgs.join(',')
       let pLanguage = p.pLanguage
+      pLanguage = pLanguage.map((v) => {
+        return v.split('-')[0]
+      })
       pLanguage = pLanguage.join(',')
       // const created_at = new Date()
       // const year = date.getFullYear()

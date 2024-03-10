@@ -23,27 +23,3 @@
     color: rgb(60, 200, 255) !important;
   }
 }
-
-.pLanguageBig {
-  border: 1px solid $danger;
-  width: 35px;
-  height: 35px;
-  border-radius: 8px;
-  h5 {
-    color: $danger;
-    text-align: center;
-    line-height: 35px;
-  }
-}
-
-.pRatingBig {
-  background-color: $yellow;
-  width: 35px;
-  height: 35px;
-  border-radius: 8px;
-  h5 {
-    color: $primary-black;
-    text-align: center;
-    line-height: 35px;
-  }
-}

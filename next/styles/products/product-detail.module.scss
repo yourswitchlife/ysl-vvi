@@ -145,8 +145,35 @@
   align-items: center;
 }
 
+.textEllipsis {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal; 
+}
+
+.pLanguageBig {
+  border: 1px solid $danger;
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  h5 {
+    color: $danger;
+    text-align: center;
+    line-height: 35px;
+  }
+}
+
+.imgSlider{
+  width: 580px;
+}
 // ------------------------------ RWD
 @media (max-width: 576px) {
+  .imgSlider{
+    width: 100%;
+  }
   .wrap {
     display: flex;
     overflow-x: scroll;

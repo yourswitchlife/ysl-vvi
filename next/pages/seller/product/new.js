@@ -8,6 +8,7 @@ import SellerFooter from '@/components/layout/footer/footer-backstage'
 // import Form from 'react-bootstrap/Form'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import BreadCrumb from '@/components/common/breadcrumb'
+import { useAuth } from '@/hooks/use-Auth';
 
 export default function New() {
   //body style
@@ -20,6 +21,7 @@ export default function New() {
     }
   }, [])
 
+  const { isLoggedIn, memberId, memberData } = useAuth();
   const [newP, setNewP] = useState({
     pName: '',
     pCover: '',
@@ -46,13 +48,7 @@ export default function New() {
 
   const ratingOptions = ['普遍級', '保護級', '輔導級', '限制級']
 
-  const languageOptions = ['中文版', '英文版', '日文版']
-
-  const languageMapping = {
-    '中文版': 'CH',
-    '英文版': 'EN',
-    '日文版': 'JP',
-  };
+  const languageOptions = ['CH-中文', 'EN-英文', 'JP-日文']
   // const fileInputRef = useRef();
 
   const handleChange = (e) => {
@@ -68,7 +64,6 @@ export default function New() {
         }
       }
     } else if (e.target.type === 'checkbox') {
-      const language = languageMapping[value]
       const tv = e.target.value
       const checked = e.target.checked
       const name = e.target.name

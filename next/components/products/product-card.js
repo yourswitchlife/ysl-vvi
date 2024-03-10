@@ -123,7 +123,7 @@ export default function ProductCard({
         <div className="d-flex justify-content-center pt-2">
           <Image
             // src={`/images/product/cover/${img_cover}`}
-            src={`/images/product/cover/${img_cover}`}
+            src={`http://localhost:3005/productImg/cover/${img_cover}`}
             alt={img_cover}
             width={150}
             height={244}
@@ -141,7 +141,7 @@ export default function ProductCard({
               </p>{' '}
             </div>
             <div className='d-flex justify-content-center align-items-center' onClick={cardIcon}>
-              <div onClick={(e) => {cardIcon(e)}} className='pb-1 p-0'>
+              <div onClick={(e) => {e.stopPropagation();cardIcon(e)}} className='pb-1 p-0'>
                 <Image
                   src={fav ? heartFill : heratIcon}
                   className="me-2"
@@ -154,7 +154,8 @@ export default function ProductCard({
                {/* 加入購物車 */}
               <FaCartPlus
                 className={`text-light h5 pb-1 ${styles.Chover}`}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   addItem({
                     name,
                     releaseTime,

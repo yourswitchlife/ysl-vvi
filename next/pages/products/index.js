@@ -190,15 +190,17 @@ export default function Products() {
                       name={p.name}
                       price={p.price}
                       display_price={p.display_price}
-                      releaseTime={p.release_time.split('T')[0]}
+                      // releaseTime={p.release_time.split('T')[0]}
+                      releaseTime={p.release_time}
                       img_cover={p.img_cover}
+                      img_details={p.img_details}
                       type={p.type_id}
                       ratingId={p.rating_id}
                       fav={p.fav}
                       handleToggleFav={handleToggleFav}
                       member_id={p.member_id}
                       cardIcon={cardIcon}
-                      imgDetails={p.img_details}
+                      // imgDetails={p.img_details}
                     />
                   </Link>
                 </div>
