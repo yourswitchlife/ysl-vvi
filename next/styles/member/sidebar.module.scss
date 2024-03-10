@@ -34,8 +34,9 @@
 }
 
 .bar {
+    margin-top: 20px;
     max-width: 268px;
-    min-height: calc(100vh - 125px);
+    min-height: calc(100vh - 145px);
     padding: 50px 0px;
     flex-direction: column;
     align-items: center;
@@ -95,6 +96,7 @@
 
 @media (max-width: 430px) {
     .bar {
+        margin-top: -5px;
         max-width: 100%;
         .member_link {
             letter-spacing: 5px;

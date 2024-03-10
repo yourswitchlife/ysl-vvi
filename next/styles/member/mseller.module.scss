@@ -440,12 +440,22 @@ $sortbar-height-rwd: 50px;
 }
 
 .seller_frame {
-  width: 90%;
+  width: 1000px;
   border-bottom: 1px solid $light-gray;
 
   .sellers {
     width: 100%;
     padding-block: 20px;
+  }
+  .seller_xs{
+    width: 750px;
+  }
+  .h4text_xs{
+   width: 410px;
+    margin-inline: 20px;
+  }
+  .site_xs{
+   width: 410px;
   }
 }
 
@@ -475,7 +485,8 @@ $sortbar-height-rwd: 50px;
   }
 
   .h4text_xs {
-    width: fit-content;
+    align-self: start;
+    max-width: fit-content;
     padding: 0 !important;
     padding-inline: 3px !important;
     font-size: 16px;
@@ -509,6 +520,11 @@ $sortbar-height-rwd: 50px;
   .wid_xs {
     width: 150px;
     margin: 0;
+  }
+  .site_xs{
+    justify-self: start;
+    max-width: 165px;
+    margin-left: 20px;
   }
   .cancle_xs {
     position: absolute;

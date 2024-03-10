@@ -336,7 +336,7 @@ router.post('/reset-password', async (req, res) => {
 
   try {
     // 檢查驗證碼是否符合
-    
+
     const [otpRecord] = await db.execute(
       'SELECT * FROM otp WHERE email = ? AND token = ? ORDER BY id DESC LIMIT 1',
       [email, verificationCode]
@@ -364,6 +364,58 @@ router.post('/reset-password', async (req, res) => {
   } catch (error) {
     console.error('Error during password reset:', error);
     return res.status(500).json({ error: '內部伺服器錯誤' });
+  }
+});
+
+
+// fav-shop
+router.get('/fav-shop', async (req, res) => {
+  const buyerId = req.query.memberId
+  const orderBy = req.query.orderBy || 'created_at';
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 6;
+  const offset = (page - 1) * limit;
+
+
+  try {
+    // 首先，計算總項目數
+    const [totalItemsResult] = await db.execute(
+      'SELECT COUNT(*) AS totalItems FROM fav_shop WHERE buyer_id = ?',
+      [buyerId]
+    );
+    const totalItems = totalItemsResult[0].totalItems;
+
+    // 接著，計算總頁數
+    const totalPages = Math.ceil(totalItems / limit);
+
+    let orderClause = '';
+    if (orderBy === 'created_at_asc') {
+      orderClause = 'ORDER BY `created_at` ASC';
+    } else if (orderBy === 'created_at') {
+      // 預設或指定為 created_at 時，使用降序排序
+      orderClause = 'ORDER BY `created_at` DESC';
+    }
+
+    const [data] = await db.execute(`
+    SELECT f.*, m.shop_name, m.shop_site, m.pic 
+    FROM fav_shop AS f
+    JOIN member AS m ON f.seller_id = m.id
+    WHERE f.buyer_id = ?
+    ${orderClause}
+    LIMIT ?, ?`,
+      [buyerId, offset, limit]);
+
+    const responseData = {
+      items: data,
+      totalItems,
+      totalPages
+    };
+    res.json(responseData);
+    console.log("Sending response data:", responseData);
+
+  } catch (error) {
+    console.error('获取收藏列表出错:', error);
+    res.status(500).send('服务器错误');
   }
 });
 
