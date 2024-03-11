@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Image from 'next/image'
 import profileImg from '@/public/images/profile-photo/peach.png'
 import SideBar from '@/components/member/sidebar-member'
@@ -19,7 +20,7 @@ import { useAuth } from '@/hooks/use-Auth';
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 
 export default function FavShop() {
-
+  const router = useRouter();
   const { isLoggedIn, memberId } = useAuth();
   const [favShops, setFavShops] = useState([]);
   // 排序
@@ -42,8 +43,10 @@ export default function FavShop() {
           const data = await response.json();
 
           setFavShops(data.items);
-          const pagess = data.totalPages
           setTotalPages(data.totalPages);
+          // 成功後導更新後的頁面
+          router.push(`/member/fav-shop?page=${page}`);
+
         } catch (error) {
           console.error('回傳收藏賣場清單錯誤', error);
         }
@@ -120,7 +123,7 @@ export default function FavShop() {
                   >
                     {/* seller detail */}
                     <div className={styles.profile + ' me-5'}>
-                      <Image width={50} height={50} src={shop.pic || profileImg} alt="" className={styles.fit} />
+                      <Image width={50} height={50} src={`http://localhost:3005/profile-pic/${shop.pic}` || profileImg} alt="" className={styles.fit} />
                     </div>
                     <div className="d-flex flex-column align-items-between justify-content-center">
                       <div className={styles.seller_xs + " d-flex align-items-center"}>
@@ -143,15 +146,20 @@ export default function FavShop() {
                         >
                           {/* star rating */}
 
-                          <h5 className={styles.h6text_xs + ' me-2'}>5.0</h5>
-                          <div className={styles.h6text_xs + ' text-warning pe-5'}>
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                          </div>
-                          <h5 className={styles.h6text_xs + ' m-auto'}>( 150 )</h5>
+                          {shop.averageRating > 0 ? (
+                            <>
+                              <h5 className={styles.shop_avg + ' ms-1 me-4'}>{shop.averageRating}</h5>
+                              <div className={styles.shop_comment + ' text-warning pe-5'}>
+                                {/* 生成對應數量的星星元素 */}
+                                {Array.from({ length: Math.round(shop.averageRating) }).map((_, i) => (
+                                  <FaStar key={i} className="me-1" />
+                                ))}
+                              </div>
+                            </>
+                          ) : (
+                            <h5 className={styles.shop_comment + ' ms-2 me-5 pe-5 d-flex justify-content-center'}>*暫無評價</h5>
+                          )}
+                          <h5 className={styles.h6text_xs}>({shop.totalOrders})</h5>
                         </div>
                       </div>
 
@@ -172,7 +180,7 @@ export default function FavShop() {
                             商品數量
                           </h5>
                           <h5 className={styles.h6text_xs + ' text-secondary'}>
-                            28
+                            {shop.totalProducts}
                           </h5>
                         </div>
                         <div
@@ -185,7 +193,7 @@ export default function FavShop() {
                             已賣出件數
                           </h5>
                           <h5 className={styles.h6text_xs + ' text-secondary'}>
-                            18
+                            {shop.totalOrders}
                           </h5>
                         </div>
                         <div
@@ -198,7 +206,7 @@ export default function FavShop() {
                             關注人數
                           </h5>
                           <h5 className={styles.h6text_xs + ' text-secondary'}>
-                            186
+                            {shop.totalFavs}
                           </h5>
                         </div>
                         <Button

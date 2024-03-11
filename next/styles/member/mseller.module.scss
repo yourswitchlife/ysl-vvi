@@ -447,16 +447,26 @@ $sortbar-height-rwd: 50px;
     width: 100%;
     padding-block: 20px;
   }
-  .seller_xs{
+
+  .seller_xs {
     width: 750px;
   }
-  .h4text_xs{
-   width: 410px;
+
+  .h4text_xs {
+    width: 410px;
     margin-inline: 20px;
   }
-  .site_xs{
-   width: 410px;
+
+  .site_xs {
+    width: 410px;
   }
+}
+
+.shop_comment {
+  width: 150px;
+}
+.shop_avg {
+  width: 28px;
 }
 
 @media screen and (max-width: 430px) {
@@ -500,6 +510,15 @@ $sortbar-height-rwd: 50px;
     padding-inline: 0px !important;
   }
 
+  .shop_comment, .shop_avg {
+    width: fit-content;
+    max-height: 25px;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 14px;
+    padding-inline: 0px !important;
+  }
+
   .wrap {
     display: flex;
     flex-wrap: wrap;
@@ -521,17 +540,20 @@ $sortbar-height-rwd: 50px;
     width: 150px;
     margin: 0;
   }
-  .site_xs{
+
+  .site_xs {
     justify-self: start;
     max-width: 165px;
     margin-left: 20px;
   }
+
   .cancle_xs {
     position: absolute;
     width: 130px;
     font-size: 14px;
     left: 5%;
   }
+
   .profile {
     padding: 0 !important;
     margin-inline: 9px !important;

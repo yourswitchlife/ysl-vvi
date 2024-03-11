@@ -378,14 +378,14 @@ router.get('/fav-shop', async (req, res) => {
 
 
   try {
-    // 首先，計算總項目數
+    // 總項目
     const [totalItemsResult] = await db.execute(
       'SELECT COUNT(*) AS totalItems FROM fav_shop WHERE buyer_id = ?',
       [buyerId]
     );
     const totalItems = totalItemsResult[0].totalItems;
 
-    // 接著，計算總頁數
+    // 總頁數
     const totalPages = Math.ceil(totalItems / limit);
 
     let orderClause = '';
@@ -395,12 +395,39 @@ router.get('/fav-shop', async (req, res) => {
       // 預設或指定為 created_at 時，使用降序排序
       orderClause = 'ORDER BY `created_at` DESC';
     }
-
     const [data] = await db.execute(`
-    SELECT f.*, m.shop_name, m.shop_site, m.pic 
-    FROM fav_shop AS f
-    JOIN member AS m ON f.seller_id = m.id
-    WHERE f.buyer_id = ?
+    SELECT 
+    fs.*, 
+    m.shop_name, 
+    m.shop_site, 
+    m.pic,
+    COUNT(DISTINCT ps.id) AS totalProducts,
+    COALESCE(o.totalOrders, 0) AS totalOrders,
+    COUNT(DISTINCT fs.seller_id) AS totalFavs,
+    ROUND(COALESCE(sc.averageRating, 0), 1) AS averageRating,
+    COUNT(DISTINCT shop_comment.id) AS CommentCount
+    FROM 
+    fav_shop fs
+    JOIN 
+    member m ON fs.seller_id = m.id
+    LEFT JOIN 
+    product ps ON fs.seller_id = ps.member_id
+    LEFT JOIN (
+      SELECT member_seller_id, COALESCE(SUM(quantity), 0) AS totalOrders
+      FROM orders
+      GROUP BY member_seller_id
+    ) o ON fs.seller_id = o.member_seller_id
+    LEFT JOIN (
+      SELECT shop_id, AVG(rating) AS averageRating
+      FROM shop_comment
+      GROUP BY shop_id
+    ) sc ON fs.seller_id = sc.shop_id
+    LEFT JOIN 
+      shop_comment ON fs.seller_id = shop_comment.shop_id
+    WHERE 
+    fs.buyer_id = ?
+    GROUP BY 
+    fs.id
     ${orderClause}
     LIMIT ?, ?`,
       [buyerId, offset, limit]);
@@ -408,17 +435,83 @@ router.get('/fav-shop', async (req, res) => {
     const responseData = {
       items: data,
       totalItems,
-      totalPages
+      totalPages,
     };
+    // console.log(responseData)
     res.json(responseData);
-    console.log("Sending response data:", responseData);
 
   } catch (error) {
-    console.error('获取收藏列表出错:', error);
-    res.status(500).send('服务器错误');
+    console.error('取得收藏列表出錯:', error);
+    res.status(500).send('伺服器錯誤');
   }
 });
 
 
+// fav-product
+router.get('/fav-product', async (req, res) => {
+  const buyerId = req.query.memberId;
+  const orderBy = req.query.orderBy || 'created_at';
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 12;
+  const offset = (page - 1) * limit;
+
+  try {
+    // Total items
+    const [totalItemsResult] = await db.execute(
+      'SELECT COUNT(*) AS totalItems FROM fav_product WHERE member_id = ?',
+      [buyerId]
+    );
+    const totalItems = totalItemsResult[0].totalItems;
+
+    // Total pages
+    const totalPages = Math.ceil(totalItems / limit);
+
+    let orderClause = '';
+    if (orderBy === 'created_at_asc') {
+      orderClause = 'ORDER BY fp.created_at ASC';
+    } else if (orderBy === 'created_at') {
+      orderClause = 'ORDER BY fp.created_at DESC';
+    }
+
+    const [data] = await db.execute(`
+      SELECT
+        fp.id AS favProductId,
+        p.display_price,
+        p.price,
+        p.release_time,
+        p.rating_id,
+        p.type_id,
+        p.name AS productName,
+        p.img_cover,
+        m.id AS memberId,
+        m.shop_name,
+        m.shop_site,
+        fp.created_at
+      FROM
+        fav_product fp
+      JOIN
+        product p ON fp.product_id = p.id
+      JOIN
+        member m ON p.member_id = m.id
+      WHERE
+        fp.member_id = ?
+      ${orderClause}
+      LIMIT ?, ?`,
+      [buyerId, offset, limit]
+    );
+
+    const responseData = {
+      items: data,
+      totalItems,
+      totalPages,
+    };
+    
+    res.json(responseData);
+    console.log(responseData);
+  } catch (error) {
+    console.error('Error fetching favorite product list:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 export default router
