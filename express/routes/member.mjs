@@ -437,7 +437,7 @@ router.get('/fav-shop', async (req, res) => {
       totalItems,
       totalPages,
     };
-    // console.log(responseData)
+    console.log(responseData)
     res.json(responseData);
 
   } catch (error) {
@@ -446,7 +446,25 @@ router.get('/fav-shop', async (req, res) => {
   }
 });
 
+// fav-shop-cancel
+router.delete('/unfav-shop', async (req, res) => {
+  const memberId = req.query.memberId;
+  const sellerId = req.query.sellerId;
 
+  try {
+    const unfavQuery = 'DELETE FROM fav_shop WHERE buyer_id = ? AND seller_id = ?';
+    const [unfavshopResult] = await db.execute(unfavQuery, [memberId, sellerId]);
+  
+    if (unfavshopResult.affectedRows > 0) {
+      res.status(200).json({ success: true, message: '取消收藏成功' });
+    } else {
+      res.status(404).json({ success: false, message: '找不到相應的收藏記錄' });
+    }
+  } catch (error) {
+    console.error('取消收藏失敗', error);
+    res.status(500).json({ success: false, message: '取消收藏失敗' });
+  }
+});
 // fav-product
 router.get('/fav-product', async (req, res) => {
   const buyerId = req.query.memberId;
@@ -476,9 +494,9 @@ router.get('/fav-product', async (req, res) => {
     const [data] = await db.execute(`
       SELECT
         fp.id AS favProductId,
-        p.display_price,
-        p.price,
-        p.release_time,
+        FORMAT(p.display_price, 0) AS display_price,
+        FORMAT(p.price, 0) AS price,
+        DATE_FORMAT(p.release_time, '%Y-%m-%d') AS release_date,
         p.rating_id,
         p.type_id,
         p.name AS productName,
@@ -507,7 +525,7 @@ router.get('/fav-product', async (req, res) => {
     };
     
     res.json(responseData);
-    console.log(responseData);
+    // console.log(responseData);
   } catch (error) {
     console.error('Error fetching favorite product list:', error);
     res.status(500).send('Internal Server Error');

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image'
+import profileImg from '@/public/images/profile-photo/default-profile-img.svg'
 import SideBar from '@/components/member/sidebar-member'
 import Navbar from '@/components/layout/navbar/navbar'
 import Footer from '@/components/layout/footer/footer-backstage'
@@ -9,8 +10,7 @@ import mStyle from '@/styles/member/g-valuable.module.scss'
 import fpStyle from '@/styles/member/fav-p.module.scss'
 import sStyles from '@/styles/member/mseller.module.scss'
 import Link from 'next/link'
-
-import { FaRegHeart, FaCartPlus } from 'react-icons/fa'
+import { FaRegHeart, FaCartPlus, FaStore } from 'react-icons/fa'
 import Paginage from '@/components/common/pagination'
 import Dropdown from 'react-bootstrap/Dropdown'
 import { useAuth } from '@/hooks/use-Auth';
@@ -25,7 +25,7 @@ export default function FavProduct() {
   // 頁數
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(6);
+  const [limit, setLimit] = useState(12);
 
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function FavProduct() {
           }
           const data = await response.json();
 
-          setFavProducts(data.items); // 改這行
+          setFavProducts(data.items);
           setTotalPages(data.totalPages);
           // 成功後導更新後的頁面
           router.push(`/member/fav-product?page=${page}`);
@@ -105,52 +105,67 @@ export default function FavProduct() {
               </Dropdown>
             </div>
             {/* 迴圈 */}
-            
-            <div className="d-flex flex-wrap">
-            {favProducts.map(product => (
-              <div className={fpStyle.card + ' m-4 rounded-3'}>
-                <div className="d-flex justify-content-center">
-                  <Image
-                    src=""
-                    alt="product"
-                    width={150}
-                    height={244}
-                    // priority={true}
-                    className="p-2  pb-3"
-                    layout="fixed"
-                  // fetchPriority="width"
-                  />
-                </div>
 
-                <div className="card-body p-3 pt-0">
-                  <div className="d-flex justify-content-between fs-5">
-                    <div className="pb-0 p-2 pt-1 border border-danger border-bottom-0 rounded-end-3 rounded-bottom-0">
-                      <p className="text-danger">
-                        <b>RPG</b>
-                      </p>{' '}
-                    </div>
-                    <div>
-                      <FaRegHeart className="me-4 text-danger" />
-                      <FaCartPlus className="text-black" />
-                    </div>
+            <div className="d-flex flex-wrap justify-content-center">
+              {favProducts.map((product, index) => (
+                <div className={fpStyle.card + ' m-4 rounded-3'} key={index}>
+                  <div className="d-flex justify-content-center">
+                    <Image
+                      src={`http://localhost:3005/productImg/cover/${product.img_cover}` || profileImg}
+                      alt={product.img_cover}
+                      width={150}
+                      height={240}
+                      className="p-2  pb-3"
+                      layout="fixed"
+                      className={fpStyle.cover_img}
+                    />
                   </div>
 
-                  <h5 className="card-text mt-2 mb-1 text-black fw-bold">
-                    舞力全開！
-                  </h5>
-                  <h6 className="text-black">玩具熊的小窩</h6>
-                  <h6 className="text-black">發行日期 2023.11.17</h6>
-                  <div class="price d-flex justify-content-between align-items-center">
-                    <h5 className="fs-5">
-                      <b className="text-danger">NT$1490</b>
-                    </h5>
-                    <h6 className="text-secondary-50 text-decoration-line-through">
-                      NT$2490
+                  <div className="card-body p-3 pt-0 d-flex flex-column justify-content-between">
+                    <div className="d-flex justify-content-between fs-5">
+                      <div className="pb-0 p-2 pt-1 border border-danger border-bottom-0 rounded-end-3 rounded-bottom-0">
+                        <p className="text-danger">
+                          <b>
+                            {product.type_id === 1 ? 'RPG' :
+                              product.type_id === 2 ? 'AVG' :
+                                product.type_id === 3 ? 'ETC' :
+                                  product.type_id === 4 ? 'ACT' :
+                                    product.type_id === 5 ? 'SLG' :
+                                      product.type_id === 6 ? 'RAC' :
+                                        product.type_id === 7 ? 'SPG' :
+                                          product.type_id === 8 ? 'STG' :
+                                            product.type_id === 9 ? 'FTG' :
+                                              null}
+                          </b>
+                        </p>
+                      </div>
+                      <div>
+                        <FaRegHeart className="me-4 text-danger" />
+                        <FaCartPlus className="text-black" />
+                      </div>
+                    </div>
+
+                    <h6 className={fpStyle.cover_name+" card-text mt-2 mb-1 text-black fw-bold fs-5" }style={{ minHeight: 60 }}>
+                      {product.productName}
                     </h6>
-                    {/* <PRating></PRating> */}
+                    <div className='d-flex justify-content-between'>
+                      <div>
+                        <h6 className="text-info fw-bold d-flex justify-content-start align-items-start" style={{minHeight:54, maxWidth:130}}><FaStore className='me-1 pt-1' />{product.shop_name}</h6>
+                        <h6 className="text-black">{product.release_date}發行</h6>
+                      </div>
+                      <div className="d-flex flex-column align-items-center">
+                        <h5 className="text-danger fw-bold mb-4">NT${product.price || null}</h5>
+                        <h6 className="text-secondary-50 text-decoration-line-through">
+                        NT${product.display_price}
+                      </h6>
+                      </div>
+                    </div>
+                    <div class="price d-flex justify-content-between align-items-center">
+                     
+                      {/* <PRating></PRating> */}
+                    </div>
                   </div>
                 </div>
-              </div>
               ))}
             </div>
             {/* 迴圈 */}
@@ -166,4 +181,8 @@ export default function FavProduct() {
       </div>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  return await mainCheckToLogin(context);
 }

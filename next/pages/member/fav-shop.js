@@ -65,6 +65,25 @@ export default function FavShop() {
     setPage(newPage);
   };
 
+  // 取消收藏
+  const handleUnfavorite = async (seller_id) => {
+    try {
+      const response = await fetch(`http://localhost:3005/api/member/unfav-shop?memberId=${memberId}&sellerId=${seller_id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to unfavorite shop',error);
+      }
+  
+      router.reload()
+  
+    } catch (error) {
+      console.error('取消收藏錯誤', error);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -215,6 +234,7 @@ export default function FavShop() {
                             styles.cancle_xs +
                             ' btn btn-danger d-flex align-items-center'
                           }
+                          onClick={() => handleUnfavorite(shop.seller_id)}
                         >
                           <FaMinus className="me-3" />
                           取消收藏
@@ -238,4 +258,8 @@ export default function FavShop() {
       </div>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  return await mainCheckToLogin(context);
 }
