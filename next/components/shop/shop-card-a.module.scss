@@ -1,0 +1,19 @@
+@import '@/styles/valuable.scss';
+.cardSize{
+  height: 95px;
+  width: 300px;
+  border: 1px solid $bright-gray;
+  border-radius: 10px;
+  background-color: $dark-gray;
+  .shopProfile {
+    overflow: hidden;
+    width: 75px;
+    height: 75px;
+    border-radius: 5px;
+    // margin-right: 48px;
+    .fit {
+      width: 100%;
+      object-fit: cover;
+    }
+  }
+}

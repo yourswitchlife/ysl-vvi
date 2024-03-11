@@ -1,13 +1,51 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
+import Image from 'next/image'
 import ControlledCarousel from '@/components/common/ControlledCarousel'
 import styles from '../styles/index.module.scss'
-import Image from 'next/image'
 import Navbar from '@/components/layout/navbar/navbar'
 import ProductList from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
+import ShopCardA from '@/components/shop/shop-card-a'
+import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 // import Navbar from '@/components/layout/navbar/navbar'
 
+
 export default function Index() {
+  const router = useRouter()
+  const [shopInfos, setShopInfos] = useState([])
+  const [bigPic, setBigPic] = useState(profilePhoto)
+  const [roundedRating, setRoundedRating] = useState(0)
+  const getShopInfo = async () => {
+    try{
+      const res = await fetch (`http://localhost:3005/api/shop/`)
+      if(!res.ok){
+        throw new Error('網路請求失敗，找不到賣場資料評價')
+      }
+      const data = await res.json()
+    //   {
+    //     "id": 1,
+    //     "rating": 5,
+    //     "shop_id": 3,
+    //     "shop_name": "碧姬公主的玩具城堡",
+    //     "pic": "peach.png"
+    // },
+      // 確保返回的數據結構正確，並更新狀態
+      if (data && data.length > 0) {
+        setShopInfos(data)
+      }
+    }catch (e){
+      console.error(e)
+    }
+  }
+  
+  useEffect(() => {
+    getShopInfo()
+  }, [])
+
+  console.log(shopInfos)
+
   return (
     <>
     <Navbar />
@@ -97,6 +135,10 @@ export default function Index() {
           <div class="col">
             <h4 className="text-white mb-2">好康資訊</h4>
             <h4 className="text-white mb-2">精選賣家</h4>
+            <div className='d-flex justify-content-between align-items-center flex-wrap'>
+              <ShopCardA avgRating={roundedRating} />
+              <ShopCardA avgRating={roundedRating} />
+            </div>
           </div>
         </div>
       </section>
