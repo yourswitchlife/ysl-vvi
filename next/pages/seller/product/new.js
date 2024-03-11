@@ -11,6 +11,7 @@ import BreadCrumb from '@/components/common/breadcrumb'
 import { useAuth } from '@/hooks/use-Auth';
 
 export default function New() {
+  const { isLoggedIn, memberId } = useAuth()
   //body style
   useEffect(() => {
     // 當元件掛載時添加樣式
@@ -21,7 +22,6 @@ export default function New() {
     }
   }, [])
 
-  const { isLoggedIn, memberId, memberData } = useAuth();
   const [newP, setNewP] = useState({
     pName: '',
     pCover: '',
@@ -272,6 +272,23 @@ export default function New() {
                         )
                       })}
                     </select>
+                  </div>
+                  {/* 商品發售時間 */}
+                  <div className="mb-3 col-12 d-flex justify-content-center align-items-center">
+                    <label htmlFor="pName" className="h6 me-2 flex-shrink-0">
+                      <h5 className="text-dark">
+                      發售時間<span className="text-danger">*</span>
+                      </h5>
+                    </label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="pName"
+                      name="pName"
+                      value={newP.pName}
+                      // placeholder="請輸入商品名稱"
+                      onChange={handleChange}
+                    />
                   </div>
                   {/* 商品語言 */}
                   <div className="mb-3 col-lg-6 col-12 d-flex ">

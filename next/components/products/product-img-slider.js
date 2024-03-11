@@ -19,8 +19,7 @@ export default function ProductImgSlider({ img_cover, img_details }) {
         modules={[Navigation, Thumbs]}
         grabCursor={true}
         thumbs={{ swiper: active }}
-        className="product-images-slider"
-      >
+        className="product-images-slider">
         <SwiperSlide>
           <img
             style={{ height: '100%', padding: '10px' }}
@@ -54,9 +53,9 @@ export default function ProductImgSlider({ img_cover, img_details }) {
         className="product-images-slider-thumb"
       >
         <SwiperSlide>
-          <div className="product-images-slider-thumbs-wrapper">
+          <div className="product-images-slider-thumbs-wrapper" style={{height:'100%',width:'100%'}}>
             <img
-              style={{ width: '100%' }}
+              style={{ height: '100%',width:'100%',objectFit:'cover', padding: '3px' }}
               src={`http://localhost:3005/productImg/cover/${img_cover}`}
               alt="products"
             />
@@ -66,9 +65,9 @@ export default function ProductImgSlider({ img_cover, img_details }) {
           ? img_details.split(',').map((v, i) => {
               return (
                 <SwiperSlide key={i}>
-                <div className="product-images-slider-thumbs-wrapper">
+                <div className="product-images-slider-thumbs-wrapper" style={{height:'100%',width:'100%'}}>
                   <img
-                    style={{ width: '100%', padding: '10px' }}
+                    style={{ height: '100%',width:'100%',objectFit:'cover', padding: '3px' }}
                     src={`http://localhost:3005/productImg/details/${v}`}
                     alt="products"
                   />

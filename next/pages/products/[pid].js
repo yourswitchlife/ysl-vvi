@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { FaRegHeart, FaCartPlus, FaShoppingCart } from 'react-icons/fa'
 import ProductCard from '@/components/products/product-card'
 import Link from 'next/link'
-
 import styles from '../../styles/products/product-detail.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
 import Navbar from '@/components/layout/navbar/navbar'
@@ -13,17 +12,15 @@ import Review from '@/components/products/review'
 import Reviewed from '@/components/products/reviewed'
 import RatingStars from '@/components/products/rating-stars'
 import ProductImgSlider from '@/components/products/product-img-slider'
-// import PImgs from '@/components/products/p-imgs'
-// import pImgDetail from '@/public/images/product/MonsterFarm-1.jpg'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import PHistory from '@/components/products/p-history'
-// import pImages from '@/components/products/p-images'
-// import { Link,useParams } from 'react-router-dom'
-
 // 引入use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
+import { useAuth } from '@/hooks/use-Auth'
+import GoTopButton from '@/components/go-to-top/go-top-button'
 
 export default function ProductDetail() {
+  const { isLoggedIn, memberId } = useAuth()
   const router = useRouter()
 
   const [product, setProduct] = useState({
@@ -88,6 +85,7 @@ export default function ProductDetail() {
 
   const [historyRecords, setHistoryRecords] = useState([])
   // const [product, setProduct] = useState([])
+
   const getProduct = async (pid) => {
     try {
       const res = await fetch(`http://localhost:3005/api/products/${pid}`)
@@ -191,6 +189,7 @@ export default function ProductDetail() {
   }
   return (
     <>
+    <GoTopButton/>
       <Navbar />
       <PhoneTabNav />
 

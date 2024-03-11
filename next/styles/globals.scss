@@ -116,11 +116,11 @@ p, .p{font-size: 12px;font-weight: 400;line-height: 18px;}
       border-color: rgb(255, 255, 255);
     }
     &:hover{
-      background-color: #ffffff38;
+      background-color: #535353;
+      border: 5px solid #535353;
     }
   }
   &-wrapper{
-    // width: 100%;
     padding-top: 100%;
     overflow: hidden;
   }

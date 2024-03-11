@@ -5,14 +5,17 @@ import Image from 'next/image'
 import Navbar from '@/components/layout/navbar/navbar'
 import ProductList from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
+import IndexSlider from '@/components/common/index-slider'
 // import Navbar from '@/components/layout/navbar/navbar'
+import GoTopButton from '@/components/go-to-top/go-top-button'
 
 export default function Index() {
   return (
     <>
+    <GoTopButton/>
     <Navbar />
       <div
-        className={`${styles.headTitleCard} z-1 position-absolute d-inline-flex flex-column justify-content-center`}
+        className={`${styles.headTitleCard} z-1 position-absolute d-lg-inline-flex d-none flex-column justify-content-center`}
       >
         <div>
           <h4 className="text-white">Let’s enjoy</h4>
@@ -73,7 +76,8 @@ export default function Index() {
       </section>
       <section class="sec3 container pt-5 pb-5">
         <h4 className="text-white mb-2">特賣焦點</h4>
-        <div className={styles.wrap}>
+        <IndexSlider />
+        {/* <div className={styles.wrap}>
           <ProductList></ProductList>
           <ProductList></ProductList>
           <ProductList></ProductList>
@@ -84,7 +88,7 @@ export default function Index() {
           <ProductList></ProductList>
           <ProductList></ProductList>
           <ProductList></ProductList>
-        </div>
+        </div> */}
       </section>
       <section class="container sec4 pt-5 pb-5">
         <h4 className="text-white mb-2">商品分類</h4>

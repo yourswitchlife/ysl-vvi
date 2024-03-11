@@ -24,10 +24,30 @@ const upload = multer({ storage: storage })
 
 // 商品列表頁
 router.get('/list', async (req, res) => {
+  const page = parseInt(req.query.page) || 1
+  const limit = parseInt(req.query.limit) || 20
+  const offset = (page - 1) * limit
   try {
-    let [products] = await db.execute('SELECT * FROM `product`')
-    // console.log(products)
-    res.json(products)
+    // 全部資料
+    let [totalProducts] = await db.execute(
+      'SELECT COUNT(*) AS totalItems FROM `product`'
+    )
+    // 一頁幾筆
+    let [products] = await db.execute(`SELECT * FROM product LIMIT ?,?`, [
+      offset,
+      limit,
+    ])
+    // console.log(TotalProducts.length)
+    const totalItems = totalProducts[0].totalItems
+    const totalPages = Math.ceil(totalItems / limit)
+    console.log(totalItems)
+
+    const responseData = {
+      products,
+      totalItems,
+      totalPages,
+    }
+    res.json(responseData)
   } catch (error) {
     console.log(error)
     res.status(500)
