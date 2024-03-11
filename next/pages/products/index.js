@@ -199,6 +199,7 @@ export default function Products() {
                       member_id={p.member_id}
                       cardIcon={cardIcon}
                       imgDetails={p.img_details}
+                      language={p.language}
                     />
                   </Link>
                 </div>

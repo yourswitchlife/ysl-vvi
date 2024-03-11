@@ -14,17 +14,17 @@ import taiwanDistricts from '@/data/taiwan_districts.json'
 
 import { useAuth } from '@/hooks/use-Auth'
 
-export default function DeliveryCheckout({ items }) {
+export default function DeliveryCheckout({ items, updateShippingFee, updateShippingMethod, memberId, onShippingInfoUpdate }) {
 
-  const { memberData } = useAuth();
+  const { memberData } = useAuth()
 
-  const [selectAddrOption, setSelectAddrOption] = useState('1')
+  const [selectAddrOption, setSelectAddrOption] = useState('')
 
   // 點擊新增宅配地址按鈕狀態
   const [showAddrForm, setshowAddrForm] = useState(false)
 
   // 點擊編輯地址按鈕狀態
-  const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [isEditingAddress, setIsEditingAddress] = useState(false)
 
 
   // 用戶是否有常用地址資料
@@ -34,34 +34,36 @@ export default function DeliveryCheckout({ items }) {
   const [isMaxHomeAddresses, setIsMaxHomeAddresses] = useState(false)
 
   // 選擇地址、區域狀態
-  const [selectedCity, setSelectedCity] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState("");
+  const [selectedCity, setSelectedCity] = useState("")
+  const [selectedRegion, setSelectedRegion] = useState("")
   // 紀錄除了城市、區域的其他詳細地址
   const [detailAddress, setDetailAddress] = useState("")
   // 收件姓名
-  const [name, setName] = useState("");
+  const [name, setName] = useState("")
   // 收件電話
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState("")
   // 寄送時間
-  const [deliveryTime, setDeliveryTime] = useState("");
+  const [deliveryTime, setDeliveryTime] = useState("")
   // 地址類型
-  const [addressType, setAddressType] = useState("");
+  const [addressType, setAddressType] = useState("")
 
   // 紀錄所選取的宅配欄位
   const [homeField, setHomeField] = useState("")
 
 
   // 紀錄被編輯地址的radio選項
-  const [editingAddressIndex, setEditingAddressIndex] = useState(null);
+  const [editingAddressIndex, setEditingAddressIndex] = useState(null)
   // 追蹤選中的宅配地址選項index
-  const [selectedAddressIndex, setSelectedAddressIndex] = useState(null);
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState(null)
   // 追蹤選中的7-11地址選項index
-  const [selectedSevenIndex, setSelectedSevenIndex] = useState(null);
+  const [selectedSevenIndex, setSelectedSevenIndex] = useState(null)
 
   // 單筆賣場商品品項數量
   const [totalProducts, setTotalProducts] = useState(0)
   // 單筆賣場訂單總價
   const [orderPrice, setOrderPrice] = useState(0)
+  // 設定運費價格，預設7-11運費價格
+  const [shippingFee, setShippingFee] = useState(60)
 
 
 
@@ -78,40 +80,33 @@ export default function DeliveryCheckout({ items }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const updateWindowWidth = () => {
-        setWindowWidth(window.innerWidth);
-      };
-      updateWindowWidth();
-      window.addEventListener("resize", updateWindowWidth);
-      return () => window.removeEventListener("resize", updateWindowWidth);
+        setWindowWidth(window.innerWidth)
+      }
+      updateWindowWidth()
+      window.addEventListener("resize", updateWindowWidth)
+      return () => window.removeEventListener("resize", updateWindowWidth)
     }
-  }, []);
+  }, [])
+
 
   // 選擇物流方式下拉選單值
   const handleSelectChange = (e) => {
-    setSelectAddrOption(e.target.value)
+    const selectedMethod = e.target.value
+    setSelectAddrOption(selectedMethod)
     // 清除超商地址或宅配地址的選擇
-    if (e.target.value === "1") {
-      setSelectedAddressIndex(null);
-      if (addresses.sevenAddresses.length > 0) {
-        setSelectedSevenIndex(0);
-      }
-    } else if (e.target.value === "2") {
-      setSelectedSevenIndex(null);
-      if (addresses.homeAddresses.length > 0) {
-        setSelectedAddressIndex(0);
-      }
+    setSelectedAddressIndex(null)
+    setSelectedSevenIndex(null)
+    // 更新運費
+    if (selectedMethod === "1") {
+      setShippingFee(60);
+    } else if (selectedMethod === "2") {
+      setShippingFee(100);
     }
+
+    updateShippingMethod(selectedMethod)
   }
 
-  useEffect(() => {
-    if (selectAddrOption === "2" && addresses.homeAddresses.length > 0) {
-      setSelectedAddressIndex(0);
-    } else if (selectAddrOption === "1" && addresses.sevenAddresses.length > 0) {
-      setSelectedSevenIndex(0);
-    }
-  }, [selectAddrOption, addresses]);
 
-  
 
   // 判斷是新增宅配地址還是編輯宅配地址
   const handleShowForm = (editMode = false) => {
@@ -120,122 +115,147 @@ export default function DeliveryCheckout({ items }) {
 
     // 如果是新增地址模式就清空表單的值
     if (!editMode) {
-      setName("");
-      setPhone("");
-      setSelectedCity("");
-      setSelectedRegion("");
-      setDetailAddress("");
-      setDeliveryTime("");
-      setAddressType("");
+      setName("")
+      setPhone("")
+      setSelectedCity("")
+      setSelectedRegion("")
+      setDetailAddress("")
+      setDeliveryTime("")
+      setAddressType("")
     }
-  };
+  }
 
   // 編輯/新增地址時點擊取消
   const handleCancel = () => {
-    setshowAddrForm(false);
+    setshowAddrForm(false)
   };
 
   // 處理城市選項變更
   const handleCityChange = (e) => {
-    setSelectedCity(e.target.value);
-    setSelectedRegion("");
-  };
+    setSelectedCity(e.target.value)
+    setSelectedRegion("")
+  }
 
   // 處理區域選項變更
   const handleRegionChange = (e) => {
-    setSelectedRegion(e.target.value);
-  };
+    setSelectedRegion(e.target.value)
+  }
 
   //根據選擇的城市對應區域們
   const regions = selectedCity
     ? taiwanDistricts.find(city => city.name === selectedCity)?.districts || []
-    : [];
+    : []
 
   // 後端傳來的地址拆分
   const parseAddress = (address) => {
-    const parts = address.split(' ');
+    const parts = address.split(' ')
     return {
       city: parts[0], // "台北市"
       region: parts[1], // "北投區"
       detail: parts.slice(2).join(' '), // "立農街二段155號"
     };
-  };
+  }
   // 範例
   // const address = "台北市 北投區 立農街二段155號";
   // const { city, region, detail } = parseAddress(address);
   // console.log(city, region, detail);
 
   // 根據被選擇的宅配地址radio來拆分地址
-  const handleAddressSelection = (selectedAddressIndex) => {
-    const selectedAddress = addresses.homeAddresses[selectedAddressIndex];
+  const handleAddressSelection = (index) => {
+    const selectedAddress = addresses.homeAddresses[index]
     // 解析地址的城市、區域和詳細地址
-    const { city, region, detail } = parseAddress(selectedAddress.address);
+    const { city, region, detail } = parseAddress(selectedAddress.address)
 
     // 姓名、電話、配送類型時間
-    const { name, phone } = selectedAddress;
-    const { AddressType, DeliveryTimePreference } = selectedAddress.specialPreferences;
+    const { name, phone } = selectedAddress
+    const { AddressType, DeliveryTimePreference } = selectedAddress.specialPreferences
 
-    let fieldMapping = ['home1', 'home2', 'home3'];
-    let selectedField = fieldMapping[selectedAddressIndex];
-    setHomeField(selectedField);
+    let fieldMapping = ['home1', 'home2', 'home3']
+    let selectedField = fieldMapping[index]
+    setHomeField(selectedField)
 
-    // console.log("Before setting state:", { city, region, detail });
-    setSelectedCity(city);
-    setSelectedRegion(region);
-    // console.log("After setting state:", { selectedCity, selectedRegion });
-    setDetailAddress(detail);
-    setName(name);
-    setPhone(phone);
-    setDeliveryTime(DeliveryTimePreference); // 更新配送時間
-    setAddressType(AddressType); // 更新地址類型
-    setSelectedAddressIndex(selectedAddressIndex)
-  };
+
+    setSelectedCity(city)
+    setSelectedRegion(region)
+    setDetailAddress(detail)
+    setName(name)
+    setPhone(phone)
+    setDeliveryTime(DeliveryTimePreference) // 更新配送時間
+    setAddressType(AddressType) // 更新地址類型
+    setSelectedAddressIndex(index)
+
+    //儲存傳給父層的收件資訊
+    onShippingInfoUpdate({
+      name,
+      phone,
+      address: `${city} ${region} ${detail}`,
+      deliveryTime: DeliveryTimePreference,
+      addressType: AddressType,
+    })
+
+  }
 
   // 根據被選擇的7-11地址radio選項顯示
   const handleSevenAddressChange = (index) => {
-    setSelectedSevenIndex(index);
-  };
+    // console.log(index);
+    setSelectedSevenIndex(index)
+
+    const selectedSevenAddress = addresses.sevenAddresses[index]
+    if (selectedSevenAddress) {
+      // 傳給父元件的超商地址資訊
+      const shippingInfo = {
+        name: selectedSevenAddress.name, 
+        phone: selectedSevenAddress.phone, 
+        address: `${selectedSevenAddress.seventInfo.storeName} | ${selectedSevenAddress.seventInfo.address}`, 
+        deliveryTime: "", 
+        addressType: "7-11超商取货" 
+      }
+  
+      onShippingInfoUpdate(shippingInfo)
+  }
+}
 
 
   // 點擊編輯地址按鈕
   const handleEditClick = () => {
-    if (selectedAddressIndex !== null) {
+    if (selectAddrOption === '2' && selectedAddressIndex !== null && addresses.homeAddresses[selectedAddressIndex]) {
       // 使用selectedAddressInde來設計表單資料
-      const selectedAddress = addresses.homeAddresses[selectedAddressIndex];
+      const selectedAddress = addresses.homeAddresses[selectedAddressIndex]
       if (selectedAddress) {
         const { name, phone } = selectedAddress;
-        const { AddressType, DeliveryTimePreference } = selectedAddress.specialPreferences;
-        const { city, region, detail } = parseAddress(selectedAddress.address);
+        const { AddressType, DeliveryTimePreference } = selectedAddress.specialPreferences
+        const { city, region, detail } = parseAddress(selectedAddress.address)
 
-        setName(name);
-        setPhone(phone);
-        setSelectedCity(city);
-        setSelectedRegion(region);
-        setDetailAddress(detail);
-        setDeliveryTime(DeliveryTimePreference);
-        setAddressType(AddressType);
-        setshowAddrForm(true);
-        setIsEditingAddress(true);
+        setName(name)
+        setPhone(phone)
+        setSelectedCity(city)
+        setSelectedRegion(region)
+        setDetailAddress(detail)
+        setDeliveryTime(DeliveryTimePreference)
+        setAddressType(AddressType)
+        setshowAddrForm(true)
+        setIsEditingAddress(true)
       }
     } else {
-      alert("請選擇一個地址進行編輯");
+      alert("請選擇一個地址進行編輯")
     }
-  };
+  }
   const router = useRouter()
 
   // 編輯地址點擊送出提交表單
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
+    console.log("提交表單，編輯模式：", isEditingAddress);
 
     // 送出前檢查表單欄位是否為空
     if (!name.trim() || !phone.trim() || !selectedCity.trim() || !selectedRegion.trim() || !detailAddress.trim() || !deliveryTime.trim() || !addressType.trim()) {
-      alert('所有欄位資訊都需要填寫！');
-      return;
+      alert('所有欄位資訊都需要填寫！')
+      return
     }
 
     if (!memberData || !memberData.id) {
-      console.error('未找到對應的memberId');
-      return;
+      console.error('未找到對應的memberId')
+      return
     }
 
     let url = isEditingAddress ? "http://localhost:3005/api/cart/edit-address" : "http://localhost:3005/api/cart/add-address"
@@ -251,10 +271,7 @@ export default function DeliveryCheckout({ items }) {
       },
       // 如果是新增地址就沒有預設欄位
       homeField: isEditingAddress ? homeField : undefined
-    };
-    console.log(JSON.stringify(formData))
-    console.log(formData);
-
+    }
     fetch(url, {
       method: "POST",
       headers: {
@@ -267,16 +284,16 @@ export default function DeliveryCheckout({ items }) {
         if (!response.ok) {
           throw new Error('伺服器連線失敗');
         }
-        return response.json();
+        return response.json()
       })
       .then((results) => {
-        console.log(results);
+        console.log(results)
         alert(isEditingAddress ? '地址更新成功' : '地址新增成功')
         setshowAddrForm(false)
         router.push('/cart/checkout')
       })
       .catch((error) => {
-        console.error('連線失敗:', error);
+        console.error('連線失敗:', error)
       });
 
   }
@@ -284,36 +301,49 @@ export default function DeliveryCheckout({ items }) {
 
   // 計算假的到貨日期
   const calculateDeliveryDates = () => {
-    const currentDate = new Date();
-    const deliveryStartDate = new Date(currentDate.getTime() + 86400000 * 1); //加1天的毫秒數86400000
-    const deliveryEndDate = new Date(currentDate.getTime() + 86400000 * 4); // 加4天
+    const currentDate = new Date()
+    const deliveryStartDate = new Date(currentDate.getTime() + 86400000 * 1) //加1天的毫秒數86400000
+    const deliveryEndDate = new Date(currentDate.getTime() + 86400000 * 4) // 加4天
 
     const formatDate = (date) => {
-      return `${date.getMonth() + 1}/${date.getDate()}`;
-    };
+      return `${date.getMonth() + 1}/${date.getDate()}`
+    }
 
     return {
       start: formatDate(deliveryStartDate),
       end: formatDate(deliveryEndDate),
-    };
-  };
-  const { start, end } = calculateDeliveryDates();
+    }
+  }
+  const { start, end } = calculateDeliveryDates()
 
 
   // 計算單筆賣場訂單商品總品項數量 + 計算賣場單筆訂單總價
-    useEffect(()=>{
-      let total = items.length
-      let totalPrice = items.reduce((order, item)=> order + (item.quantity * item.price),0)
-       setTotalProducts(total)
-       setOrderPrice(totalPrice)
-    },[items])
+  useEffect(() => {
+    let total = items.length
+    let totalPrice = items.reduce((order, item) => order + (item.quantity * item.price), 0)
+    totalPrice += shippingFee
+    setTotalProducts(total)
+    setOrderPrice(totalPrice)
+  }, [items, shippingFee])
 
+  // 利用updateShippingFee傳遞給父層的函數
+  const calcShippingFee = () => {
+    let fee = 0
+    if (selectAddrOption === '1') {
+      // 7-11
+      fee = 60
+    } else if (selectAddrOption === '2') {
+      // 宅配
+      fee = 100
+    }
+    updateShippingFee(fee)
+  }
 
+  // 當用戶改變selectAddrOption就更新運費
+  useEffect(() => {
+    calcShippingFee()
+  }, [selectAddrOption])
 
-
-  // 判斷從後端資料傳進來的宅配/7-11地址是否有資料
-  const hasHomeAddr = addresses.homeAddresses.length > 0;
-  const hasSevenAddr = addresses.sevenAddresses.length > 0;
 
   // 連線server端接收到常用地址資料
   useEffect(() => {
@@ -324,12 +354,12 @@ export default function DeliveryCheckout({ items }) {
         if (!response.ok) {
           throw new Error('連線後端失敗')
         }
-        return response.json();
+        return response.json()
       })
         .then(data => {
           if (data && data.length > 0) {
-            const homeAddresses = [];
-            const sevenAddresses = [];
+            const homeAddresses = []
+            const sevenAddresses = []
             console.log(data);
 
             data.forEach((item) => {
@@ -338,17 +368,17 @@ export default function DeliveryCheckout({ items }) {
                 ['home1', 'home2', 'home3'].forEach(homeField => {
                   try {
                     if (item[homeField]) {
-                      let parsedData = JSON.parse(item[homeField]);
+                      let parsedData = JSON.parse(item[homeField])
 
                       // 判斷資料是否為陣列
                       if (!Array.isArray(parsedData)) {
-                        parsedData = [parsedData];
+                        parsedData = [parsedData]
                       }
                       homeAddresses.push(...parsedData);
-                      console.log(homeAddresses);
+                      console.log(homeAddresses)
                     }
                   } catch (error) {
-                    console.error('解析宅配地址data發生錯誤', error);
+                    console.error('解析宅配地址data發生錯誤', error)
                   }
                 });
               } else if (item.shipping_method === 1) {
@@ -356,20 +386,20 @@ export default function DeliveryCheckout({ items }) {
                 ['seven1', 'seven2', 'seven3'].forEach(sevenField => {
                   try {
                     if (item[sevenField]) {
-                      const parsedData = JSON.parse(item[sevenField]);
-                      sevenAddresses.push(...parsedData);
-                      console.log(sevenAddresses);
+                      const parsedData = JSON.parse(item[sevenField])
+                      sevenAddresses.push(...parsedData)
+                      console.log(sevenAddresses)
                     }
                   } catch (error) {
-                    console.error('解析超商地址data發生錯誤', error);
+                    console.error('解析超商地址data發生錯誤', error)
                   }
                 });
               }
             });
-            setAddresses({ homeAddresses, sevenAddresses });
-            setHasCommonAddr(true);
+            setAddresses({ homeAddresses, sevenAddresses })
+            setHasCommonAddr(true)
             // 檢查是否達到最大地址數量
-            setIsMaxHomeAddresses(homeAddresses.length >= 3);
+            setIsMaxHomeAddresses(homeAddresses.length >= 3)
 
           } else {
             setHasCommonAddr(false)
@@ -379,7 +409,7 @@ export default function DeliveryCheckout({ items }) {
           console.error('fetch 失敗', error)
         })
     } else {
-      console.log('取得memberId失敗，請確認是否有登入');
+      console.log('取得memberId失敗，請確認是否有登入')
     }
   }, [memberData])
 
@@ -412,6 +442,7 @@ export default function DeliveryCheckout({ items }) {
               onChange={handleSelectChange}
               disabled={showAddrForm}
             >
+              <option value="">請選擇物流方式</option>
               <option value="1">7-11 超商寄送 ｜運費$60</option>
               <option value="2">店家宅配寄送 ｜運費$100</option>
             </Form.Select>
@@ -424,7 +455,7 @@ export default function DeliveryCheckout({ items }) {
                   selectAddrOption === '2' ? styles.addHomeAdrBtn : 'd-none'
                 }
               >
-                <div className={styles.editHomeAdr} onClick={() => handleShowForm(true)}>
+                <div className={styles.editHomeAdr} onClick={handleEditClick}>
                   <FaRegEdit />
                   <span className={styles.text}>編輯地址</span>
                 </div>
@@ -438,55 +469,55 @@ export default function DeliveryCheckout({ items }) {
             )
           }
           {/* 選擇常用地址radio 區塊 (block)*/}
-          <div className={`${styles.adressFrame} ${!showAddrForm ? 'd-block' : 'd-none'}`}>
-            {selectAddrOption === '1' && (
-              <div>
-                {addresses.sevenAddresses.map((addr, index) => (
-                  // 渲染每個超商地址radio
-                  <div key={index} className="form-check mb-3 d-flex align-items-center">
-                    <input
-                      className="form-check-input me-3"
-                      type="radio"
-                      name="seven-address"
-                      value={index}
-                      checked={selectedSevenIndex === index}
-                      onChange={() => handleSevenAddressChange(index)}
-                    />
-                    <label className="form-check-label">
-                      <div>{addr.name} {addr.phone}</div>
-                      <div>{addr.seventInfo.storeName} ｜ {addr.seventInfo.address}</div>
-                    </label>
-                  </div>
-                ))}
-              </div>
-            )}
+          {selectAddrOption !== '' && (
+            <div className={`${styles.adressFrame} ${!showAddrForm ? 'd-block' : 'd-none'}`}>
+              {selectAddrOption === '1' && (
+                <div>
+                  {addresses.sevenAddresses.map((addr, index) => (
+                    // 渲染每個超商地址radio
+                    <div key={index} className="form-check mb-3 d-flex align-items-center">
+                      <input
+                        className="form-check-input me-3"
+                        type="radio"
+                        name={`seven-address-${memberId}`}
+                        value={index}
+                        checked={selectedSevenIndex === index}
+                        onChange={() => { handleSevenAddressChange(index) }}
+                      />
+                      <label className="form-check-label">
+                        <div>{addr.name} {addr.phone}</div>
+                        <div>{addr.seventInfo.storeName} ｜ {addr.seventInfo.address}</div>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
 
-            {selectAddrOption === '2' && (
-              <div>
-                {addresses.homeAddresses.map((addr, index) => (
-                  // 渲染每個宅配地址radio
-                  <div key={index} className="form-check mb-3 d-flex align-items-center">
-                    <input
-                      className="form-check-input me-3"
-                      type="radio"
-                      name="home-address"
-                      checked={selectedAddressIndex === index}
-                      value={index}
-                      onChange={() => {
-                        handleAddressSelection(index); setSelectedAddressIndex(index);
-                      }}
-                    />
-                    <label className="form-check-label">
-                      <div>{addr.name} {addr.phone}</div>
-                      <div>{addr.address}</div>
-                      <div>{addr.specialPreferences.AddressType}，{addr.specialPreferences.DeliveryTimePreference}</div>
-                    </label>
-                  </div>
-                ))}
-              </div>
-            )}
+              {selectAddrOption === '2' && (
+                <div>
+                  {addresses.homeAddresses.map((addr, index) => (
+                    // 渲染每個宅配地址radio
+                    <div key={index} className="form-check mb-3 d-flex align-items-center">
+                      <input
+                        className="form-check-input me-3"
+                        type="radio"
+                        name={`home-address-${memberId}`}
+                        checked={selectedAddressIndex === index}
+                        value={index}
+                        onChange={() => { handleAddressSelection(index) }}
+                      />
+                      <label className="form-check-label">
+                        <div>{addr.name} {addr.phone}</div>
+                        <div>{addr.address}</div>
+                        <div>{addr.specialPreferences.AddressType}，{addr.specialPreferences.DeliveryTimePreference}</div>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
-          </div>
           {/* 新增超商地址按鈕(寄送資訊) */}
           <div
             className={`flex-column align-items-center mt-4 ${selectAddrOption === '1' && windowWidth > 431 ? 'd-flex' : 'd-none'
@@ -682,7 +713,7 @@ export default function DeliveryCheckout({ items }) {
 
 
         {/* 手機版 - 寄送資訊明細區塊 */}
-        {windowWidth <= 431 && !showAddrForm && (
+        {windowWidth <= 431 && !showAddrForm && selectAddrOption !== '' && (selectedAddressIndex !== null || selectedSevenIndex !== null) && (
           <div className={`col-12 bg-secondary-subtle rounded-3 p-3 ${styles.deliveryInfoMobile} $ `}>
             <div className="row align-items-center">
               {selectedAddressIndex !== null && (
@@ -763,6 +794,10 @@ export default function DeliveryCheckout({ items }) {
                     <b>運費：$60</b>
                   </div>
                 </div></>
+            )}
+            {(selectedAddressIndex === null && selectedSevenIndex === null) && (
+              // 沒有地址被選擇時
+              <div>請選擇一個寄送地址</div>
             )}
           </div>
         </div>
