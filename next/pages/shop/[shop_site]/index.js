@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useAuth } from '@/hooks/use-Auth';
 //components
 import Navbar from '@/components/layout/navbar/navbar'
 import BreadCrumb from '@/components/common/breadcrumb'
@@ -35,12 +36,7 @@ import Swal from 'sweetalert2'
 
 export default function ShopPage() {
   const router = useRouter()
-  const [shopSite, setShopSite] = useState([])
-  const {id, shop_name, shop_site, shop_cover, shop_info} = shopSite //解構賦值賣家資料
-  const [products, setProducts] = useState([])
-  const [searchResults, setSearchResults] = useState([])
-  const [searchQuery, setSearchQuery] = useState("") //用來看有沒有搜尋的值（來決定要不要渲染搜尋結果）
-  const [hit, setHit] = useState([]) //Hit 展示隨機五項商品
+  const { isLoggedIn, memberId } = useAuth();
   //offcanvas的展示狀態
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
@@ -48,6 +44,12 @@ export default function ShopPage() {
   //toggle的展示狀態
   const [openSort, setOpenSort] = useState(false)
   const [openRate, setOpenRate] = useState(false)
+  const [shopSite, setShopSite] = useState([])
+  const {id, shop_name, shop_site, shop_cover, shop_info} = shopSite //解構賦值賣家資料
+  const [products, setProducts] = useState([])
+  const [searchResults, setSearchResults] = useState([])
+  const [searchQuery, setSearchQuery] = useState("") //用來看有沒有搜尋的值（來決定要不要渲染搜尋結果）
+  const [hit, setHit] = useState([]) //Hit 展示隨機五項商品
   const [bigPic, setBigPic] = useState(profilePhoto)
   const [shopCover, setShopCover] = useState(cover)
   const [shopOrderNum, setShopOrderNum] = useState(0)
@@ -55,6 +57,7 @@ export default function ShopPage() {
   const [shopRating, setShopRating] = useState("尚無評價")
   const [commentNum, setCommentNum] = useState(0)
   const [roundedRating, setRoundedRating] = useState(0)
+  const [isFav, setIsFav] = useState(false)
 
   //處理背景樣式
   useEffect(() => {
@@ -110,8 +113,11 @@ export default function ShopPage() {
       getShopOrder(shop_site)
       getShopFav(shop_site)
       getShopRating(shop_site)
+      // if(isLoggedIn){
+      //   getShopFav(shop_site)
+      // }
     }
-  },[router.isReady])
+  },[router.isReady, isLoggedIn])
   const shopTotalItems = products.length //賣家總商品數
 
   const getRandomHit = (items, num) => {
@@ -154,11 +160,17 @@ export default function ShopPage() {
       }
       const data = await res.json()
       // 確保返回的數據結構正確，並更新狀態
-      if (data) {
+      if (data && data.length > 0) {
         //取得加總數字
-        let totalFav = data.length
-        // console.log(totalFav)
-        setShopFavNum(totalFav)
+        setShopFavNum(data.length)
+        //檢查是否收藏
+        const isFaved = data.some(fav => fav.buyer_id === memberId)
+        // console.log(isFaved)會是boolean
+        setIsFav(isFaved)
+      }else{
+        //沒有收藏紀錄
+        setShopFavNum(0)
+        setIsFav(false)
       }
     }catch(e){
       console.error(e)
@@ -188,10 +200,6 @@ export default function ShopPage() {
       console.error(e)
     }
   }
-  
- 
-
-  
   //搜尋商品
   // const [searchText, setSearchText] = useState('')
   const handleSearch = (searchQuery) => {
@@ -225,6 +233,50 @@ export default function ShopPage() {
       else return p
     })
     setSearchResults(newProducts)
+  }
+  const toggleFavShop = async () => {
+    const url = `http://localhost:3005/api/shop/${shop_site}/fav_shop`
+    try{
+      if(isFav){
+        //已經收藏者：執行取消收藏
+        const res = await fetch(url, { method: 'DELETE'})
+        const data = await res.json()
+        if(res.ok){
+          Swal.fire('取消收藏成功', '', 'success')
+        }else{
+          throw new Error(data.message || '取消收藏失敗')
+        }
+      }else{
+        //沒收藏過的人來收藏
+        const res = await fetch(url, { method: 'POST' })
+        const data = await res.json()
+        if(res.ok){
+          Swal.fire('收藏成功', '', 'success')
+        }else{
+          throw new Error(data.message || '添加收藏失敗')
+        }
+      }
+    }catch(error){
+      Swal.fire('操作失敗', error.toString(), 'error')
+    }finally{
+      //無論操作成功或失敗，都重新獲取收藏狀態
+      getShopFav(shop_site)
+    }
+  }
+  //點擊之後導向登入的函式
+  const handleLogin = () => {
+    Swal.fire({
+      title: '請先登入再進行收藏',
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: '暫不登入',
+      confirmButtonText: '好的'
+    }).then((result) => {
+      if(result.isConfirmed){
+        //點"好的"之後的操作，導向登入頁面
+        router.push('/member/login')
+      }
+    })
   }
 
   return (
@@ -278,18 +330,31 @@ export default function ShopPage() {
                   <h5 className='text-danger fw-bold'>{shopOrderNum}</h5>
                 </div>
                 <div className="d-flex flex-column align-items-center">
-                  <h5>關注人數</h5>
+                  <h5>收藏人數</h5>
                   <h5 className='text-danger fw-bold'>{shopFavNum}</h5>
                 </div>
               </div>
               {/* 這裡要加上登入判斷：沒登入跳出modal導向登入，有登入要判斷這個有沒有加入收藏 */}
+              {isLoggedIn ? (//有登入
               <button
                 type="button"
                 className="btn btn-danger d-flex align-items-center"
+                onClick={toggleFavShop}
               >
                 <FaPlus className="me-1" />
-                關注賣家
+                  {isFav ? '取消收藏' : '收藏賣家'}
               </button>
+              ) : (//沒登入
+              <button
+                type="button"
+                className="btn btn-danger d-flex align-items-center"
+                onClick={handleLogin}
+              >
+                <FaPlus className="me-1" />
+                收藏賣家
+              </button>
+              )}
+              
             </div>
             <div className="d-flex flex-column align-items-start justify-content-center">
               {/* shop detail */}
@@ -328,7 +393,7 @@ export default function ShopPage() {
               <h6 className="text-danger mb-0">{shopOrderNum}</h6>
             </div>
             <div className="d-flex flex-column align-items-center">
-              <h6>關注人數</h6>
+              <h6>收藏人數</h6>
               <h6 className="text-danger mb-0">{shopFavNum}</h6>
             </div>
           </div>
@@ -346,7 +411,7 @@ export default function ShopPage() {
               className="btn btn-danger d-flex align-items-center"
             >
               <FaPlus className="me-1" />
-              關注賣家
+              收藏賣家
             </button>
           </div>
         </div>

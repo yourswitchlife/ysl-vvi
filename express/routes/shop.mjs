@@ -1,6 +1,10 @@
 import express from 'express'
 const router = express.Router()
 import db from '../configs/db.mjs'
+import authenticate from '../middlewares/authenticate-cookie.js'
+import multer from 'multer'
+const upload = multer({ dest: 'public/shopCover/' })
+import moment from 'moment'
 
 // 商品詳細頁 ([0-9]+)
 // try {
@@ -84,6 +88,85 @@ router.get('/:shop_site/fav_shop', async (req, res) => {
     res.status(404).send({ message: '查無此賣場收藏者' })
   }
 })
+
+//創建這個賣場的收藏
+router.post(
+  '/:shop_site/fav_shop',
+  upload.none(),
+  authenticate,
+  async (req, res) => {
+    const dateString = new Date() //創建商品日期
+    const created_at = moment(dateString).format('YYYY-MM-DD HH:mm:ss')
+    const buyer_id = req.memberData.id
+    let { shop_site } = req.params
+    if (!req.memberData.id) {
+      // 如果memberData不存在，则返回错误信息
+      return res.status(400).json({ message: '找不到member id' })
+    }
+    if (isNaN(buyer_id) || buyer_id < 0) {
+      // 如果 memberId 不是一個正整數，返回錯誤響應
+      return res.status(400).json({ message: 'Invalid member_id' })
+    }
+
+    try {
+      //取得shop_site的member_id
+      const [rows] = await db.execute(
+        'SELECT `id` FROM `member` WHERE `shop_site` = ?',
+        [shop_site]
+      )
+      if (rows.length > 0) {
+        const seller_id = rows[0].id
+        const Query =
+          'INSERT INTO `fav_shop` (`buyer_id`, `seller_id`, `created_at`) VALUES (?, ?, ?)'
+        await db.execute(Query, [buyer_id, seller_id, created_at])
+        res.status(200).json({ message: '收藏成功' })
+      } else {
+        res.status(404).json({ message: '找不到對應的賣場' })
+      }
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: '伺服器錯誤' })
+    }
+  }
+)
+//取消這個賣場的收藏(toggle)
+router.delete(
+  '/:shop_site/fav_shop',
+  upload.none(),
+  authenticate,
+  async (req, res) => {
+    const buyer_id = req.memberData.id
+    let { shop_site } = req.params
+    if (!req.memberData.id) {
+      // 如果memberData不存在，则返回错误信息
+      return res.status(400).json({ message: '找不到member id' })
+    }
+    if (isNaN(buyer_id) || buyer_id < 0) {
+      // 如果 memberId 不是一個正整數，返回錯誤響應
+      return res.status(400).json({ message: 'Invalid member_id' })
+    }
+
+    try {
+      //取得shop_site的member_id
+      const [rows] = await db.execute(
+        'SELECT `id` FROM `member` WHERE `shop_site` = ?',
+        [shop_site]
+      )
+      if (rows.length > 0) {
+        const seller_id = rows[0].id
+        const Query =
+          'DELETE FROM `fav_shop` WHERE `buyer_id` = ? AND `seller_id` = ?'
+        await db.execute(Query, [buyer_id, seller_id])
+        res.status(200).json({ message: '取消收藏成功' })
+      } else {
+        res.status(404).json({ message: '找不到對應的賣場' })
+      }
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: '伺服器錯誤' })
+    }
+  }
+)
 
 //讀取此賣場評價
 router.get('/:shop_site/shop_comment', async (req, res) => {
