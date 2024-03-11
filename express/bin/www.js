@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-import app from '../app';
+import app from '../app.js'
 // 使用debug模組讀取環境變量DEBUG來決定是否輸出調試信息
 import debugLib from 'debug';
 const debug = debugLib('node-express-es6:server')

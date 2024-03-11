@@ -10,7 +10,7 @@ export default function list() {
 
   const getArticle = async () => {
     try{
-      const res = await fetch ('http://localhost:3306/api/article/list')
+      const res = await fetch ('http://localhost:3005/api/article/list')
       const data = await res.json()
       console.log(data)
 
