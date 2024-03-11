@@ -135,6 +135,7 @@ router.delete(
   upload.none(),
   authenticate,
   async (req, res) => {
+    console.log(req.memberData)
     const buyer_id = req.memberData.id
     let { shop_site } = req.params
     if (!req.memberData.id) {
@@ -220,6 +221,41 @@ router.get('/:shop_site/search', async (req, res) => {
     }
   } catch (error) {
     console.error('SQL查詢失敗：', error.message)
+    res.status(500).send({ message: 'Server error' })
+  }
+})
+
+//排序商品：價格升降冪&發行時間升降冪
+router.get('/:shop_site/products', async (req, res) => {
+  const { shop_site } = req.params
+  const { sort } = req.query // 假设 sort 可以是 'price_asc' 或 'price_desc'
+
+  try {
+    let orderByClause = ''
+    if (sort === 'price_asc') {
+      orderByClause = 'ORDER BY product.price ASC'
+    } else if (sort === 'price_desc') {
+      orderByClause = 'ORDER BY product.price DESC'
+    } else if (sort === 'release_time_asc') {
+      orderByClause = 'ORDER BY product.release_time ASC'
+    } else if (sort === 'release_time_desc') {
+      orderByClause = 'ORDER BY product.release_time DESC'
+    }
+
+    const [shopProducts] = await db.execute(
+      `
+    SELECT product.* FROM product INNER JOIN member ON product.member_id = member.id WHERE member.shop_site = ? ${orderByClause}
+    `,
+      [shop_site]
+    )
+
+    if (shopProducts.length > 0) {
+      res.json({ shopProducts })
+    } else {
+      res.status(404).send({ message: '查無此賣場商品' })
+    }
+  } catch (error) {
+    console.error('SQL查詢失敗：', error)
     res.status(500).send({ message: 'Server error' })
   }
 })

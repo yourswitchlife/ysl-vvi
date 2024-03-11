@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { useAuth } from '@/hooks/use-Auth'
+import { useAuth } from '@/hooks/use-Auth';
 //components
 import Navbar from '@/components/layout/navbar/navbar'
 import BreadCrumb from '@/components/common/breadcrumb'
@@ -36,7 +36,7 @@ import Swal from 'sweetalert2'
 
 export default function ShopPage() {
   const router = useRouter()
-  const { isLoggedIn, memberId, memberData } = useAuth()
+  const { isLoggedIn, memberId, memberData } = useAuth();
   //offcanvas的展示狀態
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
@@ -274,7 +274,7 @@ export default function ShopPage() {
   const handleSort = (SortedData) => {
     setSortProducts(SortedData)
   }
-  console.log(sortProducts)
+//   console.log(sortProducts)
 
   useEffect(()=>{
     if(router.isReady){
@@ -438,41 +438,11 @@ export default function ShopPage() {
           </div>
         </div>
         <Sortbar />
-        <div className="d-none d-md-block">
-          <Coupon />
-        </div>
-        <div className={styles.hit}>
-        <h4 className="mb-5 d-none d-md-block">焦點遊戲熱賣中</h4>
-        <h5 className="mb-4 d-block d-md-none ps-4">焦點遊戲熱賣中</h5>
-        <div className={`justify-content-md-around align-items-md-center ${styles.scroller}`}>
-        {hit.map((v) => {
-          return (
-            <div className={styles.insideScr} key={v.id}>
-            <Link href={`/products/${v.id}`} className='text-decoration-none'>
-          <ProductCard
-          id={v.id} 
-          name={v.name}
-          releaseTime={v.release_time.split('T')[0]}
-          display_price={v.display_price}
-          price={v.price}
-          img_cover={v.img_cover}
-          type={v.type_id}
-          ratingId={v.rating_id}
-          member_id={v.member_id}
-          fav={v.fav}
-          handleToggleFav={handleHitToggleFav}
-          imgDetails={v.img_details}
-          /></Link>
-          </div>
-          )
-        })}</div>
-        </div>
         <div className="d-flex d-md-none flex-column ps-4 pe-4">
-          <h5 className="fw-bold mb-2">賣場商品</h5>
+          <h5 className="fw-bold mt-3">賣場商品</h5>
           <h6 className="mb-3">共{shopTotalItems}項</h6>
         </div>
-        <h4 className="d-none d-md-block mb-4">賣場所有商品</h4>
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-between mt-4">
           <div className="d-none d-md-block">
             <SearchbarB onSearch={handleSearch}/>
           </div>

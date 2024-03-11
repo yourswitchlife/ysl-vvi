@@ -1,17 +1,28 @@
-import React, { useEffect } from 'react'
+//hooks
+import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useAuth } from '@/hooks/use-Auth'
+import Image from 'next/image'
+//components
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
+import SellerFooter from '@/components/layout/footer/footer-backstage'
+//styles
 import styles from '@/components/seller/seller.module.scss'
+//icon
 import { FaHome, FaStore, FaFileAlt, FaStar, FaCoins, FaPlus, FaAngleDown, FaFilter } from 'react-icons/fa'
 import { IoIosArrowForward } from "react-icons/io";
 import { IoGameController } from 'react-icons/io5'
-import Link from 'next/link'
-import profileImg from '@/public/images/profile-photo/peach.png'
-import Image from 'next/image'
-import SellerFooter from '@/components/layout/footer/footer-backstage'
+//images
+import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
+
+
 
 export default function Seller() {
+  const { isLoggedIn, memberId, memberData } = useAuth()
+  const [bigPic, setBigPic] = useState(profilePhoto)
+
   //body style
   useEffect(() => {
     // 當元件掛載時添加樣式
