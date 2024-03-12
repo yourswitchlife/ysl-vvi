@@ -27,7 +27,13 @@ router.get('/', authenticate, async (req, res) => {
     'SELECT * FROM `orders` WHERE `member_seller_id` = ?',
     [memberId]
   )
-  res.json({ orders, comments })
+
+  let [lackItems] = await db.execute(
+    'SELECT * FROM `product` WHERE `member_id` = ? AND `product_quanty` = 0',
+    [memberId]
+  )
+
+  res.json({ orders, comments, lackItems })
   // console.log(orders)
   // } catch (error) {
   //   console.log(error)

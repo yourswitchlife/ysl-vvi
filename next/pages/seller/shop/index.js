@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import { useAuth } from '@/hooks/use-Auth'
+import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
@@ -8,10 +10,21 @@ import Image from 'next/image'
 import SellerFooter from '@/components/layout/footer/footer-backstage'
 import Form from 'react-bootstrap/Form'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
-
+//images
+import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
+import cover from '@/public/images/shopCover/default-cover.jpg'
 
 
 export default function ShopSetting() {
+
+  const { isLoggedIn, memberId, memberData } = useAuth()
+  const [bigPic, setBigPic] = useState(profilePhoto)
+  const [shopCover, setShopCover] = useState(cover)
+   //控制賣場元件
+   const [shopName, setShopName] = useState('')
+   const [shopSite, setShopSite] = useState('')
+   const [shopInfo, setShopInfo] = useState('')
+
   //body style
   useEffect(() => {
     // 當元件掛載時添加樣式
@@ -23,10 +36,22 @@ export default function ShopSetting() {
     }
   }, [])
 
-  //控制賣場元件
-  const [shopName, setShopName] = useState('')
-  const [shopSite, setShopSite] = useState('')
-  const [shopInfo, setShopInfo] = useState('')
+  useEffect(() => {
+    if(isLoggedIn && memberData) {
+      console.log(memberData.shop_cover)
+      const picUrl = memberData.pic ? (memberData.pic.startsWith("https://") 
+        ? memberData.pic 
+        : `http://localhost:3005/profile-pic/${memberData.pic}`) 
+      : profilePhoto
+      setBigPic(picUrl)
+      const coverUrl = memberData.shop_cover ? (memberData.shop_cover.startsWith("https://") ? memberData.shop_cover : `http://localhost:3005/shopCover/${memberData.shop_cover}`) : cover
+      setShopCover(coverUrl)
+      // console.log(memberData)
+      // getSellerData()
+    }
+  }, [isLoggedIn, memberId, memberData])
+
+ 
 
   return (
     <>
@@ -35,11 +60,15 @@ export default function ShopSetting() {
         </header>
         <main className={styles.mainContainer}>
           <div className="d-none d-md-block">
-            <Sidebar />
+          {memberData && (
+          <>
+          <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
+          </>
+          )}
           </div>
           <div>
             {/* cover */}
-            <SellerCover />
+            <SellerCover shopCover={shopCover}/>
             <div className="d-flex flex-column d-lg-none container ps-4 pe-4">
               <Form>
               <Form.Group controlId="coverFile" className="mb-3">
@@ -189,4 +218,8 @@ export default function ShopSetting() {
         </footer>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  return await mainCheckToLogin(context);
 }

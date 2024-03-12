@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-Auth'
+import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import Image from 'next/image'
 //components
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
@@ -16,12 +17,38 @@ import { IoIosArrowForward } from "react-icons/io";
 import { IoGameController } from 'react-icons/io5'
 //images
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
+import cover from '@/public/images/shopCover/default-cover.jpg'
 
 
 
 export default function Seller() {
   const { isLoggedIn, memberId, memberData } = useAuth()
   const [bigPic, setBigPic] = useState(profilePhoto)
+  const [shopCover, setShopCover] = useState(cover)
+  const [orders, setOrders] = useState([])
+  const [comments, setComments] = useState([])
+  const [unpaidOrders, setUnpaidOrders] = useState(0)
+  const [undealedOrders, setUndealedOrders] = useState(0)
+  const [doneOrders, setDoneOrders] = useState(0)
+  const [zeroItems, setZeroItems] = useState(0)
+  const [shopRating, setShopRating] = useState("0.0")
+  const [commentNum, setCommentNum] = useState(0)
+  
+  useEffect(() => {
+    if(isLoggedIn && memberData) {
+      console.log(memberData.shop_cover)
+      const picUrl = memberData.pic ? (memberData.pic.startsWith("https://") 
+        ? memberData.pic 
+        : `http://localhost:3005/profile-pic/${memberData.pic}`) 
+      : profilePhoto
+      setBigPic(picUrl)
+      const coverUrl = memberData.shop_cover ? (memberData.shop_cover.startsWith("https://") ? memberData.shop_cover : `http://localhost:3005/shopCover/${memberData.shop_cover}`) : cover
+      setShopCover(coverUrl)
+      // console.log(memberData)
+      getSellerData()
+    }
+  }, [isLoggedIn, memberId, memberData])
+  
 
   //body style
   useEffect(() => {
@@ -35,7 +62,52 @@ export default function Seller() {
       // document.body.classList.remove(styles.bodySetHeight)
     }
   }, [])
+  // console.log(memberData)
 
+  const getSellerData = async() => {
+    try{
+      const res = await fetch(`http://localhost:3005/api/seller/`, { credentials: 'include'})
+      if(!res.ok){
+        throw new Error('網路請求失敗，找不到賣家資料')
+      }
+      const data = await res.json()
+      // data = { orders: [{...}], comments: [{...}]}
+      
+      // console.log(data.orders[0])
+      // console.log(data.comments[0])
+      // console.log(memberData.pic)
+      // console.log(picUrl)
+   
+      if(data && data.orders && data.comments && data.lackItems){
+        // console.log(data)
+        setOrders(data.orders[0])
+        setComments(data.comments[0])
+        //待處理訂單
+        const newUndealOrders = data.orders.filter(order => order.shipping_status === 1)
+        // console.log(newUndealOrders.length)
+        setUndealedOrders(newUndealOrders.length) 
+        //已完成訂單
+        const newDoneOrders = data.orders.filter(order => order.shipping_status === 3)
+        // console.log(newDoneOrders.length)
+        setDoneOrders(newDoneOrders.length) 
+        //已售完商品
+        const newZeroItems = data.lackItems.filter(item => item.product_quanty === 0)
+        // console.log(newZeroItems.length)
+        setZeroItems(newZeroItems.length) 
+        //取得評價平均
+        const totalRating = data.comments.reduce((acc, cur) => acc + cur.rating, 0);
+        const averageRating = (totalRating / data.comments.length).toFixed(1); // 保留一位小數
+        // console.log(averageRating)
+        setShopRating(averageRating)
+        //取得評價總數
+        setCommentNum(data.comments.length)
+      }
+      // console.log(orders)
+      // console.log(comments)
+    }catch(e){
+      console.error(e)
+    }
+  } 
   return (
     <>
     {/* <div className={styles.outsideHeight}> */}
@@ -44,93 +116,105 @@ export default function Seller() {
       </header>
       <main className={styles.mainContainer}>
         <div className="d-none d-md-block">
-          <Sidebar />
+        {memberData && (
+          <>
+          <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
+          </>
+          )}
         </div>
         <div>
           {/* cover */}
-          <SellerCover />
+          <div className={styles.coverB}>
+        <Image height={216} width={1172} src={shopCover} alt="shop-cover" className={styles.fit} />
+      </div>
           <div className="d-flex flex-column d-lg-none container ps-4 pe-4">
             <div className="d-flex justify-content-around align-items-center mt-4 mb-2">
               <div className={`${styles.profile}`}>
-                <Image src={profileImg} alt="profile-photo" className={styles.fit} />
+                <Image src={bigPic} width={55} height={55} alt="profile-photo" className={styles.fit} />
               </div>
               <div className="d-flex flex-column align-items-start justify-content-center">
-                <h5 className="mb-1">碧姬公主的玩具城堡</h5>
-                <p className="mb-1">ysl.com/princepeach8888</p>
+              {memberData && (
+                <>
+                <h6 className="mb-1 fw-bold">{memberData.shop_name}</h6>
+                <p className="mb-1">ysl.com/{memberData.shop_site}</p>
+                </>
+              )}
+                {/* <h6 className="mb-1 fw-bold">{shop_name}</h6>
+                <p className="mb-1">ysl.com/{shop_site}</p> */}
               </div>
               <div><button className='btn btn-danger'>查看賣場</button></div>
             </div>
             <hr />
           </div>
           <div className={`d-none d-md-block ${styles.dashboardMargin}`}>
-            <div className={`mb-4 ${styles.dashboardStyle}`}>
-              <div className="d-flex align-items-end mb-4">
-                <h4 className="text-dark mb-0 me-3">待辦事項清單</h4>
+            <div className={`my-3 ${styles.dashboardStyle}`}>
+              <div className="d-flex align-items-center mb-4">
+                <h5 className="text-dark  fw-bold mb-0 me-3">待辦事項清單</h5>
                 <p className="text-primary mb-0">您的待處理事項</p>
               </div>
-              <div className="d-flex justify-content-between">
+              <div className="d-flex justify-content-around">
                 <Link
-                  href="/"
+                  href="./seller/order"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
-                  <h4 className="text-danger">4</h4>
+                  <h4 className="text-danger">{unpaidOrders}</h4>
                   <h6 className="text-dark">待付款訂單</h6>
                 </Link>
                 <Link
-                  href="/"
+                  href="./seller/order"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
-                  <h4 className="text-danger">6</h4>
+                  <h4 className="text-danger">{undealedOrders}</h4>
                   <h6 className="text-dark">待處理訂單</h6>
                 </Link>
                 <Link
-                  href="/"
+                  href="./seller/order"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
-                  <h4 className="text-danger">35</h4>
+                  <h4 className="text-danger">{doneOrders}</h4>
                   <h6 className="text-dark">已完成訂單</h6>
                 </Link>
                 <Link
-                  href="/"
+                  href="./seller/product"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
-                  <h4 className="text-danger">0</h4>
+                  <h4 className="text-danger">{zeroItems}</h4>
                   <h6 className="text-dark">已售完商品</h6>
                 </Link>
-                <Link
+                {/* <Link
                   href="/"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
                   <h4 className="text-danger">1</h4>
                   <h6 className="text-dark">待取消訂單</h6>
-                </Link>
-                <Link
+                </Link> */}
+                {/* <Link
                   href="/"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
                   <h4 className="text-danger">2</h4>
                   <h6 className="text-dark">待退貨訂單</h6>
-                </Link>
+                </Link> */}
               </div>
             </div>
-            <div className={`${styles.dashboardStyle} mb-4`}>
-              <div className="d-flex align-items-end mb-4">
-                <h4 className="text-dark mb-0 me-3">賣場評價</h4>
+            <div className={`${styles.dashboardStyle} my-3`}>
+              <div className="d-flex align-items-center mb-4">
+                <h5 className="text-dark fw-bold mb-0 me-3">賣場評價</h5>
                 <p className="text-primary mb-0">賣場評價總計</p>
               </div>
               <div className="d-flex justify-content-around">
                 <Link
-                  href="/"
+                  href="./seller/comment"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
-                  <h4 className="text-danger">5.0</h4>
+                  <h4 className="text-danger">{shopRating}</h4>
                   <h6 className="text-dark">平均分數</h6>
                 </Link>
                 <Link
-                  href="/"
+                  href="./seller/comment"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
-                  <h4 className="text-danger">124</h4>
+                  <h4 className="text-danger">{commentNum}</h4>
                   <h6 className="text-dark">評論總數</h6>
                 </Link>
               </div>
@@ -145,31 +229,31 @@ export default function Seller() {
             </div>
             <div className="d-flex justify-content-around">
                 <Link
-                  href="/"
+                  href="./seller/order"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
-                  <h5 className="text-danger">6</h5>
+                  <h5 className="text-danger">{undealedOrders}</h5>
                   <p className="text-secondary">待處理訂單</p>
                 </Link>
                 <Link
-                  href="/"
+                  href="./seller/order"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
-                  <h5 className="text-danger">35</h5>
+                  <h5 className="text-danger">{doneOrders}</h5>
                   <p className="text-secondary">已完成訂單</p>
                 </Link>
                 <Link
-                  href="/"
+                  href="./seller/product"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
-                  <h5 className="text-danger">0</h5>
+                  <h5 className="text-danger">{zeroItems}</h5>
                   <p className="text-secondary">已售完商品</p>
                 </Link>
                 <Link
-                  href="/"
+                  href="./seller/comment"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
-                  <h5 className="text-danger">2</h5>
+                  <h5 className="text-danger">{commentNum}</h5>
                   <p className="text-secondary">評價</p>
                 </Link>
                 
@@ -179,7 +263,7 @@ export default function Seller() {
               <ul className={`nav nav-pills flex-column mb-auto ${styles.sidebarRWD}`}>
           <li className="nav-item">
             <Link
-              href="/seller/seller"
+              href="http://localhost:3000/seller"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
               aria-current="page"
             >
@@ -189,7 +273,7 @@ export default function Seller() {
           </li>
           <li>
             <Link
-              href="#"
+              href="http://localhost:3000/seller/shop"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <FaStore className={`${styles.navText} me-2`} />
@@ -198,7 +282,7 @@ export default function Seller() {
           </li>
           <li>
             <Link
-              href="#"
+              href="http://localhost:3000/seller/product"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <IoGameController className={`${styles.navText} me-2`} />
@@ -207,7 +291,7 @@ export default function Seller() {
           </li>
           <li>
             <Link
-              href="#"
+              href="http://localhost:3000/seller/order"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <FaFileAlt className={`${styles.navText} me-2`} />
@@ -216,20 +300,11 @@ export default function Seller() {
           </li>
           <li>
             <Link
-              href="#"
+              href="http://localhost:3000/seller/comment"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <FaStar className={`${styles.navText} me-2`} />
               <h6 className={`${styles.navText} mb-0`}>評價管理</h6>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="#"
-              className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
-            >
-              <FaCoins className={`${styles.navText} me-2`} />
-              <h6 className={`${styles.navText} mb-0`}>行銷活動</h6>
             </Link>
           </li>
         </ul>
@@ -240,4 +315,8 @@ export default function Seller() {
       {/* </div> */}
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  return await mainCheckToLogin(context);
 }
