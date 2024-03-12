@@ -68,8 +68,12 @@ export default function ShopSetting() {
           </div>
           <div>
             {/* cover */}
+            {memberData && (
+              <>
             <SellerCover shopCover={shopCover}/>
-            <div className="d-flex flex-column d-lg-none container ps-4 pe-4">
+            </>
+            )}
+            <div className="d-flex flex-column d-lg-none container py-4">
               <Form>
               <Form.Group controlId="coverFile" className="mb-3">
                   <Form.Label className="">賣場封面</Form.Label>
