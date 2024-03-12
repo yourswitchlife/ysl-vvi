@@ -76,7 +76,8 @@ export default function Index() {
       </section>
       <section class="sec3 container pt-5 pb-5">
         <h4 className="text-white mb-2">特賣焦點</h4>
-        <IndexSlider />
+        <div className='container'>
+        <IndexSlider /></div>
         {/* <div className={styles.wrap}>
           <ProductList></ProductList>
           <ProductList></ProductList>

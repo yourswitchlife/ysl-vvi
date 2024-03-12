@@ -21,6 +21,7 @@ export default function Products() {
   const { isLoggedIn, memberId } = useAuth()
   const [products, setProducts] = useState([])
   const router = useRouter()
+  const [pFilter, setPFilter] = useState('')
 
   // 頁數
   const [totalPages, setTotalPages] = useState(0)
@@ -105,6 +106,13 @@ export default function Products() {
     e.stopPropagation()
   }
 
+  const productFilter =(e)=>{
+    // setPFilter(e)
+    // console.log(pFilter)
+    // setPFilter(e)
+    console.log("MMM")
+  }
+
   return (
     <>
     <GoTopButton/>
@@ -136,7 +144,7 @@ export default function Products() {
       <div className="container pt-3 px-lg-5 px-4">
         <BreadCrumb />
         <div className="d-flex justify-content-between mb-3">
-          <TypeFilter />
+          <TypeFilter productFilter = {productFilter()}/>
           <div>
             <FaBorderAll className="text-white me-2 h5" />
             <IoReorderFour className="text-white h4 mb-0" />
@@ -160,8 +168,7 @@ export default function Products() {
                       name={p.name}
                       price={p.price}
                       display_price={p.display_price}
-                      // releaseTime={p.release_time.split('T')[0]}
-                      releaseTime={p.release_time}
+                      releaseTime={p.release_time.split('T')[0]}
                       img_cover={p.img_cover}
                       img_details={p.img_details}
                       type={p.type_id}
@@ -178,32 +185,8 @@ export default function Products() {
             })}
           </div>
         </div>
-        {/* {page >1 && <a href={`/?page=${page - 1}`}>prev</a>}
-        頁數{page} */}
-        {/* {page < totalPages && <a href={`/?page=${page + 1}`}>next</a>}
-        <nav aria-label="Page navigation example">
-            <ul className="pagination">
-              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                <a className="page-link" onClick={() => updatePage(currentPage - 1)}>Prev</a>
-              </li>
-              {[...Array(totalPages).keys()].map(number => (
-                <li key={number} className={`page-item ${currentPage === number + 1 ? 'active' : ''}`}>
-                  <a className="page-link" onClick={() => updatePage(number + 1)}>{number + 1}</a>
-                </li>
-              ))}
-              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                <a className="page-link" onClick={() => updatePage(currentPage + 1)}>Next</a>
-              </li>
-            </ul>
-          </nav>
-         */}
+    
         <PaginationFront currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
-
-        {/* <Pagination>
-            <Pagination.Prev onClick={() => currentPage > 1 && updatePage(currentPage - 1)} />
-            {items}
-            <Pagination.Next onClick={() => currentPage < totalPages && updatePage(currentPage + 1)} />
-          </Pagination> */}
 
         <div>
           <h4 className="text-white mx-3 ">猜你喜歡</h4>

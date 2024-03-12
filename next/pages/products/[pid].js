@@ -241,12 +241,13 @@ export default function ProductDetail() {
 
             <hr className="text-white border-3" />
             <div className="d-flex justify-content-between align-items-end">
-              <h5 className="text-white-50">
+            {product.display_price == null ? (''):(<h5 className="text-white-50">
                 促銷價{' '}
                 <span className="text-decoration-line-through">
                   NT$ {product.display_price}
                 </span>
-              </h5>
+              </h5>)}
+              
               <h5 className="text-white">
                 折扣價NT
                 <span className="h3 text-danger">
@@ -317,7 +318,7 @@ export default function ProductDetail() {
             <ul className="h6 text-white">
               <li>主機平台：Switch</li>
               <li>遊戲類型：{typeChange(product.type_id)}</li>
-              <li>發售日期：{product.release_time.split('T')[0]} 上市</li>
+              <li>發售日期：{product.release_time} 上市</li>
               <li>作品分級：{rs.ratingId} ⁺</li>
               <li>遊戲人數：1~2人</li>
             </ul>

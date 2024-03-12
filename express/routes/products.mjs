@@ -64,6 +64,7 @@ router.post(
   async (req, res) => {
     if (req.files) {
       console.log(req.files, req.body)
+      const memberId = req.query.memberId
       const img = req.files
       const p = req.body
       const pCover = img.pCover[0].filename
@@ -92,11 +93,13 @@ router.post(
         pImgs,
         pLanguage,
         parseInt(p.pRating),
-        p.pDiscribe
+        p.pDiscribe,
+        p.release_time,
+        memberId
         // created_at
       )
       const query =
-        'INSERT INTO `product` (name,type_id,price,img_cover,img_details,language,rating_id,description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+        'INSERT INTO `product` (name,type_id,price,img_cover,img_details,language,rating_id,description,release_time,member_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
       await db.execute(query, [
         p.pName,
         parseInt(p.pType),
@@ -106,6 +109,8 @@ router.post(
         pLanguage,
         parseInt(p.pRating),
         p.pDiscribe,
+        p.release_time,
+        memberId,
       ])
       return res.json({ msg: 'success', code: '200' })
     } else {

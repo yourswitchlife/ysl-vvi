@@ -8,10 +8,12 @@ import SellerFooter from '@/components/layout/footer/footer-backstage'
 // import Form from 'react-bootstrap/Form'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import BreadCrumb from '@/components/common/breadcrumb'
-import { useAuth } from '@/hooks/use-Auth';
+import { useAuth } from '@/hooks/use-Auth'
+import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 
 export default function New() {
   const { isLoggedIn, memberId } = useAuth()
+  // console.log(memberId)
   //body style
   useEffect(() => {
     // 當元件掛載時添加樣式
@@ -31,6 +33,7 @@ export default function New() {
     pLanguage: [],
     pPrice: '',
     pDiscribe: '',
+    release_time: '',
   })
 
   const [errorMsg, setErrorMsg] = useState('')
@@ -97,29 +100,21 @@ export default function New() {
     } else {
       const fd = new FormData(e.target)
       console.log(fd.get('pLanguage'))
-      fetch('http://localhost:3005/api/products/addNewProduct', {
-        method: 'POST',
-        body: fd,
-      })
+      fetch(
+        `http://localhost:3005/api/products/addNewProduct?memberId=${memberId}`,
+        {
+          credentials: 'include',
+          method: 'POST',
+          body: fd,
+        }
+      )
         .then((res) => res.json())
         .then(
           (data) => alert('新增成功！'),
-         
+
           setTimeout(() => {
-            setNewP({
-              pName: '',
-              pCover: '',
-              pImgs: [],
-              pType: 0,
-              pRating: '',
-              pLanguage: [],
-              pPrice: '',
-              pDiscribe: '',
-            });
-            // if (fileInputRef.current) {
-            //   fileInputRef.current.value = '';
-            // }
-          },1000)
+            clearForm()
+          }, 1000)
         )
         .catch((error) => {
           console.error('error', error)
@@ -127,6 +122,22 @@ export default function New() {
     }
   }
   console.log(newP)
+
+  const clearForm = ()=>{
+    setNewP({
+      pName: '',
+      pCover: '',
+      pImgs: [],
+      pType: 0,
+      pRating: '',
+      pLanguage: [],
+      pPrice: '',
+      pDiscribe: '',
+      release_time: '',
+    })
+    document.getElementById('pCover').value = ''
+    document.getElementById('pImgs').value = ''
+  }
   // console.log(fd)
 
   return (
@@ -275,17 +286,20 @@ export default function New() {
                   </div>
                   {/* 商品發售時間 */}
                   <div className="mb-3 col-12 d-flex justify-content-center align-items-center">
-                    <label htmlFor="pName" className="h6 me-2 flex-shrink-0">
+                    <label
+                      htmlFor="release_time"
+                      className="h6 me-2 flex-shrink-0"
+                    >
                       <h5 className="text-dark">
-                      發售時間<span className="text-danger">*</span>
+                        發售時間<span className="text-danger">*</span>
                       </h5>
                     </label>
                     <input
                       type="date"
                       className="form-control"
-                      id="pName"
-                      name="pName"
-                      value={newP.pName}
+                      id="release_time"
+                      name="release_time"
+                      value={newP.release_time}
                       // placeholder="請輸入商品名稱"
                       onChange={handleChange}
                     />
@@ -361,15 +375,19 @@ export default function New() {
                   <button type="submit" className="btn btn-danger me-2">
                     儲存並上架
                   </button>
-                  <button
+                  {/* <button
                     type="button"
                     className={`btn ${styles.btnDangerOutlined} me-2`}
                   >
                     儲存暫不上架
-                  </button>
+                  </button> */}
+                  {/* 清空表單 */}
                   <button
                     type="button"
                     className={`btn ${styles.btnGrayOutlined}`}
+                    onClick={() => {
+                      clearForm()
+                    }}
                   >
                     取消
                   </button>
@@ -388,4 +406,8 @@ export default function New() {
       </main>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  return await mainCheckToLogin(context)
 }
