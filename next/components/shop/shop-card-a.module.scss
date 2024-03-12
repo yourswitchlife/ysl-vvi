@@ -5,6 +5,11 @@
   border: 1px solid $bright-gray;
   border-radius: 10px;
   background-color: $dark-gray;
+  &:hover{
+    transition: 0.4s;
+    background-color: $danger;
+    border: 1px solid $danger;
+  }
   .shopProfile {
     overflow: hidden;
     width: 75px;
@@ -15,5 +20,6 @@
       width: 100%;
       object-fit: cover;
     }
+    
   }
 }

@@ -16,37 +16,51 @@ import GoTopButton from '@/components/go-to-top/go-top-button'
 
 export default function Index() {
   const router = useRouter()
-  const [shopInfos, setShopInfos] = useState([])
+  const [shop, setShop] = useState([])
+  const [selectedShops, setSelectedShops] = useState([null, null])
+  const [rating, setRating] = useState([])
   const [bigPic, setBigPic] = useState(profilePhoto)
   const [roundedRating, setRoundedRating] = useState(0)
-  const getShopInfo = async () => {
+
+  const getShop = async () => {
     try{
       const res = await fetch (`http://localhost:3005/api/shop/`)
       if(!res.ok){
         throw new Error('網路請求失敗，找不到賣場資料評價')
       }
       const data = await res.json()
-    //   {
-    //     "id": 1,
-    //     "rating": 5,
-    //     "shop_id": 3,
-    //     "shop_name": "碧姬公主的玩具城堡",
-    //     "pic": "peach.png"
-    // },
+      const {shopRating, shop} = data
+      // console.log(shop)
+      // {
+      //   "shopRating": [{....}],
+       //   "shop": [{....}],
       // 確保返回的數據結構正確，並更新狀態
-      if (data && data.length > 0) {
-        setShopInfos(data)
+      if (data && shop.length > 0 && shopRating.length > 0) {
+        setShop(shop)
+        setRating(shopRating)
       }
     }catch (e){
       console.error(e)
     }
   }
-  
-  useEffect(() => {
-    getShopInfo()
-  }, [])
 
-  console.log(shopInfos)
+  useEffect(() => {
+    getShop()
+  }, [])
+  useEffect(() => {
+    if(shop.length > 1){
+      let firstIndex = Math.floor(Math.random() * shop.length)
+      let secondIndex = Math.floor(Math.random() * shop.length)
+      //確保兩個索引值不同
+      while (secondIndex === firstIndex){
+        secondIndex = Math.floor(Math.random() * shop.length)
+      }
+      setSelectedShops([shop[firstIndex], shop[secondIndex]])
+    }
+  }, [shop])
+
+
+  //隨機選擇精選賣場
 
   return (
     <>
@@ -141,8 +155,8 @@ export default function Index() {
             <h4 className="text-white mb-2">好康資訊</h4>
             <h4 className="text-white mb-2">精選賣家</h4>
             <div className='d-flex justify-content-between align-items-center flex-wrap'>
-              <ShopCardA avgRating={roundedRating} />
-              <ShopCardA avgRating={roundedRating} />
+              {selectedShops[0] && <ShopCardA avgRating={roundedRating} shopInfo={selectedShops[0]} />}
+              {selectedShops[1] && <ShopCardA avgRating={roundedRating} shopInfo={selectedShops[1]} />}
             </div>
           </div>
         </div>

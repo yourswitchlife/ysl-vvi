@@ -335,21 +335,21 @@ router.delete('/product/:pid', authenticate, async (req, res) => {
 
 //賣家評價讀取 #Read
 router.get('/comment', authenticate, async (req, res) => {
+  if (!req.memberData) {
+    // 如果memberData不存在，则返回错误信息
+    return res.status(400).json({ message: '找不到member data' })
+  }
   try {
-    const memberId = req.memberData.id
-    if (!req.memberData) {
-      // 如果memberData不存在，则返回错误信息
-      return res.status(400).json({ message: '找不到member data' })
-    }
+    const shopId = req.memberData.id
     let [comments] = await db.execute(
-      'SELECT * FROM `shop_comment` WHERE `shop_id` = ?',
-      [memberId]
+      `SELECT shop_comment.*, member.account, member.pic FROM shop_comment INNER JOIN member ON shop_comment.member_id = member.id WHERE shop_comment.shop_id = ?`,
+      [shopId]
     )
-    // console.log(comments)
+    console.log(comments)
     res.json(comments)
   } catch (error) {
     console.log(error)
-    res.status(500)
+    res.status(500).json({ message: '伺服器錯誤' })
   }
 })
 //賣家評價讀取單一資料OK #Read

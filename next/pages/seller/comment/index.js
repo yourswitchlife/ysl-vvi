@@ -1,28 +1,25 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useAuth } from '@/hooks/use-Auth'
+import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+import Image from 'next/image'
+
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
+import Star from '@/components/shop/star'
 import styles from '@/components/seller/seller.module.scss'
 import {
-  FaHome,
-  FaStore,
-  FaFileAlt,
-  FaStar,
-  FaCoins,
-  FaPlus,
-  FaAngleDown,
-  FaFilter,
+FaStar,
 } from 'react-icons/fa'
-import { IoIosArrowForward } from 'react-icons/io'
-import { IoGameController } from 'react-icons/io5'
-import Link from 'next/link'
-import profileImg from '@/public/images/profile-photo/peach.png'
-import defaultHead from '@/public/images/profile-photo/default-profile-img.svg'
-import gameCover from '@/public/images/seller/product-cover/crymachina.jpg'
-import Image from 'next/image'
+
+//images
+import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
+import cover from '@/public/images/shopCover/default-cover.jpg'
+import gameCover from '@/public/images/profile-photo/default-profile-img.svg'
+
 import SellerFooter from '@/components/layout/footer/footer-backstage'
 import InputGroup from 'react-bootstrap/InputGroup'
-import { FaCalendarAlt } from 'react-icons/fa'
 import Form from 'react-bootstrap/Form'
 import Nav from 'react-bootstrap/Nav'
 import Dropdown from 'react-bootstrap/Dropdown'
@@ -45,7 +42,73 @@ export default function Comment() {
     }
   }, [])
 
-  // function handleSubmit(e) {
+  const { isLoggedIn, memberId, memberData } = useAuth()
+  const [bigPic, setBigPic] = useState(profilePhoto)
+  const [memberPic, setMemberPic] = useState(profilePhoto)
+  const [shopCover, setShopCover] = useState(cover)
+  const [comments, setComments] = useState([])
+  const [shopRating, setShopRating] = useState("0.0")
+  const [commentNum, setCommentNum] = useState(0)
+
+
+  useEffect(() => {
+    if(isLoggedIn && memberData) {
+      console.log(memberData.shop_cover)
+      const picUrl = memberData.pic ? (memberData.pic.startsWith("https://") 
+        ? memberData.pic 
+        : `http://localhost:3005/profile-pic/${memberData.pic}`) 
+      : profilePhoto
+      setBigPic(picUrl)
+      const coverUrl = memberData.shop_cover ? (memberData.shop_cover.startsWith("https://") ? memberData.shop_cover : `http://localhost:3005/shopCover/${memberData.shop_cover}`) : cover
+      setShopCover(coverUrl)
+    }
+  }, [isLoggedIn, memberId, memberData])
+
+  const getSellerData = async() => {
+    try{
+      const res = await fetch(`http://localhost:3005/api/seller/comment`, { credentials: 'include'})
+      if(!res.ok){
+        throw new Error('網路請求失敗，找不到賣家資料')
+      }
+      let data = await res.json()
+   
+      if(data && data.length > 0){
+        //格式化日期再寫進去
+        data = formatComments(data)
+        setComments(data)
+        // console.log(data)
+        //取得評價平均
+        const totalRating = data.reduce((acc, cur) => acc + cur.rating, 0);
+        const averageRating = (totalRating / data.length).toFixed(1); // 保留一位小數
+        // console.log(averageRating)
+        setShopRating(averageRating)
+        //取得評價總數
+        setCommentNum(data.length)
+      }
+    }catch(e){
+      console.error(e)
+    }
+  } 
+  useEffect(() => {
+    getSellerData()
+  }, [])
+
+  function formatComments(comments){
+    return comments.map(comment => {
+      const date = new Date(comment.created_at)
+      const formattedDate = date.getFullYear() +'-'+ String(date.getMonth() + 1).padStart(2, '0') + // 月份從0開始，所以+1
+      '-' + String(date.getDate()).padStart(2, '0') +
+      ' ' + String(date.getHours()).padStart(2, '0') +
+      ':' + String(date.getMinutes()).padStart(2, '0') +
+      ':' + String(date.getSeconds()).padStart(2, '0')
+      return {
+        ...comment,
+        created_at: formattedDate
+      };
+    })
+  }
+
+    // function handleSubmit(e) {
   //   e.prevent.default()
   // }
 
@@ -56,19 +119,27 @@ export default function Comment() {
       </header>
       <main className={styles.mainContainer}>
         <div className="d-none d-md-block">
-          <Sidebar />
+        {memberData && (
+            <>
+              <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
+            </>
+          )}
         </div>
         <div>
           {/* cover */}
-          <SellerCover />
+          {memberData && (
+              <>
+                <SellerCover shopCover={shopCover}/>
+              </>
+            )}
           <div className="d-flex flex-column d-lg-none container ps-4 pe-4">
             <div className="d-flex justify-content-around align-items-center mt-4 mb-2">
               <div className={`${styles.profile}`}>
-                <Image src={profileImg} alt="" className={styles.fit} />
+                <Image src={bigPic} width={75} height={75} alt="" className={styles.fit} />
               </div>
               <div className="d-flex flex-column align-items-start justify-content-center">
-                <h5 className="mb-1 fw-bold">碧姬公主的玩具城堡</h5>
-                <p className="mb-1">ysl.com/princepeach8888</p>
+              {memberData && <h5 className="mb-1 fw-bold">{memberData.shop_name}</h5>}
+              {memberData && <p className="mb-1">@{memberData.shop_site}</p>}
               </div>
               <div>
                 <button className="btn btn-danger btn-sm">查看賣場</button>
@@ -87,7 +158,7 @@ export default function Comment() {
                     </h6>
                   </div>
                   <h6 className="text-secondary fw-normal mb-0">
-                    <span className="text-danger fw-bold fs-4">4.5</span> / 5.0
+                    <span className="text-danger fw-bold fs-4">{shopRating}</span> / 5.0
                   </h6>
                 </div>
                 <Form.Group className="mb-3" controlId="memberName">
@@ -229,74 +300,82 @@ export default function Comment() {
                 </div>
               </div>
               {/*--------------Rating Content------------------ */}
-              <Card border="light" style={{ width: '100%' }} className="mb-3">
-                <Card.Header>
-                  <div className="d-flex align-items-center">
-                    <p className="mb-0 text-secondary me-1">會員名稱:</p>
-                    <div className={`me-1 ${styles.shapeCircle}`}>
-                      <Image
-                        src={defaultHead}
-                        alt="member-profile"
-                        width={25}
-                        height={25}
-                      />
-                    </div>
-                    <p className="mb-0 text-secondary">zhang.wt</p>
-                  </div>
-                </Card.Header>
-                <Card.Body>
-                  <Card.Title className="text-dark">
-                    <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
-                  </Card.Title>
-                  <div className="text-dark">
-                    <div className="row align-items-center">
-                      <div className="col-4 border-end d-flex justify-content-center align-items-center mt-2">
+              {comments && (
+                <>
+                {comments.map((v,i) => {
+                  return (
+                    <Card border="light" style={{ width: '100%' }} className="mb-3" key={v.id}>
+                  <Card.Header>
+                    <div className="d-flex align-items-center">
+                      <p className="mb-0 text-secondary me-1">會員名稱:</p>
+                      <div className={`me-1 ${styles.shapeCircle}`}>
                         <Image
-                          src={gameCover}
-                          alt="game-cover"
-                          width={24}
-                          height={40}
+                          src={v.pic ? (v.pic.startsWith("https://") 
+                                ? v.pic 
+                                : `http://localhost:3005/profile-pic/${v.pic}`) 
+                              : profilePhoto}
+                          alt="member-profile"
+                          width={25}
+                          height={25}
                         />
-                        <p className="mb-0 text-dark ms-2">
-                          集合啦！動物森友會
-                          <span className="text-info ms-2">x1</span>
-                        </p>
                       </div>
-                      <div className="col-6 border-end">
-                        <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar />
+                      <p className="mb-0 text-secondary">{v.account}</p>
+                    </div>
+                  </Card.Header>
+                  <Card.Body>
+                    <Card.Title className="text-dark">
+                      <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
+                    </Card.Title>
+                    <div className="text-dark">
+                      <div className="row align-items-center">
+                        <div className="col-4 border-end d-flex justify-content-center align-items-center mt-2">
+                          <Image
+                            src={gameCover}
+                            alt="game-cover"
+                            width={24}
+                            height={40}
+                          />
+                          <p className="mb-0 text-dark ms-2">
+                            集合啦！動物森友會
+                            <span className="text-info ms-2">x1</span>
+                          </p>
                         </div>
-                        <p className="mb-0 text-dark">
-                          斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
-                        </p>
-                        <small className="text-secondary">
-                          2024/02/16 22:51
-                        </small>
-                      </div>
-                      <div className="col-2 d-flex justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger"
-                        >
-                          回覆
-                        </button>
+                        <div className="col-6 border-end">
+                          <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
+                            <Star avgRating={v.rating}/>
+                          </div>
+                          <p className="mb-0 text-dark">
+                            {v.content}
+                          </p>
+                          <small className="text-secondary">
+                            {v.created_at}
+                          </small>
+                        </div>
+                        <div className="col-2 d-flex justify-content-center align-items-center">
+                          {/* 可以跳出一個MODAL來處理 */}
+                          <button
+                            type="button"
+                            href="/comment/reply"
+                            className="btn btn-danger"
+                          >
+                            回覆
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Card.Body>
-              </Card>
+                  </Card.Body>
+                    </Card>
+                  )
+                })}
+                </>
+              )}
+              
               <Card border="light" style={{ width: '100%' }} className="mb-3">
                 <Card.Header>
                   <div className="d-flex align-items-center">
                     <p className="mb-0 text-secondary me-1">會員名稱:</p>
                     <div className={`me-1 ${styles.shapeCircle}`}>
-                      <Image src={defaultHead} alt="" width={25} height={25} />
+                      <Image src={bigPic} alt="" width={25} height={25} />
                     </div>
                     <p className="mb-0 text-secondary">zhang.wt</p>
                   </div>
@@ -368,7 +447,7 @@ export default function Comment() {
                     <p className="mb-0 text-secondary me-1">會員名稱:</p>
                     <div className={`me-1 ${styles.shapeCircle}`}>
                       <Image
-                        src={defaultHead}
+                        src={bigPic}
                         alt="member-profile"
                         width={25}
                         height={25}
@@ -429,7 +508,7 @@ export default function Comment() {
                   <div className="d-flex align-items-center">
                     <p className="mb-0 text-secondary me-1">會員名稱:</p>
                     <div className={`me-1 ${styles.shapeCircle}`}>
-                      <Image src={defaultHead} alt="" width={25} height={25} />
+                      <Image src={bigPic} alt="" width={25} height={25} />
                     </div>
                     <p className="mb-0 text-secondary">zhang.wt</p>
                   </div>
@@ -495,7 +574,6 @@ export default function Comment() {
                   </div>
                 </Card.Body>
               </Card>
-
               <Pagination />
             </div>
           </div>
@@ -505,7 +583,7 @@ export default function Comment() {
                 <h6 className={`mb-0 me-3 fw-bold ${styles.subtitleFs}`}>賣場評價</h6>
               </div>
               <h6 className="fw-normal mb-0">
-                <span className="text-danger fw-bold fs-4">4.5</span> / 5.0
+                <span className="text-danger fw-bold fs-4">{shopRating}</span> / 5.0
               </h6>
             </div>
             <Form className="mb-3">
@@ -571,20 +649,27 @@ export default function Comment() {
                     1顆星
                   </Button>
                 </div>
-                <h6 className="m-2">41則評論</h6>
-                <Card border="light" style={{ width: '100%' }} className="mb-3">
+                <h6 className="m-2">{commentNum}則評論</h6>
+                {comments && (
+                <>
+                {comments.map((v,i) => {
+                  return (
+                    <Card border="light" style={{ width: '100%' }} className="mb-3" key={v.id}>
                   <Card.Header>
                     <div className="d-flex align-items-center">
                       <p className="mb-0 text-secondary me-1">會員名稱:</p>
                       <div className={`me-1 ${styles.shapeCircle}`}>
                         <Image
-                          src={defaultHead}
+                          src={v.pic ? (v.pic.startsWith("https://") 
+                                ? v.pic 
+                                : `http://localhost:3005/profile-pic/${v.pic}`) 
+                              : profilePhoto}
                           alt="member-profile"
                           width={25}
                           height={25}
                         />
                       </div>
-                      <p className="mb-0 text-secondary">zhang.wt</p>
+                      <p className="mb-0 text-secondary">{v.account}</p>
                     </div>
                   </Card.Header>
                   <Card.Body>
@@ -609,17 +694,13 @@ export default function Comment() {
                         </div>
                         <div className="col-12 py-3">
                           <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar />
+                          <Star avgRating={v.rating}/>
                           </div>
                           <p className="mb-0 text-dark">
-                            斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
+                          {v.content}
                           </p>
                           <small className="text-secondary">
-                            2024/02/16 22:51
+                          {v.created_at}
                           </small>
                         </div>
                         <div className="col-12 d-flex justify-content-center align-items-center">
@@ -635,14 +716,19 @@ export default function Comment() {
                       </div>
                     </div>
                   </Card.Body>
-                </Card>
+                    </Card>
+                  )
+                })}
+                </>
+              )}
+                
                 <Card border="light" style={{ width: '100%' }} className="mb-3">
                   <Card.Header>
                     <div className="d-flex align-items-center">
                       <p className="mb-0 text-secondary me-1">會員名稱:</p>
                       <div className={`me-1 ${styles.shapeCircle}`}>
                         <Image
-                          src={defaultHead}
+                          src={bigPic}
                           alt="member-profile"
                           width={25}
                           height={25}
@@ -720,7 +806,7 @@ export default function Comment() {
                       <p className="mb-0 text-secondary me-1">會員名稱:</p>
                       <div className={`me-1 ${styles.shapeCircle}`}>
                         <Image
-                          src={defaultHead}
+                          src={bigPic}
                           alt="member-profile"
                           width={25}
                           height={25}

@@ -262,15 +262,16 @@ router.get('/:shop_site/products', async (req, res) => {
 
 //找出所有有評價的shop和rating
 router.get('/', async (req, res) => {
-  let [shopInfo] = await db.execute(
-    `SELECT shop_comment.id, shop_comment.rating,shop_comment.shop_id, member.shop_name, member.pic FROM shop_comment 
-    INNER JOIN member ON shop_comment.shop_id = member.id
-    WHERE member.shop_valid = 1`
+  let [shopRating] = await db.execute('SELECT * FROM `shop_comment`')
+
+  let [shop] = await db.execute(
+    'SELECT `id`, `shop_name`, `shop_site`, `pic` FROM `member` WHERE `shop_valid` = 1'
   )
-  // console.log(shopOrders)
-  if (shopInfo.length > 0) {
+  console.log(shop)
+
+  if (shopRating.length > 0 && shop.length) {
     // 如果找到了所有的shop和rating
-    res.json(shopInfo) // 解析json对象
+    res.json({ shopRating, shop }) // 解析json对象
   } else {
     // 如果没有找到所有的shop和rating
     res.status(404).send({ message: '查無此賣場及評價' })

@@ -61,17 +61,17 @@ export default function ShopSetting() {
         <main className={styles.mainContainer}>
           <div className="d-none d-md-block">
           {memberData && (
-          <>
-          <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
-          </>
+            <>
+              <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
+            </>
           )}
           </div>
           <div>
             {/* cover */}
             {memberData && (
               <>
-            <SellerCover shopCover={shopCover}/>
-            </>
+                <SellerCover shopCover={shopCover}/>
+              </>
             )}
             <div className="d-flex flex-column d-lg-none container py-4">
               <Form>
