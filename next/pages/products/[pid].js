@@ -5,55 +5,32 @@ import Image from 'next/image'
 import { FaRegHeart, FaCartPlus, FaShoppingCart } from 'react-icons/fa'
 import ProductCard from '@/components/products/product-card'
 import Link from 'next/link'
-import PLanguageBig from '@/components/products/p-language-big'
-import PRatingBig from '@/components/products/p-rating-big'
 import styles from '../../styles/products/product-detail.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
 import Navbar from '@/components/layout/navbar/navbar'
 import Review from '@/components/products/review'
 import Reviewed from '@/components/products/reviewed'
 import RatingStars from '@/components/products/rating-stars'
-import PImgs from '@/components/products/p-imgs'
-import pImgDetail from '@/public/images/product/MonsterFarm-1.jpg'
+import ProductImgSlider from '@/components/products/product-img-slider'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import PHistory from '@/components/products/p-history'
-// import { Link,useParams } from 'react-router-dom'
-
 // 引入use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
+import { useAuth } from '@/hooks/use-Auth'
+import GoTopButton from '@/components/go-to-top/go-top-button'
 
 export default function ProductDetail() {
+  const { isLoggedIn, memberId } = useAuth()
   const router = useRouter()
-
-  // id: '',
-  // type_id: '',
-  // name: '',
-  // product_quanty: 0,
-  // fav: '',
-  // display_price: 0,
-  // price: 0,
-  // img_cover: '',
-  // img_1: '',
-  // img_2: '',
-  // img_3: '',
-  // release_time: '',
-  // language: [],
-  // rating_id: '3',
-  // co_op_valid: '0',
-  // description: '',
-  // member_id: '',
-  // valid: '',
-  // launch_valid: '',
-  // created_at: '',
 
   const [product, setProduct] = useState({
     id: '',
     type_id: '',
     name: '',
-    product_quanty: "0",
+    product_quanty: '0',
     fav: '',
-    display_price: "",
-    price: "",
+    display_price: '',
+    price: '',
     img_cover: '',
     img_details: [],
     release_time: '',
@@ -67,17 +44,19 @@ export default function ProductDetail() {
     created_at: '',
   })
   const [ben, setBen] = useState(false)
-
+  // const [detailImgs,setDetailImgs] = useState(product.img_details)
   // 商品數量+1
   const handleIncrement = () => {
     // 查看當前購物車的該商品數量
-    const currentQuantyInCart = cartItems.find((item) => item.id === product.id)?.quantity || 0
+    const currentQuantyInCart =
+      cartItems.find((item) => item.id === product.id)?.quantity || 0
     const newQuanty = product.quantity + 1
     if (currentQuantyInCart + newQuanty > product.product_quanty) {
       notifyMax()
     } else {
-      setProduct(prevProduct => ({
-        ...prevProduct, quantity: newQuanty
+      setProduct((prevProduct) => ({
+        ...prevProduct,
+        quantity: newQuanty,
       }))
     }
   }
@@ -102,19 +81,18 @@ export default function ProductDetail() {
     }
   }
 
-
   const { addItem, cartItems, notifyMax, notifySuccess } = useCart()
-
 
   const [historyRecords, setHistoryRecords] = useState([])
   // const [product, setProduct] = useState([])
+
   const getProduct = async (pid) => {
     try {
       const res = await fetch(`http://localhost:3005/api/products/${pid}`)
       const data = await res.json()
       // console.log(data[0])
-      console.log(data[0].img_details)
-      // console.log(data[0].img_details.split(",")[0])
+      // console.log(data[0].img_details)
+      // console.log(data[0].img_details.split(","))
 
       if (data[0].name) {
         setProduct({ ...data[0], quantity: 1, userSelect: false })
@@ -124,6 +102,64 @@ export default function ProductDetail() {
     }
   }
 
+  const typeChange = (v) => {
+    let type = ''
+    switch (Number(v)) {
+      case 1:
+        type = 'RPG - 角色扮演'
+        break
+      case 2:
+        type = 'AVG - 冒險遊戲'
+        break
+      case 3:
+        type = 'ETC - 其他類型'
+        break
+      case 4:
+        type = 'ACT - 動作遊戲'
+        break
+      case 5:
+        type = 'SLG - 策略遊戲'
+        break
+      case 6:
+        type = 'RAC - 競速遊戲'
+        break
+      case 7:
+        type = 'SPG - 體育遊戲'
+        break
+      case 8:
+        type = 'STG - 射擊遊戲'
+        break
+      case 9:
+        type = 'FTG - 格鬥遊戲'
+        break
+    }
+    return type
+  }
+  const ratingStyle = (v) => {
+    let ratingId = '',
+      bgc = ''
+    switch (Number(v)) {
+      case 1:
+        ratingId = '0'
+        bgc = '#65d432'
+        break
+      case 2:
+        ratingId = '6'
+        bgc = '#07a2f0'
+        break
+      case 3:
+        ratingId = '12'
+        bgc = '#ffca00'
+        break
+      case 4:
+        ratingId = '18'
+        bgc = '#ff0000'
+        break
+    }
+    return { ratingId, bgc }
+  }
+  const rs = ratingStyle(product.rating_id)
+
   useEffect(() => {
     if (router.isReady) {
       const { pid } = router.query
@@ -131,10 +167,9 @@ export default function ProductDetail() {
     }
   }, [router.isReady, router.query])
 
-
   // 取得瀏覽紀錄
   useEffect(() => {
-    const historyRecordArr = localStorage.getItem("readProduct")
+    const historyRecordArr = localStorage.getItem('readProduct')
     let recordArr = historyRecordArr ? JSON.parse(historyRecordArr) : []
     if (!Array.isArray(recordArr)) {
       recordArr = []
@@ -145,13 +180,16 @@ export default function ProductDetail() {
   useEffect(() => {
     console.log(historyRecords)
   }, [historyRecords])
-  // console.log(historyRecords)
+  console.log(historyRecords)
   // let imgAry = [product.img_details.split(",")[0], product.img_details.split(",")[1], product.img_details.split(",")[2]]
-  let imgsArr = [product.img_details]
-  {product.img_details == "" ? console.log("HI") : console.log(imgsArr)}
-  // console.log(product)
+
+  // console.log(product.img_details)
+  if (product.img_details != '') {
+    console.log(product.img_details.split(','))
+  }
   return (
     <>
+    <GoTopButton/>
       <Navbar />
       <PhoneTabNav />
 
@@ -163,7 +201,13 @@ export default function ProductDetail() {
         <BreadCrumb />
         <section className="p-detail-sec1 row mt-4">
           <div className="col-lg col pe-5-lg pe-2-lg">
-            <PImgs cover={product.img_cover} />
+            <div className={styles.imgSlider}>
+              <ProductImgSlider
+                img_cover={product.img_cover}
+                img_details={product.img_details}
+              />
+            </div>
+            {/* <PImgs cover={product.img_cover} /> */}
           </div>
           <div className="col-lg-6 col-12 mt-lg-0 mt-3">
             <h4 className="text-white mb-0">{product.name}</h4>
@@ -175,7 +219,11 @@ export default function ProductDetail() {
               <div className={`${styles.counter} d-flex bg-light`}>
                 <button
                   className={`btn btn-secondary ${styles.counterBtn}`}
-                  typeof="button" onClick={() => { reduce(product) }}>
+                  typeof="button"
+                  onClick={() => {
+                    reduce(product)
+                  }}
+                >
                   <b>-</b>
                 </button>
                 <div className="d-flex align-items-center">
@@ -183,7 +231,9 @@ export default function ProductDetail() {
                 </div>
                 <button
                   className={`btn btn-secondary ${styles.counterBtn}`}
-                  typeof="button" onClick={handleIncrement}>
+                  typeof="button"
+                  onClick={handleIncrement}
+                >
                   <b>+</b>
                 </button>
               </div>
@@ -191,12 +241,13 @@ export default function ProductDetail() {
 
             <hr className="text-white border-3" />
             <div className="d-flex justify-content-between align-items-end">
-              <h5 className="text-white-50">
+            {product.display_price == null ? (''):(<h5 className="text-white-50">
                 促銷價{' '}
                 <span className="text-decoration-line-through">
                   NT$ {product.display_price}
                 </span>
-              </h5>
+              </h5>)}
+              
               <h5 className="text-white">
                 折扣價NT
                 <span className="h3 text-danger">
@@ -205,25 +256,44 @@ export default function ProductDetail() {
               </h5>
             </div>
             <hr className="text-white border-3" />
-            <h5 className="text-white pb-lg-4 mb-lg-5 pb-0 mb-0 mt-4">
-              {product.description}
-            </h5>
+            <div
+              className={`${styles.textEllipsis} mb-lg-4 mb-lg-5 pb-0 mb-0 mt-4`}
+            >
+              <h5 className="text-white" style={{ textIndent: '2em' }}>
+                {product.description}
+              </h5>
+            </div>
             <div className="d-lg-flex d-none justify-content-evenly">
-              <button type="button" className="btn btn-info" onClick={() => {
-                addItem(product);
-                notifySuccess()
-              }}>
+              <button
+                type="button"
+                className="btn btn-info"
+                onClick={() => {
+                  addItem(product)
+                  notifySuccess()
+                }}
+              >
                 <FaCartPlus className="text-light pb-1" /> 加入購物車
               </button>
               <button type="button" className="btn btn-info">
                 <FaRegHeart className="text-light pb-1" /> 加入追蹤
               </button>
-              <button type="button" className="btn btn-danger" onClick={handleCheckout}>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={handleCheckout}
+              >
                 <FaShoppingCart className="text-light pb-1" /> 立即結帳
               </button>
             </div>
 
-            <div className={`row d-lg-none m-0 ${styles.btns} ${ben ? "active" : ""}`} onClick={() => { setBen(true) }}>
+            <div
+              className={`row d-lg-none m-0 ${styles.btns} ${
+                ben ? 'active' : ''
+              }`}
+              onClick={() => {
+                setBen(true)
+              }}
+            >
               <div typeof="button" className="col btn btn-info rounded-0 py-1">
                 <FaCartPlus className="text-light" /> <p>加入購物車</p>
               </div>
@@ -247,70 +317,57 @@ export default function ProductDetail() {
             <h5 className="text-white">商品特色</h5>
             <ul className="h6 text-white">
               <li>主機平台：Switch</li>
-              <li>遊戲類型：動作遊戲</li>
-              <li>發售日期：2023-11-09上市</li>
-              <li>作品分級：輔 12 級</li>
+              <li>遊戲類型：{typeChange(product.type_id)}</li>
+              <li>發售日期：{product.release_time} 上市</li>
+              <li>作品分級：{rs.ratingId} ⁺</li>
               <li>遊戲人數：1~2人</li>
             </ul>
-            <h5>商品資訊</h5>
-            <h6 className="mt-4 mb-4 text-white">
-              「角落小夥伴」是以「喜歡縮在牆角來享受安全感」
-              這樣有些害羞內向且獨具個性的角色設定及故事，而廣受來自各種族群的支持及喜愛。
-              本作品《角落小夥伴
-              大家的節奏派對》便是以這樣的人氣角色「角落小夥伴」的世界觀為舞台，藉此讓玩家們享受風格迥異的音樂跟充滿趣味的影像等要素的節奏遊戲。
-              由於本遊戲的操作採用了僅需配合音樂的節奏，按下按鍵或揮舞控制器這種簡單易懂的玩法，因此即便是小朋友或是不常玩遊戲的人，都能夠毫無壓力的享受遊戲的樂趣。
-              還替各節奏遊戲準備了「從練習起開始遊戲」的模式，即使是第一次遊玩，只要好好練習，便能夠藉由記住規則與操作方法來盡情享受遊戲。
-            </h6>
             <div className="d-flex justify-content-end">
-              <div>
-                <PLanguageBig></PLanguageBig>
-              </div>
-              <div className="ms-3 me-3">
-                <PLanguageBig></PLanguageBig>
-              </div>
-              <div>
-                <PRatingBig></PRatingBig>
+             {/* 語言/分級 */}
+               {product.language != '' ? product.language.split(',').map((v,i) => {
+                return(
+                  <div key={i} className={`me-3 ${styles.pLanguageBig}`}>
+                      <h5>
+                        <b>{v}</b>{' '}
+                      </h5>
+                    </div>
+                )
+               }):''}
+
+              <div
+                style={{
+                  width: '35px',
+                  height: '35px',
+                  borderRadius: '5px',
+                  fontSize: '24px',
+                  textAlign: 'center',
+                  fontWeight: '700',
+                  lineHeight: '35px',
+                  color: 'black',
+                  backgroundColor: rs.bgc,
+                }}
+              >
+                {rs.ratingId}⁺
               </div>
             </div>
-            { }
-            {/* {product.img_details == "" ? console.log("HI") : console.log(product.img_details)} */}
-            {/* {product.img_details == "" ? "" : product.img_details.splice(",").map((v, i) => {
-              return (
-                <div>
-                  <Image
-                    src={pImgDetail}
-                    alt="product-detail"
-                    width={670}
-                    height={400}
-                    priority={true}
-                    className="my-3 w-100 h-auto"
-                  /></div>
-              ) */}
-            {/* })} */}
-            {/* <Image
-              src={pImgDetail}
-              alt="product-detail"
-              width={670}
-              height={400}
-              priority={true}
-              className="my-3 w-100 h-auto"
-            />
-            <Image
-              src={pImgDetail}
-              alt="product-detail"
-              width={670}
-              height={400}
-              priority={true}
-              className="my-3 w-100 h-auto"
-            />
-            <Image
-              src={pImgDetail}
-              alt="product-detail"
-              width={670}
-              height={400}
-              priority={true}
-              className="my-3 w-100 h-auto"
-            /> */}
+            <h5>商品資訊</h5>
+            <h6 className="mt-4 mb-4 text-white">{product.description}</h6>
+
+            {product.img_details != ''
+              ? product.img_details.split(',').map((v, i) => {
+                  return (
+                    <Image
+                      src={`http://localhost:3005/productImg/details/${v}`}
+                      // src={`http://localhost:3005/productImg/details/${img_details}`}
+                      alt="product-detail"
+                      width={670}
+                      height={400}
+                      priority={true}
+                      className="my-3 w-100 h-auto"
+                    />
+                  )
+                })
+              : ''}
           </div>
           <div className="col px-lg-3">
             <h5 className="mb-2 text-white">關於本店</h5>
