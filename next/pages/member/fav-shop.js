@@ -77,7 +77,8 @@ export default function FavShop() {
         throw new Error('Failed to unfavorite shop', error);
       }
 
-      router.reload()
+      const updatedFavShops = favShops.filter(shop => shop.seller_id !== seller_id);
+      setFavShops(updatedFavShops);
 
     } catch (error) {
       console.error('取消收藏錯誤', error);
@@ -105,7 +106,7 @@ export default function FavShop() {
                 賣場
               </Link>
             </div>
-            <div className="container d-flex justify-content-end py-3 pe-5">
+            <div className="container d-flex justify-content-end my-4 pe-5">
               <Dropdown className="me-3">
                 <Dropdown.Toggle
                   variant="secondary"

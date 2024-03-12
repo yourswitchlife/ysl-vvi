@@ -26,6 +26,9 @@ export default function FavProduct() {
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(12);
+  // 編輯
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedProducts, setSelectedProducts] = useState([]);
 
 
   useEffect(() => {
@@ -52,6 +55,52 @@ export default function FavProduct() {
       fetchFavProducts();
     }
   }, [isLoggedIn, memberId, orderBy, page, limit]);
+
+  // 編輯模式
+  const toggleEdit = () => {
+    setIsEditing(!isEditing);
+    // 如果退出編輯模式，清空選中的產品
+    if (isEditing) {
+      setSelectedProducts([]);
+    }
+  };
+
+  const handleProductSelect = (productId) => {
+    if (selectedProducts.includes(productId)) {
+      setSelectedProducts(selectedProducts.filter(id => id !== productId));
+    } else {
+      setSelectedProducts([...selectedProducts, productId]);
+    }
+  };
+
+  const handleUnfavoriteSelected = async () => {
+    try {
+      const response = await fetch('http://localhost:3005/api/member/unfav-product', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          memberId: memberId,
+          productIds: selectedProducts, // arr
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log('unfavf success');
+        setFavProducts(favProducts.filter(product => !selectedProducts.includes(product.favProductId)));
+        toggleEdit(); 
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (error) {
+      console.error('failed to unfavf', error);
+    }
+  };
+
 
   // 排序
   const handleSortChange = (newOrderBy) => {
@@ -86,8 +135,17 @@ export default function FavProduct() {
                 <span></span>賣場
               </Link>
             </div>
-            <div className=" container d-flex justify-content-end pt-3 pe-5">
-              <Dropdown className="me-3 pb-2">
+            <div className={sStyles.tenpadding+" container d-flex justify-content-end mt-4 pe-5"}>
+              {isEditing ? (
+                <>
+                  <button onClick={handleUnfavoriteSelected} className={sStyles.statusBtn + " btn btn-danger d-flex justify-content-center align-items-center px-3 me-3"}>取消收藏</button>
+                  <button onClick={toggleEdit} className={`${sStyles.rankingBtn} ${sStyles.button_xs} btn btn-info d-flex justify-content-center align-items-center px-3 me-3`}>返回</button>
+
+                </>
+              ) : (
+                <button onClick={toggleEdit} className={sStyles.statusBtn + " btn btn-danger d-flex justify-content-center align-items-center px-3 mx-3"}>編輯</button>
+              )}
+              <Dropdown className={sStyles.noneme+" me-3 pb-2"}>
                 <Dropdown.Toggle
                   variant="secondary"
                   id="ranking"
@@ -106,28 +164,28 @@ export default function FavProduct() {
             </div>
             {/* 迴圈 */}
 
-            
-            <div className="d-flex flex-wrap justify-content-center">
-            {favProducts.map((product,index) => (
-              <div className={fpStyle.card + ' m-4 rounded-3'} key={index}>
-                <div className="d-flex justify-content-center">
-                  <Image
-                    src={`http://localhost:3005/productImg/cover/${product.img_cover}` || profileImg}
-                    alt={product.img_cover}
-                    width={150}
-                    height={244}
-                    // priority={true}
-                    className={fpStyle.cover_img+" p-2  pb-3"}
-                    layout="fixed"
-                  // fetchPriority="width"
-                  />
-                </div>
 
-                <div className="card-body p-3 pt-0">
-                  <div className="d-flex justify-content-between fs-5">
-                    <div className="pb-0 px-2  pt-1 border border-danger border-bottom-0 rounded-end-3 rounded-bottom-0">
-                      <p className="text-danger">
-                      <b>
+            <div className="d-flex flex-wrap justify-content-center">
+              {favProducts.map((product, index) => (
+                <div className={fpStyle.card + ' m-4 rounded-3'} key={index}>
+                  <div className="d-flex justify-content-center">
+                    <Image
+                      src={`http://localhost:3005/productImg/cover/${product.img_cover}` || profileImg}
+                      alt={product.img_cover}
+                      width={150}
+                      height={244}
+                      // priority={true}
+                      className={fpStyle.cover_img + " p-2  pb-3"}
+                      layout="fixed"
+                    // fetchPriority="width"
+                    />
+                  </div>
+
+                  <div className="card-body p-3 pt-0">
+                    <div className="d-flex justify-content-between fs-5">
+                      <div className="pb-0 px-2  pt-1 border border-danger border-bottom-0 rounded-end-3 rounded-bottom-0">
+                        <p className="text-danger">
+                          <b>
                             {product.type_id === 1 ? 'RPG' :
                               product.type_id === 2 ? 'AVG' :
                                 product.type_id === 3 ? 'ETC' :
@@ -139,33 +197,41 @@ export default function FavProduct() {
                                             product.type_id === 9 ? 'FTG' :
                                               null}
                           </b>
-                      </p>{' '}
+                        </p>{' '}
+                      </div>
+                      <div>
+                        {isEditing && (
+                          <input
+                            type="checkbox"
+                            checked={selectedProducts.includes(product.favProductId)}
+                            onChange={() => handleProductSelect(product.favProductId)}
+                            className="me-4"
+                            style={{transform: "scale(1.7)", marginRight: "10px" }}
+                          />
+                        )}
+                        <FaCartPlus className="text-black" />
+                      </div>
                     </div>
-                    <div>
-                      <FaRegHeart className="me-4 text-danger" />
-                      <FaCartPlus className="text-black" />
-                    </div>
-                  </div>
 
-                  <h5 className={fpStyle.cover_name+" card-text mt-2 mb-1 text-black fw-bold"}>
-                    {product.productName}
-                  </h5>
-                  <Link href={`/shop/${product.shop_site}`} className="text-info fw-bold" style={{ textDecoration: 'none' }}><FaStore className='mb-1 me-2'/>{product.shop_name}</Link>
-                  <div className={fpStyle.xs_dflex}>
-                  <h6 className={"text-secondary"}>發行日期 </h6>
-                  <h6 className={fpStyle.npadding+' ps-2 text-secondary'}>{product.release_date}</h6>
-                  </div>
-                  <div class="price d-flex justify-content-between align-items-center">
-                    <h5 className="fs-5">
-                      <b className="text-danger">${product.price}</b>
+                    <h5 className={fpStyle.cover_name + " card-text mt-2 mb-1 text-black fw-bold"}>
+                      {product.productName}
                     </h5>
-                    <h6 className="text-secondary-50 text-decoration-line-through">
-                      ${product.display_price}
-                    </h6>
-                    {/* <PRating></PRating> */}
+                    <Link href={`/shop/${product.shop_site}`} className="text-info fw-bold" style={{ textDecoration: 'none' }}><FaStore className='mb-1 me-2' />{product.shop_name}</Link>
+                    <div className={fpStyle.xs_dflex}>
+                      <h6 className={"text-secondary"}>發行日期 </h6>
+                      <h6 className={fpStyle.npadding + ' ps-2 text-secondary'}>{product.release_date}</h6>
+                    </div>
+                    <div class="price d-flex justify-content-between align-items-center">
+                      <h5 className="fs-5">
+                        <b className="text-danger">${product.price}</b>
+                      </h5>
+                      <h6 className="text-secondary-50 text-decoration-line-through">
+                        ${product.display_price}
+                      </h6>
+                      {/* <PRating></PRating> */}
+                    </div>
                   </div>
                 </div>
-              </div>
               ))}
             </div>
             {/* 迴圈 */}

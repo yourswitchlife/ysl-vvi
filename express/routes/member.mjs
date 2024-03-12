@@ -465,6 +465,7 @@ router.delete('/unfav-shop', async (req, res) => {
     res.status(500).json({ success: false, message: '取消收藏失敗' });
   }
 });
+
 // fav-product
 router.get('/fav-product', async (req, res) => {
   const buyerId = req.query.memberId;
@@ -529,6 +530,28 @@ router.get('/fav-product', async (req, res) => {
   } catch (error) {
     console.error('Error fetching favorite product list:', error);
     res.status(500).send('Internal Server Error');
+  }
+});
+
+// fav-product-cancel
+router.delete('/unfav-product', async (req, res) => {
+  const memberId = req.body.memberId;
+  const productIds = req.body.productIds; // array
+  // console.log(productIds)
+  const productHolders = productIds.map(() => '?').join(', ');
+
+  try {
+    const unfavPQuery = `DELETE FROM fav_product WHERE member_id = ? AND id IN (${productHolders})`;
+    const [unfavPResult] = await db.execute(unfavPQuery, [memberId, ...productIds]);
+
+    if (unfavPResult.affectedRows > 0) {
+      res.status(200).json({ success: true, message: '取消收藏成功' });
+    } else {
+      res.status(404).json({ success: false, message: '找不到對應收藏紀錄' });
+    }
+  } catch (error) {
+    console.error('取消收藏失敗', error);
+    res.status(500).json({ success: false, message: '取消收藏失敗' });
   }
 });
 

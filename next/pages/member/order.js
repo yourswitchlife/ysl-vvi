@@ -203,3 +203,7 @@ export default function order() {
     </>
   )
 }
+
+export async function getServerSideProps(context) {
+  return await mainCheckToLogin(context);
+}
