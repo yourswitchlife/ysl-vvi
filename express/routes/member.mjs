@@ -454,7 +454,7 @@ router.delete('/unfav-shop', async (req, res) => {
   try {
     const unfavQuery = 'DELETE FROM fav_shop WHERE buyer_id = ? AND seller_id = ?';
     const [unfavshopResult] = await db.execute(unfavQuery, [memberId, sellerId]);
-  
+
     if (unfavshopResult.affectedRows > 0) {
       res.status(200).json({ success: true, message: '取消收藏成功' });
     } else {
@@ -523,13 +523,82 @@ router.get('/fav-product', async (req, res) => {
       totalItems,
       totalPages,
     };
-    
+
     res.json(responseData);
-    // console.log(responseData);
+    console.log(responseData);
   } catch (error) {
     console.error('Error fetching favorite product list:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
+
+// order
+router.get('/order', async (req, res) => {
+  const buyerId = req.query.memberId;
+  const orderBy = req.query.orderBy || 'created_at';
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 6;
+  const offset = (page - 1) * limit;
+
+  try {
+    // 總項目
+    const [totalItemsResult] = await db.execute(
+      'SELECT COUNT(*) AS totalItems FROM orders WHERE member_buyer_id = ?',
+      [buyerId]
+    );
+    const totalItems = totalItemsResult[0].totalItems;
+
+    // 總頁數
+    const totalPages = Math.ceil(totalItems / limit);
+
+    let orderClause = '';
+    if (orderBy === 'order_date_asc') {
+      orderClause = 'ORDER BY `order_date` ASC';
+    } else if (orderBy === 'order_date') {
+      orderClause = 'ORDER BY `order_date` DESC';
+    }
+/*     GROUP_CONCAT(p.img_cover) AS product_img_covers,
+    GROUP_CONCAT(p.name) AS product_names,
+    GROUP_CONCAT(FORMAT(p.price, 0)) AS product_prices */
+    const [data] = await db.execute(`
+    SELECT 
+      o.member_seller_id,
+      o.quantity,
+      o.shipping_status,
+      DATE_FORMAT(o.order_date, '%Y-%m-%d %H:%i:%s') AS order_date,
+      m_seller.shop_name AS seller_shop_name,
+      m_seller.shop_site AS seller_shop_site,
+      CONCAT('[', GROUP_CONCAT('{"img_cover": "', p.img_cover, '", "name": "', p.name, '", "price": "', FORMAT(p.price, 0), '"}' SEPARATOR ','), ']') AS productItems
+    FROM 
+      orders o
+    JOIN 
+      member m_seller ON o.member_seller_id = m_seller.id
+    JOIN 
+      product p ON o.product_id = p.id
+    WHERE 
+      o.member_buyer_id = ?
+    GROUP BY
+      o.member_seller_id, 
+      DATE_FORMAT(o.order_date, '%Y-%m-%d %H:%i:%s')
+    ${orderClause}
+    LIMIT ?, ?
+  `, [buyerId, offset, limit]);
+
+    const responseData = {
+      items: data, //含productItems
+      totalItems,
+      totalPages,
+    };
+
+    res.json(responseData);
+    // console.log(responseData)
+
+  } catch (error) {
+    console.error('取得收藏列表出錯:', error);
+    res.status(500).send('伺服器錯誤');
+  }
+});
+
 
 export default router

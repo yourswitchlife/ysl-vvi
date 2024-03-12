@@ -72,13 +72,13 @@ export default function FavShop() {
         method: 'DELETE',
         credentials: 'include',
       });
-  
+
       if (!response.ok) {
-        throw new Error('Failed to unfavorite shop',error);
+        throw new Error('Failed to unfavorite shop', error);
       }
-  
+
       router.reload()
-  
+
     } catch (error) {
       console.error('取消收藏錯誤', error);
     }
@@ -142,7 +142,9 @@ export default function FavShop() {
                   >
                     {/* seller detail */}
                     <div className={styles.profile + ' me-5'}>
-                      <Image width={50} height={50} src={`http://localhost:3005/profile-pic/${shop.pic}` || profileImg} alt="" className={styles.fit} />
+                      <Link href={`/shop/${shop.shop_site}`} style={{ textDecoration: 'none' }} >
+                        <Image width={50} height={50} src={`http://localhost:3005/profile-pic/${shop.pic}` || profileImg} alt="" className={styles.fit} />
+                      </Link>
                     </div>
                     <div className="d-flex flex-column align-items-between justify-content-center">
                       <div className={styles.seller_xs + " d-flex align-items-center"}>
