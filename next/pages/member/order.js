@@ -14,7 +14,7 @@ import Button from 'react-bootstrap/Button'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Card from 'react-bootstrap/Card'
 import Link from 'next/link'
-import Paginage from '@/components/common/pagination'
+import Paginage from '@/components/common/pagination-front'
 import Dropdown from 'react-bootstrap/Dropdown'
 
 export default function order() {
