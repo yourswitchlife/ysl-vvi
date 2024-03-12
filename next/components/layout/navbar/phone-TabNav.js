@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { useCart } from '@/hooks/use-cart'
 
 export default function PhoneTabNav() {
-  const {totalProducts} = useCart()
+  const { totalProducts } = useCart()
   return (
     <>
       <div className={`row g-0 text-center d-lg-none ${styles.phoneNav}`}>
@@ -51,7 +51,9 @@ export default function PhoneTabNav() {
           <div className="col">
             <Link href="/cart" className={`${styles.phoneNavContent} position-relative`}>
               <FaCartShopping />
-              <span className={styles.cartBadge}>{totalProducts}</span>
+              {totalProducts > 0 && (
+                <span className={styles.cartBadge}>{totalProducts}</span>
+              )}
               <br />
               購物車
             </Link>

@@ -12,8 +12,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
-// 選擇優惠券元件
-import SelectCouponModal from '../../coupon-modal/select-coupon-modal'
+import { useRouter } from 'next/router'
 
 // 優惠券星星圖
 import couponStar from '@/public/images/cart/couponStar.svg'
@@ -124,6 +123,8 @@ export default function OrdersDetailList() {
   const payingItems = cartItems.filter((item) => item.userSelect === true)
   // console.log(payingItems)
 
+  const router = useRouter()
+
   // 處理結帳 / 下訂單按鈕的送出連接後端產生訂單
   const handleSubmit = async () => {
     if (!paymentMethod) {
@@ -143,7 +144,7 @@ export default function OrdersDetailList() {
       productDiscount,
       shippingInfos: formattedShippingInfos,
     }
-    console.log(orderData);
+    // console.log(orderData);
 
     try {
 
@@ -165,6 +166,59 @@ export default function OrdersDetailList() {
         .then((results) => {
           console.log(results)
 
+          // 依據message判斷
+          switch (results.message) {
+            case '建立訂單成功，貨到付款':
+              router.push('/cart/purchase').then(()=>{
+                // 讀取localStorage的cartItems
+              const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]')
+              // 篩選出userSelect=true的商品
+              const payingItems = cartItems.filter((item) => !item.userSelect)
+              // 將剩餘userSelect = false的商品存進cartItems中
+              localStorage.setItem('cartItems', JSON.stringify(payingItems))
+              })
+              break
+            case '建立訂單成功，LINEPAY':
+              const groupId = results.groupId
+              // 導向LINE PAY後端處理
+              fetch('http://localhost:3005/api/cart/line-pay', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({...orderData, groupId}),
+              })
+                .then(response => response.json())
+                .then(data => {
+                  console.log(data);
+                  window.location.href = data
+
+                })
+                .catch(error => {
+                  console.error('錯誤:', error)
+                })
+              break
+            case '建立訂單成功，信用卡':
+              // 導向LINE PAY後端處理
+              fetch('http://localhost:3005/api/cart/credit-card', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData),
+              })
+                .then(response => response.json())
+                .then(data => {
+                  console.log(data)
+                })
+                .catch(error => {
+                  console.error('錯誤:', error)
+                })
+              break
+              default:
+                console.log('未定義的付款方式')
+          }
+
         })
         .catch((error) => {
           console.error('伺服器連線失敗:', error);
@@ -179,7 +233,6 @@ export default function OrdersDetailList() {
 
   return (
     <>
-      <SelectCouponModal />
       <section className="container">
         <div className={styles.pcBg}>
           <div className={styles.mainTitle}>訂單詳情</div>
