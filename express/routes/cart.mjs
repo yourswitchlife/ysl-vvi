@@ -2,6 +2,11 @@ import express from 'express'
 const router = express.Router()
 import db from '../configs/db.mjs'
 import { v4 as uuidv4 } from 'uuid'
+import crypto from 'crypto'
+// 導入dotenv 使用 .env 檔案中的設定值 process.env
+import 'dotenv/config.js'
+import axios from 'axios'
+import { createLinePayClient } from 'line-pay-merchant'
 
 // 取得商品對應的賣場名稱
 router.get('/shop-names', async (req, res) => {
@@ -368,7 +373,11 @@ router.post('/create-order', async (req, res) => {
         res.json({ status: 'success', message: '建立訂單成功，貨到付款' })
       } else if (paymentMethod === 2) {
         // LINEPAY
-        res.json({ status: 'success', message: '建立訂單成功，LINEPAY' })
+        res.json({
+          status: 'success',
+          message: '建立訂單成功，LINEPAY',
+          groupId: orderGroupUuid,
+        })
       } else if (paymentMethod === 3) {
         // 信用卡(綠界)
         res.json({ status: 'success', message: '建立訂單成功，信用卡' })
@@ -381,6 +390,89 @@ router.post('/create-order', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: '資料庫連接失敗', error: error.message })
+  }
+})
+
+// LINE PAY
+router.post('/line-pay', async (req, res) => {
+  const {
+    items,
+    member_buyer_id,
+    paymentMethod,
+    shipping_method,
+    shippingDiscount,
+    productDiscount,
+    shippingInfos,
+    groupId,
+  } = req.body
+  // console.log(req.body)
+
+  // LinepayBody
+  // 計算總優惠折抵(商品折抵金額+運費折抵金額)
+  const totalDiscount = shippingDiscount + productDiscount
+  const totalOrderPrice = items.reduce((total, item) => {
+    const shippingCost = shipping_method[item.member_id] === '2' ? 100 : 60
+    return total + item.price * item.quantity + shippingCost
+  }, 0)
+  const amount = totalOrderPrice - totalDiscount
+  const productImageUrl =
+    'https://images.unsplash.com/photo-1605142806312-9ba7fa5cd0fd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  const confirmUrl = 'http://localhost:3005/cart/purchase'
+  const productName = 'YSL 二手交易平台'
+  const orderId = groupId
+  const currency = 'TWD'
+
+  try {
+    const linepayBody = {
+      amount,
+      productImageUrl,
+      confirmUrl,
+      productName,
+      orderId,
+      currency,
+    }
+    // console.log(JSON.stringify(linepayBody, null, 2))
+
+    // 製作簽章
+    const uri = '/v2/payments/request'
+    const nonce = uuidv4().toString()
+    // 使用 crypto 模組創建 HMAC SHA256 簽名並轉為 Base64
+    const channelSecret = process.env.LINE_PAY_CHANNEL_SECRET
+    const channelId = process.env.LINE_PAY_CHANNEL_ID
+    const requestBody = JSON.stringify(linepayBody)
+    const datatosign = channelSecret + uri + requestBody + nonce
+
+    const signature = crypto
+      .createHmac('sha256', channelSecret)
+      .update(datatosign)
+      .digest('base64')
+
+    console.log(signature)
+
+    // const linePayClient = createLinePayClient({
+    //   channelId: process.env.LINE_PAY_CHANNEL_ID,
+    //   channelSecretKey: process.env.LINE_PAY_CHANNEL_SECRET,
+    //   env: process.env.NODE_ENV,
+    // })
+
+    // 製作送給linepay的headers
+    const headers = {
+      'X-LINE-ChannelId': channelId,
+      'Content-Type': 'application/json',
+      'X-LINE-ChannelSecret': channelSecret,
+    }
+    // linepay api路徑
+    const url = 'https://sandbox-api-pay.line.me/v2/payments/request'
+
+    const linepayRes = await axios.post(url, linepayBody, { headers })
+    console.log(linepayRes)
+    console.log(linepayRes.data.info.paymentUrl)
+    if (linepayRes.data.returnCode === '0000') {
+      res.json(linepayRes.data.info.paymentUrl.web)
+    }
+  } catch (error) {
+    console.error('錯誤', error)
+    res.status(500).json({ status: 'failed', message: '傳送LINEPAY錯誤' })
   }
 })
 
