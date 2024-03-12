@@ -23,6 +23,11 @@ import coupon from '@/public/images/cart/coupon.svg'
 import { useCart } from '@/hooks/use-cart'
 import { useAuth } from '@/hooks/use-Auth'
 
+//使用SweetAlert2 API
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
+
 
 
 export default function OrdersDetailList() {
@@ -74,9 +79,7 @@ export default function OrdersDetailList() {
       ...method
     }))
   }
-  // useEffect(() => {
-  //   console.log(shippingMethods);
-  // }, [shippingMethods]);
+
 
 
   // 計算商品總金額
@@ -125,6 +128,14 @@ export default function OrdersDetailList() {
 
   const router = useRouter()
 
+  // 結帳完成移除購物車商品
+  const handleCheckoutSuccess = () =>{
+    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]')
+    const remainingItems = cartItems.filter(item => !item.userSelect)
+    localStorage.setItem('cartItems', JSON.stringify(remainingItems))
+  }
+
+
   // 處理結帳 / 下訂單按鈕的送出連接後端產生訂單
   const handleSubmit = async () => {
     if (!paymentMethod) {
@@ -165,18 +176,13 @@ export default function OrdersDetailList() {
         })
         .then((results) => {
           console.log(results)
+          handleCheckoutSuccess()
 
           // 依據message判斷
           switch (results.message) {
             case '建立訂單成功，貨到付款':
-              router.push('/cart/purchase').then(()=>{
-                // 讀取localStorage的cartItems
-              const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]')
-              // 篩選出userSelect=true的商品
-              const payingItems = cartItems.filter((item) => !item.userSelect)
-              // 將剩餘userSelect = false的商品存進cartItems中
-              localStorage.setItem('cartItems', JSON.stringify(payingItems))
-              })
+              const groupCashId = results.groupId
+              router.push(`/cart/purchase?orderId=${groupCashId}`)
               break
             case '建立訂單成功，LINEPAY':
               const groupId = results.groupId
@@ -186,19 +192,19 @@ export default function OrdersDetailList() {
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({...orderData, groupId}),
+                body: JSON.stringify({ ...orderData, groupId }),
               })
                 .then(response => response.json())
                 .then(data => {
                   console.log(data);
                   window.location.href = data
-
                 })
                 .catch(error => {
                   console.error('錯誤:', error)
                 })
               break
             case '建立訂單成功，信用卡':
+              const groupIdForCreditCard = results.groupId
               // 導向LINE PAY後端處理
               fetch('http://localhost:3005/api/cart/credit-card', {
                 method: 'POST',
@@ -210,13 +216,14 @@ export default function OrdersDetailList() {
                 .then(response => response.json())
                 .then(data => {
                   console.log(data)
+                  window.location.href = `/cart/purchase?orderId=${groupIdForCreditCard}`
                 })
                 .catch(error => {
                   console.error('錯誤:', error)
                 })
               break
-              default:
-                console.log('未定義的付款方式')
+            default:
+              console.log('未定義的付款方式')
           }
 
         })
@@ -229,6 +236,7 @@ export default function OrdersDetailList() {
       console.error("訂單處理錯誤", error)
     }
   }
+
 
 
   return (
