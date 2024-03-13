@@ -6,15 +6,69 @@ import { FaShopify } from 'react-icons/fa'
 
 // 引用use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
+import { method } from 'lodash'
 
-export default function OrderCheckout() {
+export default function OrderCheckout({ updateTotalShippingFee, updateShippingMethod, onShippingInfoReceived }) {
+
+  // 接收DeliveryCheckout子元件傳來的每個地址收件資訊
+  const [shippingInfos, setShippingInfos] = useState({});
+
+  // 接收DeliveryCheckout子元件傳來的每個商品的物流方式
+  const [shippingMethods, setShippingMethods] = useState({})
+
+  // 記錄單一賣場的運費
+  const [shippingFees, setShippingFees] = useState({})
+
   const { cartItems } = useCart()
 
   const [shopName, setShopName] = useState({})
 
   // 篩選出userSelect=true的商品
   const payingItems = cartItems.filter((item) => item.userSelect === true)
-  console.log(payingItems)
+  // console.log(payingItems)
+
+
+  // 計算運費總金額
+  const updateShippingFee = (member_id, fee) => {
+    setShippingFees(currentFee => ({ ...currentFee, [member_id]: fee }))
+  }
+  // useEffect(() => {
+  //   console.log(shippingFees);
+  // }, [shippingFees]);
+
+
+  useEffect(() => {
+    const totalShippingFee = Object.values(shippingFees).reduce((total, fee) => total + fee, 0)
+    console.log(totalShippingFee);
+    updateTotalShippingFee(totalShippingFee)
+  }, [shippingFees, updateTotalShippingFee])
+
+
+  // 更新物流方式
+  const handleShippingMethodChange = (member_id, method)=>{
+    setShippingMethods(currentMethods => ({
+      ...currentMethods, [member_id]:method
+    }))
+  }
+  useEffect(() => {
+    console.log(shippingMethods)
+    updateShippingMethod(shippingMethods)
+  }, [shippingMethods])
+
+
+  // 收件地址資訊
+  const handleShippingInfoUpdate = (member_id, info) => {
+    console.log("member_id:",member_id, "info:", info)
+    setShippingInfos(currentInfos => ({ ...currentInfos, [member_id]: {
+      ...currentInfos[member_id],
+      ...info} 
+    }))
+  }
+  useEffect(() => {
+    console.log(shippingInfos)
+    onShippingInfoReceived(shippingInfos)
+  }, [shippingInfos])
+
 
   // 根據商品的memberId進行訂單分組
   const orderGroup = payingItems.reduce((group, item) => {
@@ -24,7 +78,7 @@ export default function OrderCheckout() {
     return group
   }, {})
 
-  console.log(orderGroup)
+  // console.log(orderGroup)
 
   // 對應連線server端取得賣場名稱
   useEffect(() => {
@@ -67,14 +121,16 @@ export default function OrderCheckout() {
               </div>
               <div className={styles.pContainer}>
                 {/* 商品 */}
-                {items.map((item) => 
+                {items.map((item) =>
                   <ProductCheckout key={item.id} item={item} />
                 )}
               </div>
             </div>
             <div className={styles.deliveryContainer}>
               {/* 寄送資訊、收件資訊 */}
-              <DeliveryCheckout />
+
+              <DeliveryCheckout key={member_id} memberId={member_id} items={items} updateShippingFee={(fee) => updateShippingFee(member_id, fee)} updateShippingMethod = {(method)=>handleShippingMethodChange(member_id,method)} onShippingInfoUpdate={(info) => handleShippingInfoUpdate(member_id, info)} />
+
             </div>
           </div>
         )

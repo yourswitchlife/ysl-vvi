@@ -3,11 +3,37 @@ import { MdOutlineFirstPage, MdLastPage } from 'react-icons/md';
 
 // 傳入參數名稱要注意一致
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
-
-  const pageNumbers = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
+  // 沒資料時
+  if (totalPages === 0) {
+    return <div className='d-flex justify-content-center mt-5' style={{minHeight:100}}>目前暫無資料喔！快去拿點好料回來！</div>;
   }
+  // 只有一頁就不顯示了
+  if (totalPages === 1) {
+    return <div className='d-flex justify-content-center mt-5'></div>;
+  }
+
+  // 迴圈用
+  let pageNumbers = [];
+  // 第一頁前
+  if (currentPage > 2) {
+    pageNumbers.push("...");
+  }
+
+  // 中間-永遠只顯示3則頁數(含中間)
+  if (currentPage > 1) {
+    pageNumbers.push(currentPage - 1);
+  }
+  pageNumbers.push(currentPage);
+  if (currentPage < totalPages) {
+    pageNumbers.push(currentPage + 1);
+  }
+
+  // 最後一頁前
+  if (currentPage < totalPages - 1) {
+    pageNumbers.push("...");
+  }
+
+
 
   // active
   const activeStyle = {
@@ -28,7 +54,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
   return (
     <nav aria-label="Page navigation example d-flex justify-content-center">
       <ul className="pt-5 pagination d-flex justify-content-center align-items-center">
-        <li className={`pe-4 page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+        <li className={`pe-1 page-item ${currentPage === 1 ? 'disabled' : ''}`}>
           <a
             className="page-link"
             href="#"
@@ -41,7 +67,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
             <MdOutlineFirstPage />
           </a>
         </li>
-        <li className={`pe-4 page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+        <li className={`pe-1 page-item ${currentPage === 1 ? 'disabled' : ''}`}>
           <a
             className="page-link"
             href="#"
@@ -54,14 +80,16 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
             &laquo;
           </a>
         </li>
-        {pageNumbers.map(number => (
-          <li key={number} className={`pe-4 page-item ${number === currentPage ? 'active' : ''}`}>
+        {pageNumbers.map((number, index) => (
+          <li key={index} className={`pe-1 page-item ${number === currentPage ? 'active' : ''} ${number === '...' ? 'disabled' : ''}`}>
             <a
               className="page-link"
               href="#"
               onClick={(e) => {
                 e.preventDefault();
-                onPageChange(number);
+                if (typeof number === 'number') {
+                  onPageChange(number);
+                }
               }}
               style={number === currentPage ? activeStyle : linkStyle}
             >
@@ -69,7 +97,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
             </a>
           </li>
         ))}
-        <li className={`pe-4 page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+        <li className={`pe-1 page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
           <a
             className="page-link"
             href="#"

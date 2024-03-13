@@ -526,7 +526,7 @@ router.get('/fav-product', async (req, res) => {
     };
 
     res.json(responseData);
-    console.log(responseData);
+    // console.log(responseData);
   } catch (error) {
     console.error('Error fetching favorite product list:', error);
     res.status(500).send('Internal Server Error');
@@ -556,34 +556,53 @@ router.delete('/unfav-product', async (req, res) => {
 });
 
 
-// order
+// order (含篩選)
 router.get('/order', async (req, res) => {
   const buyerId = req.query.memberId;
   const orderBy = req.query.orderBy || 'created_at';
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 6;
+  const limit = parseInt(req.query.limit) || 5;
   const offset = (page - 1) * limit;
+  const selectedFilter = req.query.selectedFilter;
+
+  let statusFilter = '';
+  let queryParams = [parseInt(buyerId)]; // first buyerId
+  let totalsellerParams = [parseInt(buyerId)];
+
+  if (selectedFilter !== null && selectedFilter !== undefined && selectedFilter !== '') {
+    const parsedFilter = parseInt(selectedFilter);
+    if (!isNaN(parsedFilter)) {
+      statusFilter = 'AND o.shipping_status = ?';
+      queryParams.push(parsedFilter);
+      totalsellerParams.push(parsedFilter);
+    }
+  }
+  // and offset&limit
+  queryParams.push(offset, limit);
+
+  // console.log(selectedFilter);
+  // console.log(queryParams);
+  // console.log(totalItemsParams)
 
   try {
     // 總項目
-    const [totalItemsResult] = await db.execute(
-      'SELECT COUNT(*) AS totalItems FROM orders WHERE member_buyer_id = ?',
-      [buyerId]
+    const [totalsellerResult] = await db.execute(
+      `SELECT o.member_seller_id, COUNT(o.id) AS totalseller FROM orders o WHERE member_buyer_id = ? ${statusFilter}`,
+      totalsellerParams
     );
-    const totalItems = totalItemsResult[0].totalItems;
+    const totalseller = totalsellerResult[0].totalseller;
 
     // 總頁數
-    const totalPages = Math.ceil(totalItems / limit);
+    const totalPages = Math.ceil(totalseller / limit);
 
+    // orderby
     let orderClause = '';
     if (orderBy === 'order_date_asc') {
       orderClause = 'ORDER BY `order_date` ASC';
     } else if (orderBy === 'order_date') {
       orderClause = 'ORDER BY `order_date` DESC';
     }
-/*     GROUP_CONCAT(p.img_cover) AS product_img_covers,
-    GROUP_CONCAT(p.name) AS product_names,
-    GROUP_CONCAT(FORMAT(p.price, 0)) AS product_prices */
+
     const [data] = await db.execute(`
     SELECT 
       o.member_seller_id,
@@ -600,28 +619,32 @@ router.get('/order', async (req, res) => {
     JOIN 
       product p ON o.product_id = p.id
     WHERE 
-      o.member_buyer_id = ?
+      o.member_buyer_id = ? 
+    ${statusFilter} 
     GROUP BY
       o.member_seller_id, 
       DATE_FORMAT(o.order_date, '%Y-%m-%d %H:%i:%s')
     ${orderClause}
     LIMIT ?, ?
-  `, [buyerId, offset, limit]);
+    `, queryParams);
 
     const responseData = {
       items: data, //含productItems
-      totalItems,
+      totalseller,
       totalPages,
     };
+    console.log(offset)
 
     res.json(responseData);
-    // console.log(responseData)
+    console.log(responseData)
 
   } catch (error) {
     console.error('取得收藏列表出錯:', error);
     res.status(500).send('伺服器錯誤');
   }
 });
+
+// 
 
 
 export default router
