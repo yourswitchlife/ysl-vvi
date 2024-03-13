@@ -83,7 +83,7 @@ export default function ShopSetting() {
                 <div className="d-flex justify-content-around align-items-center mt-4 mb-2">
                 
                   <div className={`${styles.profile}`}>
-                    <Image src={bigPic} alt="profile-photo" className={styles.fit} />
+                    <Image src={bigPic} alt="profile-photo" width={75} height={75} className={styles.fit} />
                   </div>
                   <div className="d-flex flex-column align-items-start justify-content-center">
                   <Form.Group className="mb-3" controlId="shop-name">

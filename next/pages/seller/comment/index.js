@@ -138,7 +138,7 @@ export default function Comment() {
           <div className="d-flex flex-column d-lg-none container ps-4 pe-4">
             <div className="d-flex justify-content-around align-items-center mt-4 mb-2">
               <div className={`${styles.profile}`}>
-                <Image src={bigPic} width={75} height={75} alt="profile-photo" className={styles.fit} />
+              {memberData && <Image src={bigPic} width={75} height={75} alt="profile-photo" className={styles.fit} />}
               </div>
               <div className="d-flex flex-column align-items-start justify-content-center">
               {memberData && <h5 className="mb-1 fw-bold">{memberData.shop_name}</h5>}
