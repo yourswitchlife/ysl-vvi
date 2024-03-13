@@ -32,7 +32,19 @@ const MySwal = withReactContent(Swal)
 
 export default function OrdersDetailList() {
   const { cartItems } = useCart()
-  const { memberData } = useAuth();
+  const { memberData } = useAuth()
+
+  // 存放所有優惠券id
+  const [coupons, setCoupons] = useState([])
+
+  // 商品coupon_id暫存區
+  const [tempSelectedProductCoupon, setTempSelectedProductCoupon] = useState(null)
+  // 運費coupon_id暫存區
+  const [tempSelectedShippingCoupon, setTempSelectedShippingCoupon] = useState(null)
+  // 商品coupon_id存放區
+  const [selectedProductCoupon, setSelectedProductCoupon] = useState(null)
+  // 運費coupon_id存放區
+  const [selectedShippingCoupon, setSelectedShippingCoupon] = useState(null)
 
   // 免運優惠券折抵金額
   const [shippingDiscount, setShippingDiscount] = useState(0)
@@ -80,8 +92,6 @@ export default function OrdersDetailList() {
     }))
   }
 
-
-
   // 計算商品總金額
   const getTotalPrice = () => {
     const filterItems = cartItems.filter((item) => item.userSelect === true)
@@ -122,14 +132,92 @@ export default function OrdersDetailList() {
     }))
   }
 
+  // 從後端取得用戶可使用的優惠券列表
+  useEffect(() => {
+    if (memberData && memberData.id) {
+      fetch(`http://localhost:3005/api/cart/get-coupons?memberId=${memberData.id}`)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          setCoupons(data)
+        })
+        .catch(error => console.error('取得會員優惠券失敗', error))
+    }
+
+  }, [memberData])
+
+  // 檢查優惠券列表有沒有運費抵用券
+  const hasFreeShippingCoupon = coupons.some(coupon => coupon.id === 43)
+
+  // 紀錄用戶暫存的優惠券
+  const handleTempSelectProductCoupon = (coupon) => {
+    setTempSelectedProductCoupon(coupon)
+  }
+  const handleTempSelectShippingCoupon = (coupon) => {
+    setTempSelectedShippingCoupon(coupon)
+  }
+
+  // 確認選擇優惠券
+  const handleConfirmSelection = () => {
+    setSelectedProductCoupon(tempSelectedProductCoupon)
+    setSelectedShippingCoupon(tempSelectedShippingCoupon)
+    if (tempSelectedProductCoupon) {
+      const productCoupon = coupons.find(coupon => coupon.id === tempSelectedProductCoupon);
+      if (productCoupon) {
+        handleSelectProductCoupon(productCoupon);
+      }
+    }
+
+    if (tempSelectedShippingCoupon) {
+      const shippingCoupon = coupons.find(coupon => coupon.id === tempSelectedShippingCoupon);
+      if (shippingCoupon) {
+        handleSelectShippingCoupon(shippingCoupon);
+      }
+    }
+    handleCloseDesktopModal()
+    handleCloseMobileModal()
+  }
+
+  useEffect(() => {
+    const selectedCoupon = coupons.find(coupon => coupon.id === selectedShippingCoupon);
+    if (selectedCoupon) {
+      setShippingDiscount(totalShippingFee)
+    }
+  }, [totalShippingFee, selectedShippingCoupon, coupons])
+
+  // 計算商品折扣金額
+  const handleSelectProductCoupon = (coupon) => {
+    const productDiscountPrice = coupon.discount_type === 'amount' ? coupon.discount_value : totalPrice - (Math.round(totalPrice * (coupon.discount_value / 10)))
+    setProductDiscount(productDiscountPrice)
+  }
+
+  // 計算運費折扣金額
+  const handleSelectShippingCoupon = (coupon) => {
+    setShippingDiscount(totalShippingFee)
+  }
+
+  // 格式化優惠券到期日期
+  const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    const year = date.getFullYear()
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const day = date.getDate().toString().padStart(2, '0')
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+    const seconds = date.getSeconds().toString().padStart(2, '0')
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+  }
+
+
   // 篩選出userSelect=true的商品
   const payingItems = cartItems.filter((item) => item.userSelect === true)
-  // console.log(payingItems)
-
   const router = useRouter()
 
+  // 檢查所有進入付款詳情的訂單是不是都選擇配送方式
+  const allShippingMethodsSelected = Object.keys(shippingMethods).length === payingItems.length
+
   // 結帳完成移除購物車商品
-  const handleCheckoutSuccess = () =>{
+  const handleCheckoutSuccess = () => {
     const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]')
     const remainingItems = cartItems.filter(item => !item.userSelect)
     localStorage.setItem('cartItems', JSON.stringify(remainingItems))
@@ -154,6 +242,8 @@ export default function OrdersDetailList() {
       shippingDiscount,
       productDiscount,
       shippingInfos: formattedShippingInfos,
+      selectedProductCoupon,
+      selectedShippingCoupon,
     }
     // console.log(orderData);
 
@@ -277,10 +367,10 @@ export default function OrdersDetailList() {
           <div className="border-bottom border-3 border-light py-2">
             <div className={styles.useDiscountBar}>
               <div className={styles.mainText} onClick={handleShowDesktopModal}>
-                選擇使用優惠券
+                選擇使用優惠券 <FaAngleRight />
               </div>
-              <Modal show={showDesktopModal} onClick={handleCloseDesktopModal}>
-                <Modal.Header closeButton>
+              <Modal show={showDesktopModal} backdrop="static" keyboard={false}>
+                <Modal.Header>
                   <Modal.Title className={styles.couponHeader}>選擇優惠券</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -290,34 +380,53 @@ export default function OrdersDetailList() {
                       <FaCircleInfo className={styles.icon} />
                     </div>
                     <div className={styles.couponBody}>
-                      {/* 單一商品優惠券 */}
-                      <div className={styles.coupon}>
-                        {/* 勾選框框 */}
-                        <div className={styles.radioBar}>
-                          <input
-                            className={`form-check-input ${styles.radioBox}`}
-                            type="radio"
-                            name="p-coupon"
-                            value=""
-                          />
-                        </div>
-                        {/* 優惠券icon圖 */}
-                        <div className={styles.iconFrame}>
-                          <div className={styles.iconCircle}>
-                            <FaGamepad className={styles.icon} />
-                            <div className={styles.text}>遊戲優惠</div>
+                      {coupons.filter(coupon => coupon.id !== 43).map(coupon => {
+                        {/* 判斷優惠券是否達到使用條件門檻 */ }
+                        const isReach = totalPrice >= coupon.price_rule
+                        return (
+                          <div className={`${styles.coupon} ${isReach ? '' : styles.disabledCoupon}`} key={coupon.id}>
+                            {/* 勾選框框 */}
+                            <div className={styles.radioBar}>
+                              <input
+                                className={`form-check-input ${styles.radioBox}`}
+                                type="radio"
+                                name="p-coupon"
+                                value={coupon.id}
+                                checked={tempSelectedProductCoupon === coupon.id}
+                                onChange={() => handleTempSelectProductCoupon(coupon.id)}
+                                disabled={!isReach}
+                              />
+                            </div>
+                            {/* 優惠券icon圖 */}
+                            <div className={styles.iconFrame}>
+                              <div className={styles.iconCircle}>
+                                <FaGamepad className={styles.icon} />
+                                <div className={styles.text}>遊戲優惠</div>
+                              </div>
+                            </div>
+                            {/* 商品優惠券詳細資訊 */}
+                            <div className={styles.couponInfoFrame}>
+                              {coupon.discount_value > 9 ? (
+                                <><div className={styles.mainText}>折抵 ${coupon.discount_value} </div></>
+                              ) : (
+                                <>
+                                  <div className={styles.mainText}>折抵 {coupon.discount_value}折 </div>
+                                </>
+                              )}
+
+                              <div className={styles.mainText}>
+                                適用於全站 ，消費滿 ${coupon.price_rule}
+                              </div>
+                              <div className={styles.sub}>優惠券將於 {formatDate(coupon.expiration_date)} 到期</div>
+                              {/* 如果都沒有達到優惠券門檻 */}
+                              {!isReach && (
+                                <div className={styles.disabledAlert}>未達優惠券使用條件</div>
+                              )}
+                              <div className={styles.rule}>使用規則</div>
+                            </div>
                           </div>
-                        </div>
-                        {/* 優惠券詳細資訊 */}
-                        <div className={styles.couponInfoFrame}>
-                          <div className={styles.mainText}>折抵 $100 </div>
-                          <div className={styles.mainText}>
-                            適用於全站 - RPG遊戲，消費滿 $1000
-                          </div>
-                          <div className={styles.sub}>優惠券將於 2024.03.30(六) 到期</div>
-                          <div className={styles.rule}>使用規則</div>
-                        </div>
-                      </div>
+                        )
+                      })}
                     </div>
                   </div>
                   <div className={styles.deliveryFrame}>
@@ -326,32 +435,45 @@ export default function OrdersDetailList() {
                       <FaCircleInfo className={styles.icon} />
                     </div>
                     <div className={styles.couponBody}>
-                      {/* 單一運費優惠券 */}
-                      <div className={styles.coupon}>
-                        {/* 勾選框框 */}
-                        <div className={styles.radioBar}>
-                          <input
-                            className={`form-check-input ${styles.radioBox}`}
-                            type="radio"
-                            name="d-coupon"
-                            value=""
-                          />
-                        </div>
-                        {/* 優惠券icon圖 */}
-                        <div className={styles.iconFrame}>
-                          <div className={styles.iconCircle}>
-                            <FaShippingFast className={styles.icon} />
-                            <div className={styles.text}>運費優惠</div>
-                          </div>
-                        </div>
-                        {/* 優惠券詳細資訊 */}
-                        <div className={styles.couponInfoFrame}>
-                          <div className={styles.mainText}>訂單免運折抵</div>
-                          <div className={styles.mainText}>適用於全站</div>
-                          <div className={styles.sub}>優惠券將於 2024.03.30(六) 到期</div>
-                          <div className={styles.rule}>使用規則</div>
-                        </div>
-                      </div>
+                      {!allShippingMethodsSelected ? (
+                        // 如果用戶沒有為所有訂單選擇配送方式
+                        <div>請先選擇所有訂單的配送方式</div>
+                      ) : !hasFreeShippingCoupon ? (
+                        <div>目前沒有運費抵用券可使用</div>
+                      ) : (
+                        <>
+                          {coupons.filter(coupon => coupon.id === 43).map(coupon => (
+                            <div className={styles.coupon} key={coupon.id}>
+                              {/* 勾選框框 */}
+                              <div className={styles.radioBar}>
+                                <input
+                                  className={`form-check-input ${styles.radioBox}`}
+                                  type="radio"
+                                  name="d-coupon"
+                                  value={coupon.id}
+                                  checked={tempSelectedShippingCoupon === coupon.id}
+                                  onChange={() => handleTempSelectShippingCoupon(coupon.id)}
+                                  disabled={!allShippingMethodsSelected}
+                                />
+                              </div>
+                              {/* 優惠券icon圖 */}
+                              <div className={styles.iconFrame}>
+                                <div className={styles.iconCircle}>
+                                  <FaShippingFast className={styles.icon} />
+                                  <div className={styles.text}>運費優惠</div>
+                                </div>
+                              </div>
+                              {/* 優惠券詳細資訊  */}
+                              <div className={styles.couponInfoFrame}>
+                                <div className={styles.mainText}>訂單免運折抵</div>
+                                <div className={styles.mainText}>適用於全站</div>
+                                <div className={styles.sub}>優惠券將於 {formatDate(coupon.expiration_date)} 到期</div>
+                                <div className={styles.rule}>使用規則</div>
+                              </div>
+                            </div>
+                          ))}
+                        </>
+                      )}
                     </div>
                   </div>
                 </Modal.Body>
@@ -359,15 +481,46 @@ export default function OrdersDetailList() {
                   <Button variant="secondary" onClick={handleCloseDesktopModal}>
                     取消
                   </Button>
-                  <Button variant="danger" onClick={handleCloseDesktopModal}>
+                  <Button variant="danger" onClick={handleConfirmSelection}>
                     完成
                   </Button>
                 </Modal.Footer>
               </Modal>
-              <div className={styles.divider}></div>
+              {/* <div className={styles.divider}></div> */}
               <div className={styles.discountListBtn}>
-                <span className={styles.text}>顯示完整折扣細節</span>
-                <FaAngleRight className={styles.icon} />
+                <div className={styles.couponInfo}>
+                  <div className={styles.mainTitle}>完整折扣細節</div>
+                  <div className={styles.line}></div>
+                  <div>
+                    {/* 顯示商品折抵細節 */}
+                    {selectedProductCoupon && (
+                      <div className={styles.item}>
+                        <Image src={couponStar} className={styles.icon} />
+                        {coupons.filter(coupon => coupon.id === selectedProductCoupon).map((coupon) => (
+                          <div key={coupon.id}>
+                            {coupon.name} 全站消費滿${coupon.price_rule} 折抵${coupon.discount_value} (每人限用一次)
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {/* 顯示運費折抵細節 */}
+                    {selectedShippingCoupon && (
+                      <div className={styles.item}>
+                        <Image src={couponStar} className={styles.icon} />
+                        {coupons.filter(coupon => coupon.id === selectedShippingCoupon).map((coupon) => (
+                          <div key={coupon.id}>
+                            運費免運全額折抵，全站適用
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {/* 如果没有選擇任何優惠券 */}
+                    {!selectedProductCoupon && !selectedShippingCoupon && (
+                      <div className={styles.noCouponUsed}>未使用任何優惠券</div>
+                    )}
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -417,8 +570,8 @@ export default function OrdersDetailList() {
                 </div>
                 <FaAngleRight className='text-white' />
               </div>
-              <Modal show={showMobileModal} onClick={handleCloseMobileModal}>
-                <Modal.Header closeButton>
+              <Modal show={showMobileModal} backdrop="static" keyboard={false}>
+                <Modal.Header>
                   <Modal.Title className={styles.couponHeader}>選擇優惠券</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -428,34 +581,53 @@ export default function OrdersDetailList() {
                       <FaCircleInfo className={styles.icon} />
                     </div>
                     <div className={styles.couponBody}>
-                      {/* 單一商品優惠券 */}
-                      <div className={styles.coupon}>
-                        {/* 勾選框框 */}
-                        <div className={styles.radioBar}>
-                          <input
-                            className={`form-check-input ${styles.radioBox}`}
-                            type="radio"
-                            name="p-coupon"
-                            value=""
-                          />
-                        </div>
-                        {/* 優惠券icon圖 */}
-                        <div className={styles.iconFrame}>
-                          <div className={styles.iconCircle}>
-                            <FaGamepad className={styles.icon} />
-                            <div className={styles.text}>遊戲優惠</div>
+                      {coupons.filter(coupon => coupon.id !== 43).map(coupon => {
+                        {/* 判斷優惠券是否達到使用條件門檻 */ }
+                        const isReach = totalPrice >= coupon.price_rule
+                        return (
+                          <div className={`${styles.coupon} ${isReach ? '' : styles.disabledCoupon}`} key={coupon.id}>
+                            {/* 勾選框框 */}
+                            <div className={styles.radioBar}>
+                              <input
+                                className={`form-check-input ${styles.radioBox}`}
+                                type="radio"
+                                name="p-coupon"
+                                value={coupon.id}
+                                checked={tempSelectedProductCoupon === coupon.id}
+                                onChange={() => handleTempSelectProductCoupon(coupon.id)}
+                                disabled={!isReach}
+                              />
+                            </div>
+                            {/* 優惠券icon圖 */}
+                            <div className={styles.iconFrame}>
+                              <div className={styles.iconCircle}>
+                                <FaGamepad className={styles.icon} />
+                                <div className={styles.text}>遊戲優惠</div>
+                              </div>
+                            </div>
+                            {/* 商品優惠券詳細資訊 */}
+                            <div className={styles.couponInfoFrame}>
+                              {coupon.discount_value > 9 ? (
+                                <><div className={styles.mainText}>折抵 ${coupon.discount_value} </div></>
+                              ) : (
+                                <>
+                                  <div className={styles.mainText}>折抵 {coupon.discount_value}折 </div>
+                                </>
+                              )}
+
+                              <div className={styles.mainText}>
+                                適用於全站 ，消費滿 ${coupon.price_rule}
+                              </div>
+                              <div className={styles.sub}>優惠券將於 {formatDate(coupon.expiration_date)} 到期</div>
+                              {/* 如果都沒有達到優惠券門檻 */}
+                              {!isReach && (
+                                <div className={styles.disabledAlert}>未達優惠券使用條件</div>
+                              )}
+                              <div className={styles.rule}>使用規則</div>
+                            </div>
                           </div>
-                        </div>
-                        {/* 優惠券詳細資訊 */}
-                        <div className={styles.couponInfoFrame}>
-                          <div className={styles.mainText}>折抵 $100 </div>
-                          <div className={styles.mainText}>
-                            適用於全站 - RPG遊戲，消費滿 $1000
-                          </div>
-                          <div className={styles.sub}>優惠券將於 2024.03.30(六) 到期</div>
-                          <div className={styles.rule}>使用規則</div>
-                        </div>
-                      </div>
+                        )
+                      })}
                     </div>
                   </div>
                   <div className={styles.deliveryFrame}>
@@ -464,32 +636,45 @@ export default function OrdersDetailList() {
                       <FaCircleInfo className={styles.icon} />
                     </div>
                     <div className={styles.couponBody}>
-                      {/* 單一運費優惠券 */}
-                      <div className={styles.coupon}>
-                        {/* 勾選框框 */}
-                        <div className={styles.radioBar}>
-                          <input
-                            className={`form-check-input ${styles.radioBox}`}
-                            type="radio"
-                            name="d-coupon"
-                            value=""
-                          />
-                        </div>
-                        {/* 優惠券icon圖 */}
-                        <div className={styles.iconFrame}>
-                          <div className={styles.iconCircle}>
-                            <FaShippingFast className={styles.icon} />
-                            <div className={styles.text}>運費優惠</div>
-                          </div>
-                        </div>
-                        {/* 優惠券詳細資訊 */}
-                        <div className={styles.couponInfoFrame}>
-                          <div className={styles.mainText}>訂單免運折抵</div>
-                          <div className={styles.mainText}>適用於全站</div>
-                          <div className={styles.sub}>優惠券將於 2024.03.30(六) 到期</div>
-                          <div className={styles.rule}>使用規則</div>
-                        </div>
-                      </div>
+                      {!allShippingMethodsSelected ? (
+                        // 如果用戶沒有為所有訂單選擇配送方式
+                        <div>請先選擇所有訂單的配送方式</div>
+                      ) : !hasFreeShippingCoupon ? (
+                        <div>目前沒有運費抵用券可使用</div>
+                      ) : (
+                        <>
+                          {coupons.filter(coupon => coupon.id === 43).map(coupon => (
+                            <div className={styles.coupon} key={coupon.id}>
+                              {/* 勾選框框 */}
+                              <div className={styles.radioBar}>
+                                <input
+                                  className={`form-check-input ${styles.radioBox}`}
+                                  type="radio"
+                                  name="d-coupon"
+                                  value={coupon.id}
+                                  checked={tempSelectedShippingCoupon === coupon.id}
+                                  onChange={() => handleTempSelectShippingCoupon(coupon.id)}
+                                  disabled={!allShippingMethodsSelected}
+                                />
+                              </div>
+                              {/* 優惠券icon圖 */}
+                              <div className={styles.iconFrame}>
+                                <div className={styles.iconCircle}>
+                                  <FaShippingFast className={styles.icon} />
+                                  <div className={styles.text}>運費優惠</div>
+                                </div>
+                              </div>
+                              {/* 優惠券詳細資訊  */}
+                              <div className={styles.couponInfoFrame}>
+                                <div className={styles.mainText}>訂單免運折抵</div>
+                                <div className={styles.mainText}>適用於全站</div>
+                                <div className={styles.sub}>優惠券將於 {formatDate(coupon.expiration_date)} 到期</div>
+                                <div className={styles.rule}>使用規則</div>
+                              </div>
+                            </div>
+                          ))}
+                        </>
+                      )}
                     </div>
                   </div>
                 </Modal.Body>
@@ -497,14 +682,14 @@ export default function OrdersDetailList() {
                   <Button variant="secondary" onClick={handleCloseMobileModal}>
                     取消
                   </Button>
-                  <Button variant="danger" onClick={handleCloseMobileModal}>
+                  <Button variant="danger" onClick={handleConfirmSelection}>
                     完成
                   </Button>
                 </Modal.Footer>
               </Modal>
             </div>
             {/* 顯示完整優惠折抵區塊 */}
-            <div className={styles.paymentItem}>
+            {/* <div className={styles.paymentItem}>
               <div className={styles.title}>
                 <Image src={coupon} />
                 <div className={`text-body-secondary ${styles.subtext}`}>
@@ -514,22 +699,38 @@ export default function OrdersDetailList() {
               <div className={`text-body-secondary ${styles.subtext}`}>
                 顯示完整折扣細節
               </div>
-            </div>
+            </div> */}
             {/*完整優惠折抵細節  */}
             <div className={styles.couponInfo}>
               <div className={styles.mainTitle}>完整折扣細節</div>
               <div className={styles.line}></div>
-              <div className={styles.title}>按折抵順序顯示</div>
-              <div className={styles.item}>
-                <Image src={couponStar} className={styles.icon} />
-                <div>RPG遊戲優惠券 全站消費滿$1000 折抵$100 (每人限用一次)</div>
-              </div>
-              <div className={styles.item}>
-                <Image src={couponStar} className={styles.icon} />
-                <div>RPG遊戲優惠券 全站消費滿$1000 折抵$100 (每人限用一次)</div>
-              </div>
-              <div className="d-flex justify-content-end">
-                <button className="btn btn-dark btn-sm">確認</button>
+              <div>
+                {/* 顯示商品折抵細節 */}
+                {selectedProductCoupon && (
+                      <div className={styles.item}>
+                        <Image src={couponStar} className={styles.icon} />
+                        {coupons.filter(coupon => coupon.id === selectedProductCoupon).map((coupon) => (
+                          <div key={coupon.id}>
+                            {coupon.name} 全站消費滿${coupon.price_rule} 折抵${coupon.discount_value} (每人限用一次)
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {/* 顯示運費折抵細節 */}
+                    {selectedShippingCoupon && (
+                      <div className={styles.item}>
+                        <Image src={couponStar} className={styles.icon} />
+                        {coupons.filter(coupon => coupon.id === selectedShippingCoupon).map((coupon) => (
+                          <div key={coupon.id}>
+                            運費免運全額折抵，全站適用
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {/* 如果没有選擇任何優惠券 */}
+                    {!selectedProductCoupon && !selectedShippingCoupon && (
+                      <div className={styles.noCouponUsed}>未使用任何優惠券</div>
+                    )}
               </div>
             </div>
             {/* 手機版付款方式 */}
@@ -615,10 +816,10 @@ export default function OrdersDetailList() {
               <div className={styles.totalPrice}>
                 總付款金額{' '}
                 <span className="text-danger">
-                  <b>${totalPrice + totalShippingFee}</b>
+                  <b>${totalPrice + totalShippingFee - (shippingDiscount + productDiscount)}</b>
                 </span>
               </div>
-              <div className={styles.subInfo}>總額${totalPrice + totalShippingFee} 折抵$0</div>
+              <div className={styles.subInfo}>總額${totalPrice + totalShippingFee} 折抵${productDiscount + shippingDiscount}</div>
             </div>
             <button
               className={`btn btn-danger rounded-0 ${styles.checkoutBtn}`} onClick={handleSubmit}
