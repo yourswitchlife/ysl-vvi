@@ -14,6 +14,8 @@ import Footer from '@/components/layout/footer/footer-front'
 import SortDropdown from '@/components/common/sortDropdown'
 import TypeFilter from '@/components/shop/type-filter'
 import Star from '@/components/shop/star'
+import GoTopButton from '@/components/go-to-top/go-top-button'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 //images
 import cover from '@/public/images/shopCover/default-cover.jpg'
 import Image from 'next/image'
@@ -274,7 +276,7 @@ export default function ShopPage() {
   const handleSort = (SortedData) => {
     setSortProducts(SortedData)
   }
-  console.log(sortProducts)
+  // console.log(sortProducts)
 
   useEffect(()=>{
     if(router.isReady){
@@ -289,11 +291,17 @@ export default function ShopPage() {
     }
   },[router.isReady, isLoggedIn])
 
+  const cardIcon = (e) => {
+    e.persist()
+    e.nativeEvent.stopImmediatePropagation()
+    e.stopPropagation()
+  }
+
   return (
     <>
+      <GoTopButton />
       {/* navbar */}
       <Navbar />
-      {/* <CartNavbar /> */}
       {/* cover */}
       <div className={styles.cover}>
         <Image height={330} width={1440} src={shopCover} alt="shop-cover" className={styles.fit} />
@@ -448,8 +456,13 @@ export default function ShopPage() {
         {hit.map((v) => {
           return (
             <div className={styles.insideScr} key={v.id}>
-            <Link href={`/products/${v.id}`} className='text-decoration-none'>
+            <div
+            onClick={() => {
+              router.push(`/products/${v.id}`)
+            }}>
+            
           <ProductCard
+          className="p-5"
           id={v.id} 
           name={v.name}
           releaseTime={v.release_time.split('T')[0]}
@@ -461,8 +474,9 @@ export default function ShopPage() {
           member_id={v.member_id}
           fav={v.fav}
           handleToggleFav={handleHitToggleFav}
-          imgDetails={v.img_details}
-          /></Link>
+          img_details={v.img_details}
+          cardIcon={cardIcon}
+          /></div>
           </div>
           )
         })}</div>
@@ -493,7 +507,11 @@ export default function ShopPage() {
         {searchResults.map((p) => {
           return (
             <div key={p.id} className='col-6 col-md-2 mb-3'>
-            <Link href={`/products/${p.id}`} className='text-decoration-none'>
+            <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+                  >
               <ProductCard className="p-5" 
               id={p.id}
               name={p.name} 
@@ -506,8 +524,9 @@ export default function ShopPage() {
               fav={p.fav}
               handleToggleFav={handleSearchToggleFav}
               member_id={p.member_id}
-              imgDetails={p.img_details}
-              /></Link>
+              img_details={p.img_details}
+              cardIcon={cardIcon}
+              /></div>
             </div>
           )
         })}</div>
@@ -520,7 +539,12 @@ export default function ShopPage() {
         {(sortProducts.length > 0 ? sortProducts : products).map((p)=> {
           return (
             <div key={p.id} className='col mb-3'>
-            <Link href={`/products/${p.id}`} className='text-decoration-none'>
+            <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+            
+                  >
               <ProductCard className="p-5" 
               id={p.id}
               name={p.name} 
@@ -533,8 +557,9 @@ export default function ShopPage() {
               fav={p.fav}
               handleToggleFav={handleToggleFav}
               member_id={p.member_id}
-              imgDetails={p.img_details}
-              /></Link>
+              img_details={p.img_details}
+              cardIcon={cardIcon}
+              /></div>
             </div>
           )
         })}</div>
@@ -544,6 +569,7 @@ export default function ShopPage() {
           <Pagination />
         </div>
       </div>
+      <PhoneTabNav />
       <Footer />
       {/* offcanvas */}
       <Offcanvas show={show} onHide={handleClose} className={styles.offcanvas}>

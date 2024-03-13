@@ -9,6 +9,7 @@ import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
 import SellerFooter from '@/components/layout/footer/footer-backstage'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 //styles
 import styles from '@/components/seller/seller.module.scss'
 //icon
@@ -311,6 +312,7 @@ export default function Seller() {
           </div>
         </div>
       </main>
+      <PhoneTabNav />
       <footer><SellerFooter /></footer>
       {/* </div> */}
     </>

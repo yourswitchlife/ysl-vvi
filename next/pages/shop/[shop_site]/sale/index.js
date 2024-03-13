@@ -14,6 +14,7 @@ import Footer from '@/components/layout/footer/footer-front'
 import SortDropdown from '@/components/common/sortDropdown'
 import TypeFilter from '@/components/shop/type-filter'
 import Star from '@/components/shop/star'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 //images
 import cover from '@/public/images/shopCover/default-cover.jpg'
 import Image from 'next/image'
@@ -514,6 +515,7 @@ export default function ShopPage() {
           <Pagination />
         </div>
       </div>
+      <PhoneTabNav />
       <Footer />
       {/* offcanvas */}
       <Offcanvas show={show} onHide={handleClose} className={styles.offcanvas}>

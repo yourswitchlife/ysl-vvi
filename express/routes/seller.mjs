@@ -4,7 +4,7 @@ const router = express.Router()
 import db from '../configs/db.mjs'
 import authenticate from '../middlewares/authenticate-cookie.js'
 import multer from 'multer'
-const upload = multer({ dest: 'public/shopCover/' })
+import path from 'path'
 import moment from 'moment'
 
 //authenticate
@@ -64,53 +64,91 @@ router.get('/shop', authenticate, async (req, res) => {
 //賣場管理 編輯及新增賣場資料OK #Create
 //注意：新增賣場其實是更新member資料
 //在前端執行：抓取預設值存入 與 實現兩個按鈕：分別是shop_valid = 0 或shop_valid = 1
-router.patch(
-  '/shop/add',
-  upload.single('shop_cover'),
-  authenticate,
-  async function (req, res) {
-    const { shopName, shopSite, shopInfo, shopValid } = req.body
-    const shop_cover = req.file.path
-    console.log(shop_cover)
-    const memberId = req.memberData.id
-    if (!req.memberData) {
-      // 如果memberData不存在，则返回错误信息
-      return res.status(400).json({ message: '找不到member data' })
-    }
-    try {
-      //檢查賣場名稱
-      const shopNameCheckQuery = 'SELECT * FROM `member` WHERE `shop_name` = ?'
-      const [shopNameResults] = await db.execute(shopNameCheckQuery, [shopName])
+router.put('/shop/edit', authenticate, async (req, res) => {
+  const { shop_name, shop_site, shop_info, shop_valid } = req.body
+  const memberId = req.memberId
+  if (!req.memberId) {
+    // 如果memberData不存在，则返回错误信息
+    return res.status(400).json({ message: '找不到member data' })
+  }
+  const updateQuery = `UPDATE member SET shop_name = ?, shop_site = ?, shop_info = ?, shop_valid = ? WHERE id = ?`
+  try {
+    //檢查賣場名稱
+    // const shopNameCheckQuery = 'SELECT * FROM `member` WHERE `shop_name` = ?'
+    // const [shopNameResults] = await db.execute(shopNameCheckQuery, [shopName])
 
-      if (shopNameResults.length > 0) {
-        return res.status(400).send({ message: '賣場名稱已經存在' })
-      }
-      //檢查網址有沒有重複（預設網址是member.account)
-      const shopSiteCheckQuery = 'SELECT * FROM `member` WHERE shop_site = ?'
-      const [shopSiteResults] = await db.execute(shopSiteCheckQuery, [shopSite])
+    // if (shopNameResults.length > 0) {
+    //   return res.status(400).send({ message: '賣場名稱已經存在' })
+    // }
+    //檢查網址有沒有重複（預設網址是member.account)
+    // const shopSiteCheckQuery = 'SELECT * FROM `member` WHERE shop_site = ?'
+    // const [shopSiteResults] = await db.execute(shopSiteCheckQuery, [shopSite])
 
-      if (shopSiteResults.length > 0) {
-        return res.status(400).send({ message: '賣場網址已經存在' })
-      }
-
-      //把資料存進去
-      const Query =
-        'UPDATE `member` SET `shop_name` = ?, `shop_site` = ?, `shop_cover` = ?, `shop_info` = ?, `shop_valid` = ? WHERE `id` = ?'
-      await db.execute(Query, [
-        shopName,
-        shopSite,
-        shop_cover,
-        shopInfo,
-        shopValid,
+    // if (shopSiteResults.length > 0) {
+    //   return res.status(400).send({ message: '賣場網址已經存在' })
+    // }
+    const [updateResults] = await db.execute(updateQuery, [
+      shop_name,
+      shop_site,
+      shop_info,
+      shop_valid,
+      memberId,
+    ])
+    //把資料存進去
+    // const Query =
+    //   'UPDATE `member` SET `shop_name` = ?, `shop_site` = ?, `shop_cover` = ?, `shop_info` = ?, `shop_valid` = ? WHERE `id` = ?'
+    if (updateResults.affectedRows > 0) {
+      //賣場資訊更新成功
+      const [results] = await db.execute(`SELECT * FROM member WHERE id =?`, [
         memberId,
       ])
-      res.status(201).send({ message: '賣場資料建立成功' })
-    } catch (error) {
-      res.status(500).send({ message: '建立失敗' })
-      console.log('資料庫相關錯誤：', error)
+      res.status(200).json(results[0])
+    } else {
+      //賣場資訊更新失敗
+      res.status(404).json({ error: 'member shop not found.' })
     }
+  } catch (error) {
+    res.status(500).send({ message: '建立失敗' })
+    console.log('資料庫相關錯誤：', error)
   }
-)
+})
+//shopCover參照member pic也用按鈕上傳
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/shopCover') //上傳檔案的資料夾
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)) //以時間戳記作為檔名
+  },
+})
+const upload = multer({ storage: storage })
+//shopCover
+router.put('/shop/shopCover', upload.single('file'), async (req, res) => {
+  const memberId = req.memberId
+  console.log(req.file)
+  const filePath = req.file.path //上傳後的檔案路徑
+  const filename = path.basename(filePath)
+  const shopCoverQuery = 'UPDATE member SET shop_cover = ? WHERE id = ?'
+
+  try {
+    //執行SQL更新
+    const [shopCoverResults] = await db.execute(shopCoverQuery, [
+      filename,
+      memberId,
+    ])
+
+    if (shopCoverResults.affectedRows > 0) {
+      //updated successfully
+      res.status(200).json({ success: true, message: '賣場封面上傳成功' })
+    } else {
+      //updated failed
+      res.status(404).json({ error: '賣場封面上傳失敗' })
+    }
+  } catch (error) {
+    console.error('Error updating shop cover: ', error)
+    res.status(500).json({ error: '上傳途中發生錯誤' })
+  }
+})
 
 //賣家商品管理OK #Read
 router.get('/product', authenticate, async (req, res) => {
