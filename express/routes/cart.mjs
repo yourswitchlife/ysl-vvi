@@ -1,6 +1,12 @@
 import express from 'express'
 const router = express.Router()
 import db from '../configs/db.mjs'
+import { v4 as uuidv4 } from 'uuid'
+import crypto from 'crypto'
+// 導入dotenv 使用 .env 檔案中的設定值 process.env
+import 'dotenv/config.js'
+import axios from 'axios'
+import { createLinePayClient } from 'line-pay-merchant'
 
 // 取得商品對應的賣場名稱
 router.get('/shop-names', async (req, res) => {
@@ -188,5 +194,303 @@ router.post('/add-address', async (req, res) => {
     }
   }
 })
+
+// 建立訂單
+router.post('/create-order', async (req, res) => {
+  const {
+    items,
+    member_buyer_id,
+    paymentMethod,
+    shipping_method,
+    shippingDiscount,
+    productDiscount,
+    shippingInfos,
+  } = req.body
+  // console.log(req.body)
+
+  // 計算總優惠折抵(商品折抵金額+運費折抵金額)
+  const totalDiscount = shippingDiscount + productDiscount
+  let totalOrderPrice = 0
+
+  try {
+    // 連接資料庫
+    const connection = await db.getConnection()
+    try {
+      // 開始beginTransaction事務
+      await connection.beginTransaction()
+
+      // 新增order_group資料(同一付款模式不同賣場訂單存進同組別)
+      const orderGroupUuid = uuidv4()
+      const [orderGroupResult] = await connection.execute(
+        `INSERT INTO order_group (order_info, payment_method) VALUES (?, ?)`,
+        [orderGroupUuid, paymentMethod]
+      )
+      const groupId = orderGroupResult.insertId
+      console.log(groupId)
+
+      // 測試
+      // const groupedItems = testItems.reduce((group, item) => {
+      //   if (!group[item.member_id]) {
+      //     group[item.member_id] = []
+      //   }
+      //   group[item.member_id].push(item)
+      //   return group
+      // }, {})
+
+      // console.log(req.body.items)
+
+      try {
+        // 預處理，計算所有訂單的totalOrderPrice總金額
+        totalOrderPrice = items.reduce((total, item) => {
+          const shippingCost =
+            shipping_method[item.member_id] === '2' ? 100 : 60
+          return total + item.price * item.quantity + shippingCost
+        }, 0)
+      } catch (error) {
+        console.error('在 reduce 使用時出錯:', error)
+      }
+
+      const groupedItems = items.reduce((group, item) => {
+        if (!group[item.member_id]) {
+          group[item.member_id] = []
+        }
+        group[item.member_id].push(item)
+        return group
+      }, {})
+
+      // 遍歷每個賣場分組創建賣場訂單
+      for (const [member_id, itemsInGroup] of Object.entries(groupedItems)) {
+        // console.log(itemsInGroup)
+        if (!Array.isArray(itemsInGroup)) {
+          console.error(`預期 itemsInGroup 是一個陣列，取得:`, itemsInGroup)
+          continue
+        }
+        // 查找每個賣場對應的配送方式的運費
+        const shippingCost = shipping_method[member_id] === '2' ? 100 : 60
+
+        // 計算訂單總價格(未使用優惠券前)
+        const orderPrice =
+          itemsInGroup.reduce(
+            (sum, { price, quantity }) => sum + price * quantity,
+            0
+          ) + shippingCost
+
+        // 計算每個賣場訂單在所有訂單總額的佔比
+        const proportion =
+          totalOrderPrice > 0 ? orderPrice / totalOrderPrice : 0
+
+        // 根據比例分配總折抵金額
+        const discountAmount = totalDiscount * proportion
+
+        // 計算每個訂單實際付款的訂單總金額(使用優惠券)-先四捨五入測試
+        const finalPrice = Math.round(orderPrice - discountAmount)
+
+        // 每個賣場的收件人資訊
+        const shippingInfo = shippingInfos.find(
+          (info) => info.member_id.toString() === member_id.toString()
+        )
+        // 如果沒有收件資訊
+        if (!shippingInfo) {
+          return res.status(400).json({ message: '缺少收件人資訊' })
+        }
+
+        // 計算要傳給金流使用的實際付款總金額
+        const amount = totalOrderPrice - totalDiscount
+
+        for (const item of itemsInGroup) {
+          await connection.execute(
+            `INSERT INTO orders (group_id, order_number, member_buyer_id, member_seller_id, product_id, quantity, order_price, final_price, shipping_method, receive_name, receive_phone, receive_address, payment_method, shipping_status, status, coupon_id, shipping_discount_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              groupId,
+              uuidv4(),
+              member_buyer_id,
+              member_id,
+              item.id,
+              item.quantity,
+              orderPrice,
+              finalPrice,
+              shipping_method[member_id],
+              shippingInfo.receiveName,
+              shippingInfo.receivePhone,
+              shippingInfo.receiveaddress,
+              paymentMethod,
+              1,
+              '待付款',
+              '',
+              '',
+            ]
+          )
+        }
+        // 更新寫入order_group資料表的amount欄位
+        await connection.execute(
+          `UPDATE order_group SET amount = ? WHERE id = ?`,
+          [amount, groupId]
+        )
+      }
+      await connection.commit()
+      if (paymentMethod === 1) {
+        // 貨到付款
+        res.json({
+          status: 'success',
+          message: '建立訂單成功，貨到付款',
+          groupId: groupId,
+        })
+      } else if (paymentMethod === 2) {
+        // LINEPAY
+        res.json({
+          status: 'success',
+          message: '建立訂單成功，LINEPAY',
+          groupId: groupId,
+        })
+      } else if (paymentMethod === 3) {
+        // 信用卡(綠界)
+        res.json({
+          status: 'success',
+          message: '建立訂單成功，信用卡',
+          groupId: groupId,
+        })
+      }
+    } catch (error) {
+      await connection.rollback()
+      res.status(500).json({ message: '創立訂單失敗', error: error.message })
+    } finally {
+      connection.release() // 釋放連接回資料庫
+    }
+  } catch (error) {
+    res.status(500).json({ message: '資料庫連接失敗', error: error.message })
+  }
+})
+
+// LINE PAY
+router
+  .post('/line-pay', async (req, res) => {
+    const { groupId } = req.body
+    console.log(req.body)
+    console.log(groupId)
+
+    try {
+      // 從order_group取得amount
+      const [rows] = await db.execute(
+        `SELECT amount FROM order_group WHERE id = ?`,
+        [groupId]
+      )
+      if (rows.length === 0) {
+        return res.status(404).json({ message: '找不到order_group資料表' })
+      }
+      const amount = rows[0].amount
+
+      console.log(amount)
+
+      // LinepayBody
+      const orderId = groupId
+      const productImageUrl =
+        'https://images.unsplash.com/photo-1605142806312-9ba7fa5cd0fd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+      const confirmUrl = `http://localhost:3000/cart/purchase?orderId=${orderId}`
+      const productName = 'YSL 二手交易平台'
+      const currency = 'TWD'
+      const linepayBody = {
+        amount,
+        productImageUrl,
+        confirmUrl,
+        productName,
+        orderId,
+        currency,
+      }
+      // console.log(JSON.stringify(linepayBody, null, 2))
+
+      // 製作簽章
+      const uri = '/v2/payments/request'
+      const nonce = uuidv4().toString()
+      // 使用 crypto 模組創建 HMAC SHA256 簽名並轉為 Base64
+      const channelSecret = process.env.LINE_PAY_CHANNEL_SECRET
+      const channelId = process.env.LINE_PAY_CHANNEL_ID
+      const requestBody = JSON.stringify(linepayBody)
+      const datatosign = channelSecret + uri + requestBody + nonce
+
+      const signature = crypto
+        .createHmac('sha256', channelSecret)
+        .update(datatosign)
+        .digest('base64')
+
+      console.log(signature)
+
+      // const linePayClient = createLinePayClient({
+      //   channelId: process.env.LINE_PAY_CHANNEL_ID,
+      //   channelSecretKey: process.env.LINE_PAY_CHANNEL_SECRET,
+      //   env: process.env.NODE_ENV,
+      // })
+
+      // 製作送給linepay的headers
+      const headers = {
+        'X-LINE-ChannelId': channelId,
+        'Content-Type': 'application/json',
+        'X-LINE-ChannelSecret': channelSecret,
+      }
+      // linepay api路徑
+      const url = 'https://sandbox-api-pay.line.me/v2/payments/request'
+
+      const linepayRes = await axios.post(url, linepayBody, { headers })
+      console.log(linepayRes)
+      console.log(linepayRes.data.info.paymentUrl)
+      if (linepayRes.data.returnCode === '0000') {
+        res.json(linepayRes.data.info.paymentUrl.web)
+      }
+    } catch (error) {
+      console.error('錯誤', error)
+      res.status(500).json({ status: 'failed', message: '傳送LINEPAY錯誤' })
+    }
+  })
+
+  // 後端接收 transactionId再進行確認
+  .get('/check-transaction', async (req, res) => {
+    const { transactionId, groupId } = req.query
+
+    // 從order_group取得amount
+    const [rows] = await db.execute(
+      `SELECT amount FROM order_group WHERE id = ?`,
+      [groupId]
+    )
+    if (rows.length === 0) {
+      return res.status(404).json({ message: '找不到order_group資料表' })
+    }
+    const amount = rows[0].amount
+
+    // LinepayBody
+
+    // 構建Confirm API的請求
+    const confirmUrl = `https://sandbox-api-pay.line.me/v2/payments/${transactionId}/confirm`
+    const linepayBody = {
+      amount: amount,
+      currency: 'TWD',
+    }
+    try {
+      const response = await axios.post(confirmUrl, linepayBody, {
+        headers: {
+          'X-LINE-ChannelId': process.env.LINE_PAY_CHANNEL_ID,
+          'X-LINE-ChannelSecret': process.env.LINE_PAY_CHANNEL_SECRET,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      // 確認交易成功
+      if ((response.data.returnCode = '0000')) {
+        // 更新訂單付款狀態
+        await db.execute(
+          `UPDATE orders SET status = '已付款' WHERE group_id = ?`,
+          [groupId]
+        )
+        res.json({ status: 'success', message: '訂單狀態成功更新為已付款' })
+      } else {
+        res.status(400).json({
+          status: 'failed',
+          message: 'LINE PAY交易失敗',
+          detail: response.data,
+        })
+      }
+    } catch (error) {
+      console.error('確認交易時發生錯誤', error)
+      res.status(500).json({ status: 'failed', message: '伺服器錯誤' })
+    }
+  })
 
 export default router
