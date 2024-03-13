@@ -16,7 +16,6 @@ import { useRouter } from 'next/router'
 import { useAuth } from '@/hooks/use-Auth'
 import GoTopButton from '@/components/go-to-top/go-top-button'
 
-
 export default function Products() {
   const { isLoggedIn, memberId } = useAuth()
   const [products, setProducts] = useState([])
@@ -32,9 +31,11 @@ export default function Products() {
     // console.log("page Changed: " + currentPage)
     const getProducts = async () => {
       try {
-        const res = await fetch(`http://localhost:3005/api/products/list?page=${page}`,
-        {credentials: 'include'})
-        
+        const res = await fetch(
+          `http://localhost:3005/api/products/list?page=${page}`,
+          { credentials: 'include' }
+        )
+
         const data = await res.json()
         console.log(data)
         if (Array.isArray(data.products)) {
@@ -52,9 +53,6 @@ export default function Products() {
   const handlePageChange = (newPage) => {
     setPage(newPage)
   }
-  
-
-
 
   const initState = products.map((p) => {
     return { ...p, fav: false }
@@ -106,16 +104,16 @@ export default function Products() {
     e.stopPropagation()
   }
 
-  const productFilter =(e)=>{
+  const productFilter = (e) => {
     // setPFilter(e)
     // console.log(pFilter)
     // setPFilter(e)
-    console.log("MMM")
+    console.log('MMM')
   }
 
   return (
     <>
-    <GoTopButton/>
+      <GoTopButton />
       <Navbar />
       <Image
         src="/images/product/p-index.jpg"
@@ -144,7 +142,7 @@ export default function Products() {
       <div className="container pt-3 px-lg-5 px-4">
         <BreadCrumb />
         <div className="d-flex justify-content-between mb-3">
-          <TypeFilter productFilter = {productFilter()}/>
+          <TypeFilter productFilter={productFilter()} />
           <div>
             <FaBorderAll className="text-white me-2 h5" />
             <IoReorderFour className="text-white h4 mb-0" />
@@ -161,7 +159,12 @@ export default function Products() {
                     historyRecord(p)
                   }}
                 >
-                  <div onClick={()=>{ router.push(`/products/${p.id}`) }} className={styles.link}>
+                  <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+                    className={styles.link}
+                  >
                     <ProductCard
                       className="p-5"
                       id={p.id}
@@ -185,8 +188,12 @@ export default function Products() {
             })}
           </div>
         </div>
-    
-        <PaginationFront currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
+
+        <PaginationFront
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
 
         <div>
           <h4 className="text-white mx-3 ">猜你喜歡</h4>
