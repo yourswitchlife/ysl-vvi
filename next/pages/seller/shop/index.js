@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { useAuth } from '@/hooks/use-Auth'
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
 import styles from '@/components/seller/seller.module.scss'
-import profileImg from '@/public/images/profile-photo/peach.png'
-import Image from 'next/image'
 import SellerFooter from '@/components/layout/footer/footer-backstage'
-import Form from 'react-bootstrap/Form'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
+
+import Form from 'react-bootstrap/Form'
+
 //images
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 import cover from '@/public/images/shopCover/default-cover.jpg'
@@ -82,7 +83,7 @@ export default function ShopSetting() {
                 <div className="d-flex justify-content-around align-items-center mt-4 mb-2">
                 
                   <div className={`${styles.profile}`}>
-                    <Image src={profileImg} alt="profile-photo" className={styles.fit} />
+                    <Image src={bigPic} alt="profile-photo" className={styles.fit} />
                   </div>
                   <div className="d-flex flex-column align-items-start justify-content-center">
                   <Form.Group className="mb-3" controlId="shop-name">

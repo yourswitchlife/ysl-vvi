@@ -3,22 +3,21 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/use-Auth'
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import Image from 'next/image'
-
+import { useRouter } from 'next/router';
+//components
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
 import Star from '@/components/shop/star'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
+import SellerFooter from '@/components/layout/footer/footer-backstage'
 import styles from '@/components/seller/seller.module.scss'
-import {
-FaStar,
-} from 'react-icons/fa'
-
+import { FaStar } from 'react-icons/fa'
 //images
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 import cover from '@/public/images/shopCover/default-cover.jpg'
 import gameCover from '@/public/images/profile-photo/default-profile-img.svg'
-
-import SellerFooter from '@/components/layout/footer/footer-backstage'
+//React bootstrap
 import InputGroup from 'react-bootstrap/InputGroup'
 import Form from 'react-bootstrap/Form'
 import Nav from 'react-bootstrap/Nav'
@@ -29,7 +28,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Card from 'react-bootstrap/Card'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
-import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
+import Modal from 'react-bootstrap/Modal';
 
 export default function Comment() {
   //body style
@@ -41,7 +40,7 @@ export default function Comment() {
       document.body.classList.remove(styles.bodyStyleA)
     }
   }, [])
-
+  const router = useRouter()
   const { isLoggedIn, memberId, memberData } = useAuth()
   const [bigPic, setBigPic] = useState(profilePhoto)
   const [memberPic, setMemberPic] = useState(profilePhoto)
@@ -49,7 +48,11 @@ export default function Comment() {
   const [comments, setComments] = useState([])
   const [shopRating, setShopRating] = useState("0.0")
   const [commentNum, setCommentNum] = useState(0)
-
+  const [reply, setReply] = useState('')
+  //Modal for reply comments
+  const [showModal, setShowModal] = useState(false)
+  const handleCloseModal = () => setShowModal(false)
+  const handleShowModal = () => setShowModal(true)
 
   useEffect(() => {
     if(isLoggedIn && memberData) {
@@ -135,14 +138,17 @@ export default function Comment() {
           <div className="d-flex flex-column d-lg-none container ps-4 pe-4">
             <div className="d-flex justify-content-around align-items-center mt-4 mb-2">
               <div className={`${styles.profile}`}>
-                <Image src={bigPic} width={75} height={75} alt="" className={styles.fit} />
+                <Image src={bigPic} width={75} height={75} alt="profile-photo" className={styles.fit} />
               </div>
               <div className="d-flex flex-column align-items-start justify-content-center">
               {memberData && <h5 className="mb-1 fw-bold">{memberData.shop_name}</h5>}
               {memberData && <p className="mb-1">@{memberData.shop_site}</p>}
               </div>
               <div>
-                <button className="btn btn-danger btn-sm">查看賣場</button>
+              {memberData &&
+                <button className="btn btn-danger btn-sm" onClick={() => {
+                  router.push(`/shop/${memberData.shop_site}`)
+                }}>查看賣場</button>}
               </div>
             </div>
             <hr />
@@ -355,8 +361,8 @@ export default function Comment() {
                           {/* 可以跳出一個MODAL來處理 */}
                           <button
                             type="button"
-                            href="/comment/reply"
                             className="btn btn-danger"
+                            onClick={handleShowModal}
                           >
                             回覆
                           </button>
@@ -369,211 +375,6 @@ export default function Comment() {
                 })}
                 </>
               )}
-              
-              <Card border="light" style={{ width: '100%' }} className="mb-3">
-                <Card.Header>
-                  <div className="d-flex align-items-center">
-                    <p className="mb-0 text-secondary me-1">會員名稱:</p>
-                    <div className={`me-1 ${styles.shapeCircle}`}>
-                      <Image src={bigPic} alt="" width={25} height={25} />
-                    </div>
-                    <p className="mb-0 text-secondary">zhang.wt</p>
-                  </div>
-                </Card.Header>
-                <Card.Body>
-                  <Card.Title className="text-dark">
-                    <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
-                  </Card.Title>
-                  <div className="text-dark mb-2">
-                    <div className="row align-items-center">
-                      <div className="col-4 border-end d-flex flex-column  justify-content-center align-items-center mt-2">
-                        <div className="d-flex justify-content-center align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={24}
-                            height={40}
-                          />
-                          <p className="mb-0 text-dark ms-2">
-                            集合啦！動物森友會
-                            <span className="text-info ms-2">x1</span>
-                          </p>
-                        </div>
-                        <div className="d-flex justify-content-center align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={24}
-                            height={40}
-                          />
-                          <p className="mb-0 text-dark ms-2">
-                            集合啦！動物森友會
-                            <span className="text-info ms-2">x1</span>
-                          </p>
-                        </div>
-                      </div>
-                      <div className="col-6 border-end">
-                        <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar />
-                        </div>
-                        <p className="mb-0 text-dark">
-                          斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
-                        </p>
-                        <small className="text-secondary">
-                          2024/02/16 22:51
-                        </small>
-                      </div>
-                      <div className="col-2 d-flex justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger"
-                        >
-                          回覆
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
-              <Card border="light" style={{ width: '100%' }} className="mb-3">
-                <Card.Header>
-                  <div className="d-flex align-items-center">
-                    <p className="mb-0 text-secondary me-1">會員名稱:</p>
-                    <div className={`me-1 ${styles.shapeCircle}`}>
-                      <Image
-                        src={bigPic}
-                        alt="member-profile"
-                        width={25}
-                        height={25}
-                      />
-                    </div>
-                    <p className="mb-0 text-secondary">zhang.wt</p>
-                  </div>
-                </Card.Header>
-                <Card.Body>
-                  <Card.Title className="text-dark">
-                    <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
-                  </Card.Title>
-                  <div className="text-dark">
-                    <div className="row align-items-center">
-                      <div className="col-4 border-end d-flex justify-content-center align-items-center mt-2">
-                        <Image
-                          src={gameCover}
-                          alt="game-cover"
-                          width={24}
-                          height={40}
-                        />
-                        <p className="mb-0 text-dark ms-2">
-                          集合啦！動物森友會
-                          <span className="text-info ms-2">x1</span>
-                        </p>
-                      </div>
-                      <div className="col-6 border-end">
-                        <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar />
-                        </div>
-                        <p className="mb-0 text-dark">
-                          斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
-                        </p>
-                        <small className="text-secondary">
-                          2024/02/16 22:51
-                        </small>
-                      </div>
-                      <div className="col-2 d-flex justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger"
-                        >
-                          回覆
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
-              <Card border="light" style={{ width: '100%' }} className="mb-3">
-                <Card.Header>
-                  <div className="d-flex align-items-center">
-                    <p className="mb-0 text-secondary me-1">會員名稱:</p>
-                    <div className={`me-1 ${styles.shapeCircle}`}>
-                      <Image src={bigPic} alt="" width={25} height={25} />
-                    </div>
-                    <p className="mb-0 text-secondary">zhang.wt</p>
-                  </div>
-                </Card.Header>
-                <Card.Body>
-                  <Card.Title className="text-dark">
-                    <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
-                  </Card.Title>
-                  <div className="text-dark mb-2">
-                    <div className="row align-items-center">
-                      <div className="col-4 border-end d-flex flex-column  justify-content-center align-items-center mt-2">
-                        <div className="d-flex justify-content-center align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={24}
-                            height={40}
-                          />
-                          <p className="mb-0 text-dark ms-2">
-                            集合啦！動物森友會
-                            <span className="text-info ms-2">x1</span>
-                          </p>
-                        </div>
-                        <div className="d-flex justify-content-center align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={24}
-                            height={40}
-                          />
-                          <p className="mb-0 text-dark ms-2">
-                            集合啦！動物森友會
-                            <span className="text-info ms-2">x1</span>
-                          </p>
-                        </div>
-                      </div>
-                      <div className="col-6 border-end">
-                        <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar className="me-1" />
-                          <FaStar />
-                        </div>
-                        <p className="mb-0 text-dark">
-                          斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
-                        </p>
-                        <small className="text-secondary">
-                          2024/02/16 22:51
-                        </small>
-                      </div>
-                      <div className="col-2 d-flex justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger"
-                        >
-                          回覆
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
               <Pagination />
             </div>
           </div>
@@ -883,6 +684,38 @@ export default function Comment() {
           <SellerFooter />
         </div>
       </main>
+      {/* Modal 放這裡ㄛ */}
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title><h5 className='text-dark fw-bold'>回覆評論</h5></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group
+              className="mb-3"
+              controlId="exampleForm.ControlTextarea1"
+            >
+              <Form.Label><h6 className='text-dark fw-bold'>寫下回覆內容</h6></Form.Label>
+              <Form.Control as="textarea" rows={3} value={reply} onChange={(e) => {
+                setReply(e.target.value)
+              }} autoFocus/>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            取消
+          </Button>
+          <Button variant="primary" onClick={handleCloseModal}>
+            送出回覆
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   )
 }
+
+export async function getServerSideProps(context) {
+  return await mainCheckToLogin(context);
+}
+
