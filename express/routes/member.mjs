@@ -42,14 +42,13 @@ router.post('/register', async function (req, res) {
 
     password = await generateHash(password) // hash加密密碼
 
-    const Query = `INSERT INTO member (account, password, email, level_point, shop_valid, mission_start, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
+    const Query = `INSERT INTO member (account, password, email, level_point, shop_valid, created_at) VALUES (?, ?, ?, ?, ?, ?)`
     await db.execute(Query, [
       account,
       password,
       email,
       level_point,
       shop_valid,
-      mission_start,
       created_at,
     ])
 
@@ -109,7 +108,6 @@ router.post('/google-login', async function (req, res) {
   const pic = photoURL
   const level_point = 0 // 預設積分
   const shop_valid = 0 // 預設店沒上架
-  const mission_start = 0
   const created_at = new Date()
 
   try {
@@ -124,7 +122,7 @@ router.post('/google-login', async function (req, res) {
       memberId = gmResults[0].id
     } else {
       // 沒 先註冊再登入
-      const creategmQuery = `INSERT INTO member (account, email, google_uid, pic, level_point, shop_valid, mission_start, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+      const creategmQuery = `INSERT INTO member (account, email, google_uid, pic, level_point, shop_valid, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
       const [createResult] = await db.execute(creategmQuery, [
         account,
         email,
@@ -132,7 +130,6 @@ router.post('/google-login', async function (req, res) {
         pic,
         level_point,
         shop_valid,
-        mission_start,
         created_at,
       ])
       memberId = createResult.insertId
