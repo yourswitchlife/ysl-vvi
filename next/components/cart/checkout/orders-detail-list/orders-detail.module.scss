@@ -22,6 +22,16 @@
   border-radius: 20px;
 }
 
+// 優惠券不能使用
+.disabledCoupon {
+  opacity: 0.5;
+  pointer-events: none; 
+}
+.disabledAlert {
+  color: red;
+  font-size: 12px;
+}
+
 // 訂單詳情
 .mainTitle {
   margin-bottom: 20px;
@@ -408,7 +418,7 @@
 .sub {
   color: $light-gray;
   font-size: 14px;
-  padding-left: 15px;
+  padding-left: 0px;
   margin-top: 10px;
 }
 
@@ -420,12 +430,16 @@
   margin: 24px 0 24px;
 
   .mainText {
+    background:linear-gradient(90deg, $danger, rgba(0, 104, 240, 0.5)) ;
+    border-radius: 15px;
     color: $white;
-    padding-bottom: 5px;
+    padding: 5px 15px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
 
     &:hover {
-      color: $light-gray;
+      color: $primary-black;
     }
   }
 
@@ -436,17 +450,52 @@
 
   .discountListBtn {
     background: $white;
-    color: $gray;
+    color: $primary-black;
     margin: 15px 0 0;
     padding: 5px 8px;
     border-radius: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
 
-    &:hover {
-      color: $dark-gray;
+    .couponInfo {
+      border-radius: 15px;
+      margin-bottom: 30px;
+      padding: 10px;
+      width: 100%;
+  
+      .mainTitle {
+        display: block;
+        font-size: 16px;
+        padding: 0;
+        margin: 0 0 5px;
+      }
+  
+      .line {
+        height: 1px;
+        width: 100%;
+        background: linear-gradient(90deg, $red-secondary, $blue-secondary);
+        margin-bottom: 5px;
+      }
+  
+      .title {
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: $gray;
+      }
+  
+      .item {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        margin-bottom: 15px;
+  
+        .icon {
+          width: 20px;
+          height: 20px;
+          margin-right: 5px;
+        }
+      }
     }
   }
 }
@@ -759,12 +808,12 @@
     margin: 20px 0 20px;
 
     .mainText {
-      padding-bottom: 0;
+      background: none;
     }
 
     .discountListBtn {
       background: $white;
-      color: $gray;
+      color: $primary-black;
       margin: 15px 0 0;
       padding: 5px 8px;
       border-radius: 5px;
@@ -1001,7 +1050,6 @@
 
     .item {
       display: flex;
-      justify-content: space-between;
       align-items: center;
       font-size: 12px;
       margin-bottom: 10px;

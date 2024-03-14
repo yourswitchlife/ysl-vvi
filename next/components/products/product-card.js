@@ -219,7 +219,6 @@ export default function ProductCard({
                     language,
                     quantity: 1,
                   })
-                  notifySuccess()
                 }}
               />
             </div>

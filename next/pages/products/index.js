@@ -180,6 +180,8 @@ export default function Products() {
                       handleToggleFav={handleToggleFav}
                       member_id={p.member_id}
                       cardIcon={cardIcon}
+                      product_quanty={p.product_quanty}
+                      language={p.language}
                       // imgDetails={p.img_details}
                     />
                   </div>

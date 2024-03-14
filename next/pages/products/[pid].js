@@ -269,7 +269,6 @@ export default function ProductDetail() {
                 className="btn btn-info"
                 onClick={() => {
                   addItem(product)
-                  notifySuccess()
                 }}
               >
                 <FaCartPlus className="text-light pb-1" /> 加入購物車
@@ -294,7 +293,10 @@ export default function ProductDetail() {
                 setBen(true)
               }}
             >
-              <div typeof="button" className="col btn btn-info rounded-0 py-1">
+              <div typeof="button" className="col btn btn-info rounded-0 py-1" onClick={() => {
+                  addItem(product)
+                  notifySuccess()
+                }}>
                 <FaCartPlus className="text-light" /> <p>加入購物車</p>
               </div>
               <div
@@ -305,7 +307,7 @@ export default function ProductDetail() {
               </div>
               <div
                 typeof="button"
-                className="col-6 btn btn-danger rounded-0 py-1 d-flex align-items-center justify-content-center"
+                className="col-6 btn btn-danger rounded-0 py-1 d-flex align-items-center justify-content-center" onClick={handleCheckout}
               >
                 <FaShoppingCart className="text-light me-1" /> <h6>立即結帳</h6>
               </div>
