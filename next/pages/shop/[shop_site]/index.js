@@ -61,6 +61,10 @@ export default function ShopPage() {
   const [roundedRating, setRoundedRating] = useState(0)
   const [isFav, setIsFav] = useState(false)
   const [sortProducts, setSortProducts] = useState([])
+  //頁數
+  const [totalPages, setTotalPages] = useState(1)
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(6)
 
   //處理背景樣式
   useEffect(() => {
@@ -295,6 +299,10 @@ export default function ShopPage() {
     e.persist()
     e.nativeEvent.stopImmediatePropagation()
     e.stopPropagation()
+  }
+  //頁數
+  const handlePageChange = (newPage) => {
+    setPage(newPage)
   }
 
   return (
@@ -543,7 +551,6 @@ export default function ShopPage() {
                     onClick={() => {
                       router.push(`/products/${p.id}`)
                     }}
-            
                   >
               <ProductCard className="p-5" 
               id={p.id}
@@ -566,7 +573,7 @@ export default function ShopPage() {
         </>)
         }
         <div>
-          <Pagination />
+          <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
         </div>
       </div>
       <PhoneTabNav />

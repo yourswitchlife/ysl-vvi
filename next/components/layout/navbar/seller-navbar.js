@@ -4,6 +4,7 @@ import yslLogo from '@/public/images/logo/logo-sm.svg'
 import yslLogoXs from '@/public/images/logo/logo-xs.svg'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { FaArrowRight, FaSearch } from "react-icons/fa";
 //登出邏輯
 import handleLogout from '@/services/logout';
@@ -18,6 +19,7 @@ import NavPic from '@/hooks/use-navpic';
 import { useCart } from '@/hooks/use-cart'
 
 export default function SellerNavbar() {
+  const router = useRouter()
   const { isLoggedIn, memberData } = useAuth();
   const [bigPic, setBigPic] = useState(profilePhoto)
   const [isHovered, setIsHovered] = useState(false);
@@ -61,7 +63,7 @@ export default function SellerNavbar() {
             <NavPic />
             {memberData && <strong className='ms-2'>{memberData.account}</strong>}
           </Link>
-          <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
+          <ul className="dropdown-menu text-small shadow">
             <li>
             {memberData && 
               <Link className="dropdown-item" href={`/shop/${memberData.shop_site}`}>
@@ -106,8 +108,10 @@ export default function SellerNavbar() {
             <Image src={yslLogoXs} alt="ysl-logo" />
           </Link>
         </div>
-        <div className="">
-          <h6 className='mb-0 me-2 fw-bold'>我的賣場</h6>
+        <div onClick={() => {
+          router.push('http://localhost:3000/seller')
+        }}>
+          <h6 className='mb-0 me-2 fw-bold'>賣場中心</h6>
         </div>
       </header>
       </div>

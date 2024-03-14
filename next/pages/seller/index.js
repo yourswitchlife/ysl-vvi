@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/use-Auth'
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 //components
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
@@ -23,6 +24,7 @@ import cover from '@/public/images/shopCover/default-cover.jpg'
 
 
 export default function Seller() {
+  const router = useRouter()
   const { isLoggedIn, memberId, memberData } = useAuth()
   const [bigPic, setBigPic] = useState(profilePhoto)
   const [shopCover, setShopCover] = useState(cover)
@@ -143,7 +145,9 @@ export default function Seller() {
                 {/* <h6 className="mb-1 fw-bold">{shop_name}</h6>
                 <p className="mb-1">ysl.com/{shop_site}</p> */}
               </div>
-              <div><button className='btn btn-danger'>查看賣場</button></div>
+              <div><button className='btn btn-danger' onClick={() => {
+                router.push(`http://localhost:3000/shop/${memberData.shop_site}`)
+              }}>查看賣場</button></div>
             </div>
             <hr />
           </div>

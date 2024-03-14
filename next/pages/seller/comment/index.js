@@ -99,7 +99,7 @@ export default function Comment() {
   } 
   useEffect(() => {
     getSellerData()
-  }, [comments])
+  }, [])
 
   function formatComments(comments){
     return comments.map(comment => {
@@ -389,9 +389,9 @@ export default function Comment() {
                         <div className={`col-4 my-3 ${styles.reply}`}>
                         {v.reply && (
                           <>
-                          <p>我的回覆：</p>
+                          <p className='mt-2'>我的回覆：</p>
                           <p>{v.reply}</p>
-                          <p className="text-secondary">{v.replied_at}</p>
+                          <p className="text-secondary mb-2">{v.replied_at}</p>
                           </>
                         )}
                         </div>

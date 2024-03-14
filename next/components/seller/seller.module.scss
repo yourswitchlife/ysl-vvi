@@ -393,7 +393,7 @@ $sortbar-height-rwd: 50px;
   font-size: 18px;
 }
 .reply{
-  padding: 10px;
+  // padding: 10px;
   border-radius: 5px;
   background-color: $bright-gray;
 }
@@ -452,6 +452,16 @@ $sortbar-height-rwd: 50px;
   }
   .coverB {
     margin-top: 55px;
+    height: 91px;
+    overflow: hidden;
+    .fit {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+  }
+  .coverC {
+    // margin-top: 55px;
     height: 91px;
     overflow: hidden;
     .fit {
