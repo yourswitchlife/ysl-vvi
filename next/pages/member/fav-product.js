@@ -13,12 +13,16 @@ import Link from 'next/link'
 import { FaRegHeart, FaCartPlus, FaStore } from 'react-icons/fa'
 import Paginage from '@/components/common/pagination'
 import Dropdown from 'react-bootstrap/Dropdown'
+//hooks
 import { useAuth } from '@/hooks/use-Auth';
+import { useCart } from '@/hooks/use-cart'
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 
 export default function FavProduct() {
   const router = useRouter();
   const { isLoggedIn, memberId } = useAuth();
+  const { addItem, notifySuccess } = useCart()
+
   const [favProducts, setFavProducts] = useState([]);
   // 排序
   const [orderBy, setOrderBy] = useState('created_at');
@@ -92,7 +96,7 @@ export default function FavProduct() {
       if (data.success) {
         console.log('unfavf success');
         setFavProducts(favProducts.filter(product => !selectedProducts.includes(product.favProductId)));
-        toggleEdit(); 
+        toggleEdit();
       } else {
         throw new Error(data.message);
       }
@@ -101,6 +105,24 @@ export default function FavProduct() {
     }
   };
 
+  const handleAddToCart = (product) => {
+    const priceString = product.price.replace(',', ''); 
+    const displayPriceString = product.display_price.replace(',', ''); 
+    const newItem = {
+      id: product.productId,
+      name: product.productName,
+      language: [product.language],
+      product_quanty: product.product_quanty,
+      price: Number(priceString),
+      display_price: Number(displayPriceString),
+      quantity: 1, // 預設1
+      img_cover: product.img_cover,
+      user_select: false
+    }
+    console.log(newItem)
+    addItem(newItem)
+    notifySuccess()
+  }
 
   // 排序
   const handleSortChange = (newOrderBy) => {
@@ -135,7 +157,7 @@ export default function FavProduct() {
                 <span></span>賣場
               </Link>
             </div>
-            <div className={sStyles.tenpadding+" container d-flex justify-content-end mt-4 pe-5"}>
+            <div className={sStyles.tenpadding + " container d-flex justify-content-end mt-4 pe-5"}>
               {isEditing ? (
                 <>
                   <button onClick={handleUnfavoriteSelected} className={sStyles.statusBtn + " btn btn-danger d-flex justify-content-center align-items-center px-3 me-3"}>取消收藏</button>
@@ -145,7 +167,7 @@ export default function FavProduct() {
               ) : (
                 <button onClick={toggleEdit} className={sStyles.statusBtn + " btn btn-danger d-flex justify-content-center align-items-center px-3 mx-3"}>編輯</button>
               )}
-              <Dropdown className={sStyles.noneme+" me-3 pb-2"}>
+              <Dropdown className={sStyles.noneme + " me-3 pb-2"}>
                 <Dropdown.Toggle
                   variant="secondary"
                   id="ranking"
@@ -206,10 +228,10 @@ export default function FavProduct() {
                             checked={selectedProducts.includes(product.favProductId)}
                             onChange={() => handleProductSelect(product.favProductId)}
                             className="me-4"
-                            style={{transform: "scale(1.7)", marginRight: "10px" }}
+                            style={{ transform: "scale(1.7)", marginRight: "10px" }}
                           />
                         )}
-                        <FaCartPlus className="text-black" />
+                        <FaCartPlus className="text-danger" onClick={() => handleAddToCart(product)} style={{ cursor: 'pointer' }} />
                       </div>
                     </div>
 

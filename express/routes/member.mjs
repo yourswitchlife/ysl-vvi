@@ -20,6 +20,7 @@ router.post('/register', async function (req, res) {
   let { password } = req.body
   const level_point = 0 // 預設積分
   const shop_valid = 0 // 預設賣場沒上架
+  const mission_start = 0 // 預設新戶
   const created_at = new Date() // 註冊時間
 
   try {
@@ -41,13 +42,14 @@ router.post('/register', async function (req, res) {
 
     password = await generateHash(password) // hash加密密碼
 
-    const Query = `INSERT INTO member (account, password, email, level_point, shop_valid, created_at) VALUES (?, ?, ?, ?, ?, ?)`
+    const Query = `INSERT INTO member (account, password, email, level_point, shop_valid, mission_start, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
     await db.execute(Query, [
       account,
       password,
       email,
       level_point,
       shop_valid,
+      mission_start,
       created_at,
     ])
 
@@ -107,6 +109,7 @@ router.post('/google-login', async function (req, res) {
   const pic = photoURL
   const level_point = 0 // 預設積分
   const shop_valid = 0 // 預設店沒上架
+  const mission_start = 0
   const created_at = new Date()
 
   try {
@@ -121,7 +124,7 @@ router.post('/google-login', async function (req, res) {
       memberId = gmResults[0].id
     } else {
       // 沒 先註冊再登入
-      const creategmQuery = `INSERT INTO member (account, email, google_uid, pic, level_point, shop_valid, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
+      const creategmQuery = `INSERT INTO member (account, email, google_uid, pic, level_point, shop_valid, mission_start, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
       const [createResult] = await db.execute(creategmQuery, [
         account,
         email,
@@ -129,6 +132,7 @@ router.post('/google-login', async function (req, res) {
         pic,
         level_point,
         shop_valid,
+        mission_start,
         created_at,
       ])
       memberId = createResult.insertId
@@ -190,7 +194,7 @@ router.get('/info/:id', async (req, res) => {
   }
 })
 
-//修改個人資料account
+// 修改個人資料account
 router.put('/account/:memberId', async (req, res) => {
   const memberId = req.params.memberId;
   const { name, gender, address, birthday, phone, birthday_month } = req.body;
@@ -217,8 +221,62 @@ router.put('/account/:memberId', async (req, res) => {
 
 });
 
+// 結帳後積分更新
+router.patch('/levelup', async (req, res) => {
+  const memberId = req.query.memberId;
+  console.log(memberId)
+  const { totalPrice } = req.body; 
+  console.log(totalPrice)
+  try {
+    //  level_point 
+    const updatePointQuery = `
+    UPDATE member
+    SET level_point = level_point + ?
+    WHERE id = ?;
+  `;
+    const [result] = await db.execute(updatePointQuery, [totalPrice, memberId]);
+    
+    if (result.affectedRows > 0) {// 再次查詢會員資料以獲取最新的level_point
+      const getMemberQuery = `
+      SELECT level_point
+      FROM member
+      WHERE id = ?;
+      `;
+      const [memberResult] = await db.execute(getMemberQuery, [memberId]);
+      const updatedLevelPoint = memberResult[0].level_point;
+      // 檢查更新後的 level_point 是否到達下一等級
+      if (updatedLevelPoint >= 6000 && updatedLevelPoint < 13000) {
+          // 1張免運
+          await db.execute('INSERT INTO member_coupon (member_id, coupon_id, status, created_at)VALUES (?, ?, ?, NOW())', [memberId, 43, 0]);
+          
+      } else if (updatedLevelPoint >= 13000 && updatedLevelPoint < 20000) {
+          // 2張免運
+          await db.execute(`
+          INSERT INTO member_coupon (member_id, coupon_id, status, created_at)
+          VALUES (?, ?, ?, NOW()), (?, ?, ?, NOW())
+          `, [memberId, 43, 0, memberId, 43, 0]);
 
-//pic改按鈕上傳
+      } else if (updatedLevelPoint >= 20000) {
+          // 3張免運
+          // 這裡待修給優惠券的邏輯、時間限制
+          await db.execute(`
+          INSERT INTO member_coupon (member_id, coupon_id, status, created_at)
+          VALUES (?, ?, ?, NOW()), (?, ?, ?, NOW()), (?, ?, ?, NOW())
+          `, [memberId, 43, 0, memberId, 43, 0, memberId, 43, 0]);
+      }
+      
+      // 返回成功訊息
+      res.json({ message: '會員資料更新成功' });
+  } else {
+      throw new Error('沒有找到符合條件的會員');
+  }
+  } catch (error) {
+    console.error('更新會員資料失敗:', error);
+    res.status(500).json({ error: '更新會員資料失敗' });
+  }
+});
+
+// pic改按鈕上傳
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/profile-pic'); // 存放上傳檔案的資料夾
@@ -255,9 +313,8 @@ router.put('/pic/:memberId', upload.single('file'), async (req, res) => {
 
 
 
-
 // forget password
-//-拿驗證碼
+// -拿驗證碼
 // 郵件寄送(基於SMTP得API)
 
 router.post('/get-code', async (req, res) => {
@@ -366,7 +423,6 @@ router.post('/reset-password', async (req, res) => {
     return res.status(500).json({ error: '內部伺服器錯誤' });
   }
 });
-
 
 // fav-shop
 router.get('/fav-shop', async (req, res) => {
@@ -498,9 +554,12 @@ router.get('/fav-product', async (req, res) => {
         FORMAT(p.display_price, 0) AS display_price,
         FORMAT(p.price, 0) AS price,
         DATE_FORMAT(p.release_time, '%Y-%m-%d') AS release_date,
+        p.id AS productId,
         p.rating_id,
         p.type_id,
         p.name AS productName,
+        p.language,
+        p.product_quanty,
         p.img_cover,
         m.id AS memberId,
         m.shop_name,
