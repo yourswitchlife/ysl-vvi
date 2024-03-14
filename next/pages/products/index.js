@@ -16,29 +16,43 @@ import { useRouter } from 'next/router'
 import { useAuth } from '@/hooks/use-Auth'
 import GoTopButton from '@/components/go-to-top/go-top-button'
 
-
 export default function Products() {
   const { isLoggedIn, memberId } = useAuth()
   const [products, setProducts] = useState([])
   const router = useRouter()
-  const [pFilter, setPFilter] = useState('')
+  // 篩選搜尋
+  const [displayProducts, setDisplayProducts] = useState([])
+  const [searchWord, setSearchWord] = useState('')
+  // const [sortBy, setSortBy] = useState('')
+
+  // const [pFilter, setPFilter] = useState('')
 
   // 頁數
   const [totalPages, setTotalPages] = useState(0)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(20)
 
+  // 篩選
+  const [pFilter, setPFilter] = useState()
+  const productFilter = (e) => {
+    setPFilter(e)
+    // console.log(pFilter)
+  }
+
   useEffect(() => {
     // console.log("page Changed: " + currentPage)
     const getProducts = async () => {
       try {
-        const res = await fetch(`http://localhost:3005/api/products/list?page=${page}`,
-        {credentials: 'include'})
-        
+        const res = await fetch(
+          `http://localhost:3005/api/products/list?page=${page}`,
+          { credentials: 'include' }
+        )
+
         const data = await res.json()
         console.log(data)
         if (Array.isArray(data.products)) {
           setProducts(data.products)
+          setDisplayProducts(data.products)
           setTotalPages(data.totalPages)
         }
       } catch (e) {
@@ -46,15 +60,13 @@ export default function Products() {
       }
       router.push(`/products?page=${page}`)
     }
+
     getProducts()
   }, [page, limit, isLoggedIn, memberId])
 
   const handlePageChange = (newPage) => {
     setPage(newPage)
   }
-  
-
-
 
   const initState = products.map((p) => {
     return { ...p, fav: false }
@@ -105,18 +117,37 @@ export default function Products() {
     e.nativeEvent.stopImmediatePropagation()
     e.stopPropagation()
   }
+  // const pid = pFilter.length == 0 ? []:pFilter.map(v => v.id)
+  // console.log(pid)
 
-  const productFilter =(e)=>{
-    // setPFilter(e)
-    // console.log(pFilter)
-    // setPFilter(e)
-    console.log("MMM")
-  }
 
+  useEffect(() => {
+    const typechecked = pFilter?.typechecked;
+    const typecheckedID = typechecked ? typechecked.map(v => parseInt(v.id)) : [];
+  
+    const ratingchecked = pFilter?.ratingchecked;
+    const ratingcheckedID = ratingchecked ? ratingchecked.map(v => parseInt(v.id)) : [];
+  
+    // 搜索,篩選
+    const filteredProducts = products.filter(p => 
+      (p.name && p.name.includes(searchWord)) && // 搜索
+      (ratingcheckedID.length === 0 || ratingcheckedID.includes(p.rating_id)) && // 分级
+      (typecheckedID.length === 0 || typecheckedID.includes(p.type_id)) // 類型
+    );
+  
+    setDisplayProducts(filteredProducts);
+  
+    const params = new URLSearchParams();
+    typecheckedID.forEach(id => params.append('type', id));
+    ratingcheckedID.forEach(id => params.append('rating', id));
+    // 更新URL参数以反映当前的筛选状态
+    router.push(`/products?${params.toString()}`);
+  }, [pFilter, searchWord, products]);
+  
   return (
     <>
-    <GoTopButton/>
-      <Navbar />
+      <GoTopButton />
+      <Navbar searchWord={searchWord} setSearchWord={setSearchWord} />
       <Image
         src="/images/product/p-index.jpg"
         alt="product"
@@ -144,7 +175,7 @@ export default function Products() {
       <div className="container pt-3 px-lg-5 px-4">
         <BreadCrumb />
         <div className="d-flex justify-content-between mb-3">
-          <TypeFilter productFilter = {productFilter()}/>
+          <TypeFilter productFilter={productFilter} />
           <div>
             <FaBorderAll className="text-white me-2 h5" />
             <IoReorderFour className="text-white h4 mb-0" />
@@ -152,7 +183,7 @@ export default function Products() {
         </div>
         <div className="container px-0 py-2 mb-3">
           <div className="row row-cols-2 row-cols-lg-5 g-0 g-lg-3">
-            {products.map((p) => {
+            {displayProducts.map((p) => {
               return (
                 <div
                   key={p.id}
@@ -161,7 +192,12 @@ export default function Products() {
                     historyRecord(p)
                   }}
                 >
-                  <div onClick={()=>{ router.push(`/products/${p.id}`) }} className={styles.link}>
+                  <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+                    className={styles.link}
+                  >
                     <ProductCard
                       className="p-5"
                       id={p.id}
@@ -185,8 +221,12 @@ export default function Products() {
             })}
           </div>
         </div>
-    
-        <PaginationFront currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
+
+        <PaginationFront
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
 
         <div>
           <h4 className="text-white mx-3 ">猜你喜歡</h4>

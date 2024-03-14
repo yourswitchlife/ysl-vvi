@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Offcanvas from 'react-bootstrap/Offcanvas'
 //toggle list from react bootstrap
 import Collapse from 'react-bootstrap/Collapse'
@@ -10,10 +10,6 @@ import ratings from '@/data/rating.json'
 
 export default function TypeFilter({ productFilter = () => {} }) {
   //offcanvas const
-  const [pFilter,setPFilter]=useState({
-    type:'',
-    rating:'',
-  })
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
@@ -39,11 +35,29 @@ export default function TypeFilter({ productFilter = () => {} }) {
     })
   }
 
-  const typechecked = typeCheck.filter((v) => v.checked === true)
-  console.log(typechecked)
-  const ratingchecked = ratingCheck.filter((v) => v.checked === true)
-  console.log(ratingchecked)
-  productFilter(typechecked)
+  // 點按鈕後把選到的值傳給父層且同步
+  const handleSubmit = () => {
+    const typechecked = typeCheck.filter((v) => v.checked === true)
+    const ratingchecked = ratingCheck.filter((v) => v.checked === true)
+    // console.log(typechecked)
+    // console.log(ratingchecked)
+    const pFilterCondintion = { typechecked, ratingchecked }
+    productFilter(pFilterCondintion)
+
+    handleClose()
+  }
+  useEffect(() => {
+    // const typechecked = typeCheck.filter((v) => v.checked === true)
+    // const ratingchecked = ratingCheck.filter((v) => v.checked === true)
+    // const pFilterCondintion = { typechecked, ratingchecked }
+    // productFilter(pFilterCondintion)
+  }, [typeCheck, ratingCheck])
+  
+  const clearForm = () => {
+   const checkboxes = document.querySelectorAll('input[type="checkbox"]')
+   checkboxes.forEach(checkbox => checkbox.checked = false)
+  }
+
 
   return (
     <>
@@ -141,8 +155,12 @@ export default function TypeFilter({ productFilter = () => {} }) {
               className={`d-flex justify-content-center ${styles.selectBtn}`}
             >
               <button
-                type="submit"
+                type="button"
                 className="btn btn-danger d-flex align-items-center"
+                onClick={() => {
+                  handleSubmit();
+                  clearForm()
+                }}
               >
                 篩選商品
               </button>

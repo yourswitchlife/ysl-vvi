@@ -199,7 +199,7 @@ export default function ProductCard({
             <h6>
               <b className="text-danger">NT${price}</b>
             </h6>
-            {display_price == null ? (''):(<p className="text-white-50 text-decoration-line-through">
+            {display_price == null || display_price == price ? (''):(<p className="text-white-50 text-decoration-line-through">
               NT ${display_price}
             </p>)}
          

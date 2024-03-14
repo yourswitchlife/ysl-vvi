@@ -1,7 +1,7 @@
 import React from 'react';
 import { MdOutlineFirstPage, MdLastPage } from 'react-icons/md';
 
-export default function Pagination({ currentPage, totalPages, onPageChange }) {
+export default function PaginationFront({ currentPage, totalPages, onPageChange }) {
 
   const pageNumbers = [];
   for (let i = 1; i <= totalPages; i++) {

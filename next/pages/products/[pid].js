@@ -43,6 +43,26 @@ export default function ProductDetail() {
     launch_valid: '',
     created_at: '',
   })
+  const [sameTypeP, setSameTypeP] = useState({
+    id: '',
+    type_id: '',
+    name: '',
+    product_quanty: '0',
+    fav: '',
+    display_price: '',
+    price: '',
+    img_cover: '',
+    img_details: [],
+    release_time: '',
+    language: [],
+    rating_id: '3',
+    co_op_valid: '0',
+    description: '',
+    member_id: '',
+    valid: '',
+    launch_valid: '',
+    created_at: '',
+  })
   const [ben, setBen] = useState(false)
   // const [detailImgs,setDetailImgs] = useState(product.img_details)
   // 商品數量+1
@@ -90,12 +110,20 @@ export default function ProductDetail() {
     try {
       const res = await fetch(`http://localhost:3005/api/products/${pid}`)
       const data = await res.json()
-      // console.log(data[0])
+      console.log(data.responseData[0]) //相對應id的商品
+      console.log(data.productTypeResult) //找同類型的商品
       // console.log(data[0].img_details)
       // console.log(data[0].img_details.split(","))
+      // console.log(sameTypeP)
+      if(data.productTypeResult[0].name){
+        const sameTypeP = data.productTypeResult.filter((p,i) => p.id != data.responseData[0].id)
+        const sTypeP = sameTypeP.slice(1,5)
+        setSameTypeP(sTypeP)
+        console.log(sTypeP)
+      }
 
-      if (data[0].name) {
-        setProduct({ ...data[0], quantity: 1, userSelect: false })
+      if (data.responseData[0].name) {
+        setProduct({ ...data.responseData[0], quantity: 1, userSelect: false })
       }
     } catch (e) {
       console.error(e)
@@ -135,6 +163,32 @@ export default function ProductDetail() {
     }
     return type
   }
+
+  const memberIdChange = (v) => {
+    let memberId = ''
+    switch (Number(v)) {
+      case 1:
+        memberId = '玩具熊的小窩'
+        break
+      case 2:
+        memberId = '煞氣欸路易吉'
+        break
+      case 3:
+        memberId = '碧姬公主的玩具城堡'
+        break
+      case 4:
+        memberId = '栗寶寶好物站'
+        break
+      case 5:
+        memberId = '庫巴很酷吧'
+        break
+      case 6:
+        memberId = '紅色死神的遊戲收藏'
+        break
+    }
+    return memberId
+  }
+
   const ratingStyle = (v) => {
     let ratingId = '',
       bgc = ''
@@ -180,13 +234,24 @@ export default function ProductDetail() {
   useEffect(() => {
     console.log(historyRecords)
   }, [historyRecords])
-  console.log(historyRecords)
+  // console.log(historyRecords)
   // let imgAry = [product.img_details.split(",")[0], product.img_details.split(",")[1], product.img_details.split(",")[2]]
 
   // console.log(product.img_details)
   if (product.img_details != '') {
     console.log(product.img_details.split(','))
   }
+
+  // const getRandomSameTypeP = (arr, count) => {
+  //   let shuffled = arr.slice()
+  //   for (let i = shuffled.length - 1; i > 0; i--) {
+  //     const j = Math.floor(Math.random() * (i + 1))
+  //     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  //   }
+  //   return shuffled.slice(0, count)
+  // } 
+  // const randomSameTypeP = getRandomSameTypeP(sameTypeP,4)
+  // console.log(randomSameTypeP)
   return (
     <>
     <GoTopButton/>
@@ -318,7 +383,7 @@ export default function ProductDetail() {
             <ul className="h6 text-white">
               <li>主機平台：Switch</li>
               <li>遊戲類型：{typeChange(product.type_id)}</li>
-              <li>發售日期：{product.release_time} 上市</li>
+              <li>發售日期：{product.release_time.split('T')[0]} 上市</li>
               <li>作品分級：{rs.ratingId} ⁺</li>
               <li>遊戲人數：1~2人</li>
             </ul>
@@ -363,7 +428,7 @@ export default function ProductDetail() {
                       width={670}
                       height={400}
                       priority={true}
-                      className="my-3 w-100 h-auto"
+                      className="my-4 w-100 h-auto"
                     />
                   )
                 })
@@ -386,7 +451,7 @@ export default function ProductDetail() {
                   />
                 </div>
                 <div className="ms-3">
-                  <h6 className="text-white">我的ns小舖</h6>
+                  <h6 className="text-white">{memberIdChange(product.member_id)}</h6>
                   <RatingStars />
                 </div>
               </div>
@@ -398,7 +463,7 @@ export default function ProductDetail() {
                   <FaRegHeart className="text-light pb-1" /> 關注店家
                 </button>
                 <button type="button" className="btn btn-danger btn-sm mt-1">
-                  <FaRegHeart className="text-light pb-1" /> 進入本店
+                  <FaRegHeart className="text-light pb-1" /> 進入本店 
                 </button>
               </div>
             </div>
@@ -412,13 +477,50 @@ export default function ProductDetail() {
 
             <h5 className="text-white mb-3">本分類熱銷</h5>
             <div className={styles.wrap}>
-              <ProductCard></ProductCard>
-              <ProductCard></ProductCard>
-              <ProductCard></ProductCard>
-              <ProductCard></ProductCard>
+            {console.log(sameTypeP)}
+            {sameTypeP.length > 0 ? sameTypeP.map((p,i)=>{
+              return(
+                <ProductCard key={i}
+                id={p.id}
+                      name={p.name}
+                      price={p.price}
+                      display_price={p.display_price}
+                      releaseTime={p.release_time.split('T')[0]}
+                      img_cover={p.img_cover}
+                      img_details={p.img_details}
+                      type={p.type_id}
+                      ratingId={p.rating_id}
+                      fav={p.fav}
+                      // handleToggleFav={handleToggleFav}
+                      member_id={p.member_id}
+                      // cardIcon={cardIcon}
+              />
+              )
+            }):''}
+            {/* {sameTypeP != [] ? sameTypeP.map((p,i) => {
+              return(
+              <ProductCard key={i}
+                id={p.id}
+                      name={p.name}
+                      price={p.price}
+                      display_price={p.display_price}
+                      releaseTime={p.release_time.split('T')[0]}
+                      img_cover={p.img_cover}
+                      img_details={p.img_details}
+                      type={p.type_id}
+                      ratingId={p.rating_id}
+                      fav={p.fav}
+                      handleToggleFav={handleToggleFav}
+                      member_id={p.member_id}
+                      cardIcon={cardIcon}
+              />
+              )
+            })
+            :[]} */}
+            
             </div>
             <Link
-              href=""
+              href="http://localhost:3000/products"
               className={`d-block mt-2 text-end more h6 text-white ${styles.more}`}
             >
               看更多...

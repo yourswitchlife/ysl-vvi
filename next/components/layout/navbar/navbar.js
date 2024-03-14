@@ -7,8 +7,8 @@ import SearchBar from './searchBar'
 import SearchBarB from './searchBarB'
 import Image from 'next/image'
 import Link from 'next/link'
-import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
-import { FaHeart, FaShoppingCart, FaBell, FaStore } from 'react-icons/fa'
+// import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
+import { FaHeart, FaShoppingCart, FaBell, FaStore, FaSearch } from 'react-icons/fa'
 import Dropdown from 'react-bootstrap/Dropdown';
 import BurgerMenu from './burgermenu'
 //登出邏輯
@@ -22,7 +22,8 @@ import NavPic from '@/hooks/use-navpic';
 import { useCart } from '@/hooks/use-cart'
 
 
-export default function Navbar() {
+export default function Navbar(props) {
+  const { searchWord, setSearchWord } = props
   const { isLoggedIn, memberData } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
   const {totalProducts} = useCart()
@@ -50,7 +51,20 @@ export default function Navbar() {
           </Link>
         </div>
         <div className="">
-          <SearchBar />
+        <div className={styles.display}>
+        <button type="button" className={`${styles.button}`}>
+          <FaSearch className={styles.icon} />
+        </button>
+        <input
+        type='text'
+          // text="search"
+          placeholder="搜尋所有商品..."
+          className={styles.search}
+          value={searchWord}
+          onChange={(e) => {
+            setSearchWord(e.target.value)}}
+        />
+      </div>
         </div>
         {isLoggedIn ? (
             // 登入後顯示
