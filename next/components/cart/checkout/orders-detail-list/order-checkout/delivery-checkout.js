@@ -63,7 +63,7 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
   // 單筆賣場訂單總價
   const [orderPrice, setOrderPrice] = useState(0)
   // 設定運費價格，預設7-11運費價格
-  const [shippingFee, setShippingFee] = useState(60)
+  const [shippingFee, setShippingFee] = useState(0)
 
 
 
@@ -219,12 +219,13 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
   // 點擊編輯地址按鈕
   const handleEditClick = () => {
     if (selectAddrOption === '2' && selectedAddressIndex !== null && addresses.homeAddresses[selectedAddressIndex]) {
-      // 使用selectedAddressInde來設計表單資料
+      // 使用selectedAddressIndex來設計表單資料
       const selectedAddress = addresses.homeAddresses[selectedAddressIndex]
       if (selectedAddress) {
         const { name, phone } = selectedAddress;
         const { AddressType, DeliveryTimePreference } = selectedAddress.specialPreferences
         const { city, region, detail } = parseAddress(selectedAddress.address)
+        console.log(selectedAddress.address);
 
         setName(name)
         setPhone(phone)
@@ -321,10 +322,12 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
   useEffect(() => {
     let total = items.length
     let totalPrice = items.reduce((order, item) => order + (item.quantity * item.price), 0)
-    totalPrice += shippingFee
+    if(selectAddrOption){
+      totalPrice += shippingFee
+    }
     setTotalProducts(total)
     setOrderPrice(totalPrice)
-  }, [items, shippingFee])
+  }, [items, shippingFee, selectAddrOption])
 
   // 利用updateShippingFee傳遞給父層的函數
   const calcShippingFee = () => {

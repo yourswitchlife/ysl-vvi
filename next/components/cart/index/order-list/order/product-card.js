@@ -102,9 +102,9 @@ export default function ProductCard({ isEditing, item }) {
             <>
               {/* 當手機版點擊編輯出現 */}
               <div className={styles.editBtn}>
-                <button type="button" className="btn btn-sm btn-danger">
+                {/* <button type="button" className="btn btn-sm btn-danger">
                   <FaHeart />
-                </button>
+                </button> */}
                 <button
                   type="button"
                   className="btn btn-sm btn-dark"

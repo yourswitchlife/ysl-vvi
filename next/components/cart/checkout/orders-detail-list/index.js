@@ -231,6 +231,20 @@ export default function OrdersDetailList() {
       return
     }
 
+    // 如果用戶沒有選擇配送方式
+    const allhaveShippingMethod = payingItems.every(item => shippingMethods.hasOwnProperty(item.member_id))
+    console.log(allhaveShippingMethod)
+    console.log(payingItems);
+    console.log(shippingMethods);
+    if (!allhaveShippingMethod) {
+      MySwal.fire({
+        icon: "warning",
+        text: "請為所有訂單選擇配送方式",
+        confirmButtonColor: '#E41E49',
+      })
+      return;
+    }
+
     const formattedShippingInfos = formatShippingInfos(shippingInfos);
 
     const orderData = {
@@ -498,7 +512,9 @@ export default function OrdersDetailList() {
                         <Image src={couponStar} className={styles.icon} />
                         {coupons.filter(coupon => coupon.id === selectedProductCoupon).map((coupon) => (
                           <div key={coupon.id}>
-                            {coupon.name} 全站消費滿${coupon.price_rule} 折抵${coupon.discount_value} (每人限用一次)
+                            {coupon.name} 全站消費滿${coupon.price_rule} 折抵
+                            {coupon.discount_value > 9 ? (`$${coupon.discount_value}`) : (`${coupon.discount_value}折`)}
+                             (每人限用一次)
                           </div>
                         ))}
                       </div>
