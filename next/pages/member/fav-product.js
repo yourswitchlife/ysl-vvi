@@ -111,7 +111,7 @@ export default function FavProduct() {
     const newItem = {
       id: product.productId,
       name: product.productName,
-      language: [product.language],
+      language: product.language,
       product_quanty: product.product_quanty,
       price: Number(priceString),
       display_price: Number(displayPriceString),
@@ -121,7 +121,6 @@ export default function FavProduct() {
     }
     console.log(newItem)
     addItem(newItem)
-    notifySuccess()
   }
 
   // 排序

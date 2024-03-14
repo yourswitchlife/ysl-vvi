@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import CartNavbar from '@/components/layout/navbar/navbar'
 import Footer from '@/components/layout/footer/footer-front'
 import CartStep from '@/components/cart/step-progress'
@@ -19,38 +19,41 @@ import useRequireCart from '@/hooks/use-require-cart'
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import { useAuth } from '@/hooks/use-Auth'
 
+
 export default function Purchase() {
+
   // useRequireCart()
   const router = useRouter()
+
+
   const { orderId, transactionId } = router.query
-  useEffect(()=>{
-   
 
-  if (orderId && transactionId) {
-    const checkTransactionUrl =`http://localhost:3005/api/cart/check-transaction?transactionId=${transactionId}&groupId=${orderId}`
+  // LINEPAY導頁進來
+  useEffect(() => {
+    if (orderId && transactionId) {
+      const checkTransactionUrl = `http://localhost:3005/api/cart/check-transaction?transactionId=${transactionId}&groupId=${orderId}`
 
-    fetch(checkTransactionUrl)
-      .then(response => response.json())
-      .then(data => {
-        // 根据响应处理业务逻辑，例如更新UI或显示支付结果提示
-        console.log('交易結果:', data);
-        if (data.status === 'success') {
-          MySwal.fire({
-            icon: 'success',
-            title: '付款成功',
-            showConfirmButton: false,
-            timer: 2000,
-          })
-        } else {
-          MySwal.fire({
-            text: '付款失敗',
-            confirmButtonColor: '#E41E49',
-          })
-        }
-      })
-      .catch(error => console.error('付款驗證失敗:', error))
-  }
-  },[orderId, transactionId])
+      fetch(checkTransactionUrl)
+        .then(response => response.json())
+        .then(data => {
+          console.log('交易結果:', data);
+          if (data.status === 'success') {
+            MySwal.fire({
+              icon: 'success',
+              title: '付款成功',
+              showConfirmButton: false,
+              timer: 2000,
+            })
+          } else {
+            MySwal.fire({
+              text: '付款失敗',
+              confirmButtonColor: '#E41E49',
+            })
+          }
+        })
+        .catch(error => console.error('付款驗證失敗:', error))
+    }
+  }, [orderId, transactionId])
   return (
     <>
       <CartNavbar />

@@ -205,6 +205,8 @@ router.post('/create-order', async (req, res) => {
     shippingDiscount,
     productDiscount,
     shippingInfos,
+    selectedProductCoupon,
+    selectedShippingCoupon,
   } = req.body
   // console.log(req.body)
 
@@ -316,8 +318,8 @@ router.post('/create-order', async (req, res) => {
               paymentMethod,
               1,
               '待付款',
-              '',
-              '',
+              selectedProductCoupon,
+              selectedShippingCoupon,
             ]
           )
         }
@@ -492,5 +494,28 @@ router
       res.status(500).json({ status: 'failed', message: '伺服器錯誤' })
     }
   })
+
+// 取得會員優惠券
+router.get('/get-coupons', async (req, res) => {
+  const memberId = req.query.memberId
+
+  if (!memberId) {
+    return res.status(400).send({ error: '找不到用戶' })
+  }
+
+  try {
+    const [coupons] = await db.execute(
+      `SELECT discount_coupon.*
+    FROM discount_coupon JOIN member_coupon ON discount_coupon.id = member_coupon.coupon_id
+    WHERE member_coupon.member_id = ? AND member_coupon.status = 0 AND discount_coupon.expiration_date >= NOW() AND discount_coupon.valid = 1`,
+      [memberId]
+    )
+
+    res.json(coupons)
+  } catch (error) {
+    console.error('取得用戶優惠券失敗', error)
+    res.status(500).send({ error: '伺服器錯誤' })
+  }
+})
 
 export default router
