@@ -4,7 +4,7 @@ import { FaBorderAll } from 'react-icons/fa'
 import { IoReorderFour } from 'react-icons/io5'
 import ProductCard from '@/components/products/product-card'
 import BreadCrumb from '@/components/common/breadcrumb'
-import Pagination from '@/components/common/pagination'
+import PaginationFront from '@/components/common/pagination-front'
 import Link from 'next/link'
 import styles from '../../styles/products/products.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
@@ -13,48 +13,46 @@ import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 // import data from '@/data/product.json'
 import TypeFilter from '@/components/shop/type-filter'
 import { useRouter } from 'next/router'
+import { useAuth } from '@/hooks/use-Auth'
+import GoTopButton from '@/components/go-to-top/go-top-button'
 
 export default function Products() {
+  const { isLoggedIn, memberId } = useAuth()
   const [products, setProducts] = useState([])
-  const [totalPages, setTotalPages] = useState(0)
   const router = useRouter()
-  const {page} = router.query 
-  const currentPage = parseInt(page) || 1
-  const limit = 20
+  const [pFilter, setPFilter] = useState('')
+
+  // 頁數
+  const [totalPages, setTotalPages] = useState(0)
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(20)
 
   useEffect(() => {
     // console.log("page Changed: " + currentPage)
     const getProducts = async () => {
       try {
-        const res = await fetch('http://localhost:3005/api/products/list')
+        const res = await fetch(
+          `http://localhost:3005/api/products/list?page=${page}`,
+          { credentials: 'include' }
+        )
+
         const data = await res.json()
         console.log(data)
-        if (Array.isArray(data)) {
-          setProducts(data)
-          setTotalPages(Math.ceil(data.length / limit))
-          // console.log(data.length / limit)
+        if (Array.isArray(data.products)) {
+          setProducts(data.products)
+          setTotalPages(data.totalPages)
         }
       } catch (e) {
         console.error(e)
       }
+      router.push(`/products?page=${page}`)
     }
     getProducts()
-  }, [currentPage])
+  }, [page, limit, isLoggedIn, memberId])
 
-  const updatePage = (newPage) => {
-    router.push(`/?page=${newPage}`)
+  const handlePageChange = (newPage) => {
+    setPage(newPage)
   }
-
-  let items = [];
-  for (let number = 1; number <= totalPages; number++) {
-    items.push(
-      <Pagination.Item key={number} active={number === currentPage} onClick={() => updatePage(number)}>
-        {number}
-      </Pagination.Item>
-    );
-  }
-  console.error(items)
-  
 
   const initState = products.map((p) => {
     return { ...p, fav: false }
@@ -100,44 +98,22 @@ export default function Products() {
     historyRecord()
   }, [])
 
-  // const pagination = (products) => {
-  //   const dataTotal = products.length
-  //   const perPage = 20
-  //   const pageTotal = Math.ceil(dataTotal / perPage)
-  //   // console.log(`全部數量:${dataTotal} 一頁:${perPage} 總頁數:${pageTotal}`)
-  //   let currentPage = nowPage;
-  //   if(currentPage > pageTotal){
-  //     currentPage = currentPage ;
-  //   }
-  //   const minData = (currentPage * perPage) - perPage + 1
-  //   const maxData = (currentPage * perPage)
-
-  //   const data = []
-  //   jsonData.forEach((item,i) => {
-  //     const num = i + 1
-  //     if(num >= minData && num <= maxData){
-  //       data.push(item)
-  //     }
-  //   })
-  //   const page = {
-  //     pageTotal,
-  //     currentPage,
-  //     hasPage: currentPage > 1,
-  //     hasNext: currentPage < pageTotal,
-  //   }
-  //   displayData(data)
-  //   pageBtn(page)
-  // }
-  // pagination(products)
-
   const cardIcon = (e) => {
     e.persist()
     e.nativeEvent.stopImmediatePropagation()
     e.stopPropagation()
   }
 
+  const productFilter = (e) => {
+    // setPFilter(e)
+    // console.log(pFilter)
+    // setPFilter(e)
+    console.log('MMM')
+  }
+
   return (
     <>
+      <GoTopButton />
       <Navbar />
       <Image
         src="/images/product/p-index.jpg"
@@ -166,7 +142,7 @@ export default function Products() {
       <div className="container pt-3 px-lg-5 px-4">
         <BreadCrumb />
         <div className="d-flex justify-content-between mb-3">
-          <TypeFilter />
+          <TypeFilter productFilter={productFilter()} />
           <div>
             <FaBorderAll className="text-white me-2 h5" />
             <IoReorderFour className="text-white h4 mb-0" />
@@ -183,55 +159,43 @@ export default function Products() {
                     historyRecord(p)
                   }}
                 >
-                  <Link href={`/products/${p.id}`} className={styles.link}>
+                  <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+                    className={styles.link}
+                  >
                     <ProductCard
                       className="p-5"
                       id={p.id}
                       name={p.name}
                       price={p.price}
-                      displayPrice={p.display_price}
+                      display_price={p.display_price}
                       releaseTime={p.release_time.split('T')[0]}
-                      cover={p.img_cover}
+                      img_cover={p.img_cover}
+                      img_details={p.img_details}
                       type={p.type_id}
                       ratingId={p.rating_id}
                       fav={p.fav}
                       handleToggleFav={handleToggleFav}
-                      memberId={p.member_id}
+                      member_id={p.member_id}
                       cardIcon={cardIcon}
-                      imgDetails={p.img_details}
+                      product_quanty={p.product_quanty}
+                      language={p.language}
+                      // imgDetails={p.img_details}
                     />
-                  </Link>
+                  </div>
                 </div>
               )
             })}
           </div>
         </div>
-        {/* {page >1 && <a href={`/?page=${page - 1}`}>prev</a>}
-        頁數{page}
-        {page < totalPages && <a href={`/?page=${page + 1}`}>next</a>} */}
-        {/* <nav aria-label="Page navigation example">
-            <ul className="pagination">
-              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                <a className="page-link" onClick={() => updatePage(currentPage - 1)}>Prev</a>
-              </li>
-              {[...Array(totalPages).keys()].map(number => (
-                <li key={number} className={`page-item ${currentPage === number + 1 ? 'active' : ''}`}>
-                  <a className="page-link" onClick={() => updatePage(number + 1)}>{number + 1}</a>
-                </li>
-              ))}
-              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                <a className="page-link" onClick={() => updatePage(currentPage + 1)}>Next</a>
-              </li>
-            </ul>
-          </nav> */}
-        
-        {/* <Pagination /> */}
 
-        <Pagination>
-            <Pagination.Prev onClick={() => currentPage > 1 && updatePage(currentPage - 1)} />
-            {items}
-            <Pagination.Next onClick={() => currentPage < totalPages && updatePage(currentPage + 1)} />
-          </Pagination>
+        <PaginationFront
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
 
         <div>
           <h4 className="text-white mx-3 ">猜你喜歡</h4>

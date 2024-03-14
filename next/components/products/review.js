@@ -9,7 +9,7 @@ export default function Review() {
     review: '',
     reviewPhoto: '',
   })
-  const [selectFile, setSelectFile] = useState('')
+  const [selectFile, setSelectFile] = useState(null)
   const [filePicked, setFilePicked] = useState(false)
   const [preview, setPreview] = useState('')
   const [imgServerUrl, setImgServerUrl] = useState('')
@@ -29,11 +29,11 @@ export default function Review() {
 
   const changHandler = (e) => {
     const file = e.target.files[0]
-    if(file){
+    if (file) {
       setFilePicked(true)
       setSelectFile(file)
       setImgServerUrl('')
-    }else{
+    } else {
       setFilePicked(false)
       setSelectFile(null)
       setImgServerUrl('')
@@ -47,29 +47,41 @@ export default function Review() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const formData = new FormData(review)
-
-    formData.append('reviewPhoto',selectFile)
-
-    fetch('http://localhost:3005/api/products/reviewPhoto', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        console.log('success', result)
+    if (!review.review) {
+      alert('請輸入您的評論')
+      return
+    } else {
+      const formData = new FormData(e.target)
+      console.log(formData.get('review'))
+      fetch('http://localhost:3005/api/products/addReview', {
+        method: 'POST',
+        body: formData,
       })
-      .catch((error) => {
-        console.error('error', error)
-      })
+        .then((response) => response.json())
+        .then((result) => {
+          alert('評論已發佈！'),
+            setTimeout(() => {
+              setReview({
+                rating: 0,
+                review: '',
+                reviewPhoto: '',
+              })
+            },1000)
+        })
+        .catch((error) => {
+          console.error('error', error)
+        })
+    }
   }
+
+  // console.log(review)
 
   return (
     <>
       <form
-        action={'/reviewPhoto'}
-        method="post"
-        encType="multipart/form-data"
+        // action={'/addReview'}
+        // method="post"
+        // encType="multipart/form-data"
         className={styles.formStyle}
         onSubmit={handleSubmit}
       >

@@ -3,13 +3,14 @@ export default async function mainCheckToLogin(context) {
     credentials: 'include',
     headers: {
       Cookie: context.req.headers.cookie || '',
+      /* 'Content-Type': 'application/json', */
     },
   });
 
   const data = await res.json();
-  // console.log(data);
+  console.log(data);
 
-  if (!data.isLoggedIn) {
+  if (!data.isLoggedIn || data.isLoggedIn === false) {
     return {
       redirect: {
         destination: '/member/login',

@@ -1,24 +1,28 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { FaCartPlus } from 'react-icons/fa'
+import { FaCartPlus, FaStore } from 'react-icons/fa'
 import styles from '../../styles/products/product-card.module.scss'
 import heartFill from 'assets/heart-fill.svg'
 import heratIcon from 'assets/heart-white.svg'
-import { FaShop } from 'react-icons/fa6'
+
+// 引入use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
 
 export default function ProductCard({
   id,
   name,
   releaseTime,
-  displayPrice,
+  display_price,
   price,
-  cover,
+  product_quanty,
+  img_cover,
   type,
   ratingId,
-  memberId,
+  member_id,
   fav,
   handleToggleFav,
   cardIcon = () => {},
+  language,
 }) {
   const ratingStyle = (v) => {
     let ratingId = '',
@@ -104,6 +108,8 @@ export default function ProductCard({
     return memberId
   }
 
+  const { addItem, notifySuccess } = useCart()
+
   // const cardIcon = (e) => {
   //   e.stopPropagation()
   // }
@@ -114,8 +120,9 @@ export default function ProductCard({
       <div className={styles.card}>
         <div className="d-flex justify-content-center pt-2">
           <Image
-            src={`/images/product/cover/${cover}`}
-            alt={cover}
+            // src={`/images/product/cover/${img_cover}`}
+            src={`http://localhost:3005/productImg/cover/${img_cover}`}
+            alt={img_cover}
             width={150}
             height={244}
             // priority={true}
@@ -131,8 +138,17 @@ export default function ProductCard({
                 <b>{typeChange(type)}</b>
               </p>{' '}
             </div>
-            <div className='d-flex justify-content-center align-items-center' onClick={cardIcon}>
-              <div onClick={(e) => {cardIcon(e)}} className='pb-1 p-0'>
+            <div
+              className="d-flex justify-content-center align-items-center"
+              onClick={cardIcon}
+            >
+              <div
+                onClick={(e) => {
+                  e.stopPropagation()
+                  cardIcon(e)
+                }}
+                className="pb-1 p-0"
+              >
                 <Image
                   src={fav ? heartFill : heratIcon}
                   className="me-2"
@@ -142,9 +158,26 @@ export default function ProductCard({
                   }}
                 />
               </div>
+              {/* 加入購物車 */}
               <FaCartPlus
                 className={`text-light h5 pb-1 ${styles.Chover}`}
-                onClick={() => {}}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  addItem({
+                    name,
+                    releaseTime,
+                    display_price,
+                    price,
+                    img_cover,
+                    type,
+                    id,
+                    member_id,
+                    fav,
+                    product_quanty,
+                    language,
+                    quantity: 1,
+                  })
+                }}
               />
             </div>
           </div>
@@ -155,18 +188,24 @@ export default function ProductCard({
             {name}
           </h6>
           <p className="text-light">
-            <FaShop className="me-1 mb-1" />
-            {memberIdChange(memberId)}
+            <FaStore className="me-1 mb-1" />
+            {memberIdChange(member_id)}
           </p>
-          <p className="text-white">發行日期 {releaseTime}</p>
-          <div className="price d-flex justify-content-between mt-1 align-items-center">
+          <p className="text-white">
+            發行日期 {releaseTime}
+          </p>
+          <div  className="price d-flex justify-content-between mt-1 align-items-center">
             <h6>
-              <b className="text-danger">NT ${price}</b>{' '}
+              <b className="text-danger">NT${price}</b>
             </h6>
-            <p className="text-white-50 text-decoration-line-through">
-              NT ${displayPrice}
-            </p>
-            {/* <div className={styles[`${rs.className}`]}>{rs.ratingId}⁺</div> */}
+            {display_price == null ? (''):(<p className="text-white-50 text-decoration-line-through">
+              NT ${display_price}
+            </p>)}
+         
+            {/* <p className="text-white-50 text-decoration-line-through">
+              NT${display_price}
+            </p> */}
+      
             <div
               style={{
                 width: '22px',

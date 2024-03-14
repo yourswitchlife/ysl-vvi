@@ -8,7 +8,7 @@ import profileImg from '@/public/images/profile-photo/peach.png'
 import Sortbar from '@/components/shop/sortbar'
 import Coupon from '@/components/shop/coupon'
 import SearchbarB from '@/components/shop/searchbar-b'
-import Pagination from '@/components/common/pagination'
+import Pagination from '@/components/common/pagination-front'
 import ProductCard from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
 import SortDropdown from '@/components/common/sortDropdown'
@@ -183,7 +183,7 @@ const handleHitToggleFav = (id) => {
       <div className="container">
         <div className="d-none d-lg-block">
         <div className='mt-2'><BreadCrumb /></div>
-          <div className="d-flex justify-content-around mb-5 mt-5">
+          <div className="d-flex justify-c  ontent-around mb-5 mt-5">
           
             {/* seller detail */}
             <div className={styles.profile}>

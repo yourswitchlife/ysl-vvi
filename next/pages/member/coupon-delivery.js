@@ -21,7 +21,7 @@ import whitelog from '@/public/images/logo/logo_White-desktopLogo.svg'
 // import styles from '@/styles/products/product-list.module.scss'
 
 
-import Paginage from '@/components/common/pagination'
+import Paginage from '@/components/common/pagination-front'
 import Dropdown from 'react-bootstrap/Dropdown'
 
 export default function FavProduct() {

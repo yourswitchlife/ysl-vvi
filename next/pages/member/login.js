@@ -5,6 +5,7 @@ import mainCheckLogin from '@/context/member/mainCheckLogin'
 import Navbar from '@/components/layout/navbar/navbar'
 import sStyle from '@/styles/member/sign-in.module.scss'
 import Link from 'next/link'
+import Swal from 'sweetalert2';
 
 //google api
 import { signInWithRedirect } from "firebase/auth";
@@ -63,16 +64,19 @@ export default function logIn() {
 
       if (response.ok) {
         // const getHeader = response.headers.get('Authorization');
-        
-  
         // if (getHeader) {
-          // const token = getHeader.replace('Bearer ', '');
-          
-          // document.cookie = `token=${token}; max-age=3600; path=/`;
-          
-          console.log('登入成功:');
+        // const token = getHeader.replace('Bearer ', '');
 
-          router.push('/'); 
+        // console.log('登入成功:');
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "登入成功！歡迎您！",
+          showConfirmButton: false,
+          timer: 1300
+        });
+
+        router.replace('/'); 
         // }
       } else {
         // 處理錯誤情況
@@ -106,7 +110,7 @@ export default function logIn() {
               </Link>
             </div>
             <h5 className={sStyle.spe_text}>Welcome home.</h5>
-            <Form className="mt-3" onSubmit={handleLogin}>
+            <Form className="mt-3 align-items-center" onSubmit={handleLogin}>
               <InputGroup className="mb-3 px-4">
                 <InputGroup.Text>
                   <FaUser />
@@ -118,7 +122,7 @@ export default function logIn() {
                   placeholder="使用者名稱"
                   value={formData.account}
                   onChange={handleChange}
-                  style={{ width: '330px' }}
+                  style={{ width: '250px' }}
                 />
               </InputGroup>
 
@@ -135,7 +139,7 @@ export default function logIn() {
                     value={formData.password}
                     onChange={handleChange}
                     autoFocus
-                    style={{ width: '330px' }}
+                    style={{ width: '250px' }}
                   />
                 </InputGroup>
                 <Form.Check
@@ -167,9 +171,9 @@ export default function logIn() {
               </div>
             </Form>
             <div className="d-flex justify-content-center mb-3">
-              <h6 className="me-5">還沒加入YSL嗎?</h6>
-              <Link href="" className={sStyle.sign_link}>
-                立即快速註冊
+              <h6 className="me-5">忘記密碼了嗎?</h6>
+              <Link href="/member/forget-password" className={sStyle.sign_link}>
+                立即快速重設
               </Link>
             </div>
           </div>

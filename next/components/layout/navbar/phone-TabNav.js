@@ -4,7 +4,11 @@ import { FaHome, FaHeart, FaBell, FaUserAlt } from 'react-icons/fa'
 import { FaShop, FaCartShopping } from 'react-icons/fa6'
 import Link from 'next/link'
 
+// 引入use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
+
 export default function PhoneTabNav() {
+  const { totalProducts } = useCart()
   return (
     <>
       <div className={`row g-0 text-center d-lg-none ${styles.phoneNav}`}>
@@ -45,8 +49,11 @@ export default function PhoneTabNav() {
             </Link>
           </div>
           <div className="col">
-            <Link href="" className={styles.phoneNavContent}>
+            <Link href="/cart" className={`${styles.phoneNavContent} position-relative`}>
               <FaCartShopping />
+              {totalProducts > 0 && (
+                <span className={styles.cartBadge}>{totalProducts}</span>
+              )}
               <br />
               購物車
             </Link>
