@@ -233,21 +233,23 @@ export default function ProductCard({
             <FaStore className="me-1 mb-1" />
             {memberIdChange(member_id)}
           </p>
-          <p className="text-white">
-            發行日期 {releaseTime}
-          </p>
-          <div  className="price d-flex justify-content-between mt-1 align-items-center">
+          <p className="text-white">發行日期 {releaseTime}</p>
+          <div className="price d-flex justify-content-between mt-1 align-items-center">
             <h6>
               <b className="text-danger">NT${price}</b>
             </h6>
-            {display_price == null ? (''):(<p className="text-white-50 text-decoration-line-through">
-              NT ${display_price}
-            </p>)}
-         
+            {display_price == null ? (
+              ''
+            ) : (
+              <p className="text-white-50 text-decoration-line-through">
+                NT ${display_price}
+              </p>
+            )}
+
             {/* <p className="text-white-50 text-decoration-line-through">
               NT${display_price}
             </p> */}
-      
+
             <div
               style={{
                 width: '22px',
