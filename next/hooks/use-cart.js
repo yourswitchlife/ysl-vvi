@@ -278,6 +278,7 @@ export function CartProvider({ children }) {
           return cartItem
         })
         setCartItems(updateCartItems)
+        notifySuccess()
       } else {
         // 超過庫存量
         notifyCartQunanty(item.product_quanty)
@@ -289,6 +290,7 @@ export function CartProvider({ children }) {
       const newItem = { ...item, quantity: item.quantity || 1, userSelect: item.userSelect || false, timeStamp }
       const newItems = [newItem, ...cartItems]
       setCartItems(newItems)
+      notifySuccess()
       // sellers
       setMemberIds([item.member_id, ...memberIds])
     }

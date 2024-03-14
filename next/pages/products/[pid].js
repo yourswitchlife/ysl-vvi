@@ -269,7 +269,6 @@ export default function ProductDetail() {
                 className="btn btn-info"
                 onClick={() => {
                   addItem(product)
-                  notifySuccess()
                 }}
               >
                 <FaCartPlus className="text-light pb-1" /> 加入購物車
