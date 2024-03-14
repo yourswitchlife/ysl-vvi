@@ -17,47 +17,7 @@ import moment from 'moment'
 // }
 
 //我的賣場
-// router.get('/:shop_site', async (req, res) => {
-//   try {
-//     let { shop_site } = req.params
-//     // console.log(`shop_site = ${shop_site}`)
-//     let [shop] = await db.execute(
-//       'SELECT * FROM `member` WHERE `shop_site` = ?',
-//       [shop_site]
-//     )
-//     // console.log(shop)
-//     //檢查查詢結果是否為空值
-//     if (shop.length === 0) {
-//       return res.status(404).send({ message: '查無此賣場' })
-//     }
-//     // 走上必要之惡...JOIN...
-//     let [shopProducts] = await db.execute(
-//       `SELECT product.* FROM product
-//       INNER JOIN member ON product.member_id = member.id
-//       WHERE member.shop_site = ?`,
-//       [shop_site]
-//     )
-//     // console.log(shopProducts)
-//     if (shopProducts.length > 0) {
-//       // 如果找到了商品信息
-//       res.json({ shop, shopProducts }) // 解析json对象
-//     } else {
-//       // 如果会员存在但没有找到商品信息
-//       res.status(404).send({ message: '查無此賣場商品' })
-//     }
-//   } catch (error) {
-//     console.log(error)
-//     res.status(500).send({ message: 'Server error' })
-//   }
-// })
-
-//我的賣場加入頁碼版本
 router.get('/:shop_site', async (req, res) => {
-  const page = parseInt(req.query.page) || 1
-  const limit = parseInt(req.query.limit) || 15
-  const offset = (page - 1) * limit
-  const { sort } = req.query // 假设 sort 可以是 'price_asc' 或 'price_desc'
-
   try {
     let { shop_site } = req.params
     // console.log(`shop_site = ${shop_site}`)
@@ -70,36 +30,17 @@ router.get('/:shop_site', async (req, res) => {
     if (shop.length === 0) {
       return res.status(404).send({ message: '查無此賣場' })
     }
-    // 走上必要之惡...JOIN...總項目
-    const [shopProductsResult] = await db.execute(
-      `SELECT product.* FROM product 
+    // 走上必要之惡...JOIN...
+    let [shopProducts] = await db.execute(
+      `SELECT product.* FROM product
       INNER JOIN member ON product.member_id = member.id
       WHERE member.shop_site = ?`,
       [shop_site]
     )
-    // console.log(shopProductsResult)
-    const shopProducts = shopProductsResult[0].shopProducts
-
-    //總頁數
-    const totalPages = Math.ceil(shopProducts / limit)
-
-    let orderByClause = ''
-    if (sort === 'price_asc') {
-      orderByClause = 'ORDER BY product.price ASC'
-    } else if (sort === 'price_desc') {
-      orderByClause = 'ORDER BY product.price DESC'
-    } else if (sort === 'release_time_asc') {
-      orderByClause = 'ORDER BY product.release_time ASC'
-    } else if (sort === 'release_time_desc') {
-      orderByClause = 'ORDER BY product.release_time DESC'
-    }
-    // const [data] = await db.execute(
-
-    // )
-
-    if (shopProductsResult.length > 0) {
+    // console.log(shopProducts)
+    if (shopProducts.length > 0) {
       // 如果找到了商品信息
-      res.json({ shop, shopProductsResult }) // 解析json对象
+      res.json({ shop, shopProducts }) // 解析json对象
     } else {
       // 如果会员存在但没有找到商品信息
       res.status(404).send({ message: '查無此賣場商品' })
@@ -109,6 +50,65 @@ router.get('/:shop_site', async (req, res) => {
     res.status(500).send({ message: 'Server error' })
   }
 })
+
+//我的賣場加入頁碼版本
+// router.get('/:shop_site', async (req, res) => {
+//   const page = parseInt(req.query.page) || 1
+//   const limit = parseInt(req.query.limit) || 15
+//   const offset = (page - 1) * limit
+//   const { sort } = req.query // 假设 sort 可以是 'price_asc' 或 'price_desc'
+
+//   try {
+//     let { shop_site } = req.params
+//     // console.log(`shop_site = ${shop_site}`)
+//     let [shop] = await db.execute(
+//       'SELECT * FROM `member` WHERE `shop_site` = ?',
+//       [shop_site]
+//     )
+//     // console.log(shop)
+//     //檢查查詢結果是否為空值
+//     if (shop.length === 0) {
+//       return res.status(404).send({ message: '查無此賣場' })
+//     }
+//     // 走上必要之惡...JOIN...總項目
+//     const [shopProductsResult] = await db.execute(
+//       `SELECT product.* FROM product
+//       INNER JOIN member ON product.member_id = member.id
+//       WHERE member.shop_site = ?`,
+//       [shop_site]
+//     )
+//     // console.log(shopProductsResult)
+//     const shopProducts = shopProductsResult[0].shopProducts
+
+//     //總頁數
+//     const totalPages = Math.ceil(shopProducts / limit)
+
+//     let orderByClause = ''
+//     if (sort === 'price_asc') {
+//       orderByClause = 'ORDER BY product.price ASC'
+//     } else if (sort === 'price_desc') {
+//       orderByClause = 'ORDER BY product.price DESC'
+//     } else if (sort === 'release_time_asc') {
+//       orderByClause = 'ORDER BY product.release_time ASC'
+//     } else if (sort === 'release_time_desc') {
+//       orderByClause = 'ORDER BY product.release_time DESC'
+//     }
+//     // const [data] = await db.execute(
+
+//     // )
+
+//     if (shopProductsResult.length > 0) {
+//       // 如果找到了商品信息
+//       res.json({ shop, shopProductsResult }) // 解析json对象
+//     } else {
+//       // 如果会员存在但没有找到商品信息
+//       res.status(404).send({ message: '查無此賣場商品' })
+//     }
+//   } catch (error) {
+//     console.log(error)
+//     res.status(500).send({ message: 'Server error' })
+//   }
+// })
 
 //讀取此賣場訂單
 router.get('/:shop_site/order', async (req, res) => {
