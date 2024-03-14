@@ -10,12 +10,9 @@ import fsStyle from '@/styles/member/fav-s.module.scss'
 import sStyles from '@/styles/member/mseller.module.scss'
 import cStyles from '@/styles/member/coupon.module.scss'
 
-import Link from 'next/link'
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import CouponProduct from '@/components/coupon/coupon-member/couponP-member'
 
-import PRating from '@/components/products/p-rating'
-// import Type from '@/components/products/type'
+import Link from 'next/link'
 import { FaRegHeart, FaCartPlus } from 'react-icons/fa'
 import whitelog from '@/public/images/logo/logo_White-desktopLogo.svg'
 // import styles from '@/styles/products/product-list.module.scss'
@@ -23,6 +20,7 @@ import whitelog from '@/public/images/logo/logo_White-desktopLogo.svg'
 
 import Paginage from '@/components/common/pagination'
 import Dropdown from 'react-bootstrap/Dropdown'
+import CouponMember from '@/components/coupon/coupon-member/couponD-member'
 
 export default function FavProduct() {
 
@@ -42,7 +40,7 @@ export default function FavProduct() {
               </Link>
               <h3 className={pStyle.gray_text}>|</h3>
               <Link href="/member/coupon-delivery" className={fsStyle.pagep_btn}>
-              <span></span>運費優惠
+                <span></span>運費優惠
               </Link>
             </div>
             <div className=" container d-flex justify-content-end pt-3 pe-5">
@@ -66,7 +64,7 @@ export default function FavProduct() {
             </div>
             {/* 迴圈 */}
 
-            <div className={"d-flex flex-wrap"}>
+            {/* <div className={"d-flex flex-wrap"}>
 
               <div className={cStyles.p_coupon + " d-flex flex-column align-items-center justify-content-evenly"}>
                 <div className={cStyles.logo_frame + " align-self-start ms-2"}>
@@ -94,38 +92,9 @@ export default function FavProduct() {
 
 
 
-            </div>
+            </div> */}
             {/* 迴圈 */}
-            <div className={"d-flex flex-wrap"}>
-
-<div className={cStyles.p_coupon + " d-flex flex-column align-items-center justify-content-evenly"}>
-  <div className={cStyles.logo_frame + " align-self-start ms-2"}>
-    <Image className={cStyles.fit} src={whitelog}></Image>
-  </div>
-  <h5 className="text-white fw-bold">RPG遊戲折價券</h5>
-  <h2 className="text-white fw-bold">$ 100</h2>
-  <h6 className='text-white align-self-start ps-2'>效期至:
-    2024/04/15 23:59:59</h6>
-  <div class={cStyles.coupon_tearaway}></div>
-</div>
-
-<div className={cStyles.p_coupon + " d-flex flex-column align-items-center justify-content-evenly"}>
-  <div className={cStyles.logo_frame + " align-self-start ms-2"}>
-    <Image className={cStyles.fit} src={whitelog}></Image>
-  </div>
-  <h5 className="text-white fw-bold">RPG遊戲折價券</h5>
-  <h2 className="text-white fw-bold">$ 100</h2>
-  <h6 className='text-white align-self-start ps-2'>效期至:
-    2024/04/15 23:59:59</h6>
-  <div class={cStyles.coupon_tearaway}></div>
-</div>
-
-
-
-
-
-</div>
-<div className={"d-flex flex-wrap"}>
+            {/* <div className={"d-flex flex-wrap"}>
 
               <div className={cStyles.p_coupon + " d-flex flex-column align-items-center justify-content-evenly"}>
                 <div className={cStyles.logo_frame + " align-self-start ms-2"}>
@@ -149,13 +118,42 @@ export default function FavProduct() {
                 <div class={cStyles.coupon_tearaway}></div>
               </div>
 
-              
+
 
 
 
             </div>
-            
+            <div className={"d-flex flex-wrap"}>
 
+              <div className={cStyles.p_coupon + " d-flex flex-column align-items-center justify-content-evenly"}>
+                <div className={cStyles.logo_frame + " align-self-start ms-2"}>
+                  <Image className={cStyles.fit} src={whitelog}></Image>
+                </div>
+                <h5 className="text-white fw-bold">RPG遊戲折價券</h5>
+                <h2 className="text-white fw-bold">$ 100</h2>
+                <h6 className='text-white align-self-start ps-2'>效期至:
+                  2024/04/15 23:59:59</h6>
+                <div class={cStyles.coupon_tearaway}></div>
+              </div>
+
+              <div className={cStyles.p_coupon + " d-flex flex-column align-items-center justify-content-evenly"}>
+                <div className={cStyles.logo_frame + " align-self-start ms-2"}>
+                  <Image className={cStyles.fit} src={whitelog}></Image>
+                </div>
+                <h5 className="text-white fw-bold">RPG遊戲折價券</h5>
+                <h2 className="text-white fw-bold">$ 100</h2>
+                <h6 className='text-white align-self-start ps-2'>效期至:
+                  2024/04/15 23:59:59</h6>
+                <div class={cStyles.coupon_tearaway}></div>
+              </div>
+
+
+
+
+
+            </div> */}
+
+            <CouponProduct/>
             <Paginage className={mStyle.paginag} />
           </div>
 
