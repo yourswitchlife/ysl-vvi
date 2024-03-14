@@ -19,6 +19,9 @@ import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import PHistory from '@/components/products/p-history'
 // import { Link,useParams } from 'react-router-dom'
 
+// 引入use-cart鉤子
+import { useCart } from '@/hooks/use-cart'
+
 export default function ProductDetail() {
   const router = useRouter()
 
@@ -42,69 +45,125 @@ export default function ProductDetail() {
   // valid: '',
   // launch_valid: '',
   // created_at: '',
-  
+
   const [product, setProduct] = useState({
     id: '',
-  type_id: '',
-  name: '',
-  product_quanty: "0",
-  fav: '',
-  display_price: "",
-  price: "",
-  img_cover: '',
-  img_1: '',
-  img_2: '',
-  img_3: '',
-  release_time: '',
-  language: [],
-  rating_id: '3',
-  co_op_valid: '0',
-  description: '',
-  member_id: '',
-  valid: '',
-  launch_valid: '',
-  created_at: '',
+    type_id: '',
+    name: '',
+    product_quanty: "0",
+    fav: '',
+    display_price: "",
+    price: "",
+    img_cover: '',
+    img_details: [],
+    release_time: '',
+    language: [],
+    rating_id: '3',
+    co_op_valid: '0',
+    description: '',
+    member_id: '',
+    valid: '',
+    launch_valid: '',
+    created_at: '',
   })
-  const [ben,setBen]=useState(false)
+  const [ben, setBen] = useState(false)
 
+  // 商品數量+1
+  const handleIncrement = () => {
+    // 查看當前購物車的該商品數量
+    const currentQuantyInCart = cartItems.find((item) => item.id === product.id)?.quantity || 0
+    const newQuanty = product.quantity + 1
+    if (currentQuantyInCart + newQuanty > product.product_quanty) {
+      notifyMax()
+    } else {
+      setProduct(prevProduct => ({
+        ...prevProduct, quantity: newQuanty
+      }))
+    }
+  }
+
+  // 商品數量-1
+  const reduce = () => {
+    setProduct((prevProduct) => {
+      if (prevProduct.quantity > 1) {
+        return { ...prevProduct, quantity: prevProduct.quantity - 1 }
+      } else {
+        return prevProduct
+      }
+    })
+  }
+
+  // 立即結帳
+  const handleCheckout = () => {
+    const routerPush = addItem(product)
+    // 如果有成功加入購物車，在跳轉到購物車頁面
+    if (routerPush) {
+      router.push('/cart')
+    }
+  }
+
+
+  const { addItem, cartItems, notifyMax, notifySuccess } = useCart()
+
+
+  const [historyRecords, setHistoryRecords] = useState([])
   // const [product, setProduct] = useState([])
   const getProduct = async (pid) => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/products/${pid}`)
+    try {
+      const res = await fetch(`http://localhost:3005/api/products/${pid}`)
       const data = await res.json()
       // console.log(data[0])
+      console.log(data[0].img_details)
+      // console.log(data[0].img_details.split(",")[0])
 
-      if(data[0].name){
-        setProduct(data[0])
+      if (data[0].name) {
+        setProduct({ ...data[0], quantity: 1, userSelect: false })
       }
-    }catch (e){
+    } catch (e) {
       console.error(e)
     }
   }
 
   useEffect(() => {
-    if(router.isReady){
-      const {pid}=router.query
+    if (router.isReady) {
+      const { pid } = router.query
       getProduct(pid)
     }
-  },[router.isReady])
-  // let imgAry = [img2, img3, img3]
- 
+  }, [router.isReady, router.query])
 
+
+  // 取得瀏覽紀錄
+  useEffect(() => {
+    const historyRecordArr = localStorage.getItem("readProduct")
+    let recordArr = historyRecordArr ? JSON.parse(historyRecordArr) : []
+    if (!Array.isArray(recordArr)) {
+      recordArr = []
+    }
+    setHistoryRecords(recordArr)
+  }, [])
+
+  useEffect(() => {
+    console.log(historyRecords)
+  }, [historyRecords])
+  // console.log(historyRecords)
+  // let imgAry = [product.img_details.split(",")[0], product.img_details.split(",")[1], product.img_details.split(",")[2]]
+  let imgsArr = [product.img_details]
+  {product.img_details == "" ? console.log("HI") : console.log(imgsArr)}
+  // console.log(product)
   return (
     <>
       <Navbar />
       <PhoneTabNav />
 
       <div className={`d-lg-block d-none ${styles.pHistory}`}>
-        <PHistory />
+        <PHistory historyRecords={historyRecords} />
       </div>
 
       <div className="container mt-5 pt-4 px-lg-5 px-4">
         <BreadCrumb />
         <section className="p-detail-sec1 row mt-4">
           <div className="col-lg col pe-5-lg pe-2-lg">
-            <PImgs />
+            <PImgs cover={product.img_cover} />
           </div>
           <div className="col-lg-6 col-12 mt-lg-0 mt-3">
             <h4 className="text-white mb-0">{product.name}</h4>
@@ -116,44 +175,27 @@ export default function ProductDetail() {
               <div className={`${styles.counter} d-flex bg-light`}>
                 <button
                   className={`btn btn-secondary ${styles.counterBtn}`}
-                  typeof="button"
-                >
+                  typeof="button" onClick={() => { reduce(product) }}>
                   <b>-</b>
                 </button>
                 <div className="d-flex align-items-center">
-                  <input
-                    type="text"
-                    className={styles.input}
-                    max="3"
-                    min="1"
-                    value={1}
-                  />
+                  <div className={styles.quantity}>{product.quantity}</div>
                 </div>
                 <button
                   className={`btn btn-secondary ${styles.counterBtn}`}
-                  typeof="button"
-                >
+                  typeof="button" onClick={handleIncrement}>
                   <b>+</b>
                 </button>
               </div>
-              {/* <div>
-                <select
-                  className="form-select form-select-sm"
-                  aria-label="Large select example"
-                >
-                  <option selected>amount</option>
-                  <option value="1">One</option>
-                  <option value="2">Two</option>
-                  <option value="3">Three</option>
-                </select>
-              </div> */}
             </div>
 
             <hr className="text-white border-3" />
             <div className="d-flex justify-content-between align-items-end">
               <h5 className="text-white-50">
                 促銷價{' '}
-                <span className="text-decoration-line-through">NT$ {product.display_price}</span>
+                <span className="text-decoration-line-through">
+                  NT$ {product.display_price}
+                </span>
               </h5>
               <h5 className="text-white">
                 折扣價NT
@@ -167,18 +209,21 @@ export default function ProductDetail() {
               {product.description}
             </h5>
             <div className="d-lg-flex d-none justify-content-evenly">
-              <button type="button" className="btn btn-info">
+              <button type="button" className="btn btn-info" onClick={() => {
+                addItem(product);
+                notifySuccess()
+              }}>
                 <FaCartPlus className="text-light pb-1" /> 加入購物車
               </button>
               <button type="button" className="btn btn-info">
                 <FaRegHeart className="text-light pb-1" /> 加入追蹤
               </button>
-              <button type="button" className="btn btn-danger">
+              <button type="button" className="btn btn-danger" onClick={handleCheckout}>
                 <FaShoppingCart className="text-light pb-1" /> 立即結帳
               </button>
             </div>
 
-            <div className={`row d-lg-none m-0 ${styles.btns} ${ben?"active":""}`} onClick={()=>{setBen(true)}}>
+            <div className={`row d-lg-none m-0 ${styles.btns} ${ben ? "active" : ""}`} onClick={() => { setBen(true) }}>
               <div typeof="button" className="col btn btn-info rounded-0 py-1">
                 <FaCartPlus className="text-light" /> <p>加入購物車</p>
               </div>
@@ -227,7 +272,22 @@ export default function ProductDetail() {
                 <PRatingBig></PRatingBig>
               </div>
             </div>
-            <Image
+            { }
+            {/* {product.img_details == "" ? console.log("HI") : console.log(product.img_details)} */}
+            {/* {product.img_details == "" ? "" : product.img_details.splice(",").map((v, i) => {
+              return (
+                <div>
+                  <Image
+                    src={pImgDetail}
+                    alt="product-detail"
+                    width={670}
+                    height={400}
+                    priority={true}
+                    className="my-3 w-100 h-auto"
+                  /></div>
+              ) */}
+            {/* })} */}
+            {/* <Image
               src={pImgDetail}
               alt="product-detail"
               width={670}
@@ -250,7 +310,7 @@ export default function ProductDetail() {
               height={400}
               priority={true}
               className="my-3 w-100 h-auto"
-            />
+            /> */}
           </div>
           <div className="col px-lg-3">
             <h5 className="mb-2 text-white">關於本店</h5>

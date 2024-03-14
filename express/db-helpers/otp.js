@@ -3,7 +3,7 @@ import { generateToken } from '#configs/otp.js'
 
 // 資料庫使用
 import { QueryTypes } from 'sequelize'
-import sequelize from '#configs/db.js'
+import sequelize from '##/configs/db.mjs'
 const { User, Otp } = sequelize.models
 
 // 判斷token是否到期, true代表到期
@@ -11,7 +11,7 @@ const { User, Otp } = sequelize.models
 //   return Date.now() > expTimestamp
 // }
 
-// 判斷是否可以重設token, true代表可以重設
+// 判斷是否可以重設token, true代表可以重設 
 const shouldReset = (expTimestamp, exp, limit = 60) => {
   const createdTimestamp = expTimestamp - exp * 60 * 1000
   return Date.now() - createdTimestamp > limit * 1000

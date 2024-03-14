@@ -412,10 +412,30 @@ $sortbar-height-rwd: 50px;
   }
 }
 
+
 //PhoneTabNav Space
 .spaceForPhoneTab {
   width: 100%;
   height: 100px;
+}
+
+
+@media (max-width: 576px){
+  .dashboardMargin {
+    padding: 0 20px;
+  }
+}
+.dashboardStyle {
+  margin-top: 100px;
+  padding: 30px 20px;
+  background-color: $white;
+  border-radius: 20px;
+}
+.btn{
+  padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5; 
+    border-radius: .2rem;
 }
 
 @media screen and (max-width: 431px) {

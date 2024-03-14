@@ -1,5 +1,24 @@
 @import '../valuable.scss';
 
+.btnn{
+  border-radius: 5px;
+}
+.ttt{
+  background-color: black;
+  width: 100px;
+}
+.ttt2{
+  display: flex;
+  justify-content: center;
+  height: 30px;
+  align-items: center;
+  padding: 5px;
+  border-bottom: white solid 1px;
+  &:hover {
+    transition: 0.5s;
+    box-shadow: 0px 0px 8px wheat;
+  }
+}
 .custom_btn {
   font-size: 13px;
   padding: 4px;
@@ -97,9 +116,9 @@
 .time {
   width: 50%;
   padding-left: 15px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  // display: flex;
+  // flex-direction: column;
+  // justify-content: space-between;
 }
 
 .h5 {
@@ -113,25 +132,28 @@
 /* card */
 .card {
   width: 300px;
-  position: relative;
-  & img {
-    width: 300px;
-  }
-}
-.card2 {
-  padding-top: 60px;
-  width: 100%;
-  height: 472px;
+  height: 170px;
   position: relative;
   & img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 0 -100px;
+  }
+}
+.card2 {
+  padding-top: 60px;
+  width: 100%;
+  height: 500px;
+  position: relative;
+  & img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
 .text2 {
   position: absolute;
+  width: 300px;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.6);
   & p {

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import React, { useState } from 'react';
+import { Button, Col, Row, Toast, } from 'react-bootstrap';
 import style from '@/styles/article/index.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
 import Navbar from '@/components/layout/navbar/navbar'
@@ -7,14 +8,20 @@ import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import settings from '../article/setting'
+import Link from 'next/link'
+
 // import data from '@/public/images/card'
 
 export default function index() {
   // const initState = data.map((v, i) => {
   //   return { ...v, fav: false }
   // })
-  
+
   // const [article, setArticle] = useState(initState)
+  const [showB, setShowB] = useState(true);
+  const toggleShowB = () => setShowB(!showB);
+
+
   return (
     <>
       <Navbar />
@@ -98,6 +105,49 @@ export default function index() {
           </div>
         </a>
       </Slider>
+      <div className='container'>
+        <Row>
+          <Col md={6} className="mb-2">
+            <Button onClick={toggleShowB} className={`${style.btnn} mb-2`}>
+              分類列表
+            </Button>
+            <Toast onClose={toggleShowB} show={showB} animation={false} bg="dark" className={style.ttt} >
+              <Toast.Body className='p-0'>
+                <div >
+                  <div >
+                    <Link href="/article/list2" className="text-decoration-none text-white">
+                      <div className={style.ttt2}>
+                        動作類
+                      </div>
+                    </Link>
+                  </div>
+                  <div>
+                    <Link href="/article/list3" className="text-decoration-none text-white">
+                      <div className={style.ttt2}>
+                        冒險類
+                      </div>
+                    </Link>
+                  </div>
+                  <div>
+                    <Link href="/article/list4" className="text-decoration-none text-white">
+                      <div className={style.ttt2}>
+                        休閒類
+                      </div>
+                    </Link>
+                  </div>
+                  <div>
+                    <Link href="/article/list5" className="text-decoration-none text-white">
+                      <div className={style.ttt2}>
+                        策略類
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+              </Toast.Body>
+            </Toast>
+          </Col>
+        </Row>
+      </div>
       <main>
         <div
           className={`${style.main_media} container px-lg-5 d-flex justify-content-center`}
@@ -415,6 +465,32 @@ export default function index() {
           </div>
         </div>
       </section>
+      <div className='container nav nav-tabs nav-justified'>
+        <button className='nav-link active' data-bs-toggle="tab" data-bs-target="#menu1" aria-selected="true">
+          冒險類
+        </button>
+        <button className='nav-link' data-bs-toggle="tab" data-bs-target="#menu2" aria-selected="true">
+          動作類
+        </button>
+        <button className='nav-link' data-bs-toggle="tab" data-bs-target="#menu2" aria-selected="true">
+          策略類
+        </button>
+        <button className='nav-link' data-bs-toggle="tab" data-bs-target="#menu2" aria-selected="true">
+          休閒類
+        </button>
+      </div>
+      <div className='tab-content'>
+        <div className='tab-pane fade show active' id='menu1'>
+          <p>
+            sefhsefosefiuhseihsehfio
+          </p>
+        </div>
+        <div className='tab-pane fade show active' id='menu2'>
+          <h2>
+            sefhsefosefiuhseihsehfio
+          </h2>
+        </div>
+      </div>
       <Footer />
     </>
   )

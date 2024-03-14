@@ -1,8 +1,9 @@
-import React, { useState, useEffrct } from 'react'
+import React, { useState, useEffect } from 'react'
 import style from '@/styles/article/index.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
 import Navbar from '@/components/layout/navbar/navbar'
 import { FaSearch } from 'react-icons/fa'
+import Link from 'next/link'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
@@ -10,90 +11,66 @@ import settings from '../article/setting'
 
 
 export default function index() {
-  
+
+  const [article, setArticle] = useState([])
+  const [article2, setArticle2] = useState([])
+  const [article3, setArticle3] = useState([])
+  const [article4, setArticle4] = useState([])
+  const [title, setTitle] = useState([])
+  const [more, setMore] = useState([])
+  const [hot, setHot] = useState([])
+  const [tag, setTag] = useState([])
+
+
+  const getArticle = async () => {
+    try {
+      const res = await fetch('http://localhost:3005/api/article')
+      const data = await res.json()
+      // console.log(data)
+
+      if (data) {
+        setArticle(data.article)
+        setArticle2(data.article2)
+        setArticle3(data.article3)
+        setArticle4(data.article4)
+        setTitle(data.title)
+        setMore(data.more)
+        setHot(data.hot)
+        setTag(data.tag)
+
+      }
+      // console.log(data.article);
+      // console.log(data.title);
+
+    } catch (e) {
+      console.error(e)
+    }
+  }
+  useEffect(() => {
+    getArticle()
+  }, [])
   return (
     <>
       <Navbar />
-      <Slider {...settings} className={`${style.test} test`}>
-        <a href="article_main.html">
-          <div className={style.card2}>
-            <img
-              src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-              alt=""
-            />
-            <div className={style.text3}>
-              <h2 className={style.bannerTitle}>
-                《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-              </h2>
-            </div>
-          </div>
-        </a>
-        <a href="article_main.html">
-          <div className={style.card2}>
-            <img
-              src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-              alt=""
-            />
-            <div className={style.text3}>
-              <h2 className={style.bannerTitle}>
-                《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-              </h2>
-            </div>
-          </div>
-        </a>
-        <a href="article_main.html">
-          <div className={style.card2}>
-            <img
-              src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-              alt=""
-            />
-            <div className={style.text3}>
-              <h2 className={style.bannerTitle}>
-                《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-              </h2>
-            </div>
-          </div>
-        </a>
-        <a href="article_main.html">
-          <div className={style.card2}>
-            <img
-              src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-              alt=""
-            />
-            <div className={style.text3}>
-              <h2 className={style.bannerTitle}>
-                《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-              </h2>
-            </div>
-          </div>
-        </a>
-        <a href="article_main.html">
-          <div className={style.card2}>
-            <img
-              src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-              alt=""
-            />
-            <div className={style.text3}>
-              <h2 className={style.bannerTitle}>
-                《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-              </h2>
-            </div>
-          </div>
-        </a>
-        <a href="article_main.html">
-          <div className={style.card2}>
-            <img
-              src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-              alt=""
-            />
-            <div className={style.text3}>
-              <h2 className={style.bannerTitle}>
-                《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-              </h2>
-            </div>
-          </div>
-        </a>
-      </Slider>
+      <div className='container'>
+        <Slider {...settings} className={`${style.test} test`}>
+          {title.map((t) => {
+            return (<Link href={`/article/${t.ai_id}`} >
+              <div className={style.card2}>
+                <img
+                  src={`images/article/${t.article_img}`}
+                  alt={t.article_img}
+                />
+                <div className={style.text3}>
+                  <h2 className={style.bannerTitle}>
+                    {t.article_title}
+                  </h2>
+                </div>
+              </div>
+            </Link>)
+          })}
+        </Slider>
+      </div>
       <main>
         <div
           className={`${style.main_media} container px-lg-5 d-flex justify-content-center`}
@@ -117,171 +94,214 @@ export default function index() {
             </div>
             <h3 className={`text-white ${style.h3}`}>最新文章</h3>
             <div className={style.swtich}>
-              <li>冒險類</li>
-              <li>動作類</li>
-              <li>策略類</li>
-              <li>休閒類</li>
-            </div>
-            <div className={style.hot_main}>
-              <div className={style.hot_main_img}>
-                <a href="article_main.html">
-                  <img
-                    src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-                    alt=""
-                  />
-                </a>
-              </div>
-              <div className={style.time}>
-                <div className="d-flex justify-content-between ">
-                  <div
-                    className={`btn btn-outline-primary ${style.custom_btn}`}
-                  >
-                    NEW
-                  </div>
-                  <p className="text-white d-flex align-items-center">
-                    2024/2/11
-                  </p>
-                </div>
-                <a href="article_main.html" className={style.a}>
-                  <p>
-                    台灣獨立遊戲開發團隊 SIGONO
-                    今（15）日宣布將與集英社遊戲共同開發旗下研發中的新作《OPUS：心
-                  </p>
-                </a>
+              <div className='container nav nav-tabs nav-justified'>
+                <button className='nav-link active' data-bs-toggle="tab" data-bs-target="#menu1" aria-selected="true">
+                  冒險類
+                </button>
+                <button className='nav-link' data-bs-toggle="tab" data-bs-target="#menu2" aria-selected="true">
+                  動作類
+                </button>
+                <button className='nav-link' data-bs-toggle="tab" data-bs-target="#menu3" aria-selected="true">
+                  策略類
+                </button>
+                <button className='nav-link' data-bs-toggle="tab" data-bs-target="#menu4" aria-selected="true">
+                  休閒類
+                </button>
               </div>
             </div>
-            <div className="hot_main">
-              <div className="hot_main_img">
-                <img src="/article_Title/05.webp" alt="" />
+            <div className='tab-content'>
+              <div className='tab-pane fade show active' id='menu1'>
+                {article.map((a) => {
+                  return (
+                    <div className={` ${style.hot_main}`}  >
+                      <div className={style.hot_main_img}>
+                        <Link href={`/article/${a.ai_id}`}>
+                          <img
+                            src={`images/article/${a.article_img}`}
+                            alt={a.article_img}
+                          />
+                        </Link>
+                      </div>
+                      <div className={style.time}>
+                        <div className="d-flex justify-content-between ">
+                          <div
+                            className={`btn btn-outline-primary ${style.custom_btn}`}
+                          >
+                            NEW
+                          </div>
+                          <p className="text-white d-flex align-items-center">
+                            {a.article_time}
+                          </p>
+                        </div>
+                        <Link href={`/article/${a.ai_id}`} className={style.a}>
+                          <p className='mt-2'>
+                            {a.article_title}
+                          </p>
+                        </Link>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
-              <div className="time">
-                <div className="d-flex justify-content-between">
-                  <button className="btn btn-outline-success custom-btn">
-                    NEW
-                  </button>
-                  <p className="date">2024/2/11</p>
-                </div>
-                <p>wefwiehfowehfoweifwef</p>
+              <div className='tab-pane fade show ' id='menu2'>
+                {article2.map((a) => {
+                  return (
+                    <div className={`${style.hot_main}`}  >
+                      <div className={style.hot_main_img}>
+                        <Link href={`/article/${a.ai_id}`}>
+                          <img
+                            src={`images/article/${a.article_img}`}
+                            alt={a.article_img}
+                          />
+                        </Link>
+                      </div>
+                      <div className={style.time}>
+                        <div className="d-flex justify-content-between ">
+                          <div
+                            className={`btn btn-outline-primary ${style.custom_btn}`}
+                          >
+                            NEW
+                          </div>
+                          <p className="text-white d-flex align-items-center">
+                            {a.article_time}
+                          </p>
+                        </div>
+                        <Link href={`/article/${a.ai_id}`} className={style.a}>
+                          <p className='mt-2'>
+                            {a.article_title}
+                          </p>
+                        </Link>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
-            </div>
-            <div className="hot_main">
-              <div className="hot_main_img">
-                <img src="/article_Title/05.webp" alt="" />
+              <div className='tab-pane fade show ' id='menu3'>
+                {article3.map((a) => {
+                  return (
+                    <div className={`${style.hot_main}`}  >
+                      <div className={style.hot_main_img}>
+                        <Link href={`/article/${a.ai_id}`}>
+                          <img
+                            src={`images/article/${a.article_img}`}
+                            alt={a.article_img}
+                          />
+                        </Link>
+                      </div>
+                      <div className={style.time}>
+                        <div className="d-flex justify-content-between ">
+                          <div
+                            className={`btn btn-outline-primary ${style.custom_btn}`}
+                          >
+                            NEW
+                          </div>
+                          <p className="text-white d-flex align-items-center">
+                            {a.article_time}
+                          </p>
+                        </div>
+                        <Link href={`/article/${a.ai_id}`} className={style.a}>
+                          <p className='mt-2'>
+                            {a.article_title}
+                          </p>
+                        </Link>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
-              <div className="time">
-                <div className="d-flex justify-content-between">
-                  <button className="btn btn-outline-success custom-btn">
-                    NEW
-                  </button>
-                  <p className="date">2024/2/11</p>
-                </div>
-                <p>wefwiehfowehfoweifwef</p>
-              </div>
-            </div>
-            <div className="hot_main">
-              <div className="hot_main_img">
-                <img src="/article_Title/05.webp" alt="" />
-              </div>
-              <div className="time">
-                <div className="d-flex justify-content-between">
-                  <button className="btn btn-outline-success custom-btn">
-                    NEW
-                  </button>
-                  <p className="date">2024/2/11</p>
-                </div>
-                <p>wefwiehfowehfoweifwef</p>
+              <div className='tab-pane fade show ' id='menu4'>
+                {article4.map((a) => {
+                  return (
+                    <div className={`${style.hot_main}`}  >
+                      <div className={style.hot_main_img}>
+                        <Link href={`/article/${a.ai_id}`}>
+                          <img
+                            src={`images/article/${a.article_img}`}
+                            alt={a.article_img}
+                          />
+                        </Link>
+                      </div>
+                      <div className={style.time}>
+                        <div className="d-flex justify-content-between ">
+                          <div
+                            className={`btn btn-outline-primary ${style.custom_btn}`}
+                          >
+                            NEW
+                          </div>
+                          <p className="text-white d-flex align-items-center">
+                            {a.article_time}
+                          </p>
+                        </div>
+                        <Link href={`/article/${a.ai_id}`} className={style.a}>
+                          <p className='mt-2'>
+                            {a.article_title}
+                          </p>
+                        </Link>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>
           <div className={style.right_main}>
-            <h3 className={`text-white mb-3 ${style.h3}`}>熱門標籤</h3>
+            <h3 className={`text-white mb-3 ${style.h3}`}>標籤列表</h3>
             <div className={style.tag}>
-              <a
-                href="list.html"
+              <Link
+                href="/article/list2"
                 className={`${style.tag_btn} btn btn-primary`}
               >
-                #集英社
-              </a>
-              <a
-                href="list.html"
+                #冒險類
+              </Link>
+              <Link
+                href="/article/list3"
                 className={`${style.tag_btn} btn btn-primary`}
               >
-                #集英社
-              </a>
-              <a
-                href="list.html"
+                #動作類
+              </Link>
+              <Link
+                href="/article/list4"
                 className={`${style.tag_btn} btn btn-primary`}
               >
-                #集英社
-              </a>
-              <a
-                href="list.html"
+                #策略類
+              </Link>
+              <Link
+                href="/article/list5"
                 className={`${style.tag_btn} btn btn-primary`}
               >
-                #集英社
-              </a>
-              <a
-                href="list.html"
-                className={`${style.tag_btn} btn btn-primary`}
-              >
-                #集英社
-              </a>
+                #休閒類
+              </Link>
             </div>
             <h3 className={`text-white mt-4 ${style.h3}`}>熱門話題</h3>
-            <div className={style.hot_main}>
-              <div className={style.hot_main_img}>
-                <a href="article_main.html">
-                  <img
-                    src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-                    alt=""
-                  />
-                </a>
-              </div>
-              <div className={style.time}>
-                <div className="d-flex justify-content-between ">
-                  <div className={`btn btn-outline-danger ${style.custom_btn}`}>
-                    Hot
+            {hot.map((h) => {
+              return (
+                <div className={style.hot_main}>
+                  <div className={style.hot_main_img}>
+                    <Link href={`/article/${h.ai_id}`}>
+                      <img
+                        src={`/images/article/${h.article_img}`}
+                        alt={h.article_img}
+                      />
+                    </Link>
                   </div>
-                  <p className="text-white d-flex align-items-center">
-                    2024/2/11
-                  </p>
+                  <div className={style.time}>
+                    <div className="d-flex justify-content-between pb-2 ">
+                      <div className={`btn btn-outline-danger ${style.custom_btn}`}>
+                        Hot
+                      </div>
+                      <p className="text-white d-flex align-items-center">
+                        {h.article_time}
+                      </p>
+                    </div>
+                    <Link href={`/article/${h.ai_id}`} className={style.a}>
+                      <p>
+                        {h.article_title}
+                      </p>
+                    </Link>
+                  </div>
                 </div>
-                <a href="article_main.html" className={style.a}>
-                  <p>
-                    台灣獨立遊戲開發團隊 SIGONO
-                    今（15）日宣布將與集英社遊戲共同開發旗下研發中的新作《OPUS：心
-                  </p>
-                </a>
-              </div>
-            </div>
-            <div className="hot_main">
-              <div className="hot_main_img">
-                <img src="/article_Title/05.webp" alt="" />
-              </div>
-              <div className="time">
-                <div className="d-flex justify-content-between">
-                  <button className="btn btn-outline-danger custom-btn">
-                    Hot
-                  </button>
-                  <p className="date">2024/2/11</p>
-                </div>
-                <p>wefwiehfowehfoweifwef</p>
-              </div>
-            </div>
-            <div className="hot_main">
-              <div className="hot_main_img">
-                <img src="/article_Title/05.webp" alt="" />
-              </div>
-              <div className="time">
-                <div className="d-flex justify-content-between">
-                  <button className="btn btn-outline-danger custom-btn">
-                    Hot
-                  </button>
-                  <p className="date">2024/2/11</p>
-                </div>
-                <p>wefwiehfowehfoweifwef</p>
-              </div>
-            </div>
+              )
+            })}
           </div>
         </div>
       </main>
@@ -291,123 +311,23 @@ export default function index() {
             查看更多...
           </h5>
           <div className={`${style.more} pt-3 pb-3`}>
-            <a href="article_main.html">
-              <div className={style.card}>
-                <img
-                  src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-                  alt=""
-                />
-                <div className={style.text2}>
-                  <p className={style.bannerTitle}>
-                    《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-                  </p>
-                </div>
-              </div>
-            </a>
-            <a href="article_main.html">
-              <div className={style.card}>
-                <img
-                  src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-                  alt=""
-                />
-                <div className={style.text2}>
-                  <p className={style.bannerTitle}>
-                    《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-                  </p>
-                </div>
-              </div>
-            </a>
-            <a href="article_main.html">
-              <div className={style.card}>
-                <img
-                  src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-                  alt=""
-                />
-                <div className={style.text2}>
-                  <p className={style.bannerTitle}>
-                    《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-                  </p>
-                </div>
-              </div>
-            </a>
-            <a href="article_main.html">
-              <div className={style.card}>
-                <img
-                  src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-                  alt=""
-                />
-                <div className={style.text2}>
-                  <p className={style.bannerTitle}>
-                    《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-                  </p>
-                </div>
-              </div>
-            </a>
-            <a href="article_main.html">
-              <div className={style.card}>
-                <img
-                  src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-                  alt=""
-                />
-                <div className={style.text2}>
-                  <p className={style.bannerTitle}>
-                    《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-                  </p>
-                </div>
-              </div>
-            </a>
-            <a href="article_main.html">
-              <div className={style.card}>
-                <img
-                  src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-                  alt=""
-                />
-                <div className={style.text2}>
-                  <p className={style.bannerTitle}>
-                    《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-                  </p>
-                </div>
-              </div>
-            </a>
-            <a href="article_main.html">
-              <div className={style.card}>
-                <img
-                  src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-                  alt=""
-                />
-                <div className={style.text2}>
-                  <p className={style.bannerTitle}>
-                    《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-                  </p>
-                </div>
-              </div>
-            </a>
-            <a href="article_main.html">
-              <div className={style.card}>
-                <img
-                  src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-                  alt=""
-                />
-                <div className={style.text2}>
-                  <p className={style.bannerTitle}>
-                    《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-                  </p>
-                </div>
-              </div>
-            </a>
-            <a href="article_main.html">
-              <div className={style.card}>
-                <img
-                  src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000"
-                  alt=""
-                />
-                <div className={style.text2}>
-                  <p className={style.bannerTitle}>
-                    《魔物獵人 Now》龍年好運到！獨家龍年活動邀玩家出門狩獵
-                  </p>
-                </div>
-              </div>
-            </a>
+            {more.map((m) => {
+              return (
+                <Link href={`/article/${m.ai_id}`}>
+                  <div className={style.card} >
+                    <img
+                      src={`images/article/${m.article_img}`}
+                      alt={m.article_img}
+                    />
+                    <div className={style.text2}>
+                      <p className={style.bannerTitle}>
+                        {m.article_title}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>

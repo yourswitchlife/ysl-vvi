@@ -6,7 +6,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FaCheckCircle } from 'react-icons/fa'
 
+import useRequireCart from '@/hooks/use-require-cart'
+
 export default function Payment() {
+  useRequireCart()
   return (
     <>
       <CartNavbar />
