@@ -61,13 +61,23 @@ router.get('/shop', authenticate, async (req, res) => {
     res.status(500)
   }
 })
+//shopCover參照member pic也用按鈕上傳
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/shopCover') //上傳檔案的資料夾
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)) //以時間戳記作為檔名
+  },
+})
+const upload = multer({ storage: storage })
 //賣場管理 編輯及新增賣場資料OK #Create
 //注意：新增賣場其實是更新member資料
 //在前端執行：抓取預設值存入 與 實現兩個按鈕：分別是shop_valid = 0 或shop_valid = 1
-router.put('/shop/edit', authenticate, async (req, res) => {
+router.put('/shop/edit', authenticate, upload.none(), async (req, res) => {
   const { shop_name, shop_site, shop_info, shop_valid } = req.body
-  const memberId = req.memberId
-  if (!req.memberId) {
+  const memberId = req.memberData.id
+  if (!req.memberData.id) {
     // 如果memberData不存在，则返回错误信息
     return res.status(400).json({ message: '找不到member data' })
   }
@@ -112,43 +122,50 @@ router.put('/shop/edit', authenticate, async (req, res) => {
     console.log('資料庫相關錯誤：', error)
   }
 })
-//shopCover參照member pic也用按鈕上傳
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/shopCover') //上傳檔案的資料夾
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)) //以時間戳記作為檔名
-  },
-})
-const upload = multer({ storage: storage })
+
 //shopCover
-router.put('/shop/shopCover', upload.single('file'), async (req, res) => {
-  const memberId = req.memberId
-  console.log(req.file)
-  const filePath = req.file.path //上傳後的檔案路徑
-  const filename = path.basename(filePath)
-  const shopCoverQuery = 'UPDATE member SET shop_cover = ? WHERE id = ?'
-
-  try {
-    //執行SQL更新
-    const [shopCoverResults] = await db.execute(shopCoverQuery, [
-      filename,
-      memberId,
-    ])
-
-    if (shopCoverResults.affectedRows > 0) {
-      //updated successfully
-      res.status(200).json({ success: true, message: '賣場封面上傳成功' })
-    } else {
-      //updated failed
-      res.status(404).json({ error: '賣場封面上傳失敗' })
+router.put(
+  '/shop/shopCover',
+  authenticate,
+  upload.single('file'),
+  async (req, res) => {
+    const memberId = req.memberData.id
+    if (typeof memberId === 'undefined') {
+      return res
+        .status(400)
+        .json({ error: '未經認證的用戶，無法獲取 memberId' })
     }
-  } catch (error) {
-    console.error('Error updating shop cover: ', error)
-    res.status(500).json({ error: '上傳途中發生錯誤' })
+    console.log('Authenticated memberId:', memberId)
+
+    console.log('after file upload')
+    console.log('uploaded file info:', req.file)
+    console.log('Form data:', req.body)
+    const filePath = req.file.path //上傳後的檔案路徑
+    const filename = path.basename(filePath)
+    const shopCoverQuery = 'UPDATE member SET shop_cover = ? WHERE id = ?'
+
+    try {
+      //執行SQL更新
+      const [shopCoverResults] = await db.execute(shopCoverQuery, [
+        filename,
+        memberId,
+      ])
+      console.log('Executeing SQL query:', shopCoverQuery, [filename, memberId])
+
+      if (shopCoverResults.affectedRows > 0) {
+        //updated successfully
+        res.status(200).json({ success: true, message: '賣場封面上傳成功' })
+      } else {
+        //updated failed
+        res.status(404).json({ error: '賣場封面上傳失敗' })
+      }
+    } catch (error) {
+      console.error('上傳封面照的錯誤：', error.message)
+      console.error('錯誤：', error)
+      res.status(500).json({ error: '上傳途中發生錯誤', detail: error.message })
+    }
   }
-})
+)
 
 //賣家商品管理OK #Read
 router.get('/product', authenticate, async (req, res) => {
@@ -425,12 +442,11 @@ router.get('/comment/:cid', authenticate, async (req, res) => {
   }
 })
 //賣家評價回覆評價（更新資料表）OK #Create #Update
-router.patch('/comment/:cid', upload.none(), authenticate, async (req, res) => {
-  const { reply } = req.body
+router.put('/comment/reply', upload.none(), authenticate, async (req, res) => {
+  const { reply, cid } = req.body
   const dateString = new Date()
   const replied_at = moment(dateString).format('YYYY-MM-DD HH:mm:ss')
-  const { cid } = req.params
-  const memberId = req.memberData.id
+  const shop_id = req.memberData.id
   // console.log(cid)
   // console.log(memberId)
   // let [result] = await db.execute(
@@ -449,13 +465,13 @@ router.patch('/comment/:cid', upload.none(), authenticate, async (req, res) => {
       return res.status(404).send({ message: '評論不存在' })
     }
     const comment = comments[0]
-    if (comment.shop_id !== memberId) {
+    if (comment.shop_id !== shop_id) {
       //不符合沒有權限修改
       return res.status(403).send({ message: '無權限修改此評論' })
     }
     const Query =
       'UPDATE `shop_comment` SET `reply` = ?, `replied_at` = ? WHERE `id` = ? AND `shop_id` = ?'
-    await db.execute(Query, [reply, replied_at, cid, memberId])
+    await db.execute(Query, [reply, replied_at, cid, shop_id])
     res.status(200).send({ message: '回應買家評價建立成功' })
   } catch (error) {
     res.status(400).send({ message: '不存在的評論，回覆失敗' })

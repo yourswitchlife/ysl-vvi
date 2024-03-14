@@ -21,6 +21,7 @@ export default function SellerNavbar() {
   const { isLoggedIn, memberData } = useAuth();
   const [bigPic, setBigPic] = useState(profilePhoto)
   const [isHovered, setIsHovered] = useState(false);
+
   return (
     <>
     <div className='d-none d-lg-block'>

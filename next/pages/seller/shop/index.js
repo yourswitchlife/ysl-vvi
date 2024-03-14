@@ -125,7 +125,7 @@ export default function ShopSetting() {
       console.error('資料更新發生錯誤:', error);
     }
   }
-
+  //上傳檔案
   const handleFileChange = (e) => {
     const file = e.target.files[0]
     console.log(file)
@@ -151,19 +151,20 @@ export default function ShopSetting() {
   const handleUpload = async (file) => {
     if(file){
       const formData = new FormData()
-      // console.log(formData)
+      
       formData.append('file', file)
-      // console.log(selectedFile)
+      console.log(formData.get('file'))
+      console.log(selectedFile)
       try{
         const response = await fetch(`http://localhost:3005/api/seller/shop/shopCover`,{
           method: 'PUT',
           body: formData,
           credentials: 'include',
-        })
+        }).catch(error => console.error('上傳過程中發生錯誤：', error))
         if (response.ok){
           console.log('賣場封面上傳成功')
         } else {
-          console.error('賣場封面上傳失敗')
+          console.error('賣場封面上傳失敗:')
         }
       }catch(error){
         console.error('上傳過程中發生錯誤：', error)

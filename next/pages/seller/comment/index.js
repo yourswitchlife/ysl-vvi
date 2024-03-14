@@ -49,10 +49,15 @@ export default function Comment() {
   const [shopRating, setShopRating] = useState("0.0")
   const [commentNum, setCommentNum] = useState(0)
   const [reply, setReply] = useState('')
+  const [selectCid, setSelectCid] = useState(null)
   //Modal for reply comments
   const [showModal, setShowModal] = useState(false)
   const handleCloseModal = () => setShowModal(false)
-  const handleShowModal = () => setShowModal(true)
+  //修改Modal讓他可以接受comment的id
+  const handleShowModal = (cid) => {
+    setSelectCid(cid)
+    setShowModal(true)
+  }
 
   useEffect(() => {
     if(isLoggedIn && memberData) {
@@ -94,7 +99,7 @@ export default function Comment() {
   } 
   useEffect(() => {
     getSellerData()
-  }, [])
+  }, [comments])
 
   function formatComments(comments){
     return comments.map(comment => {
@@ -109,6 +114,42 @@ export default function Comment() {
         created_at: formattedDate
       };
     })
+  }
+
+  const handleSubmitReply = async () => {
+    //確認reply不是空的
+    if(!reply.trim()){
+      alert("請輸入回覆內容！")
+      return
+    }
+
+    try{
+      const response = await fetch(`http://localhost:3005/api/seller/comment/reply`,{
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          cid: selectCid,
+          reply: reply
+        })
+      })
+
+      if(response.ok){
+        //處理成功的邏輯，例如關閉Modal清空回覆內容
+        handleCloseModal()
+        setReply('') //重置回覆內容
+        setSelectCid(null) //重置cid
+        //這裡可以增加刷新評論列表（增加顯示賣家的回覆）
+
+      }else{
+        throw new Error('回覆失敗')
+      }
+    }catch(error){
+      console.error('回覆訊息錯誤：', error)
+      alert('提交回覆時發生錯誤，請稍後再試')
+    }
   }
 
     // function handleSubmit(e) {
@@ -330,23 +371,11 @@ export default function Comment() {
                   </Card.Header>
                   <Card.Body>
                     <Card.Title className="text-dark">
-                      <p className="mb-0 text-secondary">訂單編號：1025484548W</p>
+                      <p className="mb-0 text-secondary">訂單編號：{v.order_num}</p>
                     </Card.Title>
                     <div className="text-dark">
                       <div className="row align-items-center">
-                        <div className="col-4 border-end d-flex justify-content-center align-items-center mt-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={24}
-                            height={40}
-                          />
-                          <p className="mb-0 text-dark ms-2">
-                            集合啦！動物森友會
-                            <span className="text-info ms-2">x1</span>
-                          </p>
-                        </div>
-                        <div className="col-6 border-end">
+                        <div className="col-5">
                           <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
                             <Star avgRating={v.rating}/>
                           </div>
@@ -357,12 +386,21 @@ export default function Comment() {
                             {v.created_at}
                           </small>
                         </div>
-                        <div className="col-2 d-flex justify-content-center align-items-center">
+                        <div className={`col-4 my-3 ${styles.reply}`}>
+                        {v.reply && (
+                          <>
+                          <p>我的回覆：</p>
+                          <p>{v.reply}</p>
+                          <p className="text-secondary">{v.replied_at}</p>
+                          </>
+                        )}
+                        </div>
+                        <div className="col-3 d-flex justify-content-center align-items-center">
                           {/* 可以跳出一個MODAL來處理 */}
                           <button
                             type="button"
-                            className="btn btn-danger"
-                            onClick={handleShowModal}
+                            className="btn btn-danger btn-sm"
+                            onClick={() => {handleShowModal(v.id)}}
                           >
                             回覆
                           </button>
@@ -706,7 +744,7 @@ export default function Comment() {
           <Button variant="secondary" onClick={handleCloseModal}>
             取消
           </Button>
-          <Button variant="primary" onClick={handleCloseModal}>
+          <Button variant="primary" onClick={handleSubmitReply}>
             送出回覆
           </Button>
         </Modal.Footer>
