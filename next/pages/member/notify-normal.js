@@ -19,7 +19,7 @@ import { RiCoupon3Fill } from "react-icons/ri";
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import Link from 'next/link'
-import Paginage from '@/components/common/pagination-front'
+import Paginage from '@/components/common/pagination'
 import Dropdown from 'react-bootstrap/Dropdown'
 
 export default function notifyNormal() {

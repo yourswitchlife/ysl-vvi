@@ -18,7 +18,7 @@ router.get('/:shop_site', async (req, res) => {
     let { shop_site } = req.params
     console.log(`shop_site = ${shop_site}`)
     let [result] = await db.execute(
-      'SELECT * FROM `member-shop` WHERE `shop_site` = ?',
+      'SELECT * FROM `member` WHERE `shop_site` = ?',
       [shop_site]
     )
     console.log(result)

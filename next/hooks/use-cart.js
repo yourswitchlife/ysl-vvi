@@ -147,6 +147,7 @@ export function CartProvider({ children }) {
 
   // 轉換商品語言版本為中文
   const changeLanguage = (language)=>{
+    console.log(language)
     const languageList = {
       CH:'中文',
       EN:'英文',

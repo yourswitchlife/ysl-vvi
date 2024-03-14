@@ -205,7 +205,7 @@ export default function forgetPassword() {
                     onChange={handleChange}
                   // onChange={(e) => setVerificationCode(e.target.value)}
                   />
-                  <Button className={sStyle.auth_btn} onClick={handleGetCode}>取得驗証碼</Button>
+                  <Button className={sStyle.auth_btn+ " d-flex align-items-center"} onClick={handleGetCode} style={{height:38}}>取得驗証碼</Button>
                 </InputGroup>
                 <div className={`${sStyle.error} ${isCountingDown ? 'text-info' : ''} mt-2`}>
                   {isCountingDown
