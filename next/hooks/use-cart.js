@@ -145,6 +145,17 @@ export function CartProvider({ children }) {
     })
   }
 
+  // 轉換商品語言版本為中文
+  const changeLanguage = (language)=>{
+    const languageList = {
+      CH:'中文',
+      EN:'英文',
+      JP:'日文'
+    }
+    const languageNames = language.split(',').map(item => languageList[item] || item).join(', ')
+    return languageNames
+  }
+
   // 計算被勾選的商品總價
   const filterItems = cartItems.filter((item) => item.userSelect === true)
   let totalPrice = 0
@@ -302,6 +313,7 @@ export function CartProvider({ children }) {
         notifyMax,
         totalProducts,
         totalPrice,
+        changeLanguage,
       }}
     >
       {children}
