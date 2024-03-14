@@ -30,7 +30,7 @@ const MySwal = withReactContent(Swal)
 
 export default function OrdersDetailList() {
   const { cartItems } = useCart()
-  const { memberData } = useAuth()
+  const { memberId, memberData } = useAuth()
 
   // 存放所有優惠券id
   const [coupons, setCoupons] = useState([])
@@ -235,6 +235,30 @@ export default function OrdersDetailList() {
     localStorage.setItem('cartItems', JSON.stringify(remainingItems))
   }
 
+  // 成功建立訂單後更新積分start
+  const handleLevelPoint = async () => {
+    try {
+      const updateResponse = await fetch(
+        `http://localhost:3005/api/member/levelup/?memberId=${memberId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ totalPrice }),
+          credentials: 'include',
+        }
+      )
+
+      if (!updateResponse.ok) {
+        throw new Error('更新會員資料失敗')
+      }
+    } catch (error) {
+      console.error('更新會員資料時發生錯誤:', error)
+    }
+  }
+  // 成功建立訂單後更新積分END
+
   // 處理結帳 / 下訂單按鈕的送出連接後端產生訂單
   const handleSubmit = async () => {
     if (!paymentMethod) {
@@ -299,6 +323,7 @@ export default function OrdersDetailList() {
             case '建立訂單成功，貨到付款':
               const groupCashId = results.groupId
               router.push(`/cart/purchase?orderId=${groupCashId}`)
+              handleLevelPoint()
               break
             case '建立訂單成功，LINEPAY':
               const groupId = results.groupId
@@ -313,6 +338,7 @@ export default function OrdersDetailList() {
                 .then((response) => response.json())
                 .then((data) => {
                   console.log(data)
+                  handleLevelPoint()
                   window.location.href = data
                 })
                 .catch((error) => {
@@ -332,6 +358,7 @@ export default function OrdersDetailList() {
                 .then((response) => response.json())
                 .then((data) => {
                   console.log(data)
+                  handleLevelPoint()
                   window.location.href = `/cart/purchase?orderId=${groupIdForCreditCard}`
                 })
                 .catch((error) => {
