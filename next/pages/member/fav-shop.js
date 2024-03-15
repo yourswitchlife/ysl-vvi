@@ -144,7 +144,7 @@ export default function FavShop() {
                     {/* seller detail */}
                     <div className={styles.profile + ' me-5'}>
                       <Link href={`/shop/${shop.shop_site}`} style={{ textDecoration: 'none' }} >
-                        <Image width={50} height={50} src={`http://localhost:3005/profile-pic/${shop.pic}` || profileImg} alt="" className={styles.fit} />
+                        <Image width={100} height={100} src={`http://localhost:3005/profile-pic/${shop.pic}` || profileImg} alt={shop.pic} className={styles.fit} />
                       </Link>
                     </div>
                     <div className="d-flex flex-column align-items-between justify-content-center">

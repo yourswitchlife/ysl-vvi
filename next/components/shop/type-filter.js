@@ -40,9 +40,9 @@ export default function TypeFilter({ productFilter = () => {} }) {
   }
 
   const typechecked = typeCheck.filter((v) => v.checked === true)
-  console.log(typechecked)
+  // console.log(typechecked)
   const ratingchecked = ratingCheck.filter((v) => v.checked === true)
-  console.log(ratingchecked)
+  // console.log(ratingchecked)
   productFilter(typechecked)
 
   return (

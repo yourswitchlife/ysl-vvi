@@ -50,7 +50,7 @@ export default function Navbar() {
               最新攻略
             </Link>
           </div>
-          <div className="">
+          <div>
             <SearchBar />
           </div>
           {isLoggedIn ? (
@@ -95,7 +95,8 @@ export default function Navbar() {
             {isLoggedIn ? (
               <Dropdown >
                 <Dropdown.Toggle className={`${styles.member_drop} ${isHovered ? 'hover_toggle' : ''}`} variant="black" id="dropdown-basic">
-                  <NavPic />
+                  <NavPic/>
+                  <h6  className="ps-2 fw-bold">{memberData.account}</h6>
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu onMouseEnter={() => setIsHovered(true)}

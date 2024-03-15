@@ -13,8 +13,12 @@
 }
 
 .bg_card {
-  /* background: url('/images/member/cardbg2 (2).webp') left/cover no-repeat; */
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 1)), url('/images/member/1709974047758.jpg') left/cover no-repeat;
+
   background-color: $bright-gray;
+}
+.text_frame{
+  width: 650px;
 }
 
 @media (max-width: 430px) {
@@ -90,6 +94,15 @@
   }
 
   .shop_name {
+    width: 83px;
+    font-size: 16px;
+    padding-inline: 5px !important;
+    padding-block: 5px !important;
+    margin-inline: 0 !important;
+  }
+
+  .shop_name_front {
+    width: 120px;
     font-size: 16px;
     padding-inline: 5px !important;
     padding-block: 5px !important;
@@ -98,6 +111,6 @@
 
   .flex_c {
     flex-direction: column;
-    padding-left: 20px;
+    padding-left: 60px;
   }
 }

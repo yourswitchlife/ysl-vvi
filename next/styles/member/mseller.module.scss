@@ -36,6 +36,7 @@ $sortbar-height-rwd: 50px;
 
   .fit {
     width: 100%;
+    height: 100%;
     object-fit: cover;
   }
 }
@@ -380,7 +381,7 @@ $sortbar-height-rwd: 50px;
 }
 
 .profile {
-  width: 180px;
+  min-width: 180px;
   height: 180px;
 
   .fit {
@@ -489,7 +490,7 @@ $sortbar-height-rwd: 50px;
         margin-inline-end: 0 !important;
         margin-top: 10px;
         min-width: 80px;
-        max-height: 80px;
+        height: 70px;
         border-radius: 20px;
       }
 
@@ -560,16 +561,6 @@ $sortbar-height-rwd: 50px;
     left: 5%;
   }
 
-  .profile {
-    padding: 0 !important;
-    margin-inline: 9px !important;
-    margin-top: 10px;
-    min-width: 70px;
-    max-height: 70px;
-    border-radius: 20px;
-    margin: auto;
-    align-self: center;
-  }
   .tenpadding{
     padding-inline:10px !important;
     justify-content:center !important;

@@ -104,6 +104,48 @@ export default function ProductCard({
       case 6:
         memberId = '紅色死神的遊戲收藏'
         break
+      case 7:
+        memberId = '魔法兔子的玩具坊'
+        break
+      case 8:
+        memberId = '星光小狐的玩樂世界'
+        break
+      case 9:
+        memberId = '夢幻精靈的小店鋪'
+        break
+      case 10:
+        memberId = '露西亞的小天地'
+        break
+      case 11:
+        memberId = '奇幻螢火蟲的寶庫'
+        break
+      case 12:
+        memberId = '糖果精靈的甜蜜天地'
+        break
+      case 13:
+        memberId = '秘境小巷的驚奇寶盒'
+        break
+      case 14:
+        memberId = '海盜船長的珍寶藏身處'
+        break
+      case 15:
+        memberId = '奇幻仙境的集市'
+        break
+      case 16:
+        memberId = '森林精靈的神秘市集'
+        break
+      case 17:
+        memberId = '星際冒險家的未知商鋪'
+        break
+      case 18:
+        memberId = '魔法城堡的奇蹟角落'
+        break
+      case 19:
+        memberId = '奇幻之鑰的神秘櫥窗'
+        break
+      case 20:
+        memberId = '傳說中的寶物堡壘'
+        break
     }
     return memberId
   }
@@ -191,21 +233,23 @@ export default function ProductCard({
             <FaStore className="me-1 mb-1" />
             {memberIdChange(member_id)}
           </p>
-          <p className="text-white">
-            發行日期 {releaseTime}
-          </p>
-          <div  className="price d-flex justify-content-between mt-1 align-items-center">
+          <p className="text-white">發行日期 {releaseTime}</p>
+          <div className="price d-flex justify-content-between mt-1 align-items-center">
             <h6>
               <b className="text-danger">NT${price}</b>
             </h6>
-            {display_price == null ? (''):(<p className="text-white-50 text-decoration-line-through">
-              NT ${display_price}
-            </p>)}
-         
+            {display_price == null ? (
+              ''
+            ) : (
+              <p className="text-white-50 text-decoration-line-through">
+                NT ${display_price}
+              </p>
+            )}
+
             {/* <p className="text-white-50 text-decoration-line-through">
               NT${display_price}
             </p> */}
-      
+
             <div
               style={{
                 width: '22px',

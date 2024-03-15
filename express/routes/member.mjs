@@ -232,7 +232,7 @@ router.patch('/levelup', async (req, res) => {
     WHERE id = ?;
   `;
     const [result] = await db.execute(updatePointQuery, [totalPrice, memberId]);
-    console.log('SQL 查詢結果:', result);
+    // console.log('SQL 查詢結果:', result);
     if (result.affectedRows > 0) {
       // 最新的level_point
       const getMemberQuery = `
@@ -255,6 +255,7 @@ router.patch('/levelup', async (req, res) => {
           // 1張50折價
           await db.execute('INSERT INTO member_coupon (member_id, coupon_id, status, created_at)VALUES (?, ?, ?, NOW())', [memberId, 64, 0]);
           res.json({ message: '恭喜升級！成功獲得1張高手獎勵優惠券！' });
+          return;
         }
 
       } else if (updatedLevelPoint >= 13000 && updatedLevelPoint < 20000) {
@@ -271,6 +272,7 @@ router.patch('/levelup', async (req, res) => {
             VALUES (?, ?, ?, NOW()), (?, ?, ?, NOW())
             `, [memberId, 65, 0, memberId, 65, 0]);
           res.json({ message: '恭喜升級！成功獲得2張菁英獎勵優惠券！' });
+          return;
         }
 
       } else if (updatedLevelPoint >= 20000) {
@@ -287,6 +289,7 @@ router.patch('/levelup', async (req, res) => {
             VALUES (?, ?, ?, NOW()), (?, ?, ?, NOW())
             `, [memberId, 66, 0, memberId, 66, 0]);
           res.json({ message: '恭喜升級！成功獲得2張大師獎勵優惠券！' });
+          return;
         }
       }
       res.json({ message: '會員資料更新成功' });
@@ -481,6 +484,7 @@ router.get('/fav-shop', async (req, res) => {
     m.shop_name, 
     m.shop_site, 
     m.pic,
+    m.shop_cover,
     COUNT(DISTINCT ps.id) AS totalProducts,
     COALESCE(o.totalOrders, 0) AS totalOrders,
     COUNT(DISTINCT fs.seller_id) AS totalFavs,
@@ -676,7 +680,7 @@ router.get('/order', async (req, res) => {
     const totalseller = totalsellerResult[0].totalseller;
 
     // 總頁數
-    const totalPages = Math.ceil(totalseller / limit);
+    const totalPages = Math.ceil(totalseller / limit) - 1;
 
     // orderby
     let orderClause = '';

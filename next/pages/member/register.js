@@ -171,7 +171,7 @@ export default function register() {
                 <Form.Check className="mx-4" type="checkbox" label="顯示密碼" onChange={togglePasswordVisibility}  />
               </Form.Group>
               <div className={sStyle.error + ' px-4'}>
-                {errorMessage && <h6>{errorMessage}</h6>}
+                {errorMessage && <h6 className={sStyle.error_text}>提示：{errorMessage}</h6>}
               </div>
               <div
                 className={
@@ -180,7 +180,7 @@ export default function register() {
                 }
               >
                 <Button className={sStyle.sign_btn + ' h5 me-4'} type="submit">
-                  開始探索
+                  完成註冊
                 </Button>
                 <Button
                   className={sStyle.sign_btn + ' h5 d-flex align-items-center'}
@@ -193,7 +193,7 @@ export default function register() {
 
             <div className="d-flex justify-content-center mb-3">
               <h6 className="me-5">已經加入YSL了嗎?</h6>
-              <Link href="" className={sStyle.sign_link}>
+              <Link href="/member/login" className={sStyle.sign_link+" fw-bold"}>
                 立即快速登入
               </Link>
             </div>
