@@ -271,9 +271,6 @@ export default function OrdersDetailList() {
     const allhaveShippingMethod = payingItems.every((item) =>
       shippingMethods.hasOwnProperty(item.member_id)
     )
-    console.log(allhaveShippingMethod)
-    console.log(payingItems)
-    console.log(shippingMethods)
     if (!allhaveShippingMethod) {
       MySwal.fire({
         icon: 'warning',
@@ -283,7 +280,17 @@ export default function OrdersDetailList() {
       return
     }
 
+    // 如果用戶沒有選取收件地址
     const formattedShippingInfos = formatShippingInfos(shippingInfos)
+   
+    if (formattedShippingInfos.length !== payingItems.length) {
+      MySwal.fire({
+        icon: 'warning',
+        text: '請為選有訂單選擇收件地址',
+        confirmButtonColor: '#E41E49',
+      })
+      return
+    }
 
     const orderData = {
       member_buyer_id: memberData.id,
