@@ -208,6 +208,7 @@ export default function OrdersDetailList() {
     setShippingDiscount(totalShippingFee)
   }
 
+
   // 格式化優惠券到期日期
   const formatDate = (dateString) => {
     const date = new Date(dateString)
@@ -321,19 +322,33 @@ export default function OrdersDetailList() {
           // 依據message判斷
           switch (results.message) {
             case '建立訂單成功，貨到付款':
-              const groupCashId = results.groupId
-              router.push(`/cart/purchase?orderId=${groupCashId}`)
-              handleLevelPoint()
+              const externalOrderIdForCash = results.externalOrderId
+              fetch('http://localhost:3005/api/cart/cash', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log(data)
+                  handleLevelPoint()
+                  window.location.href = `/cart/purchase?orderId=${externalOrderIdForCash}`
+                })
+                .catch((error) => {
+                  console.error('錯誤:', error)
+                })
               break
             case '建立訂單成功，LINEPAY':
-              const groupId = results.groupId
+              const externalOrderIdForLinePay = results.externalOrderId
               // 導向LINE PAY後端處理
               fetch('http://localhost:3005/api/cart/line-pay', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ ...orderData, groupId }),
+                body: JSON.stringify({ ...orderData,  externalOrderId: externalOrderIdForLinePay }),
               })
                 .then((response) => response.json())
                 .then((data) => {
@@ -346,8 +361,8 @@ export default function OrdersDetailList() {
                 })
               break
             case '建立訂單成功，信用卡':
-              const groupIdForCreditCard = results.groupId
-              // 導向LINE PAY後端處理
+              const externalOrderIdForCreditCard = results.externalOrderId
+              // 導向後端處理
               fetch('http://localhost:3005/api/cart/credit-card', {
                 method: 'POST',
                 headers: {
@@ -359,7 +374,7 @@ export default function OrdersDetailList() {
                 .then((data) => {
                   console.log(data)
                   handleLevelPoint()
-                  window.location.href = `/cart/purchase?orderId=${groupIdForCreditCard}`
+                  window.location.href = `/cart/purchase?orderId=${externalOrderIdForCreditCard}`
                 })
                 .catch((error) => {
                   console.error('錯誤:', error)

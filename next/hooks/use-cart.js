@@ -148,12 +148,14 @@ export function CartProvider({ children }) {
   // 轉換商品語言版本為中文
   const changeLanguage = (language)=>{
     console.log(language)
+    // 檢查language是否為非字串格式
+    const languageStr = Array.isArray(language) ? language.join(',') : (typeof language === 'string' ? language : '')
     const languageList = {
       CH:'中文',
       EN:'英文',
       JP:'日文'
     }
-    const languageNames = language.split(',').map(item => languageList[item] || item).join(', ')
+    const languageNames = languageStr.split(',').map(item => languageList[item] || item).join(', ')
     return languageNames
   }
 
@@ -261,7 +263,7 @@ export function CartProvider({ children }) {
   // 加入購物車存進狀態內
   const addItem = (item) => {
     // 成功加入要跳轉頁面
-    let routerPush = true;
+    let routerPush = true
     // 先檢查商品的id是否已存在購物車中
     const findIndex = cartItems.findIndex((p) => p.id === item.id)
     const existingItem = cartItems[findIndex]

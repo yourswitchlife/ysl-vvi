@@ -230,6 +230,9 @@ router.post('/create-order', async (req, res) => {
       const groupId = orderGroupResult.insertId
       console.log(groupId)
 
+      // 生成Linepay用的唯一識別訂單號
+      const externalOrderId = `${groupId}${orderGroupUuid}`
+
       // 測試
       // const groupedItems = testItems.reduce((group, item) => {
       //   if (!group[item.member_id]) {
@@ -301,9 +304,10 @@ router.post('/create-order', async (req, res) => {
 
         for (const item of itemsInGroup) {
           await connection.execute(
-            `INSERT INTO orders (group_id, order_number, member_buyer_id, member_seller_id, product_id, quantity, order_price, final_price, shipping_method, receive_name, receive_phone, receive_address, payment_method, shipping_status, status, coupon_id, shipping_discount_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO orders (group_id, external_order_id, order_number, member_buyer_id, member_seller_id, product_id, quantity, order_price, final_price, shipping_method, receive_name, receive_phone, receive_address, payment_method, shipping_status, status, coupon_id, shipping_discount_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
               groupId,
+              externalOrderId,
               uuidv4(),
               member_buyer_id,
               member_id,
@@ -335,21 +339,21 @@ router.post('/create-order', async (req, res) => {
         res.json({
           status: 'success',
           message: '建立訂單成功，貨到付款',
-          groupId: groupId,
+          externalOrderId: externalOrderId,
         })
       } else if (paymentMethod === 2) {
         // LINEPAY
         res.json({
           status: 'success',
           message: '建立訂單成功，LINEPAY',
-          groupId: groupId,
+          externalOrderId: externalOrderId,
         })
       } else if (paymentMethod === 3) {
         // 信用卡(綠界)
         res.json({
           status: 'success',
           message: '建立訂單成功，信用卡',
-          groupId: groupId,
+          externalOrderId: externalOrderId,
         })
       }
     } catch (error) {
@@ -366,25 +370,26 @@ router.post('/create-order', async (req, res) => {
 // LINE PAY
 router
   .post('/line-pay', async (req, res) => {
-    const { groupId } = req.body
+    const { externalOrderId } = req.body
     console.log(req.body)
-    console.log(groupId)
 
     try {
       // 從order_group取得amount
-      const [rows] = await db.execute(
-        `SELECT amount FROM order_group WHERE id = ?`,
-        [groupId]
+      const [groupRows] = await db.execute(
+        `SELECT order_group.amount FROM order_group JOIN orders ON order_group.id = orders.group_id  WHERE orders.external_order_id = ?`,
+        [externalOrderId]
       )
-      if (rows.length === 0) {
-        return res.status(404).json({ message: '找不到order_group資料表' })
+      if (groupRows.length === 0) {
+        return res
+          .status(404)
+          .json({ message: '找不到order_group資料表對應的訂單組別' })
       }
-      const amount = rows[0].amount
+      const amount = groupRows[0].amount
 
       console.log(amount)
 
       // LinepayBody
-      const orderId = groupId
+      const orderId = externalOrderId
       const productImageUrl =
         'https://images.unsplash.com/photo-1605142806312-9ba7fa5cd0fd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
       const confirmUrl = `http://localhost:3000/cart/purchase?orderId=${orderId}`
@@ -398,7 +403,7 @@ router
         orderId,
         currency,
       }
-      // console.log(JSON.stringify(linepayBody, null, 2))
+      console.log(JSON.stringify(linepayBody, null, 2))
 
       // 製作簽章
       const uri = '/v2/payments/request'
@@ -436,6 +441,8 @@ router
       console.log(linepayRes.data.info.paymentUrl)
       if (linepayRes.data.returnCode === '0000') {
         res.json(linepayRes.data.info.paymentUrl.web)
+      } else {
+        console.log('錯誤')
       }
     } catch (error) {
       console.error('錯誤', error)
@@ -445,17 +452,21 @@ router
 
   // 後端接收 transactionId再進行確認
   .get('/check-transaction', async (req, res) => {
-    const { transactionId, groupId } = req.query
+    const { transactionId, orderId } = req.query
+    console.log(transactionId)
+    console.log(orderId)
 
     // 從order_group取得amount
-    const [rows] = await db.execute(
-      `SELECT amount FROM order_group WHERE id = ?`,
-      [groupId]
+    const [orderRows] = await db.execute(
+      `SELECT orders.group_id, order_group.amount FROM orders JOIN order_group ON orders.group_id = order_group.id WHERE orders.external_order_id = ?`,
+      [orderId]
     )
-    if (rows.length === 0) {
-      return res.status(404).json({ message: '找不到order_group資料表' })
+    if (orderRows.length === 0) {
+      return res
+        .status(404)
+        .json({ message: '找不到order_group資料表中對應的訂單組別' })
     }
-    const amount = rows[0].amount
+    const amount = orderRows[0].amount
 
     // LinepayBody
 
@@ -478,8 +489,8 @@ router
       if ((response.data.returnCode = '0000')) {
         // 更新訂單付款狀態
         await db.execute(
-          `UPDATE orders SET status = '已付款' WHERE group_id = ?`,
-          [groupId]
+          `UPDATE orders SET status = '已付款' WHERE external_order_id = ?`,
+          [orderId]
         )
         res.json({ status: 'success', message: '訂單狀態成功更新為已付款' })
       } else {

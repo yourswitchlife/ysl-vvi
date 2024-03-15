@@ -1,13 +1,10 @@
-import CartNavbar from '@/components/layout/navbar/navbar'
-import Footer from '@/components/layout/footer/footer-front'
-import styles from '@/styles/cart/purchase.module.scss'
+import styles from './empty.module.scss'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export default function Empty() {
   return (
     <>
-      <CartNavbar />
       <div className="container">
         <section className={styles.emptyFrame}>
           <div className={`ratio ratio-1x1 ${styles.ratio}`}>
@@ -23,13 +20,12 @@ export default function Empty() {
             <Link href="/" type="button" className="btn btn-info">
               回首頁逛逛
             </Link>
-            <Link href="" type="button" className="btn btn-danger">
+            <Link href="/member/fav-product" type="button" className="btn btn-danger">
               我的收藏清單
             </Link>
           </div>
         </section>
       </div>
-      <Footer />
     </>
   )
 }
