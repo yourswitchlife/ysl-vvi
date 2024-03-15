@@ -75,7 +75,8 @@ const upload = multer({ storage: storage })
 //注意：新增賣場其實是更新member資料
 //在前端執行：抓取預設值存入 與 實現兩個按鈕：分別是shop_valid = 0 或shop_valid = 1
 router.put('/shop/edit', authenticate, upload.none(), async (req, res) => {
-  const { shop_name, shop_site, shop_info, shop_valid } = req.body
+  const { shop_name, shop_site, shop_info } = req.body
+  const shop_valid = 1
   const memberId = req.memberData.id
   if (!req.memberData.id) {
     // 如果memberData不存在，则返回错误信息
@@ -390,18 +391,61 @@ router.delete('/product/:pid', authenticate, async (req, res) => {
 
 //賣家評價讀取 #Read
 router.get('/comment', authenticate, async (req, res) => {
-  if (!req.memberData) {
-    // 如果memberData不存在，则返回错误信息
-    return res.status(400).json({ message: '找不到member data' })
+  const tab = req.query.tab || 'all'
+  const shopId = req.memberData.id
+  const page = parseInt(req.query.page) || 1
+  const limit = parseInt(req.query.limit) || 4
+  const offset = (page - 1) * limit
+
+  let sql = `
+  SELECT 
+    shop_comment.*, 
+    member.account, 
+    member.pic, 
+    AVG(shop_comment.rating) OVER() AS avg_rating, 
+    COUNT(shop_comment.id) OVER() AS total_comments
+  FROM shop_comment 
+  INNER JOIN member ON shop_comment.member_id = member.id 
+  WHERE shop_comment.shop_id = ?
+`
+  // 根據tab值調整SQL查詢
+  if (tab === 'unreply') {
+    sql += ` AND (shop_comment.reply IS NULL OR shop_comment.reply = '')`
+  } else if (tab === 'replied') {
+    sql += ` AND shop_comment.reply IS NOT NULL AND shop_comment.reply <> ''`
   }
+
   try {
-    const shopId = req.memberData.id
-    let [comments] = await db.execute(
-      `SELECT shop_comment.*, member.account, member.pic FROM shop_comment INNER JOIN member ON shop_comment.member_id = member.id WHERE shop_comment.shop_id = ?`,
+    //總項目
+    const [totalItemsResult] = await db.execute(
+      'SELECT COUNT(*) AS totalItems FROM shop_comment WHERE shop_comment.shop_id = ?',
       [shopId]
     )
-    console.log(comments)
-    res.json(comments)
+    const totalItems = totalItemsResult[0].totalItems
+    //總頁數
+    const totalPages = Math.ceil(totalItems / limit)
+    //查詢結果
+    // const [commentsResult] = await db.execute(sql, [shopId])
+    // const comments = commentsResult
+    // // console.log(comments)
+    // res.json({
+    //   comments,
+    //   totalItems,
+    //   totalPages,
+    // })
+    let [comments] = await db.execute(sql + ' LIMIT ?, ?', [
+      shopId,
+      offset,
+      limit,
+    ])
+
+    const responseData = {
+      items: comments,
+      totalItems,
+      totalPages,
+    }
+    console.log(responseData)
+    res.json(responseData)
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: '伺服器錯誤' })
@@ -475,6 +519,37 @@ router.put('/comment/reply', upload.none(), authenticate, async (req, res) => {
     res.status(200).send({ message: '回應買家評價建立成功' })
   } catch (error) {
     res.status(400).send({ message: '不存在的評論，回覆失敗' })
+    console.log('資料庫相關錯誤：', error)
+  }
+})
+
+router.put('/comment/delete', upload.none(), authenticate, async (req, res) => {
+  const { cid } = req.body
+  const reply = null
+  const replied_at = null
+  const shop_id = req.memberData.id
+
+  try {
+    //先檢查這則評論有沒有存在＆和shop_id匹配
+    const [comments] = await db.execute(
+      'SELECT * FROM `shop_comment` WHERE `id` = ?',
+      [cid]
+    )
+    //檢查評論是存在以及shop_id是否匹配
+    if (comments.length === 0) {
+      return res.status(404).send({ message: '評論不存在' })
+    }
+    const comment = comments[0]
+    if (comment.shop_id !== shop_id) {
+      //不符合沒有權限修改
+      return res.status(403).send({ message: '無權限修改此評論' })
+    }
+    const Query =
+      'UPDATE `shop_comment` SET `reply` = ?, `replied_at` = ? WHERE `id` = ? AND `shop_id` = ?'
+    await db.execute(Query, [reply, replied_at, cid, shop_id])
+    res.status(200).send({ message: '刪除評價成功' })
+  } catch (error) {
+    res.status(400).send({ message: '不存在的評論，刪除回覆失敗' })
     console.log('資料庫相關錯誤：', error)
   }
 })

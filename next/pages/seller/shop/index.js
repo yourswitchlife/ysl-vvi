@@ -106,11 +106,11 @@ export default function ShopSetting() {
       })
       if (response.ok){
         Swal.fire({
-          title: "賣場更新成功",
-          text: "二手遊戲的新天地，一起販售商品吧！",
+          title: "賣場更新成功!",
+          text: "快來上架二手遊戲一起販售商品吧！",
           icon: "success",
-          showConfirmButton: false,
-          timer: 1200
+          showConfirmButton: true,
+          // timer: 1200
         })
       }else{
         // 更新失敗，顯示錯誤訊息
