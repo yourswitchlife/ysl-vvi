@@ -221,15 +221,52 @@ export default function OrdersDetailList() {
         },
         body: JSON.stringify({ totalPrice }),
         credentials: 'include',
-      })
-
+      });
+  
       if (!updateResponse.ok) {
-        throw new Error('更新會員資料失敗')
+        throw new Error('更新會員資料失敗');
+      }
+  
+      const Data = await updateResponse.json();
+      if (Data.message.includes('高手獎勵')) {
+        Swal.fire({
+          title: `${memberData.account}，恭喜升級！`,
+          text: 'YSL團隊為您帶來了2張高手獎勵優惠券！',
+          imageUrl: "/images/member/gift.jpg" ,
+          imageWidth: 200,
+          imageHeight: 200,
+          imageAlt: "gift",
+          confirmButtonColor: "#43B0FF",
+          confirmButtonText: "好耶！",
+        });
+      } else if (responseData.message.includes('菁英獎勵')) {
+        Swal.fire({
+          title: `${memberData.account}，恭喜升級！`,
+          text: 'YSL團隊為您帶來了2張菁英獎勵優惠券！',
+          imageUrl: "/images/member/gift.jpg" ,
+          imageWidth: 200,
+          imageHeight: 200,
+          imageAlt: "gift",
+          confirmButtonColor: "#43B0FF",
+          confirmButtonText: "好耶！",
+        });
+      } else if (responseData.message.includes('大師獎勵')) {
+        Swal.fire({
+          title: `${memberData.account}，恭喜升級！`,
+          text: 'YSL團隊為您帶來了2張大師獎勵優惠券！',
+          imageUrl: "/images/member/gift.jpg" ,
+          imageWidth: 200,
+          imageHeight: 200,
+          imageAlt: "gift",
+          confirmButtonColor: "#43B0FF",
+          confirmButtonText: "好耶！",
+        });
       }
     } catch (error) {
-      console.error('更新會員資料時發生錯誤:', error)
+      console.error('更新會員資料時發生錯誤:', error);
     }
-  }
+  };
+  
   // 成功建立訂單後更新積分END
 
   // 處理結帳 / 下訂單按鈕的送出連接後端產生訂單

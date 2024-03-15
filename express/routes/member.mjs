@@ -222,18 +222,19 @@ router.put('/account/:memberId', async (req, res) => {
 router.patch('/levelup', async (req, res) => {
   const memberId = req.query.memberId;
   console.log(memberId)
-  const { totalPrice } = req.body; 
+  const { totalPrice } = req.body;
   console.log(totalPrice)
   try {
-    //  level_point 
+    // 更新會員積分
     const updatePointQuery = `
     UPDATE member
     SET level_point = level_point + ?
     WHERE id = ?;
   `;
     const [result] = await db.execute(updatePointQuery, [totalPrice, memberId]);
-    
-    if (result.affectedRows > 0) {// 再次查詢會員資料以獲取最新的level_point
+    console.log('SQL 查詢結果:', result);
+    if (result.affectedRows > 0) {
+      // 最新的level_point
       const getMemberQuery = `
       SELECT level_point
       FROM member
@@ -241,37 +242,63 @@ router.patch('/levelup', async (req, res) => {
       `;
       const [memberResult] = await db.execute(getMemberQuery, [memberId]);
       const updatedLevelPoint = memberResult[0].level_point;
-      // 檢查更新後的 level_point 是否到達下一等級
+
+      // 檢查level_point
       if (updatedLevelPoint >= 6000 && updatedLevelPoint < 13000) {
-          // 1張免運
-          await db.execute('INSERT INTO member_coupon (member_id, coupon_id, status, created_at)VALUES (?, ?, ?, NOW())', [memberId, 43, 0]);
-          
+        const checkCouponQuery = `
+        SELECT *
+        FROM member_coupon
+        WHERE member_id = ? AND coupon_id = ?;
+        `;
+        const [couponResult] = await db.execute(checkCouponQuery, [memberId, 64]);
+        if (couponResult.length === 0) {
+          // 1張50折價
+          await db.execute('INSERT INTO member_coupon (member_id, coupon_id, status, created_at)VALUES (?, ?, ?, NOW())', [memberId, 64, 0]);
+          res.json({ message: '恭喜升級！成功獲得1張高手獎勵優惠券！' });
+        }
+
       } else if (updatedLevelPoint >= 13000 && updatedLevelPoint < 20000) {
-          // 2張免運
+        const checkCouponQuery = `
+        SELECT *
+        FROM member_coupon
+        WHERE member_id = ? AND coupon_id = ?;
+        `;
+        const [couponResult] = await db.execute(checkCouponQuery, [memberId, 65]);
+        if (couponResult.length === 0) {
+          // 2張100折價
           await db.execute(`
-          INSERT INTO member_coupon (member_id, coupon_id, status, created_at)
-          VALUES (?, ?, ?, NOW()), (?, ?, ?, NOW())
-          `, [memberId, 43, 0, memberId, 43, 0]);
+            INSERT INTO member_coupon (member_id, coupon_id, status, created_at)
+            VALUES (?, ?, ?, NOW()), (?, ?, ?, NOW())
+            `, [memberId, 65, 0, memberId, 65, 0]);
+          res.json({ message: '恭喜升級！成功獲得2張菁英獎勵優惠券！' });
+        }
 
       } else if (updatedLevelPoint >= 20000) {
-          // 3張免運
-          // 這裡待修給優惠券的邏輯、時間限制
+        const checkCouponQuery = `
+        SELECT *
+        FROM member_coupon
+        WHERE member_id = ? AND coupon_id = ?;
+        `;
+        const [couponResult] = await db.execute(checkCouponQuery, [memberId, 66]);
+        if (couponResult.length === 0) {
+          // 2張200折價
           await db.execute(`
-          INSERT INTO member_coupon (member_id, coupon_id, status, created_at)
-          VALUES (?, ?, ?, NOW()), (?, ?, ?, NOW()), (?, ?, ?, NOW())
-          `, [memberId, 43, 0, memberId, 43, 0, memberId, 43, 0]);
+            INSERT INTO member_coupon (member_id, coupon_id, status, created_at)
+            VALUES (?, ?, ?, NOW()), (?, ?, ?, NOW())
+            `, [memberId, 66, 0, memberId, 66, 0]);
+          res.json({ message: '恭喜升級！成功獲得2張大師獎勵優惠券！' });
+        }
       }
-      
-      // 返回成功訊息
       res.json({ message: '會員資料更新成功' });
-  } else {
+    } else {
       throw new Error('沒有找到符合條件的會員');
-  }
+    }
   } catch (error) {
     console.error('更新會員資料失敗:', error);
     res.status(500).json({ error: '更新會員資料失敗' });
   }
 });
+
 
 // pic改按鈕上傳
 const storage = multer.diskStorage({
