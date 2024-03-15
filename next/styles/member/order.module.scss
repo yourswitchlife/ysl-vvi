@@ -36,6 +36,7 @@
     padding-inline: 3px !important;
     font-size: 16px;
   }
+
   .h5text_xs {
     width: 40%;
     align-items: center;
@@ -50,29 +51,53 @@
     margin: 10px !important;
     font-size: 16px;
   }
+
   .card_xs {
     padding-inline: 10px !important;
   }
+
   .order_xs {
     padding: 0 !important;
     margin: 0 !important;
   }
+
   .shop_xs {
     padding-inline: 0 !important;
-    padding-block:25px ;
+    padding-block: 25px;
     margin-inline: 0 !important;
   }
+
   .nopdmn_xs {
     padding-inline: 0 !important;
     margin-inline: 0 !important;
   }
+  .nopd_xs {
+    padding-inline: 0 !important;
+  }
+
   .nopdmn_block_xs {
     margin-block: 0 !important;
     margin-inline: 10px !important;
   }
+
   .img_frame {
-    max-width: 80px;
+    width: 85px;
     height: 140px;
     align-self: center;
+  }
+  .text_frame{
+    max-width: 160px;
+  }
+
+  .shop_name {
+    font-size: 16px;
+    padding-inline: 5px !important;
+    padding-block: 5px !important;
+    margin-inline: 0 !important;
+  }
+
+  .flex_c {
+    flex-direction: column;
+    padding-left: 20px;
   }
 }

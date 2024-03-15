@@ -41,7 +41,7 @@ $nav-black: #161719ae;
   background-color: $nav-black;
   color: $white;
   font-size: 18px;
-  padding: 15px 50px;
+  padding: 10px 50px;
   .linkPr {
     color: $white;
     text-decoration: none;
@@ -106,7 +106,7 @@ $nav-black: #161719ae;
   align-items: center;
   background-color: $primary-black;
   color: $white;
-  padding: 10px 150px;
+  padding: 10px 50px;
   .link {
     display: flex;
     align-items: center;
@@ -318,13 +318,13 @@ $nav-black: #161719ae;
 // ------------  phoneNav
 .phoneNav {
   z-index: 5;
-  height: 90px;
+  height: 80px;
   width: 100%;
   bottom: 0;
   position: fixed;
   background-color: #161719;
   // border-top: 1px solid rgb(151, 151, 151);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
 }
 .phoneNavContent {
   color: white;
@@ -347,5 +347,5 @@ $nav-black: #161719ae;
   justify-content: center;
   align-items: center;
   top: 0;
-  right: 5px;
+  right: 17px;
 }

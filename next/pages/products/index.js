@@ -222,6 +222,12 @@ export default function Products() {
                     }}
                     className={styles.link}
                   >
+                  <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+                    className={styles.link}
+                  >
                     <ProductCard
                       className="p-5"
                       id={p.id}
@@ -237,6 +243,8 @@ export default function Products() {
                       handleToggleFav={handleToggleFav}
                       member_id={p.member_id}
                       cardIcon={cardIcon}
+                      product_quanty={p.product_quanty}
+                      language={p.language}
                       // imgDetails={p.img_details}
                     />
                   </div>

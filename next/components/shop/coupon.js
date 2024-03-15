@@ -12,13 +12,13 @@ export default function Coupon() {
           className={`d-flex justify-content-between align-items-end mb-4 ${styles.coupontitle}`}
         >
           <Link
-            href="/coupon"
+            href="http://localhost:3000/coupon"
             className={`${styles.title} ${styles.linkstyle}`}
           >
             <h4 className="mb-0">YSL官網優惠券</h4>
           </Link>
           <Link
-            href="/user/coupon"
+            href="http://localhost:3000/member/coupon-product"
             className={`${styles.subtitle} ${styles.linkstyle}`}
           >
             <h6 className="mb-0">查看我的優惠券</h6>

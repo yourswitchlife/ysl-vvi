@@ -183,7 +183,7 @@ const handleHitToggleFav = (id) => {
       <div className="container">
         <div className="d-none d-lg-block">
         <div className='mt-2'><BreadCrumb /></div>
-          <div className="d-flex justify-content-around mb-5 mt-5">
+          <div className="d-flex justify-c  ontent-around mb-5 mt-5">
           
             {/* seller detail */}
             <div className={styles.profile}>
