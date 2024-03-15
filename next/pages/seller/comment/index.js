@@ -60,7 +60,7 @@ export default function Comment() {
   //頁數
   const [totalPages, setTotalPages] = useState(1)
   const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(4)
+  const [limit, setLimit] = useState(6)
 
   //修改Modal讓他可以接受comment的id
   const handleShowModal = (comment) => {
@@ -69,19 +69,6 @@ export default function Comment() {
     setShowModal(true)
   }
   
-
-  // useEffect(() => {
-  //   if(isLoggedIn && memberData) {
-  //     console.log(memberData.shop_cover)
-  //     const picUrl = memberData.pic ? (memberData.pic.startsWith("https://") 
-  //       ? memberData.pic 
-  //       : `http://localhost:3005/profile-pic/${memberData.pic}`) 
-  //     : profilePhoto
-  //     setBigPic(picUrl)
-  //     const coverUrl = memberData.shop_cover ? (memberData.shop_cover.startsWith("https://") ? memberData.shop_cover : `http://localhost:3005/shopCover/${memberData.shop_cover}`) : cover
-  //     setShopCover(coverUrl)
-  //   }
-  // }, [isLoggedIn, memberId, memberData])
   const fetchShopComments = async() => {
     try{
       const url = `http://localhost:3005/api/seller/comment?tab=${selectedTab}&page=${page}&limit=${limit}`
@@ -212,7 +199,7 @@ export default function Comment() {
       if(result.isConfirmed){
         try{
           const response = await fetch(`http://localhost:3005/api/seller/comment/delete`, {
-          method: 'PUT', // 或者是PUT，取決於你的API設計
+          method: 'PUT', 
           headers: {
             'Content-Type': 'application/json'
           },
@@ -225,7 +212,7 @@ export default function Comment() {
             icon: 'success',
           })
           //更新評論列表
-          fetchShopComments(); // 假設這個函式會重新從後端獲取更新後的評論列表
+          fetchShopComments(); 
         } else {
           throw new Error('刪除回覆失敗');
         }
@@ -536,14 +523,39 @@ export default function Comment() {
               </div>
             </Form>
             <hr />
-            <Tabs
-              defaultActiveKey="all"
-              id="mobile-tabs"
-              className="mb-3"
-              justify
-            >
-              <Tab eventKey="all" title="全部">
-                <div className="d-flex justify-content-around">
+            <Nav
+                variant="tabs"
+                defaultActiveKey="/comment/all"
+                className="mb-4"
+              >
+                <Nav.Item>
+                  <Nav.Link onClick={() => {
+                    setSelectedTab('all')
+                  }} className={selectedTab === 'all' ? "text-danger" : "text-secondary"}>
+                    全部
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link onClick={() => {
+                    setSelectedTab('unreply')
+                  }} className={selectedTab === 'unreply' ? "text-danger" : "text-secondary"}>
+                    待回覆
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link onClick={() => {
+                    setSelectedTab('replied')
+                  }} className={selectedTab === 'replied' ? "text-danger" : "text-secondary"}>
+                    已回覆
+                  </Nav.Link>
+                </Nav.Item>
+                {/* <Nav.Item>
+                  <Nav.Link eventKey="disabled" disabled>
+                    Disabled
+                  </Nav.Link>
+                </Nav.Item> */}
+              </Nav>
+            {/* <div className="d-flex justify-content-around">
                   <Button variant="secondary" size="sm">
                     5顆星
                   </Button>
@@ -559,7 +571,7 @@ export default function Comment() {
                   <Button variant="secondary" size="sm">
                     1顆星
                   </Button>
-                </div>
+                </div> */}
                 <h6 className="m-2">{commentNum}則評論</h6>
                 {comments && (
                 <>
@@ -586,23 +598,11 @@ export default function Comment() {
                   <Card.Body>
                     <Card.Title className="text-dark">
                       <p className="mb-0 text-secondary">
-                        訂單編號：1025484548W
+                        訂單編號：{v.order_num}
                       </p>
                     </Card.Title>
                     <div className="text-dark">
-                      <div className="row align-items-center">
-                        <div className="col-12 border-bottom pb-2 d-flex justify-content-start align-items-center mt-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={24}
-                            height={40}
-                          />
-                          <p className="mb-0 text-dark ms-2">
-                            集合啦！動物森友會
-                            <span className="text-info ms-2">x1</span>
-                          </p>
-                        </div>
+                      <div className="row align-items-center justify-content-center">
                         <div className="col-12 py-3">
                           <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
                           <Star avgRating={v.rating}/>
@@ -614,15 +614,45 @@ export default function Comment() {
                           {v.created_at}
                           </small>
                         </div>
+                        <div className={`col-11 mb-3 ${styles.reply}`}>
+                        {v.reply && (
+                          <>
+                          <p className='mt-2'>我的回覆：</p>
+                          <p>{v.reply}</p>
+                          <p className="text-secondary mb-2">{v.replied_at}</p>
+                          </>
+                        )}
+                        </div>
                         <div className="col-12 d-flex justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
+                        {v.reply ? (
+                          <div className='d-flex'>
+                              {/* 有回覆：編輯、刪除（輸入空白的資料） */}
+                              <button
+                                type="button"
+                                className="btn btn-danger btn-sm me-2"
+                                onClick={() => {handleShowModal(v)}}
+                              >
+                                編輯
+                              </button>
+                              <button
+                                type="button"
+                                className={`btn btn-danger btn-sm ${styles.btnDangerOutlined}`}
+                                onClick={() => {handleDeleteReply(v.id)}}
+                              >
+                                刪除
+                              </button>
+                            </div>
+                          ) : (
+                            <>
+                            <button
                             type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger"
-                          >
-                            回覆
-                          </button>
+                            className="btn btn-danger btn-sm"
+                            onClick={() => {handleShowModal(v)}}
+                            >
+                              回覆
+                            </button>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -632,158 +662,7 @@ export default function Comment() {
                 })}
                 </>
               )}
-                
-                <Card border="light" style={{ width: '100%' }} className="mb-3">
-                  <Card.Header>
-                    <div className="d-flex align-items-center">
-                      <p className="mb-0 text-secondary me-1">會員名稱:</p>
-                      <div className={`me-1 ${styles.shapeCircle}`}>
-                        <Image
-                          src={bigPic}
-                          alt="member-profile"
-                          width={25}
-                          height={25}
-                        />
-                      </div>
-                      <p className="mb-0 text-secondary">zhang.wt</p>
-                    </div>
-                  </Card.Header>
-                  <Card.Body>
-                    <Card.Title className="text-dark">
-                      <p className="mb-0 text-secondary">
-                        訂單編號：102545648S
-                      </p>
-                    </Card.Title>
-                    <div className="text-dark">
-                      <div className="row align-items-center">
-                        <div className="col-12 border-bottom pb-2 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={24}
-                              height={40}
-                            />
-                            <p className="mb-0 text-dark ms-2">
-                              集合啦！動物森友會
-                              <span className="text-info ms-2">x1</span>
-                            </p>
-                          </div>
-                          <div className="d-flex justify-content-start align-items-center">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={24}
-                              height={40}
-                            />
-                            <p className="mb-0 text-dark ms-2">
-                              集合啦！動物森友會
-                              <span className="text-info ms-2">x1</span>
-                            </p>
-                          </div>
-                        </div>
-                        <div className="col-12 py-3">
-                          <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar />
-                          </div>
-                          <p className="mb-0 text-dark">
-                            斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
-                          </p>
-                          <small className="text-secondary">
-                            2024/02/16 22:51
-                          </small>
-                        </div>
-                        <div className="col-12 d-flex justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger"
-                          >
-                            回覆
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </Card.Body>
-                </Card>
-                <Card border="light" style={{ width: '100%' }} className="mb-3">
-                  <Card.Header>
-                    <div className="d-flex align-items-center">
-                      <p className="mb-0 text-secondary me-1">會員名稱:</p>
-                      <div className={`me-1 ${styles.shapeCircle}`}>
-                        <Image
-                          src={bigPic}
-                          alt="member-profile"
-                          width={25}
-                          height={25}
-                        />
-                      </div>
-                      <p className="mb-0 text-secondary">zhang.wt</p>
-                    </div>
-                  </Card.Header>
-                  <Card.Body>
-                    <Card.Title className="text-dark">
-                      <p className="mb-0 text-secondary">
-                        訂單編號：1025484548W
-                      </p>
-                    </Card.Title>
-                    <div className="text-dark">
-                      <div className="row align-items-center">
-                        <div className="col-12 border-bottom pb-2 d-flex justify-content-start align-items-center mt-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={24}
-                            height={40}
-                          />
-                          <p className="mb-0 text-dark ms-2">
-                            集合啦！動物森友會
-                            <span className="text-info ms-2">x1</span>
-                          </p>
-                        </div>
-                        <div className="col-12 py-3">
-                          <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar className="me-1" />
-                            <FaStar />
-                          </div>
-                          <p className="mb-0 text-dark">
-                            斯巴拉西！買到超值的二手遊戲好開心～我要成為西施惠的好朋友
-                          </p>
-                          <small className="text-secondary">
-                            2024/02/16 22:51
-                          </small>
-                        </div>
-                        <div className="col-12 d-flex justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger"
-                          >
-                            回覆
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </Card.Body>
-                </Card>
-                <Pagination />
-              </Tab>
-              <Tab eventKey="unreply" title="待回覆">
-                待回覆
-              </Tab>
-              <Tab eventKey="replied" title="已回覆">
-                已回覆
-              </Tab>
-            </Tabs>
+                <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
           </div>
         </div>
         <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>

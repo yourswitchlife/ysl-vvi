@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import { useAuth } from '@/hooks/use-Auth'
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+import { createShopExam } from '@/context/seller/create-shop-exam';
+import { useRouter } from 'next/router'
 //Component
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
@@ -18,7 +20,7 @@ import cover from '@/public/images/shopCover/default-cover.jpg'
 
 
 export default function ShopSetting() {
-
+  const router = useRouter()
   const { isLoggedIn, memberId, memberData } = useAuth()
   const [bigPic, setBigPic] = useState(profilePhoto)
   const [shopCover, setShopCover] = useState(cover)
@@ -29,6 +31,7 @@ export default function ShopSetting() {
    const [selectedFile, setSelectedFile] = useState(null);
    const [previewImage, setPreviewImage] = useState(null);
    const fileInputRef = useRef(null);
+   const [errorMessage, setErrorMessage] = useState('')
    const [formData, setFormData] = useState({
     shop_name: '',
     shop_site: '',
@@ -41,7 +44,7 @@ export default function ShopSetting() {
     shop_info: '',
     shop_valid: ''
   });
-
+  const isDataChanged = JSON.stringify(formData) !== JSON.stringify(initialFormData)
 
   //body style
   useEffect(() => {
@@ -69,7 +72,7 @@ export default function ShopSetting() {
 
       const data = {
         shop_name: memberData.shop_name || '',
-        shop_site: memberData.shop_site || '',
+        shop_site: memberData.shop_site || memberData.account,
         shop_info: memberData.shop_info || '',
         shop_valid: memberData.shop_valid || ''
       }
@@ -84,7 +87,12 @@ export default function ShopSetting() {
       ...prevData, 
       [name]: value
     }))
-    //表單驗證的地方
+    //表單驗證的地方: context / createShopExam
+    const Result = createShopExam({
+      ...formData,
+      [name]: value
+    })
+    setErrorMessage(Result)
   }
 
   const handleSubmit = async (e) => {
@@ -114,12 +122,12 @@ export default function ShopSetting() {
         })
       }else{
         // 更新失敗，顯示錯誤訊息
-        // Swal.fire({
-        //   title: "喔喔!",
-        //   text: "您的個人資料更新錯誤！",
-        //   icon: "error"
-        // });
-        console.error('資料更新失敗！');
+        Swal.fire({
+          title: "外星人入侵",
+          text: "您的賣場資料更新錯誤！",
+          icon: "error"
+        });
+        // console.error('資料更新失敗！');
       }
     }catch(error){
       console.error('資料更新發生錯誤:', error);
@@ -128,7 +136,7 @@ export default function ShopSetting() {
   //上傳檔案
   const handleFileChange = (e) => {
     const file = e.target.files[0]
-    console.log(file)
+    // console.log(file)
 
     if(file){
       setSelectedFile(file)
@@ -140,7 +148,7 @@ export default function ShopSetting() {
     const reader = new FileReader() //fileReader是一個可以讀取檔案內容的web API(來做圖片預覽)
 
     reader.onloadend = () => {
-      console.log(reader.result) //生成的資料 URL用於顯示圖片預覽
+      // console.log(reader.result) //生成的資料 URL用於顯示圖片預覽
       setPreviewImage(reader.result)
       handleUpload(file)
     }
@@ -153,8 +161,8 @@ export default function ShopSetting() {
       const formData = new FormData()
       
       formData.append('file', file)
-      console.log(formData.get('file'))
-      console.log(selectedFile)
+      // console.log(formData.get('file'))
+      // console.log(selectedFile)
       try{
         const response = await fetch(`http://localhost:3005/api/seller/shop/shopCover`,{
           method: 'PUT',
@@ -207,7 +215,9 @@ export default function ShopSetting() {
   return (
     <>
         <header>
-          <SellerNavbar />
+        {memberData && 
+          <SellerNavbar shopSite={memberData.shop_site}/>
+        }
         </header>
         <main className={styles.mainContainer}>
           <div className="d-none d-md-block">
@@ -224,11 +234,17 @@ export default function ShopSetting() {
                 <SellerCover shopCover={shopCover}/>
               </>
             )} */}
-            <div className="d-flex flex-column d-lg-none container py-4">
+            <div className="d-flex flex-column d-lg-none container py-4 px-4">
               
-              <div className="mb-3">
-                  <h6>賣場封面</h6>
-                  <p className='text-light d-inline ms-2'>(接受的檔案格式: jpg, jpeg, png, webp)</p>
+              <div className="mb-1">
+              <div className='d-flex align-items-center'>
+                <h5 className='mb-2'>更新賣場資料</h5>
+                <h6 className='mb-2 ms-2'>( <span className='text-danger '>* </span>為必填資料 )</h6>
+              </div>
+              <div className='d-flex align-items-center mb-1'>
+                <h6>賣場封面</h6>
+                <p className='text-light d-inline ms-2 mb-0'>( 接受的檔案格式: jpg, jpeg, png, webp )</p>
+              </div>
                     <div className={styles.coverC}>
                     {previewImage ? (
                     // 如果有預覽圖片，顯示預覽圖片
@@ -246,28 +262,26 @@ export default function ShopSetting() {
                       ref={fileInputRef}
                       accept='.png, .jpg, .jpeg, .webp'
                     />
-                    <button className='btn btn-danger btn-sm my-2 d-block' onClick={handleClick}>上傳照片</button>
+                    <button className='btn btn-danger btn-sm mt-2 mb-3 d-block' onClick={handleClick}>上傳照片</button>
                 </div>
                 <Form>
-                <div className="d-flex justify-content-around align-items-center mt-4 mb-2">
-                  <div className={`${styles.profile}`}>
+                <div className='d-flex'>
+                  <div className={`${styles.profile} me-3`}>
                     <Image src={bigPic} alt="profile-photo" width={75} height={75} className={styles.fit} />
                   </div>
-                  <div className="d-flex flex-column align-items-start justify-content-center">
-                  <Form.Group className="mb-3" controlId="shop_name">
-                  <Form.Label className="">賣場名稱</Form.Label>
+                  <Form.Group className="mb-3 flex-grow-1" controlId="shop_name">
+                  <Form.Label className="">賣場名稱<small> (25字元以內) </small><span className='text-danger'>*</span></Form.Label>
                   <Form.Control 
                   type="text"
                   name="shop_name"
                   value={formData.shop_name} 
                   onChange={handleShop} 
-                  placeholder="請輸入賣場名稱(25字元以內)" />
-                </Form.Group>
-                  </div>
+                  placeholder="請輸入賣場名稱(25字元以內)"
+                  />
+                  </Form.Group>
                 </div>
-                <hr />
                 <Form.Group className="mb-2" controlId="shop_site">
-                  <Form.Label className="mb-1">賣場網址</Form.Label>
+                  <Form.Label className="mb-1">賣場網址<small> (預設值為帳號名稱) </small><span className="text-danger">*</span></Form.Label>
                   <div className="d-flex align-items-center">
                     <h6 className="mb-0 fw-normal me-1">
                       http://www.yourswitchlife.com/
@@ -276,34 +290,43 @@ export default function ShopSetting() {
                         size="sm"
                         type="text"
                         name="shop_site"
-                        placeholder="請輸入賣場網址(僅限輸入數字英文大小寫)"
+                        placeholder="請輸入100字元內的賣場網址(僅限輸入數字英文大小寫)"
                         value={formData.shop_site}
                         onChange={handleShop}
                       />
                   </div>
                 </Form.Group>
                 <Form.Group
-                  className="mb-3"
+                  className="mb-2"
                   controlId="shop_info"
                 >
-                  <Form.Label className="">賣場介紹</Form.Label>
+                  <Form.Label className="">賣場介紹<small> (30~100字元以內) </small><span className='text-danger'>*</span></Form.Label>
                   <Form.Control
                     as="textarea"
-                    rows={3}
-                    placeholder="請輸入30~50字的賣場介紹"
+                    rows={5}
+                    placeholder="請輸入30~100字的賣場介紹"
                     name="shop_info"
                     value={formData.shop_info}
                     onChange={handleShop}
                   />
                 </Form.Group>
+                <div style={{ height: '65px' }} className='mt-1 mb-2'>
+                    <div className="error-message-container" style={{ visibility: errorMessage ? 'visible' : 'hidden' }}>
+                      <div className="alert alert-danger">
+                        {errorMessage}
+                      </div>
+                    </div>
+                  </div>
                 <div className="d-flex justify-content-center mb-4">
-                  <button onClick={handleSubmit} type="button" className="btn btn-danger btn-sm me-2">
+                  <button onClick={handleSubmit} type="button" className="btn btn-danger me-2" disabled={!isDataChanged}>
                   儲存
                   </button>
                   {/* <button type="submit" className={`btn btn-danger btn-sm ${styles.btnDangerOutlined} me-2`}>
                       儲存暫不上架賣場
                   </button> */}
-                  <button type="button" className={`btn btn-danger btn-sm ${styles.btnGrayOutlined}`}>
+                  <button onClick={() => {
+                    router.push('./shop')
+                  }} className={`btn btn-danger ${styles.btnGrayOutlined}`}>
                     取消
                   </button>
                 </div>
@@ -317,13 +340,15 @@ export default function ShopSetting() {
                     <h5 className="text-dark fw-bold mb-0 me-3">
                       賣場基本資料
                     </h5>
-                    <p className="text-secondary mb-0">
-                      查看及更新您的賣場資料
-                    </p>
+                    <h6 className="text-secondary mb-0">
+                      查看及更新您的賣場資料 ( <span className='text-danger '>* </span>為必填資料 )
+                    </h6>
                   </div>
                   <div className="mb-3">
+                  <div className='d-flex align-items-center'>
                     <h6 className="text-dark">賣場封面<span className="text-danger">*</span></h6>
                     <p className='text-secondary d-inline ms-2'>(接受的檔案格式: jpg, jpeg, png, webp)</p>
+                  </div>
                     <div className={styles.coverB}>
                     {previewImage ? (
                     // 如果有預覽圖片，顯示預覽圖片
@@ -345,7 +370,7 @@ export default function ShopSetting() {
                   </div>
                   <Form>
                   <Form.Group className="mb-3" controlId="shopName">
-                    <Form.Label className="text-dark">賣場名稱<span className="text-danger">*</span></Form.Label>
+                    <Form.Label className="text-dark">賣場名稱<small> (25字元以內) </small><span className="text-danger">*</span></Form.Label>
                     <Form.Control 
                     type="text"
                     name="shop_name" 
@@ -353,7 +378,7 @@ export default function ShopSetting() {
                   onChange={handleShop} />
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="shopSite">
-                    <Form.Label className="text-dark">賣場網址</Form.Label>
+                    <Form.Label className="text-dark">賣場網址<small> (預設值為帳號名稱) </small><span className="text-danger">*</span></Form.Label>
                     <div className="d-flex align-items-center">
                       <h6 className="text-dark mb-0 me-1">
                         http://www.yourswitchlife.com/</h6>
@@ -371,24 +396,33 @@ export default function ShopSetting() {
                     className="mb-3"
                     controlId="shopInfo"
                   >
-                    <Form.Label className="text-dark">賣場介紹</Form.Label>
+                    <Form.Label className="text-dark">賣場介紹<small> (30~100字元以內) </small><span className="text-danger">*</span></Form.Label>
                     <Form.Control
                       as="textarea"
-                      rows={3}
-                      placeholder="請輸入30~50字的賣場介紹"
+                      rows={5}
+                      placeholder="請輸入30~100字的賣場介紹"
                       name="shop_info"
                       value={formData.shop_info}
                       onChange={handleShop}
                     />
                   </Form.Group>
+                  <div style={{ height: '65px' }} className='mt-1 mb-2'>
+                    <div className="error-message-container" style={{ visibility: errorMessage ? 'visible' : 'hidden' }}>
+                      <div className="alert alert-danger">
+                        {errorMessage}
+                      </div>
+                    </div>
+                  </div>
                   <div className="d-flex justify-content-center">
-                    <button onClick={handleSubmit} type='button' className="btn btn-danger me-2">
+                    <button onClick={handleSubmit} type='button' className="btn btn-danger me-2" disabled={!isDataChanged}>
                       儲存
                     </button>
                     {/* <button onClick={handleSubmit} type='button' className={`btn btn-danger ${styles.btnDangerOutlined} me-2`}>
                       儲存暫不上架賣場
                     </button> */}
-                    <button type="button" className={`btn btn-danger ${styles.btnGrayOutlined}`}>
+                    <button type="button" onClick={() => {
+                    router.push('./shop')
+                  }} className={`btn btn-danger ${styles.btnGrayOutlined}`}>
                       取消
                     </button>
                   </div>

@@ -18,7 +18,7 @@ import NavPic from '@/hooks/use-navpic';
 // 引入use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
 
-export default function SellerNavbar() {
+export default function SellerNavbar({shopSite=""}) {
   const router = useRouter()
   const { isLoggedIn, memberData } = useAuth();
   const [bigPic, setBigPic] = useState(profilePhoto)
@@ -66,7 +66,7 @@ export default function SellerNavbar() {
           <ul className="dropdown-menu text-small shadow">
             <li>
             {memberData && 
-              <Link className="dropdown-item" href={`/shop/${memberData.shop_site}`}>
+              <Link className="dropdown-item" href={`/shop/${shopSite}`}>
                 我的賣場
               </Link>
             }
