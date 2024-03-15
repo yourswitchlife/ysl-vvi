@@ -4,7 +4,6 @@ import { FaBorderAll } from 'react-icons/fa'
 import { IoReorderFour } from 'react-icons/io5'
 import ProductCard from '@/components/products/product-card'
 import BreadCrumb from '@/components/common/breadcrumb'
-import PaginationFront from '@/components/common/pagination-front'
 import Link from 'next/link'
 import styles from '../../styles/products/products.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
@@ -15,22 +14,37 @@ import TypeFilter from '@/components/shop/type-filter'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/hooks/use-Auth'
 import GoTopButton from '@/components/go-to-top/go-top-button'
+import Pagination from 'react-bootstrap/Pagination'
 
 export default function Products() {
   const { isLoggedIn, memberId } = useAuth()
   const [products, setProducts] = useState([])
   const router = useRouter()
+  console.log(router.query)
   // 篩選搜尋
   const [displayProducts, setDisplayProducts] = useState([])
   const [searchWord, setSearchWord] = useState('')
-  // const [sortBy, setSortBy] = useState('')
-
+  const [sortBy, setSortBy] = useState('')
+  console.log(products)
   // const [pFilter, setPFilter] = useState('')
 
   // 頁數
-  const [totalPages, setTotalPages] = useState(0)
-  const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(20)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [ProductsPerPage] = useState(20)
+
+  const indexOfLastProduct = currentPage * ProductsPerPage
+  const indexOfFirstProduct = indexOfLastProduct - ProductsPerPage
+  const currentProduct = displayProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  )
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber)
+  }
+  // const [totalPages, setTotalPages] = useState(0)
+  // const [page, setPage] = useState(1)
+  // const [limit, setLimit] = useState(20)
 
   // 篩選
   const [pFilter, setPFilter] = useState()
@@ -44,7 +58,7 @@ export default function Products() {
     const getProducts = async () => {
       try {
         const res = await fetch(
-          `http://localhost:3005/api/products/list?page=${page}`,
+          `http://localhost:3005/api/products/list?page=${currentPage}`,
           { credentials: 'include' }
         )
 
@@ -58,15 +72,15 @@ export default function Products() {
       } catch (e) {
         console.error(e)
       }
-      router.push(`/products?page=${page}`)
+      router.push(`/products?page=${currentPage}`)
     }
 
     getProducts()
-  }, [page, limit, isLoggedIn, memberId])
+  }, [currentPage, isLoggedIn, memberId])
 
-  const handlePageChange = (newPage) => {
-    setPage(newPage)
-  }
+  // const handlePageChange = (newPage) => {
+  //   setPage(newPage)
+  // }
 
   const initState = products.map((p) => {
     return { ...p, fav: false }
@@ -120,30 +134,40 @@ export default function Products() {
   // const pid = pFilter.length == 0 ? []:pFilter.map(v => v.id)
   // console.log(pid)
 
-
   useEffect(() => {
-    const typechecked = pFilter?.typechecked;
-    const typecheckedID = typechecked ? typechecked.map(v => parseInt(v.id)) : [];
-  
-    const ratingchecked = pFilter?.ratingchecked;
-    const ratingcheckedID = ratingchecked ? ratingchecked.map(v => parseInt(v.id)) : [];
-  
-    // 搜索,篩選
-    const filteredProducts = products.filter(p => 
-      (p.name && p.name.includes(searchWord)) && // 搜索
-      (ratingcheckedID.length === 0 || ratingcheckedID.includes(p.rating_id)) && // 分级
-      (typecheckedID.length === 0 || typecheckedID.includes(p.type_id)) // 類型
-    );
-  
-    setDisplayProducts(filteredProducts);
-  
-    const params = new URLSearchParams();
-    typecheckedID.forEach(id => params.append('type', id));
-    ratingcheckedID.forEach(id => params.append('rating', id));
-    // 更新URL参数以反映当前的筛选状态
-    router.push(`/products?${params.toString()}`);
-  }, [pFilter, searchWord, products]);
-  
+    const searchP = products.filter(
+      (p) => p.name && p.name.includes(searchWord)
+    )
+    setDisplayProducts(searchP)
+
+    // 篩選
+    const typechecked = pFilter?.typechecked
+    const typecheckedID = typechecked
+      ? typechecked.map((v) => parseInt(v.id))
+      : []
+
+    const ratingchecked = pFilter?.ratingchecked
+    const ratingcheckedID = ratingchecked
+      ? ratingchecked.map((v) => parseInt(v.id))
+      : []
+
+    const filterP = products.filter(
+      (p) =>
+        (ratingcheckedID.length === 0 ||
+          ratingcheckedID.includes(p.rating_id)) &&
+        (typecheckedID.length === 0 || typecheckedID.includes(p.type_id))
+    )
+    setDisplayProducts(filterP)
+
+    const params = new URLSearchParams()
+    // if (page !== undefined) params.set('page', page)
+    if (typecheckedID) typecheckedID.forEach((id) => params.append('type', id))
+    if (ratingcheckedID)
+      ratingcheckedID.forEach((id) => params.append('rating', id))
+
+    // router.push(`/products?${params.toString()}`)
+  }, [pFilter, searchWord, products])
+
   return (
     <>
       <GoTopButton />
@@ -183,7 +207,7 @@ export default function Products() {
         </div>
         <div className="container px-0 py-2 mb-3">
           <div className="row row-cols-2 row-cols-lg-5 g-0 g-lg-3">
-            {displayProducts.map((p) => {
+            {currentProduct.map((p) => {
               return (
                 <div
                   key={p.id}
@@ -221,12 +245,64 @@ export default function Products() {
             })}
           </div>
         </div>
+        <Pagination className="justify-content-center mt-3 pt-3">
+          <Pagination.First onClick={() => handlePageChange(1)} />
+          <Pagination.Prev
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          />
+          {/* <Pagination.Ellipsis /> */}
+          {/* <Pagination.Ellipsis hidden={currentPage <= 3} /> */}
+          {[
+            ...Array(
+              Math.ceil(displayProducts.length / ProductsPerPage)
+            ).keys()
+          ]
+            .filter((number) => {
+              if (number < 3) return true // 顯示前3页
+              const maxPage = Math.ceil(
+                displayProducts.length / ProductsPerPage
+              )
+              return (
+                Math.abs(currentPage - 1 - number) <= 2 ||
+                number === maxPage - 1
+              )
+            }
+            )
+            
+            .map((number) => (
+              <Pagination.Item
+                // active={number === active}
+                key={number + 1}
+                onClick={() => handlePageChange(number + 1)}
+              >
+                {number + 1}
+              </Pagination.Item>
+            ))}
+          <Pagination.Ellipsis 
+            hidden={
+              currentPage >=
+              Math.ceil(displayProducts.length / ProductsPerPage) - 10
+            }
+          />
+      
+          <Pagination.Next
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={
+              currentPage ===
+              Math.ceil(displayProducts.length / ProductsPerPage)
+            }
+          />
+          <Pagination.Last
+            onClick={() =>
+              handlePageChange(
+                Math.ceil(displayProducts.length / ProductsPerPage)
+              )
+            }
+          />
+        </Pagination>
 
-        <PaginationFront
-          currentPage={page}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+        
 
         <div>
           <h4 className="text-white mx-3 ">猜你喜歡</h4>

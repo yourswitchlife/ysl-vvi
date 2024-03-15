@@ -63,6 +63,47 @@ export default function ProductDetail() {
     launch_valid: '',
     created_at: '',
   })
+  const [sameShopP, setSameShopP] = useState({
+    id: '',
+    type_id: '',
+    name: '',
+    product_quanty: '0',
+    fav: '',
+    display_price: '',
+    price: '',
+    img_cover: '',
+    img_details: [],
+    release_time: '',
+    language: [],
+    rating_id: '3',
+    co_op_valid: '0',
+    description: '',
+    member_id: '',
+    valid: '',
+    launch_valid: '',
+    created_at: '',
+  })
+  const [shopSelect, setShopSelect] = useState({
+    id: '',
+    type_id: '',
+    name: '',
+    product_quanty: '0',
+    fav: '',
+    display_price: '',
+    price: '',
+    img_cover: '',
+    img_details: [],
+    release_time: '',
+    language: [],
+    rating_id: '3',
+    co_op_valid: '0',
+    description: '',
+    member_id: '',
+    valid: '',
+    launch_valid: '',
+    created_at: '',
+  })
+  const [shopData, setShopData] = useState({})
   const [ben, setBen] = useState(false)
   // const [detailImgs,setDetailImgs] = useState(product.img_details)
   // 商品數量+1
@@ -80,6 +121,7 @@ export default function ProductDetail() {
       }))
     }
   }
+
 
   // 商品數量-1
   const reduce = () => {
@@ -111,19 +153,41 @@ export default function ProductDetail() {
       const res = await fetch(`http://localhost:3005/api/products/${pid}`)
       const data = await res.json()
       console.log(data.responseData[0]) //相對應id的商品
-      console.log(data.productTypeResult) //找同類型的商品
+      console.log(data.shopData[0]) //找同類型的商品
       // console.log(data[0].img_details)
       // console.log(data[0].img_details.split(","))
       // console.log(sameTypeP)
+      if(data.shopData[0].name){
+        setShopData(data.shopData[0])
+        console.log(shopData)
+      }
+
       if(data.productTypeResult[0].name){
         const sameTypeP = data.productTypeResult.filter((p,i) => p.id != data.responseData[0].id)
         const sTypeP = sameTypeP.slice(1,5)
         setSameTypeP(sTypeP)
         console.log(sTypeP)
       }
+      
+      if(data.sameShopP[0].name){
+        const sameShopP = data.sameShopP.filter((p,i) => p.id != data.responseData[0].id)
+        const sSP = sameShopP.slice(1,3)
+        setSameShopP(sSP)
+        console.log(sSP)
+      }
+      // setShopSelect(product)
+      // console.log(shopSelect)
+      // if(data.shopSelect[0].name){
+      //   const filteredShopSelect = shopSelect.filter((p) => p.id != p.member_id === product.member_id)
+      //   const filterShopSelect = filteredShopSelect.slice(1,3)
+      //   setShopSelect(filterShopSelect)
+      //   console.log(shopSelect)
+      // }
+
 
       if (data.responseData[0].name) {
         setProduct({ ...data.responseData[0], quantity: 1, userSelect: false })
+        setShopSelect({ ...data.responseData[0] })
       }
     } catch (e) {
       console.error(e)
@@ -242,6 +306,7 @@ export default function ProductDetail() {
     console.log(product.img_details.split(','))
   }
 
+  console.log(shopData)
   // const getRandomSameTypeP = (arr, count) => {
   //   let shuffled = arr.slice()
   //   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -442,7 +507,8 @@ export default function ProductDetail() {
               <div className="d-flex align-items-center">
                 <div>
                   <Image
-                    src="https://i.ebayimg.com/images/g/ToYAAOSw-mJh6lHy/s-l1600.png"
+                    // src="https://i.ebayimg.com/images/g/ToYAAOSw-mJh6lHy/s-l1600.png"
+                    src={`http://localhost:3005/shopCover/${shopData.pic}`}
                     alt="shop"
                     width={75}
                     height={75}
@@ -470,8 +536,25 @@ export default function ProductDetail() {
             <hr className="text-white border-3" />
             <h5 className="text-white mb-3">本店精選</h5>
             <div className={styles.wrap}>
-              <ProductCard></ProductCard>
-              <ProductCard></ProductCard>
+            {sameShopP.length > 0 ? sameShopP.map((p,i)=>{
+              return(
+                <ProductCard key={i}
+                id={p.id}
+                      name={p.name}
+                      price={p.price}
+                      display_price={p.display_price}
+                      releaseTime={p.release_time.split('T')[0]}
+                      img_cover={p.img_cover}
+                      img_details={p.img_details}
+                      type={p.type_id}
+                      ratingId={p.rating_id}
+                      fav={p.fav}
+                      // handleToggleFav={handleToggleFav}
+                      member_id={p.member_id}
+                      // cardIcon={cardIcon}
+              />
+              )
+            }):''}
             </div>
             <hr className="text-white border-3" />
 
@@ -497,26 +580,6 @@ export default function ProductDetail() {
               />
               )
             }):''}
-            {/* {sameTypeP != [] ? sameTypeP.map((p,i) => {
-              return(
-              <ProductCard key={i}
-                id={p.id}
-                      name={p.name}
-                      price={p.price}
-                      display_price={p.display_price}
-                      releaseTime={p.release_time.split('T')[0]}
-                      img_cover={p.img_cover}
-                      img_details={p.img_details}
-                      type={p.type_id}
-                      ratingId={p.rating_id}
-                      fav={p.fav}
-                      handleToggleFav={handleToggleFav}
-                      member_id={p.member_id}
-                      cardIcon={cardIcon}
-              />
-              )
-            })
-            :[]} */}
             
             </div>
             <Link

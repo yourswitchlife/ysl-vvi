@@ -47,15 +47,14 @@ export default function TypeFilter({ productFilter = () => {} }) {
     handleClose()
   }
   useEffect(() => {
-    // const typechecked = typeCheck.filter((v) => v.checked === true)
-    // const ratingchecked = ratingCheck.filter((v) => v.checked === true)
-    // const pFilterCondintion = { typechecked, ratingchecked }
-    // productFilter(pFilterCondintion)
   }, [typeCheck, ratingCheck])
   
   const clearForm = () => {
-   const checkboxes = document.querySelectorAll('input[type="checkbox"]')
-   checkboxes.forEach(checkbox => checkbox.checked = false)
+  //  const checkboxes = document.querySelectorAll('input[type="checkbox"]')
+  //  console.log(checkboxes)
+  //  checkboxes.forEach(checkbox => checkbox.checked = false)
+  setTypeCheck(typeCheck.map(v => ({ ...v, checked: false })))
+  setRatingCheck(ratingCheck.map(v => ({ ...v, checked: false })))
   }
 
 

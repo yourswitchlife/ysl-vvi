@@ -61,23 +61,24 @@ router.get('/list', async (req, res) => {
     //   }
     // }
     // 全部資料
-    let [totalProducts] = await db.execute(
-      'SELECT COUNT(*) AS totalItems FROM `product`'
-    )
-    // 一頁幾筆
-    let [products] = await db.execute(`SELECT * FROM product LIMIT ?,?`, [
-      offset,
-      limit,
-    ])
+    let [products] = await db.execute(`SELECT * FROM product `)
+    // let [totalProducts] = await db.execute(
+    //   'SELECT COUNT(*) AS totalItems FROM `product`'
+    // )
+    // // 一頁幾筆
+    // let [products] = await db.execute(`SELECT * FROM product LIMIT ?,?`, [
+    //   offset,
+    //   limit,
+    // ])
     // console.log(TotalProducts.length)
-    const totalItems = totalProducts[0].totalItems
-    const totalPages = Math.ceil(totalItems / limit)
-    console.log(totalItems)
+    // const totalItems = totalProducts[0].totalItems
+    // const totalPages = Math.ceil(totalItems / limit)
+    // console.log(totalItems)
 
     const responseData = {
       products,
-      totalItems,
-      totalPages,
+      // totalItems,
+      // totalPages,
     }
     res.json(responseData)
   } catch (error) {
@@ -107,15 +108,6 @@ router.post(
         return v.split('-')[0]
       })
       pLanguage = pLanguage.join(',')
-      // const created_at = new Date()
-      // const year = date.getFullYear()
-      // const month = date.getMonth()
-      // const day = date.getDate()
-      // const hour = date.getHours()
-      // const minute = date.getMinutes()
-      // const second = date.getSeconds()
-      // const upDateTime = `${year}-${month}-${day} ${hour}:${minute}:${second}`
-
       // const { pCover } = req.files
       // console.log(
       //   p.pName,
@@ -153,11 +145,6 @@ router.post(
 )
 // 單檔上傳
 router.post('/addReview', upload.single('reviewPhoto'), async (req, res) => {
-  // let timeStamp = Date.now()
-  // let newName = timeStamp + extname(req.file.originalname)
-  // renameSync(req.file.path, resolve(__dirname, '../public/uploadImg', newName))
-  // req.body.reviewPhoto = newName
-
   if (req.files) {
     console.log(req.files, req.body)
     return res.json({ msg: 'success', code: '200' })
@@ -168,44 +155,46 @@ router.post('/addReview', upload.single('reviewPhoto'), async (req, res) => {
   // res.json({ body: req.body, file: req.file })
 })
 
-// try {
-//   const [results, fields] = await db.execute(
-//     'SELECT * FROM `product` WHERE `id` = 1'
-//   )
-//   console.log(results)
-// } catch (error) {
-//   console.error(error)
-// }
-
 // 商品詳細頁 ([0-9]+)
 router.get('/:pid', async (req, res) => {
   try {
     let { pid } = req.params
     console.log(`pid = ${pid}`)
+    // 查詢相對應id的商品
     let [responseData] = await db.execute(
       'SELECT * FROM `product` WHERE `id` = ?',
       [pid]
     )
-    // 查询产品信息
+
+    // 查询此商品對應的店家資訊
+    let [shopData] = await db.execute(
+      'SELECT p.id,m.* FROM product AS p JOIN member AS m ON p.member_id = m.id WHERE p.id = ?',
+      [pid]
+    )
+
+    // 查询相同商品類型
     let [productTypeResult] = await db.execute(
       'SELECT * FROM `product` WHERE `type_id` IN (SELECT type_id FROM `product` WHERE id = ?)',
       [pid]
     )
 
-    // 假设我们还想要获取该产品的评论
-    // let [commentsResult] = await db.execute(
-    //   'SELECT * FROM `product_comments` WHERE `product_id` = ?',
-    //   [pid]
-    // )
+    let [shopComment] = await db.execute(
+      'SELECT * FROM member m JOIN shop_comment sc ON m.id = sc.shop_id WHERE m.id IN (SELECT member_id FROM Product WHERE id = ? )',
+      [pid]
+    )
 
-    // if (productResult.length > 0) {
-    //   const product = productResult[0];
-    //   const comments = commentsResult
-    // console.log(result)
+    // 查询相同商店的其他商品
+    let [sameShopP] = await db.execute(
+      'SELECT * FROM product WHERE member_id = (SELECT member_id FROM product WHERE id = ?)',
+      [pid]
+    )
+
     const result = {
       responseData,
+      shopData,
       productTypeResult,
-      // commentsResult,
+      shopComment,
+      sameShopP,
     }
 
     if (result) {
