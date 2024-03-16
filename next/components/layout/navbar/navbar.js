@@ -21,12 +21,41 @@ import NavPic from '@/hooks/use-navpic';
 // 引入use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
 import { useRouter } from 'next/router'
-
+//websocket
+import { io } from 'socket.io-client';
 
 export default function Navbar() {
   const { isLoggedIn, memberData } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
   const { totalProducts } = useCart()
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const socket = io('http://localhost:3005', {
+      transports: ['polling'],
+    });
+
+
+    console.log('Attempting to connect to the server...');
+
+    socket.on('connect', () => {
+      console.log('Connected to the server');
+    });
+
+    socket.on('unread_count', (count) => {
+      console.log('Received unread count:', count);
+      setUnreadCount(count); // 假設你有一個狀態變量叫做 unreadCount
+    });
+
+    // 清理函數，在組件卸載時執行
+    return () => {
+      console.log('Disconnecting from the server...');
+      socket.off('connect');
+      socket.off('unread_count');
+      socket.close();
+    };
+
+  }, []);
   return (
     <>
       <div className='d-none d-lg-block'>
@@ -69,8 +98,15 @@ export default function Navbar() {
                 )}
 
               </Link>
-              <Link href="/member/notify-order" className={styles.loginIcon}>
+              <Link href="/member/notify-coupon" className={styles.loginIcon}>
                 <FaBell className={styles.icon} />
+                {unreadCount > 0 && (
+                  <span className="position-absolute start-99 translate-middle badge rounded-pill bg-danger">
+                    {unreadCount}
+                    <span className="visually-hidden">unread messages</span>
+                  </span>
+                )}
+
               </Link>
               <Link href="/seller" className={styles.loginIconEnd}>
                 <FaStore className={styles.icon} />
@@ -95,8 +131,8 @@ export default function Navbar() {
             {isLoggedIn ? (
               <Dropdown >
                 <Dropdown.Toggle className={`${styles.member_drop} ${isHovered ? 'hover_toggle' : ''}`} variant="black" id="dropdown-basic">
-                  <NavPic/>
-                  <h6  className="ps-2 fw-bold">{memberData.account}</h6>
+                  <NavPic />
+                  <h6 className="ps-2 fw-bold">{memberData.account}</h6>
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu onMouseEnter={() => setIsHovered(true)}

@@ -9,6 +9,10 @@ import debugLib from 'debug';
 const debug = debugLib('node-express-es6:server')
 import http from 'http';
 
+// websocket
+import { Server as SocketIOServer } from 'socket.io';
+import db from '../configs/db.mjs';
+
 // 導入dotenv 使用 .env 檔案中的設定值 process.env
 import 'dotenv/config.js'
 
@@ -24,6 +28,42 @@ app.set('port', port)
  */
 
 const server = http.createServer(app);
+// Socket.IO 附加到 HTTP 服務器上
+const io = new SocketIOServer(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST']
+  }
+});
+
+// io監聽事件設定
+io.on('connection', async (socket) => { 
+  console.log('A member connected.');
+
+  const sendUnreadCount = async () => {
+    try {
+      const [results] = await db.query("SELECT COUNT(*) AS unreadCount FROM notify_coupon WHERE valid = 0");
+      socket.emit('unread_count', results[0]['unreadCount']);
+    } catch (error) {
+      console.error('Database query error:', error);
+      socket.emit('error', 'An error occurred while fetching unread counts.');
+    }
+  };
+
+  // 20s
+  const intervalId = setInterval(() => {
+    sendUnreadCount(); 
+  }, 20000);
+
+  // clear
+  socket.on('disconnect', () => {
+    console.log('Member disconnected.');
+    clearInterval(intervalId);
+  });
+
+  // 初始查詢
+  await sendUnreadCount(); 
+});
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -97,6 +137,7 @@ function onError(error) {
   debug('Listening on ' + bind);
 } */
 
+
 function onListening() {
   var addr = server.address();
   var bind;
@@ -110,5 +151,6 @@ function onListening() {
     console.log('Listening on ' + bind);
   }
 
-  debug('express api Listening on ' + bind); 
+  debug('express api Listening on ' + bind);
 }
+export default io;

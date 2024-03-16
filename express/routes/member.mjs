@@ -1,4 +1,5 @@
 import express from 'express';
+const app = express();
 const router = express.Router();
 import db from '../configs/db.mjs';
 
@@ -12,8 +13,6 @@ import multer from 'multer';
 import path from 'path';
 // OTP NM API
 import nodemailer from 'nodemailer';
-
-
 
 router.post('/register', async function (req, res) {
   const { account, email } = req.body
@@ -731,7 +730,32 @@ router.get('/order', async (req, res) => {
   }
 });
 
-// 
+
+// coupon alert
+// trigger
+(async () => {
+  try {
+    const triggerSQL = `
+    CREATE TRIGGER after_member_coupon_insert
+    AFTER INSERT ON member_coupon
+    FOR EACH ROW
+    BEGIN
+      INSERT INTO notify_coupon (member_id, coupon_id, valid, created_at)
+      VALUES (NEW.member_id, NEW.coupon_id, 0, NEW.created_at);
+    END;
+    `;
+    await db.query(triggerSQL);
+    console.log('trigger創建成功');
+  } catch (error) {
+    if (error.code === 'ER_TRG_ALREADY_EXISTS') {
+      console.log('trigger已存在');
+    } else {
+      console.error('創建trigger發生錯誤:', error);
+    }
+  }
+})();
+
+
 
 
 export default router
