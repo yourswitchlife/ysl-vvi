@@ -61,6 +61,8 @@ export default function Comment() {
   const [totalPages, setTotalPages] = useState(1)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(6)
+  //搜尋
+  const [searchQuery, setSearchQuery] = useState('')
 
   //修改Modal讓他可以接受comment的id
   const handleShowModal = (comment) => {
@@ -71,7 +73,7 @@ export default function Comment() {
   
   const fetchShopComments = async() => {
     try{
-      const url = `http://localhost:3005/api/seller/comment?tab=${selectedTab}&page=${page}&limit=${limit}`
+      const url = `http://localhost:3005/api/seller/comment?tab=${selectedTab}&search=${encodeURIComponent(searchQuery)}&page=${page}&limit=${limit}`
       // console.log('Fetching comments with URL:', url)
       const res = await fetch(url , { credentials: 'include'})
       if(!res.ok){
@@ -86,9 +88,9 @@ export default function Comment() {
         // const totalRating = data.reduce((acc, cur) => acc + cur.rating, 0);
         // const averageRating = (totalRating / data.length).toFixed(1); // 保留一位小數
         // console.log(averageRating)
-        setShopRating(parseFloat(data.items[0].avg_rating).toFixed(1))
+        setShopRating(parseFloat(data.items[0]?.avg_rating || 0).toFixed(1))
         //取得評價總數
-        setCommentNum(data.items[0].total_comments)
+        setCommentNum(data.items[0]?.total_comments || 0)
         // router.push(`comment?tab=${selectedTab}`)
         // router.push(`./comment?tab=${selectedTab}`)
         setTotalPages(data.totalPages)
@@ -116,6 +118,11 @@ export default function Comment() {
     setSelectedTab(selectedTab)
     //更新url的查詢參數（但不加載頁面）
     router.push(`/comment?tab=${selectedTab}`, undefined, { shallow: true })
+  }
+  //加上搜尋按鈕的點擊事件處理函數
+  const handleSearch = () => {
+    setPage(1) //重置到第一頁
+    fetchShopComments()
   }
 
   useEffect(() => {
@@ -290,7 +297,13 @@ export default function Comment() {
                 </div>
                 <Form.Group className="mb-3" controlId="memberName">
                   <Form.Label className="text-dark">會員名稱</Form.Label>
-                  <Form.Control type="text" placeholder="請輸入會員名稱" />
+                  <Form.Control 
+                  type="text" 
+                  placeholder="請輸入會員名稱"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                  }} />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="dateSelect">
                   <Form.Label className="text-dark">評價時間</Form.Label>
@@ -321,7 +334,8 @@ export default function Comment() {
                     className="btn btn-danger me-2"
                     onChange={handleSubmit}
                   > */}
-                  <button type="button" className="btn btn-danger me-2">
+                  <button type="button" className="btn btn-danger me-2"
+                  onClick={handleSearch}>
                     搜尋
                   </button>
                   <button type="button" className="btn btn-danger">

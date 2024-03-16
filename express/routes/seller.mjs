@@ -76,28 +76,37 @@ const upload = multer({ storage: storage })
 //在前端執行：抓取預設值存入 與 實現兩個按鈕：分別是shop_valid = 0 或shop_valid = 1
 router.put('/shop/edit', authenticate, upload.none(), async (req, res) => {
   const { shop_name, shop_site, shop_info } = req.body
-  const shop_valid = 1
+  const shop_valid = 1 //預設儲存賣場就上架商品
   const memberId = req.memberData.id
   if (!req.memberData.id) {
-    // 如果memberData不存在，则返回错误信息
+    // 如果memberData不存在
     return res.status(400).json({ message: '找不到member data' })
   }
-  const updateQuery = `UPDATE member SET shop_name = ?, shop_site = ?, shop_info = ?, shop_valid = ? WHERE id = ?`
+
   try {
-    //檢查賣場名稱
-    // const shopNameCheckQuery = 'SELECT * FROM `member` WHERE `shop_name` = ?'
-    // const [shopNameResults] = await db.execute(shopNameCheckQuery, [shopName])
+    //檢查賣場名稱，但要排除現在的用戶！
+    const shopNameCheckQuery =
+      'SELECT * FROM `member` WHERE `shop_name` = ? AND `id` != ?'
+    const [shopNameResults] = await db.execute(shopNameCheckQuery, [
+      shop_name,
+      memberId,
+    ])
 
-    // if (shopNameResults.length > 0) {
-    //   return res.status(400).send({ message: '賣場名稱已經存在' })
-    // }
-    //檢查網址有沒有重複（預設網址是member.account)
-    // const shopSiteCheckQuery = 'SELECT * FROM `member` WHERE shop_site = ?'
-    // const [shopSiteResults] = await db.execute(shopSiteCheckQuery, [shopSite])
+    if (shopNameResults.length > 0) {
+      return res.status(400).send({ message: '賣場名稱已經存在' })
+    }
+    //檢查網址有沒有重複，但要排除現在的用戶！（預設網址是member.account)
+    const shopSiteCheckQuery =
+      'SELECT * FROM `member` WHERE shop_site = ? AND `id` != ?'
+    const [shopSiteResults] = await db.execute(shopSiteCheckQuery, [
+      shop_site,
+      memberId,
+    ])
 
-    // if (shopSiteResults.length > 0) {
-    //   return res.status(400).send({ message: '賣場網址已經存在' })
-    // }
+    if (shopSiteResults.length > 0) {
+      return res.status(400).send({ message: '賣場網址已經存在' })
+    }
+    const updateQuery = `UPDATE member SET shop_name = ?, shop_site = ?, shop_info = ?, shop_valid = ? WHERE id = ?`
     const [updateResults] = await db.execute(updateQuery, [
       shop_name,
       shop_site,
@@ -105,9 +114,7 @@ router.put('/shop/edit', authenticate, upload.none(), async (req, res) => {
       shop_valid,
       memberId,
     ])
-    //把資料存進去
-    // const Query =
-    //   'UPDATE `member` SET `shop_name` = ?, `shop_site` = ?, `shop_cover` = ?, `shop_info` = ?, `shop_valid` = ? WHERE `id` = ?'
+
     if (updateResults.affectedRows > 0) {
       //賣場資訊更新成功
       const [results] = await db.execute(`SELECT * FROM member WHERE id =?`, [
@@ -393,6 +400,7 @@ router.delete('/product/:pid', authenticate, async (req, res) => {
 router.get('/comment', authenticate, async (req, res) => {
   const tab = req.query.tab || 'all'
   const shopId = req.memberData.id
+  const search = req.query.search || ''
   const page = parseInt(req.query.page) || 1
   const limit = parseInt(req.query.limit) || 4
   const offset = (page - 1) * limit
@@ -415,12 +423,29 @@ router.get('/comment', authenticate, async (req, res) => {
     sql += ` AND shop_comment.reply IS NOT NULL AND shop_comment.reply <> ''`
   }
 
+  //添加對member.account的搜尋功能
+  if (search.trim() !== '') {
+    sql += ` AND member.account LIKE ?`
+  }
+
   try {
-    //總項目
-    const [totalItemsResult] = await db.execute(
-      'SELECT COUNT(*) AS totalItems FROM shop_comment WHERE shop_comment.shop_id = ?',
-      [shopId]
-    )
+    const queryParams = [shopId]
+    if (search.trim() !== '') {
+      queryParams.push(`%${search}%`)
+    }
+
+    //計算總項目時也要考慮搜尋條件
+    let totalItemsQuery = `
+      SELECT COUNT(*) AS totalItems 
+      FROM shop_comment 
+      INNER JOIN member ON shop_comment.member_id = member.id 
+      WHERE shop_comment.shop_id = ?
+    `
+    if (search.trim() !== '') {
+      totalItemsQuery += ` AND member.account LIKE ?`
+    }
+
+    const [totalItemsResult] = await db.execute(totalItemsQuery, queryParams)
     const totalItems = totalItemsResult[0].totalItems
     //總頁數
     const totalPages = Math.ceil(totalItems / limit)
@@ -433,11 +458,8 @@ router.get('/comment', authenticate, async (req, res) => {
     //   totalItems,
     //   totalPages,
     // })
-    let [comments] = await db.execute(sql + ' LIMIT ?, ?', [
-      shopId,
-      offset,
-      limit,
-    ])
+    queryParams.push(offset, limit)
+    let [comments] = await db.execute(sql + ' LIMIT ?, ?', queryParams)
 
     const responseData = {
       items: comments,
@@ -555,18 +577,116 @@ router.put('/comment/delete', upload.none(), authenticate, async (req, res) => {
 })
 
 //讀取賣家訂單OK #Read
+// router.get('/order', authenticate, async (req, res) => {
+//   try {
+//     const memberId = req.memberData.id
+//     let [orders] = await db.execute(
+//       `SELECT o.*, m.pic AS pic, m.account AS account,
+//       p.img_cover AS img_cover
+// FROM
+//     `orders` o
+// JOIN
+//     `member` m ON o.member_buyer_id = m.id
+// JOIN
+//     `product` p ON o.product_id = p.id
+// WHERE
+//     o.member_seller_id = ?`,
+//       [memberId]
+//     )
+//     // console.log(orders)
+//     res.json(orders)
+//   } catch (error) {
+//     console.log(error)
+//     res.status(500)
+//   }
+// })
+// router.get('/order', authenticate, async (req, res) => {
+//   try {
+//     const memberId = req.memberData.id
+//     let [orders] = await db.execute(
+//       `
+//       SELECT o.*, m.pic AS member_pic, m.account AS member_account,
+//              p.img_cover AS product_img_cover
+//       FROM orders o
+//       JOIN member m ON o.member_buyer_id = m.id
+//       JOIN product p ON o.product_id = p.id
+//       WHERE o.member_seller_id = ?`,
+//       [memberId]
+//     )
+//     // 將訂單按order_number分組
+//     const groupOrders = orders.reduce((acc, order) => {
+//       // 如果這個order_number的訂單已經在累加器中，更新product_id、quantity、product_img_cover的陣列
+//       if (acc[order.order_number]) {
+//         acc[order.order_number].product_ids.push(order.product_id)
+//         acc[order.order_number].quantities.push(order.quantity)
+//         acc[order.order_number].product_img_covers.push(order.product_img_cover)
+//       } else {
+//         // 否則，創建一個新的項目在累加器中
+//         acc[order.order_number] = {
+//           ...order,
+//           product_ids: [order.product_id],
+//           quantities: [order.quantity],
+//           product_img_covers: [order.product_img_cover],
+//         }
+//       }
+//       return acc
+//     }, {})
+//     //轉換結果為陣列格式
+//     const result = Object.values(groupOrders).map((order) => ({
+//       ...order,
+//       product_id: order.product_ids,
+//       quantity: order.quantities,
+//       product_img_cover: order.product_img_covers,
+//       //移除不需要個別product_id和quantity字段
+//       product_ids: undefined,
+//       quantities: undefined,
+//       product_img_covers: undefined,
+//     }))
+//     res.json(result)
+//   } catch (error) {
+//     console.log(error)
+//     res.status(500).send('Server Error')
+//   }
+// })
 router.get('/order', authenticate, async (req, res) => {
   try {
     const memberId = req.memberData.id
     let [orders] = await db.execute(
-      'SELECT * FROM `orders` WHERE `member_seller_id` = ?',
+      `
+      SELECT o.*, m.pic AS member_pic, m.account AS member_account, 
+             p.img_cover AS product_img_cover
+      FROM orders o
+      JOIN member m ON o.member_buyer_id = m.id
+      JOIN product p ON o.product_id = p.id
+      WHERE o.member_seller_id = ?`,
       [memberId]
     )
-    // console.log(orders)
-    res.json(orders)
+    // 初始化一個物件來組織資料，以 order_number 為key
+    const ordersByNumber = orders.reduce((acc, order) => {
+      // 如果這個 order_number 已經存在於 acc 中，將當前訂單的商品資訊添加到對應的陣列中
+      if (!acc[order.order_number]) {
+        acc[order.order_number] = {
+          ...order,
+          products: [],
+        }
+      }
+      acc[order.order_number].products.push({
+        product_id: order.product_id,
+        quantity: order.quantity,
+        product_img_cover: order.product_img_cover,
+      })
+
+      return acc
+    }, {})
+    // 將組織好的資料轉換回陣列格式，準備發送回客戶端
+    const result = Object.values(ordersByNumber).map((order) => ({
+      ...order,
+      products: order.products,
+    }))
+    res.json(result)
   } catch (error) {
     console.log(error)
-    res.status(500)
+    res.status(500).send('Server Error')
   }
 })
 

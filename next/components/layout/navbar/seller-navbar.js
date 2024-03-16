@@ -65,11 +65,9 @@ export default function SellerNavbar({shopSite=""}) {
           </Link>
           <ul className="dropdown-menu text-small shadow">
             <li>
-            {memberData && 
               <Link className="dropdown-item" href={`/shop/${shopSite}`}>
                 我的賣場
               </Link>
-            }
             </li>
             <li>
               <Link className="dropdown-item" href="/member/account">

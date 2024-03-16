@@ -159,7 +159,7 @@ router.get('/:shop_site/fav_shop', async (req, res) => {
   let [shopFav] = await db.execute(
     `SELECT fav_shop.* FROM fav_shop 
     INNER JOIN member ON fav_shop.seller_id = member.id
-    WHERE member.shop_site = ?`,
+    WHERE member.shop_site = ? AND fav_shop.valid = 1`,
     [shop_site]
   )
   // console.log(shopOrders)
@@ -181,6 +181,7 @@ router.post(
     const dateString = new Date() //創建商品日期
     const created_at = moment(dateString).format('YYYY-MM-DD HH:mm:ss')
     const buyer_id = req.memberData.id
+    const valid = 1
     let { shop_site } = req.params
     if (!req.memberData.id) {
       // 如果memberData不存在，则返回错误信息
@@ -199,9 +200,14 @@ router.post(
       )
       if (rows.length > 0) {
         const seller_id = rows[0].id
+
+        //檢查buyer_id和seller_id是否相同
+        if (buyer_id === seller_id) {
+          return res.status(400).json({ message: '無法收藏自己的賣場喔！' })
+        }
         const Query =
-          'INSERT INTO `fav_shop` (`buyer_id`, `seller_id`, `created_at`) VALUES (?, ?, ?)'
-        await db.execute(Query, [buyer_id, seller_id, created_at])
+          'INSERT INTO `fav_shop` (`buyer_id`, `seller_id`, `created_at`, `valid`) VALUES (?, ?, ?, ?)'
+        await db.execute(Query, [buyer_id, seller_id, created_at, valid])
         res.status(200).json({ message: '收藏成功' })
       } else {
         res.status(404).json({ message: '找不到對應的賣場' })
@@ -212,8 +218,8 @@ router.post(
     }
   }
 )
-//取消這個賣場的收藏(toggle)
-router.delete(
+//取消這個賣場的收藏
+router.put(
   '/:shop_site/fav_shop',
   upload.none(),
   authenticate,
@@ -238,9 +244,10 @@ router.delete(
       )
       if (rows.length > 0) {
         const seller_id = rows[0].id
+        //更新而不是刪除紀錄
         const Query =
-          'DELETE FROM `fav_shop` WHERE `buyer_id` = ? AND `seller_id` = ?'
-        await db.execute(Query, [buyer_id, seller_id])
+          'UPDATE `fav_shop` SET `valid` = ? WHERE `buyer_id` = ? AND `seller_id` = ?'
+        await db.execute(Query, [0, buyer_id, seller_id])
         res.status(200).json({ message: '取消收藏成功' })
       } else {
         res.status(404).json({ message: '找不到對應的賣場' })

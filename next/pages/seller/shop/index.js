@@ -45,6 +45,9 @@ export default function ShopSetting() {
     shop_valid: ''
   });
   const isDataChanged = JSON.stringify(formData) !== JSON.stringify(initialFormData)
+  const [newMemberData, setNewMemberData] = useState([])
+  console.log(newMemberData)
+
 
   //body style
   useEffect(() => {
@@ -78,6 +81,7 @@ export default function ShopSetting() {
       }
       setInitialFormData(data)
       setFormData(data)
+      setNewMemberData(data)
     }
   }, [memberData])
 
@@ -97,41 +101,52 @@ export default function ShopSetting() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const error = createShopExam(formData)
+    setErrorMessage(error || '')
 
-    try{
-      const response = await fetch(`http://localhost:3005/api/seller/shop/edit`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          shop_name: formData.shop_name,
-          shop_site: formData.shop_site,
-          shop_info: formData.shop_info,
-          shop_valid: formData.shop_valid
-        }),
-        credentials: 'include'
-      })
-      if (response.ok){
-        Swal.fire({
-          title: "賣場更新成功!",
-          text: "快來上架二手遊戲一起販售商品吧！",
-          icon: "success",
-          showConfirmButton: true,
-          // timer: 1200
+    // 如果沒有錯誤，執行提交表單的邏輯
+    if(!error){
+      try{
+        const response = await fetch(`http://localhost:3005/api/seller/shop/edit`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            shop_name: formData.shop_name,
+            shop_site: formData.shop_site,
+            shop_info: formData.shop_info,
+            shop_valid: formData.shop_valid
+          }),
+          credentials: 'include'
         })
-      }else{
-        // 更新失敗，顯示錯誤訊息
-        Swal.fire({
-          title: "外星人入侵",
-          text: "您的賣場資料更新錯誤！",
-          icon: "error"
-        });
-        // console.error('資料更新失敗！');
+        if (response.ok){
+          updateMemberData(formData.shop_site)
+          Swal.fire({
+            title: "賣場更新成功!",
+            text: "快來上架二手遊戲一起販售商品吧！",
+            icon: "success",
+            showConfirmButton: true,
+            // timer: 1200
+          })
+        }else{
+          //處理錯誤情況
+          const errorData = await response.json()
+          console.log(errorData) //輸出錯誤資訊到控制台
+          setErrorMessage(errorData.message)
+          // 更新失敗，顯示錯誤訊息
+          {errorMessage && Swal.fire({
+            title: "儲存失敗",
+            text: "請確認欄位資料正確！",
+            icon: "error"
+          }) }
+          // console.error('資料更新失敗！');
+        }
+      }catch(error){
+        console.error('資料更新發生錯誤:', error);
       }
-    }catch(error){
-      console.error('資料更新發生錯誤:', error);
     }
+    
   }
   //上傳檔案
   const handleFileChange = (e) => {
@@ -210,13 +225,20 @@ export default function ShopSetting() {
       console.error('FileInputRef is null')
     }
   }
+
+  const updateMemberData = (updatedSite) => {
+    setNewMemberData((prevData) => ({
+      ...prevData,
+      shop_site: updatedSite
+    }))
+  }
  
 
   return (
     <>
         <header>
         {memberData && 
-          <SellerNavbar shopSite={memberData.shop_site}/>
+          <SellerNavbar shopSite={newMemberData.shop_site}/>
         }
         </header>
         <main className={styles.mainContainer}>
@@ -409,13 +431,13 @@ export default function ShopSetting() {
                   <div style={{ height: '65px' }} className='mt-1 mb-2'>
                     <div className="error-message-container" style={{ visibility: errorMessage ? 'visible' : 'hidden' }}>
                       <div className="alert alert-danger">
-                        {errorMessage}
+                        {errorMessage && <h6>{errorMessage}</h6>}
                       </div>
                     </div>
                   </div>
                   <div className="d-flex justify-content-center">
                     <button onClick={handleSubmit} type='button' className="btn btn-danger me-2" disabled={!isDataChanged}>
-                      儲存
+                      儲存賣場資料
                     </button>
                     {/* <button onClick={handleSubmit} type='button' className={`btn btn-danger ${styles.btnDangerOutlined} me-2`}>
                       儲存暫不上架賣場

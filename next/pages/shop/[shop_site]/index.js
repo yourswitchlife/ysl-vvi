@@ -248,12 +248,12 @@ export default function ShopPage() {
     })
     setSearchResults(newProducts)
   }
-  const toggleFavShop = async () => {
+  const handleFavShop = async () => {
     const url = `http://localhost:3005/api/shop/${shop_site}/fav_shop`
     try{
       if(isFav){
         //已經收藏者：執行取消收藏
-        const res = await fetch(url, { method: 'DELETE', credentials: 'include'})
+        const res = await fetch(url, { method: 'PUT', credentials: 'include'})
         const data = await res.json()
         if(res.ok){
           Swal.fire('取消收藏成功', '', 'success')
@@ -374,7 +374,7 @@ export default function ShopPage() {
               <button
                 type="button"
                 className="btn btn-danger d-flex align-items-center"
-                onClick={toggleFavShop}
+                onClick={handleFavShop}
               >
                 <FaPlus className="me-1" />
                   {isFav ? '取消收藏' : '收藏賣家'}
@@ -445,7 +445,7 @@ export default function ShopPage() {
             <button
               type="button"
               className="btn btn-danger d-flex align-items-center"
-              onClick={toggleFavShop}
+              onClick={handleFavShop}
             >
               <FaPlus className="me-1" />
               {isFav ? '取消收藏' : '收藏賣家'}

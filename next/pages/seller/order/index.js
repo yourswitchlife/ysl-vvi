@@ -42,7 +42,7 @@ export default function Order() {
   const [bigPic, setBigPic] = useState(profilePhoto)
   const [shopCover, setShopCover] = useState(cover)
   const [orders, setOrders] = useState([])
-  const [orderProductInfos, setOrderProductInfos] = useState([])
+  // const [orderProductInfos, setOrderProductInfos] = useState([])
   const shippingMethods = {
     1: '7-11超商配送',
     2: '宅配',
@@ -62,11 +62,37 @@ export default function Order() {
     '已付款': '已付款',
     '待付款': '待付款',
   }
-  const [products, setProducts] = useState([])
+  // const [products, setProducts] = useState([])
+  // 表單控制狀態
+  const orderOptions = ['訂單編號', '會員名稱']
+  const [orderSelect, setOrderSelect] = useState('訂單編號')
+  const [searchText, setSearchText] = useState('')
 
+  const fetchShopOrders = async() => {
+    try{
+      const res = await fetch(`http://localhost:3005/api/seller/order`, { credentials: 'include'})
+      if(!res.ok){
+        throw new Error('網路請求失敗，找不到賣家資料')
+      }
+      let data = await res.json()
+   
+      if(data && data.length > 0){
+        //格式化日期再寫進去
+        data = formatDatas(data)
+        setOrders(data)
+        console.log(data)
+        //取得評價平均
+        // console.log(data)
+        // console.log(averageRating)
+        
+      }
+    }catch(e){
+      console.error(e)
+    }
+  }
   useEffect(() => {
-    if(isLoggedIn && memberData) {
-      console.log(memberData.shop_cover)
+    if(isLoggedIn) {
+      // console.log(memberData.shop_cover)
       const picUrl = memberData.pic ? (memberData.pic.startsWith("https://") 
         ? memberData.pic 
         : `http://localhost:3005/profile-pic/${memberData.pic}`) 
@@ -80,10 +106,7 @@ export default function Order() {
   }, [isLoggedIn, memberId, memberData])
 
 
-  // 表單控制狀態
-  const orderOptions = ['訂單編號', '會員名稱']
-  const [orderSelect, setOrderSelect] = useState('訂單編號')
-  const [searchText, setSearchText] = useState('')
+
 
   const getSellerData = async() => {
     try{
@@ -107,25 +130,25 @@ export default function Order() {
       console.error(e)
     }
   } 
-  const getSellerProducts = async() => {
-    try{
-      const res = await fetch(`http://localhost:3005/api/seller/product`, { credentials: 'include'})
-      if(!res.ok){
-        throw new Error('網路請求失敗，找不到賣家資料')
-      }
-      const data = await res.json()
+  // const getSellerProducts = async() => {
+  //   try{
+  //     const res = await fetch(`http://localhost:3005/api/seller/product`, { credentials: 'include'})
+  //     if(!res.ok){
+  //       throw new Error('網路請求失敗，找不到賣家資料')
+  //     }
+  //     const data = await res.json()
    
-      if(data && data.length > 0){
-        setProducts(data)
-      }
-    }catch(e){
-      console.error(e)
-    }
-  }
-  useEffect(() => {
-    getSellerData()
-    getSellerProducts()
-  }, [])
+  //     if(data && data.length > 0){
+  //       setProducts(data)
+  //     }
+  //   }catch(e){
+  //     console.error(e)
+  //   }
+  // }
+  // useEffect(() => {
+  //   getSellerData()
+  //   getSellerProducts()
+  // }, [])
 
   function formatDatas(datas){
     return datas.map(data => {
