@@ -66,7 +66,7 @@ export default function TypeFilter({ productFilter = () => {} }) {
         onClick={handleShow}
         className={`me-3 btn d-flex justify-content-center align-items-center ${styles.offcanvasBtn}`}
       >
-        <h6 className="mb-0 d-none d-md-block">條件篩選</h6>
+        <h6 className="mb-0 d-none d-md-block">條件篩選(0)</h6>
         <p className="mb-0 d-block d-md-none">條件篩選(0)</p>
         <FaFilter
           className={`ms-1 ${styles.iconsmall} text-light d-none d-md-block`}

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import styles from '@/components/layout/navbar/navbar.module.scss'
 import yslLogoSm from '@/public/images/logo/logo-sm.svg'
 import yslLogoXs from '@/public/images/logo/logo-xs.svg'
-import SearchBar from './searchBar'
+// import SearchBar from './searchBar'
 import SearchBarB from './searchBarB'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -20,39 +20,38 @@ import { useAuth } from '@/hooks/use-Auth';
 import NavPic from '@/hooks/use-navpic';
 // 引入use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
-import { useRouter } from 'next/router'
 
 
 export default function Navbar(props) {
   const { searchWord, setSearchWord } = props
   const { isLoggedIn, memberData } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
-  const { totalProducts } = useCart()
+  const {totalProducts} = useCart()
   return (
     <>
-      <div className='d-none d-lg-block'>
-        <header
-          className={styles.navbar}
+    <div className='d-none d-lg-block'>
+      <header
+        className={styles.navbar}
+      >
+        <div // logo
         >
-          <div // logo
-          >
-            <Link href="/">
-              <Image src={yslLogoSm} alt="ysl-logo" />
-            </Link>
-          </div>
-          <div className={styles.links}>
-            <Link href="/products" className={styles.linkPr}>
-              商品專區
-            </Link>
-            <Link href="/coupon" className={styles.linkPr}>
-              優惠報報
-            </Link>
-            <Link href="/article" className={styles.link}>
-              最新攻略
-            </Link>
-          </div>
-          <div className="">
-          <div className={styles.display}>
+          <Link href="/">
+            <Image src={yslLogoSm} alt="ysl-logo" />
+          </Link>
+        </div>
+        <div className={styles.links}>
+          <Link href="/products" className={styles.linkPr}>
+            商品專區
+          </Link>
+          <Link href="/coupon" className={styles.linkPr}>
+            優惠報報
+          </Link>
+          <Link href="/article" className={styles.link}>
+            最新攻略
+          </Link>
+        </div>
+        <div className="">
+        <div className={styles.display}>
         <button type="button" className={`${styles.button}`}>
           <FaSearch className={styles.icon} />
         </button>
@@ -65,26 +64,23 @@ export default function Navbar(props) {
           onChange={(e) => {
             setSearchWord(e.target.value)}}
         />
+      </div>
         </div>
-        </div>
-          {isLoggedIn ? (
+        {isLoggedIn ? (
             // 登入後顯示
             <div className="d-flex align-items-center">
               <Link href="/member/fav-product" className={styles.loginIcon}>
-                <FaHeart className={styles.icon} />
+                <FaHeart className={styles.icon}/>
               </Link>
               <Link href="/cart" className={`${styles.loginIcon} position-relative`}>
                 <FaShoppingCart className={styles.icon} />
-                {totalProducts > 0 && (
-                  <span class="position-absolute top-0 start-99 translate-middle badge rounded-pill bg-danger">
-                    {totalProducts}
-                    <span className="visually-hidden">unread messages</span>
-                  </span>
-                )}
-
+                <span class="position-absolute top-0 start-99 translate-middle badge rounded-pill bg-danger">
+                {totalProducts}
+                <span className="visually-hidden">unread messages</span>
+              </span>
               </Link>
               <Link href="/member/notify-order" className={styles.loginIcon}>
-                <FaBell className={styles.icon} />
+                <FaBell className={styles.icon}/>
               </Link>
               <Link href="/seller" className={styles.loginIconEnd}>
                 <FaStore className={styles.icon} />
@@ -126,23 +122,23 @@ export default function Navbar(props) {
 
 
             ) : null}
-          </div>
-        </header>
+        </div>
+      </header>
       </div>
       {/* RWD */}
       <div className='d-flex flex-column d-lg-none'>
-        <header className={styles.navbarB}>
-          <div // logo
-          >
-            <Link href="/">
-              <Image src={yslLogoXs} alt="ysl-logo" />
-            </Link>
-          </div>
-          <div className="">
-            <SearchBarB />
-          </div>
-          <BurgerMenu />
-        </header>
+      <header className={styles.navbarB}>
+        <div // logo
+        >
+          <Link href="/">
+            <Image src={yslLogoXs} alt="ysl-logo" />
+          </Link>
+        </div>
+        <div className="">
+          <SearchBarB />
+        </div>
+        <BurgerMenu />
+      </header>
       </div>
     </>
   )

@@ -10,8 +10,10 @@ import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import BreadCrumb from '@/components/common/breadcrumb'
 import { useAuth } from '@/hooks/use-Auth'
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+import Swal from 'sweetalert2'
 
 export default function New() {
+  const MySwal = withReactContent(Swal)
   const { isLoggedIn, memberId } = useAuth()
   // console.log(memberId)
   //body style
@@ -53,6 +55,20 @@ export default function New() {
 
   const languageOptions = ['CH-中文', 'EN-英文', 'JP-日文']
   // const fileInputRef = useRef();
+  const notifySuccess = () => {
+    MySwal.fire({
+      icon: 'success',
+      title: '商品已加入購物車',
+      showConfirmButton: false,
+      timer: 2000,
+    })
+  }
+  const notifyMax = () => {
+    MySwal.fire({
+      text: "已達購買上限",
+      confirmButtonColor: '#E41E49',
+    })
+  }
 
   const handleChange = (e) => {
     if (e.target.type === 'file') {

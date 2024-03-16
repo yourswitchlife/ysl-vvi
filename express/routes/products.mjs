@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
       cb(null, './public/productImg/details')
     } else if (file.fieldname === 'pCover') {
       cb(null, './public/productImg/cover')
-    } else if (file.fieldname === 'reviewPhoto') {
+    } else {
       cb(null, './public/reviewImg')
     }
   },
@@ -36,44 +36,16 @@ router.get('/list', async (req, res) => {
   // console.log(parseInt(rating))
   console.log(req.query)
 
-  const page = parseInt(req.query.page) || 1
-  const limit = parseInt(req.query.limit) || 20
-  const offset = (page - 1) * limit
+  // const page = parseInt(req.query.page) || 1
+  // const limit = parseInt(req.query.limit) || 20
+  // const offset = (page - 1) * limit
 
   // let sql = `SELECT * FROM product WHERE`
   // let queryParams = []
 
   try {
-    // if (type || rating) {
-    //   if (type) {
-    //     queryParams.push(type)
-    //     queryParams.join(',')
-    //     let [totalProducts] = await db.execute(
-    //       'sql += `type_id IN (?)`,queryParams'
-    //     )
-    //   }
-    //   if (rating) {
-    //     queryParams.push(rating)
-    //     queryParams.join(',')
-    //     let [totalProducts] = await db.execute(
-    //       'sql += `rating_id IN (?)`,queryParams'
-    //     )
-    //   }
-    // }
     // 全部資料
     let [products] = await db.execute(`SELECT * FROM product `)
-    // let [totalProducts] = await db.execute(
-    //   'SELECT COUNT(*) AS totalItems FROM `product`'
-    // )
-    // // 一頁幾筆
-    // let [products] = await db.execute(`SELECT * FROM product LIMIT ?,?`, [
-    //   offset,
-    //   limit,
-    // ])
-    // console.log(TotalProducts.length)
-    // const totalItems = totalProducts[0].totalItems
-    // const totalPages = Math.ceil(totalItems / limit)
-    // console.log(totalItems)
 
     const responseData = {
       products,
@@ -145,8 +117,10 @@ router.post(
 )
 // 單檔上傳
 router.post('/addReview', upload.single('reviewPhoto'), async (req, res) => {
-  if (req.files) {
-    console.log(req.files, req.body)
+  if (req) {
+    // console.log('Uploaded file name: ', req.file.originalname)
+    console.log(req.body)
+    console.log(req.file)
     return res.json({ msg: 'success', code: '200' })
   } else {
     console.log('no upload')
@@ -159,6 +133,8 @@ router.post('/addReview', upload.single('reviewPhoto'), async (req, res) => {
 router.get('/:pid', async (req, res) => {
   try {
     let { pid } = req.params
+    // let { shopid } = req.params
+    // console.log(`shop_id = ${shopid}`)
     console.log(`pid = ${pid}`)
     // 查詢相對應id的商品
     let [responseData] = await db.execute(
@@ -171,15 +147,16 @@ router.get('/:pid', async (req, res) => {
       'SELECT p.id,m.* FROM product AS p JOIN member AS m ON p.member_id = m.id WHERE p.id = ?',
       [pid]
     )
+    const shopId = shopData[0].id
+
+    let [shopComment] = await db.execute(
+      'SELECT sc.*, m.* FROM shop_comment AS sc JOIN member AS m ON sc.member_id = m.id WHERE sc.shop_id = ? ORDER BY `sc`.`created_at` ASC',
+      [shopId]
+    )
 
     // 查询相同商品類型
     let [productTypeResult] = await db.execute(
       'SELECT * FROM `product` WHERE `type_id` IN (SELECT type_id FROM `product` WHERE id = ?)',
-      [pid]
-    )
-
-    let [shopComment] = await db.execute(
-      'SELECT * FROM member m JOIN shop_comment sc ON m.id = sc.shop_id WHERE m.id IN (SELECT member_id FROM Product WHERE id = ? )',
       [pid]
     )
 

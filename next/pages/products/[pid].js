@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import BreadCrumb from '@/components/common/breadcrumb'
 import Image from 'next/image'
-import { FaRegHeart, FaCartPlus, FaShoppingCart } from 'react-icons/fa'
+import { FaRegHeart, FaCartPlus, FaShoppingCart, FaStore} from 'react-icons/fa'
 import ProductCard from '@/components/products/product-card'
 import Link from 'next/link'
 import styles from '../../styles/products/product-detail.module.scss'
@@ -104,9 +104,11 @@ export default function ProductDetail() {
     created_at: '',
   })
   const [shopData, setShopData] = useState({})
+  const [shopComment, setShopComment] = useState({})
   const [ben, setBen] = useState(false)
   // const [detailImgs,setDetailImgs] = useState(product.img_details)
   // 商品數量+1
+  // console.log(shopData)
   const handleIncrement = () => {
     // 查看當前購物車的該商品數量
     const currentQuantyInCart =
@@ -152,28 +154,38 @@ export default function ProductDetail() {
     try {
       const res = await fetch(`http://localhost:3005/api/products/${pid}`)
       const data = await res.json()
-      console.log(data.responseData[0]) //相對應id的商品
-      console.log(data.shopData[0]) //找同類型的商品
+      // console.log(data.responseData[0]) //相對應id的商品
+      // console.log(data.shopData[0]) //找同類型的商品
       // console.log(data[0].img_details)
       // console.log(data[0].img_details.split(","))
       // console.log(sameTypeP)
       if(data.shopData[0].name){
         setShopData(data.shopData[0])
-        console.log(shopData)
+        // console.log(shopData.id)
       }
+      if(data.shopComment[0].id){
+        setShopComment(data.shopComment)
+        // console.log(shopData.id)
+      }
+      // console.log(data.shopComment)
+      // if(data.shopComment[0].name){
+      //   setShopData(data.shopData[0])
+      //   // console.log(shopData.id)
+      // }
+      // const shopid = shopData.id  
 
       if(data.productTypeResult[0].name){
         const sameTypeP = data.productTypeResult.filter((p,i) => p.id != data.responseData[0].id)
         const sTypeP = sameTypeP.slice(1,5)
         setSameTypeP(sTypeP)
-        console.log(sTypeP)
+        // console.log(sTypeP)
       }
       
       if(data.sameShopP[0].name){
         const sameShopP = data.sameShopP.filter((p,i) => p.id != data.responseData[0].id)
         const sSP = sameShopP.slice(1,3)
         setSameShopP(sSP)
-        console.log(sSP)
+        // console.log(sSP)
       }
       // setShopSelect(product)
       // console.log(shopSelect)
@@ -306,17 +318,6 @@ export default function ProductDetail() {
     console.log(product.img_details.split(','))
   }
 
-  console.log(shopData)
-  // const getRandomSameTypeP = (arr, count) => {
-  //   let shuffled = arr.slice()
-  //   for (let i = shuffled.length - 1; i > 0; i--) {
-  //     const j = Math.floor(Math.random() * (i + 1))
-  //     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-  //   }
-  //   return shuffled.slice(0, count)
-  // } 
-  // const randomSameTypeP = getRandomSameTypeP(sameTypeP,4)
-  // console.log(randomSameTypeP)
   return (
     <>
     <GoTopButton/>
@@ -507,10 +508,10 @@ export default function ProductDetail() {
               className={`${styles.myshop} d-flex justify-content-between align-items-center mb-4`}
             >
               <div className="d-flex align-items-center">
-                <div>
+                <div style={{height:'85px',width:'75px'}}>
                   <Image
                     // src="https://i.ebayimg.com/images/g/ToYAAOSw-mJh6lHy/s-l1600.png"
-                    src={`http://localhost:3005/shopCover/${shopData.pic}`}
+                    src={`http://localhost:3005/profile-pic/${shopData.pic}`}
                     alt="shop"
                     width={75}
                     height={75}
@@ -524,14 +525,14 @@ export default function ProductDetail() {
                 </div>
               </div>
               <div className="me-2">
-                <button
+                {/* <button
                   type="button"
                   className="btn btn-danger btn-sm d-block mb-1"
                 >
                   <FaRegHeart className="text-light pb-1" /> 關注店家
-                </button>
+                </button> */}
                 <button type="button" className="btn btn-danger btn-sm mt-1">
-                  <FaRegHeart className="text-light pb-1" /> 進入本店 
+                  <FaStore className="text-light pb-1" /> 進入本店 
                 </button>
               </div>
             </div>
@@ -595,7 +596,19 @@ export default function ProductDetail() {
         <section className="p-detail-sec-3">
           <h5 className="text-white">對賣家的評價</h5>
           <hr className="text-white border-3" />
-          <Reviewed />
+          {shopComment.length > 0 ?shopComment.map((v,i) => {
+            return (
+          <Reviewed key={i}
+            name={v.name}
+            pic={v.pic}
+            content={v.content}
+            created_at={v.created_at}
+            rating={v.rating}
+            comment_img={v.comment_img}
+            reply={v.reply}
+          />
+            )
+          }):''}
           <Review />
         </section>
       </div>
