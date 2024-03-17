@@ -1,5 +1,8 @@
 @import '@/styles/valuable.scss';
 
+.unvalid{
+    opacity: 0.5;
+}
 
 .cardBG{
     background: url('/images/coupon/coupon-03.png');
@@ -11,6 +14,10 @@
 
     //420
     //180
+
+    .expired{
+        opacity: 0.5;
+    }
 
     .title{
         font-size: 22px;

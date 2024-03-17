@@ -19,7 +19,7 @@ import { FaRegHeart, FaCartPlus } from 'react-icons/fa'
 import whitelog from '@/public/images/logo/logo_White-desktopLogo.svg'
 // import styles from '@/styles/products/product-list.module.scss'
 
-import Mission from '@/components/mission/mission'
+import Mission from '@/components/mission/mission-favshop'
 
 
 import Paginage from '@/components/common/pagination'
@@ -48,7 +48,7 @@ export default function MissionFinished(){
                         </div>
                         <div className=" container d-flex justify-content-end pt-3 pe-5">
 
-                            <Dropdown className="ps-3 pb-2">
+                            {/* <Dropdown className="ps-3 pb-2">
                                 <Dropdown.Toggle
                                     variant="secondary"
                                     id="ranking"
@@ -63,7 +63,7 @@ export default function MissionFinished(){
                                     <Dropdown.Item>從新到舊</Dropdown.Item>
                                     <Dropdown.Item>從舊到新</Dropdown.Item>
                                 </Dropdown.Menu>
-                            </Dropdown>
+                            </Dropdown> */}
                         </div>
                         
 

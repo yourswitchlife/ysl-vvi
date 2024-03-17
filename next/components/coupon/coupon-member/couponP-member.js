@@ -14,32 +14,35 @@ import logo from '@/public/images/coupon/logominiFig.png'
 import { useAuth } from '@/hooks/use-Auth'
 
 
-export default function CouponMember() {
+export default function Couponn({ currentFilter }) {
   const [claimed, setClaimed] = useState([])
   const router = useRouter()
   const { isLoggedIn, memberId } = useAuth()
 
   useEffect(() => {
-    fetch('http://localhost:3005/api/coupon/member-coupons', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ memberId }),
+    if (!isLoggedIn || !memberId) return
+
+    fetch(`http://localhost:3005/api/coupon/memberCP?memberId=${memberId}&filter=${currentFilter}`, {
+      method: 'GET',
+      credentials: 'include',
     })
       .then((response) => response.json())
       .then((result) => {
+        // console.log(result)
         //讀除了運費以外的優惠券
         const results = result.some(coupon => coupon.discount_value == '0')
-        
-        const memberCP = results? result.filter(coupon => coupon.discount_value != '0'): result
-       console.log(memberCP)
-       
+
+        const memberCP = results ? result.filter(coupon => coupon.discount_value != '0') : result
+        // console.log(memberCP)
+
         setClaimed(memberCP)
+
       })
 
       .catch((error) => {
         console.log('Error:', error)
       })
-  }, [memberId])
+  }, [memberId, currentFilter, isLoggedIn])
 
 
   const visit = () => {
@@ -70,13 +73,13 @@ export default function CouponMember() {
                   </div>
                   <div className="col-10 row">
                     <div className={`${styles.title} text-white text-start fw-bold mb-0 col-12 ms-3`}>
-                      全館{coupon.title}
+                      {coupon.title.includes('獎勵') ? '' : '全館'}{coupon.title}
                     </div>
                     <div className="col-12 row justify-content-around align-items-center">
                       {/* <span
                         className={`text-white d-none d-md-block col-1 p-0 d-flex align-items-center fs-1 `}
                       > */}
-                        {/* {coupon.discount_value < 10 ? "" : `$`} */}
+                      {/* {coupon.discount_value < 10 ? "" : `$`} */}
                       {/* </span> */}
                       <div
                         className={`${styles.font} text-white d-none d-md-block col-5 p-0 mb-2`}
@@ -93,12 +96,12 @@ export default function CouponMember() {
                         )}
                       </div>
                       <button
-                        className={`${styles.btnCTA} btn-sm btn-info btn
+                        className={`${styles.btnCTA} btn-sm ${(new Date(coupon.expiration_date) < new Date()) || coupon.status === 1 ? "btn-secondary" : "btn-info"} btn
                         ms-3 col-6}`}
                         onClick={() => visit()}
                       >
                         <h5 className="">
-                          去逛一下
+                          {(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? "不能用囉" : "再逛一下"}
                         </h5>
                       </button>
                     </div>
@@ -126,7 +129,7 @@ export default function CouponMember() {
           key={coupon.id}
         >
           <div
-            className={`${styles.cardBG} py-3 px-1 row align-items-center col-lg-6 m-2`}
+            className={`${styles.cardBG} py-3 px-1 row align-items-center col-lg-6 m-2  ${(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? styles.unvalid : ''}`}
           >
             <div className=" col-3">
               <Image src={logo} width={35} height={35} alt="YSL coupon Logo" />
@@ -134,31 +137,32 @@ export default function CouponMember() {
 
             <div className="col-9 row">
               <p className="text-white text-start fw-bold fs-6 mb-0 col-12">
-                全館{coupon.title}
+                {coupon.title.includes('獎勵') ? '' : '全館'}{coupon.title}
               </p>
               <div className="col-12  ">
                 <div className="d-flex justify-content-center align-items-center">
-                <div
-                        className={`${styles.font} text-white d-block d-md-none col-5 p-0`}
-                      >
-                        {coupon.discount_value < 10 ? (
-                          <div className='ms-1'>
-                            <span className={styles.discountValue}>{coupon.discount_value}</span>
-                            <span className={styles.discountFont}>折</span>
-                          </div>) : (
-                          <div className='ms-1 d-flex align-items-center '>
-                            <span className={styles.discountFont}>$</span>
-                            <span className={styles.discountValue}>{coupon.discount_value}</span>
-                          </div>
-                        )}
+                  <div
+                    className={`${styles.font} text-white d-block d-md-none col-5 p-0`}
+                  >
+                    {coupon.discount_value < 10 ? (
+                      <div className='ms-1'>
+                        <span className={styles.discountValue}>{coupon.discount_value}</span>
+                        <span className={styles.discountFont}>折</span>
+                      </div>) : (
+                      <div className='ms-1 d-flex align-items-center '>
+                        <span className={styles.discountFont}>$</span>
+                        <span className={styles.discountValue}>{coupon.discount_value}</span>
                       </div>
+                    )}
+                  </div>
                   <button
-                    className={`${styles.btnCTA} btn btn-sm btn-info
+                    className={`${styles.btnCTA} btn btn-sm  ${(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? "btn-secondary" : "btn-info"}
                        col-5 ms-5`}
                     onClick={() => handleGet(coupon.id)}
+                    disabled={(new Date(coupon.expiration_date) < new Date() || coupon.status === 1)}
                   >
                     <p className={`${styles.btnCTA}`}>
-                     去逛一下
+                      {(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? "不能用囉" : "再逛一下"}
                     </p>
                   </button>
                 </div>

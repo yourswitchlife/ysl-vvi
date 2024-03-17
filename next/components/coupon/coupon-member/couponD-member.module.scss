@@ -1,5 +1,8 @@
 @import '@/styles/valuable.scss';
 
+.unvalid{
+    opacity: 0.5;
+}
 
 .cardBG{
     background: url('/images/coupon/couponFreeShipBG.png');
@@ -8,6 +11,8 @@
     background-size: cover;
     width: 440px;
     height: 180px;
+
+
 
     .font{
         font-family: "Noto Sans TC SemiBold";
@@ -40,6 +45,7 @@
         font-size: 13px;
         text-align:start ;
     }
+
 
 
 @media screen and (max-width: 431px) {
