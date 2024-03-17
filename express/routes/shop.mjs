@@ -6,16 +6,6 @@ import multer from 'multer'
 const upload = multer({ dest: 'public/shopCover/' })
 import moment from 'moment'
 
-// 商品詳細頁 ([0-9]+)
-// try {
-//   const [results, fields] = await db.execute(
-//     'SELECT * FROM `member` WHERE `id` = 1'
-//   )
-//   console.log(results)
-// } catch (error) {
-//   console.error(error)
-// }
-
 //我的賣場
 // router.get('/:shop_site', async (req, res) => {
 //   try {
@@ -51,6 +41,7 @@ import moment from 'moment'
 //   }
 // })
 
+//--------------------賣場資料----------------------//
 //我的賣場加入頁碼版本
 router.get('/:shop_site', async (req, res) => {
   // const shopId = req.query.memberId錯的 這樣子會抓到瀏覽者的
@@ -134,6 +125,7 @@ router.get('/:shop_site', async (req, res) => {
   }
 })
 
+//--------------------賣場訂單----------------------//
 //讀取此賣場訂單
 router.get('/:shop_site/order', async (req, res) => {
   let { shop_site } = req.params
@@ -153,6 +145,7 @@ router.get('/:shop_site/order', async (req, res) => {
   }
 })
 
+//--------------------收藏賣場----------------------//
 //讀取此賣場收藏人數
 router.get('/:shop_site/fav_shop', async (req, res) => {
   let { shop_site } = req.params
@@ -259,6 +252,7 @@ router.put(
   }
 )
 
+//--------------------賣場評價----------------------//
 //讀取此賣場評價
 router.get('/:shop_site/shop_comment', async (req, res) => {
   let { shop_site } = req.params
@@ -278,6 +272,7 @@ router.get('/:shop_site/shop_comment', async (req, res) => {
   }
 })
 
+//--------------------賣場商品----------------------//
 //搜尋賣場商品
 router.get('/:shop_site/search', async (req, res) => {
   let { shop_site } = req.params

@@ -85,10 +85,11 @@ export default function Comment() {
         setComments(data.items)
         // console.log(data)
         //取得評價平均
-        // const totalRating = data.reduce((acc, cur) => acc + cur.rating, 0);
+        // const totalRating = data.reduce((acc, cur) => acc + cur.rating, 0)
         // const averageRating = (totalRating / data.length).toFixed(1); // 保留一位小數
         // console.log(averageRating)
         setShopRating(parseFloat(data.items[0]?.avg_rating || 0).toFixed(1))
+        // setShopRating(averageRating)
         //取得評價總數
         setCommentNum(data.items[0]?.total_comments || 0)
         // router.push(`comment?tab=${selectedTab}`)
@@ -305,7 +306,7 @@ export default function Comment() {
                     setSearchQuery(e.target.value)
                   }} />
                 </Form.Group>
-                <Form.Group className="mb-3" controlId="dateSelect">
+                {/* <Form.Group className="mb-3" controlId="dateSelect">
                   <Form.Label className="text-dark">評價時間</Form.Label>
                   <div className="d-flex justify-content-between align-items-center">
                     <InputGroup className={`mb-0 ${styles.dateSelect}`}>
@@ -326,7 +327,7 @@ export default function Comment() {
                       />
                     </InputGroup>
                   </div>
-                </Form.Group>
+                </Form.Group> */}
                 <div className="d-flex justify-content-center">
                   {/* <button
                     type="button"
@@ -338,7 +339,11 @@ export default function Comment() {
                   onClick={handleSearch}>
                     搜尋
                   </button>
-                  <button type="button" className="btn btn-danger">
+                  <button type="button" className="btn btn-danger" onClick={() => {
+                    setSearchQuery("")
+                    setPage(1) //重置到第一頁
+                    fetchShopComments()
+                  }}>
                     取消
                   </button>
                 </div>
@@ -501,9 +506,14 @@ export default function Comment() {
             <Form className="mb-3">
               <Form.Group className="mb-3" controlId="memberName">
                 <Form.Label>會員名稱</Form.Label>
-                <Form.Control type="text" placeholder="請輸入會員名稱" />
+                <Form.Control type="text" 
+                  placeholder="請輸入會員名稱"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                  }} />
               </Form.Group>
-              <Form.Group className="mb-3" controlId="dateSelect">
+              {/* <Form.Group className="mb-3" controlId="dateSelect">
                 <Form.Label>評價時間</Form.Label>
                 <div className="d-flex justify-content-between align-items-center">
                   <InputGroup className={`mb-0 ${styles.dateSelect}`}>
@@ -526,12 +536,16 @@ export default function Comment() {
                     />
                   </InputGroup>
                 </div>
-              </Form.Group>
+              </Form.Group> */}
               <div className="d-flex justify-content-center align-items-center mt-4">
-                <button type="button" className="btn btn-danger btn-sm me-3">
+                <button type="button" className="btn btn-danger btn-sm me-3" onClick={handleSearch}>
                   搜尋
                 </button>
-                <button type="button" className="btn btn-danger btn-sm">
+                <button type="button" className="btn btn-danger btn-sm" onClick={() => {
+                    setSearchQuery("")
+                    setPage(1) //重置到第一頁
+                    fetchShopComments()
+                  }}>
                   取消
                 </button>
               </div>

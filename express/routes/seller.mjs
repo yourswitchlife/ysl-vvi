@@ -576,90 +576,35 @@ router.put('/comment/delete', upload.none(), authenticate, async (req, res) => {
   }
 })
 
-//讀取賣家訂單OK #Read
-// router.get('/order', authenticate, async (req, res) => {
-//   try {
-//     const memberId = req.memberData.id
-//     let [orders] = await db.execute(
-//       `SELECT o.*, m.pic AS pic, m.account AS account,
-//       p.img_cover AS img_cover
-// FROM
-//     `orders` o
-// JOIN
-//     `member` m ON o.member_buyer_id = m.id
-// JOIN
-//     `product` p ON o.product_id = p.id
-// WHERE
-//     o.member_seller_id = ?`,
-//       [memberId]
-//     )
-//     // console.log(orders)
-//     res.json(orders)
-//   } catch (error) {
-//     console.log(error)
-//     res.status(500)
-//   }
-// })
-// router.get('/order', authenticate, async (req, res) => {
-//   try {
-//     const memberId = req.memberData.id
-//     let [orders] = await db.execute(
-//       `
-//       SELECT o.*, m.pic AS member_pic, m.account AS member_account,
-//              p.img_cover AS product_img_cover
-//       FROM orders o
-//       JOIN member m ON o.member_buyer_id = m.id
-//       JOIN product p ON o.product_id = p.id
-//       WHERE o.member_seller_id = ?`,
-//       [memberId]
-//     )
-//     // 將訂單按order_number分組
-//     const groupOrders = orders.reduce((acc, order) => {
-//       // 如果這個order_number的訂單已經在累加器中，更新product_id、quantity、product_img_cover的陣列
-//       if (acc[order.order_number]) {
-//         acc[order.order_number].product_ids.push(order.product_id)
-//         acc[order.order_number].quantities.push(order.quantity)
-//         acc[order.order_number].product_img_covers.push(order.product_img_cover)
-//       } else {
-//         // 否則，創建一個新的項目在累加器中
-//         acc[order.order_number] = {
-//           ...order,
-//           product_ids: [order.product_id],
-//           quantities: [order.quantity],
-//           product_img_covers: [order.product_img_cover],
-//         }
-//       }
-//       return acc
-//     }, {})
-//     //轉換結果為陣列格式
-//     const result = Object.values(groupOrders).map((order) => ({
-//       ...order,
-//       product_id: order.product_ids,
-//       quantity: order.quantities,
-//       product_img_cover: order.product_img_covers,
-//       //移除不需要個別product_id和quantity字段
-//       product_ids: undefined,
-//       quantities: undefined,
-//       product_img_covers: undefined,
-//     }))
-//     res.json(result)
-//   } catch (error) {
-//     console.log(error)
-//     res.status(500).send('Server Error')
-//   }
-// })
 router.get('/order', authenticate, async (req, res) => {
+  const tab = req.query.tab || 'all'
+  const page = parseInt(req.query.page) || 1
+  const limit = parseInt(req.query.limit) || 6
+  const offset = (page - 1) * limit
+
   try {
     const memberId = req.memberData.id
+    //根據tab來調整SQL
+    //查詢訂單總量
+    const [[{ total }]] = await db.execute(
+      `
+    SELECT COUNT(DISTINCT order_number) AS total
+      FROM orders
+      WHERE member_seller_id = ?`,
+      [memberId]
+    )
     let [orders] = await db.execute(
       `
       SELECT o.*, m.pic AS member_pic, m.account AS member_account, 
-             p.img_cover AS product_img_cover
+             p.img_cover AS product_img_cover, p.name AS product_name
       FROM orders o
       JOIN member m ON o.member_buyer_id = m.id
       JOIN product p ON o.product_id = p.id
-      WHERE o.member_seller_id = ?`,
-      [memberId]
+      WHERE o.member_seller_id = ?
+      GROUP BY o.order_number
+      ORDER BY o.order_number DESC
+      LIMIT ? OFFSET ?`,
+      [memberId, limit, offset]
     )
     // 初始化一個物件來組織資料，以 order_number 為key
     const ordersByNumber = orders.reduce((acc, order) => {
@@ -674,6 +619,7 @@ router.get('/order', authenticate, async (req, res) => {
         product_id: order.product_id,
         quantity: order.quantity,
         product_img_cover: order.product_img_cover,
+        product_name: order.product_name,
       })
 
       return acc
@@ -683,7 +629,14 @@ router.get('/order', authenticate, async (req, res) => {
       ...order,
       products: order.products,
     }))
-    res.json(result)
+    //計算總頁數
+    const totalPages = Math.ceil(total / limit)
+    res.json({
+      orders: result,
+      page,
+      totalPages,
+      totalItems: total,
+    })
   } catch (error) {
     console.log(error)
     res.status(500).send('Server Error')

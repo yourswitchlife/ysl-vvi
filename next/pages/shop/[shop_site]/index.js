@@ -164,6 +164,39 @@ export default function ShopPage() {
     }
   }
 
+  // const getShopFav = async (shop_site) => {
+  //   try{
+  //     const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/fav_shop`, {
+  //       credentials: 'include',
+  //     })
+  //     if(!res.ok){
+  //       throw new Error('網路請求失敗，找不到此賣場')
+  //     }
+  //     const data = await res.json()
+  //     // 確保返回的數據結構正確，並更新狀態
+  //     if (data && data.length > 0) {
+  //       //檢查是否收藏：改成valid=0
+  //       const isValidFav = data.some(fav => fav.valid && fav.valid === 0)
+  //       if(isValidFav){
+  //         setShopFavNum(0)
+  //         setIsFav(false)
+  //       }else{
+  //         //取得加總數字
+  //         setShopFavNum(data.length)
+  //         //檢查是否收藏
+  //         const isFaved = data.some(fav => fav.buyer_id === memberData.id)
+  //         // console.log(isFaved)會是boolean
+  //         setIsFav(isFaved)
+  //       }
+  //     }else{
+  //       //沒有收藏紀錄
+  //       setShopFavNum(0)
+  //       setIsFav(false)
+  //     }
+  //   }catch(e){
+  //     console.error(e)
+  //   }
+  // }
   const getShopFav = async (shop_site) => {
     try{
       const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/fav_shop`, {
@@ -256,6 +289,7 @@ export default function ShopPage() {
         const res = await fetch(url, { method: 'PUT', credentials: 'include'})
         const data = await res.json()
         if(res.ok){
+          setIsFav(false)
           Swal.fire('取消收藏成功', '', 'success')
         }else{
           throw new Error(data.message || '取消收藏失敗')
@@ -265,13 +299,16 @@ export default function ShopPage() {
         const res = await fetch(url, { method: 'POST', credentials: 'include' })
         const data = await res.json()
         if(res.ok){
+          setIsFav(true)
           Swal.fire('收藏成功', '', 'success')
         }else{
           throw new Error(data.message || '添加收藏失敗')
         }
       }
     }catch(error){
-      Swal.fire('操作失敗', error.toString(), 'error')
+      //用replace方法去除"Error:"前綴
+      let errorMessage = error.toString().replace('Error: ', '')
+      Swal.fire('操作失敗', errorMessage, 'error')
     }finally{
       //無論操作成功或失敗，都重新獲取收藏狀態
       getShopFav(shop_site)
