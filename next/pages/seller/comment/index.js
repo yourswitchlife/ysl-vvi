@@ -118,7 +118,7 @@ export default function Comment() {
     //更新狀態
     setSelectedTab(selectedTab)
     //更新url的查詢參數（但不加載頁面）
-    router.push(`/comment?tab=${selectedTab}`, undefined, { shallow: true })
+    router.push(`./comment?tab=${selectedTab}`, undefined, { shallow: true })
   }
   //加上搜尋按鈕的點擊事件處理函數
   const handleSearch = () => {
@@ -133,7 +133,7 @@ export default function Comment() {
     if(tab){
       setSelectedTab(tab)
     }
-  }, [router.query])
+  }, [router.query.tab])
 
   function formatComments(comments){
     return comments.map(comment => {
@@ -350,39 +350,29 @@ export default function Comment() {
               </Form>
             </div>
             <div className={`mb-5 ${styles.dashboardStyle}`}>
-              <Nav
-                variant="tabs"
-                defaultActiveKey="/comment/all"
+              <Tabs
+                defaultActiveKey="all"
+                id="commentStatusTabs"
+                justify
                 className="mb-4"
+                onSelect={handleTabChange}
               >
-                <Nav.Item>
-                  <Nav.Link onClick={() => {
-                    setSelectedTab('all')
-                  }} className={selectedTab === 'all' ? "text-danger" : "text-secondary"}>
-                    全部
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link onClick={() => {
-                    setSelectedTab('unreply')
-                  }} className={selectedTab === 'unreply' ? "text-danger" : "text-secondary"}>
-                    待回覆
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link onClick={() => {
-                    setSelectedTab('replied')
-                  }} className={selectedTab === 'replied' ? "text-danger" : "text-secondary"}>
-                    已回覆
-                  </Nav.Link>
-                </Nav.Item>
+                  <Tab eventKey="all" title="全部" className={selectedTab === 'all' ? "text-danger" : "text-secondary"}>
+                  {comments && <h5 className='ms-2 fw-bold text-dark'>{commentNum}則評論</h5>}
+                  </Tab>
+                  <Tab eventKey="unreply" title="待回覆" className={selectedTab === 'unreply' ? "text-danger" : "text-secondary"}>
+                  {comments && <h5 className='ms-2 fw-bold text-dark'>{commentNum}則評論</h5>}
+                  </Tab>
+                  <Tab eventKey="replied" title="已回覆" className={selectedTab === 'replied' ? "text-danger" : "text-secondary"}>
+                  {comments && <h5 className='ms-2 fw-bold text-dark'>{commentNum}則評論</h5>}
+                  </Tab>
                 {/* <Nav.Item>
                   <Nav.Link eventKey="disabled" disabled>
                     Disabled
                   </Nav.Link>
                 </Nav.Item> */}
-              </Nav>
-              <h5 className='ms-2 fw-bold text-dark'>{commentNum}則評論</h5>
+              </Tabs>
+              
               {/* <ButtonGroup aria-label="ratingSort" size="sm">
                 <Button variant="secondary">全部</Button>
                 <Button variant="secondary">5顆星(141)</Button>

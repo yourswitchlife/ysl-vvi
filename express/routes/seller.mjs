@@ -585,14 +585,30 @@ router.get('/order', authenticate, async (req, res) => {
   try {
     const memberId = req.memberData.id
     //根據tab來調整SQL
-    //查詢訂單總量
+    let shippingStatusCondition = ''
+    switch (tab) {
+      case 'shipped':
+        shippingStatusCondition = 'AND o.shipping_status = 1'
+        break
+      case 'processing':
+        shippingStatusCondition = 'AND o.shipping_status = 2'
+        break
+      case 'delivered':
+        shippingStatusCondition = 'AND o.shipping_status = 3'
+        break
+      default:
+        shippingStatusCondition = ''
+        break
+    }
+    //查詢訂單總量(根據tab參數調整)
     const [[{ total }]] = await db.execute(
       `
-    SELECT COUNT(DISTINCT order_number) AS total
-      FROM orders
-      WHERE member_seller_id = ?`,
+    SELECT COUNT(DISTINCT o.order_number) AS total
+      FROM orders o 
+      WHERE o.member_seller_id = ? ${shippingStatusCondition}`,
       [memberId]
     )
+    //查詢訂單加入tab參數
     let [orders] = await db.execute(
       `
       SELECT o.*, m.pic AS member_pic, m.account AS member_account, 
@@ -600,7 +616,7 @@ router.get('/order', authenticate, async (req, res) => {
       FROM orders o
       JOIN member m ON o.member_buyer_id = m.id
       JOIN product p ON o.product_id = p.id
-      WHERE o.member_seller_id = ?
+      WHERE o.member_seller_id = ? ${shippingStatusCondition}
       GROUP BY o.order_number
       ORDER BY o.order_number DESC
       LIMIT ? OFFSET ?`,
