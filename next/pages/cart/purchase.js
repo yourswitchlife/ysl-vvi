@@ -14,24 +14,19 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 
-import useRequireCart from '@/hooks/use-require-cart'
 
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import { useAuth } from '@/hooks/use-Auth'
 
 
 export default function Purchase() {
-
-  // useRequireCart()
   const router = useRouter()
-
-
   const { orderId, transactionId } = router.query
 
   // LINEPAY導頁進來
   useEffect(() => {
     if (orderId && transactionId) {
-      const checkTransactionUrl = `http://localhost:3005/api/cart/check-transaction?transactionId=${transactionId}&groupId=${orderId}`
+      const checkTransactionUrl = `http://localhost:3005/api/cart/check-transaction?orderId=${orderId}&transactionId=${transactionId}`
 
       fetch(checkTransactionUrl)
         .then(response => response.json())
@@ -84,7 +79,7 @@ export default function Purchase() {
                 回首頁逛逛
               </Link>
               <Link
-                href=""
+                href="/member/order"
                 type="button"
                 className={`btn btn-danger ${styles.button}`}
               >

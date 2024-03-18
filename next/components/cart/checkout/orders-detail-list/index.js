@@ -22,14 +22,18 @@ import coupon from '@/public/images/cart/coupon.svg'
 // 引用use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
 import { useAuth } from '@/hooks/use-Auth'
+// 引入共同shipping鉤子
+import { useShipping } from '@/hooks/use-shipping'
 
 //使用SweetAlert2 API
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+
 const MySwal = withReactContent(Swal)
 
 export default function OrdersDetailList() {
   const { cartItems } = useCart()
+  const { shippingFees, shippingMethods, shippingInfos, setTotalShippingFee, handleShippingInfoUpdate, getFormatShippingInfos, totalShippingFee, shippingOptions } = useShipping()
   const { memberId, memberData } = useAuth()
 
   // 存放所有優惠券id
@@ -51,15 +55,6 @@ export default function OrdersDetailList() {
   // 商品優惠券折抵金額
   const [productDiscount, setProductDiscount] = useState(0)
 
-  // 儲存從order-checkout傳來的物流方式
-  const [shippingMethods, setShippingMethods] = useState({})
-
-  // 儲存從order-checkout的總運費狀態
-  const [totalShippingFee, setTotalShippingFee] = useState(0)
-
-  // 儲存從order-checkout的總運費狀態
-  const [shippingInfos, setShippingInfos] = useState({})
-
   // 付款總金額
   const [totalPrice, setTotalPrice] = useState(0)
   // 付款方式
@@ -75,23 +70,18 @@ export default function OrdersDetailList() {
   const handleShowMobileModal = () => setShowMobileModal(true)
   const handleCloseMobileModal = () => setShowMobileModal(false)
 
-  // 計算從子層傳來的每個運費的總運費
-  const updateTotalShippingFee = (newFees) => {
-    const totalFee = Object.values(newFees).reduce(
-      (total, fee) => total + fee,
-      0
-    )
-    setTotalShippingFee(totalFee)
-    console.log(totalShippingFee)
-  }
+  useEffect(() => {
+    const totalShippingFee = Object.values(shippingFees).reduce((total, fee) => total + fee, 0);
+    setTotalShippingFee(totalShippingFee)
+  }, [shippingFees])
 
   // 從子層傳來的每個物流方式狀態
-  const handleShippingMethodChange = (method) => {
-    setShippingMethods((prevMethods) => ({
-      ...prevMethods,
-      ...method,
-    }))
-  }
+  // const handleShippingMethodChange = (method) => {
+  //   setShippingMethods((prevMethods) => ({
+  //     ...prevMethods,
+  //     ...method,
+  //   }))
+  // }
 
   // 計算商品總金額
   const getTotalPrice = () => {
@@ -104,34 +94,12 @@ export default function OrdersDetailList() {
 
   useEffect(() => {
     getTotalPrice()
-  }, [cartItems, totalShippingFee])
+  }, [cartItems])
 
   // 選擇的付款方式存在狀態裡
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method)
     console.log('選擇的付款方式:', method)
-  }
-
-  // 儲存子層傳來的收件資訊們
-  const handleShippingInfos = (shippingInfo) => {
-    setShippingInfos((prevData) => ({
-      ...prevData,
-      ...shippingInfo,
-    }))
-  }
-
-  useEffect(() => {
-    console.log(shippingInfos)
-  }, [shippingInfos])
-
-  // 整理shippingInfos成收件人姓名、收件人電話、地址
-  const formatShippingInfos = (shippingInfos) => {
-    return Object.entries(shippingInfos).map(([member_id, info]) => ({
-      member_id,
-      receiveName: info.name, // 收件人姓名
-      receivePhone: info.phone, // 收件人電話
-      receiveaddress: `${info.address} ${info.addressType} ${info.deliveryTime}`, // 地址
-    }))
   }
 
   // 從後端取得用戶可使用的優惠券列表
@@ -208,6 +176,7 @@ export default function OrdersDetailList() {
     setShippingDiscount(totalShippingFee)
   }
 
+
   // 格式化優惠券到期日期
   const formatDate = (dateString) => {
     const date = new Date(dateString)
@@ -267,32 +236,45 @@ export default function OrdersDetailList() {
     }
 
     // 如果用戶沒有選擇配送方式
-    const allhaveShippingMethod = payingItems.every((item) =>
-      shippingMethods.hasOwnProperty(item.member_id)
-    )
-    console.log(allhaveShippingMethod)
-    console.log(payingItems)
-    console.log(shippingMethods)
-    if (!allhaveShippingMethod) {
+    // const allhaveShippingMethod = payingItems.every((item) =>
+    //   shippingMethods.hasOwnProperty(item.member_id)
+    // )
+    // if (!allhaveShippingMethod) {
+    //   MySwal.fire({
+    //     icon: 'warning',
+    //     text: '請為所有訂單選擇配送方式',
+    //     confirmButtonColor: '#E41E49',
+    //   })
+    //   return
+    // }
+
+    // 如果用戶沒有選取收件地址
+    const allOrdersHaveShippngInfo = payingItems.every(item => !!(
+      shippingInfos[item.member_id] &&
+      shippingInfos[item.member_id].name &&
+      shippingInfos[item.member_id].phone &&
+      shippingInfos[item.member_id].address
+    ))
+
+    if (!allOrdersHaveShippngInfo) {
       MySwal.fire({
         icon: 'warning',
-        text: '請為所有訂單選擇配送方式',
+        text: '請為選有訂單選擇收件地址',
         confirmButtonColor: '#E41E49',
       })
       return
     }
 
-    const formattedShippingInfos = formatShippingInfos(shippingInfos)
+    const formattedShippingInfos = getFormatShippingInfos(shippingInfos,shippingOptions)
 
     const orderData = {
       member_buyer_id: memberData.id,
       paymentMethod,
       items: payingItems,
-      shipping_method: shippingMethods,
-      totalPrice: totalPrice + totalShippingFee, //可能用不到，先傳過去
+      shipping_method: formattedShippingInfos,
       shippingDiscount,
       productDiscount,
-      shippingInfos: formattedShippingInfos,
+      shippingInfos: shippingInfos,
       selectedProductCoupon,
       selectedShippingCoupon,
     }
@@ -321,19 +303,33 @@ export default function OrdersDetailList() {
           // 依據message判斷
           switch (results.message) {
             case '建立訂單成功，貨到付款':
-              const groupCashId = results.groupId
-              router.push(`/cart/purchase?orderId=${groupCashId}`)
-              handleLevelPoint()
+              const externalOrderIdForCash = results.externalOrderId
+              fetch('http://localhost:3005/api/cart/cash', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log(data)
+                  handleLevelPoint()
+                  window.location.href = `/cart/purchase?orderId=${externalOrderIdForCash}`
+                })
+                .catch((error) => {
+                  console.error('錯誤:', error)
+                })
               break
             case '建立訂單成功，LINEPAY':
-              const groupId = results.groupId
+              const externalOrderIdForLinePay = results.externalOrderId
               // 導向LINE PAY後端處理
               fetch('http://localhost:3005/api/cart/line-pay', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ ...orderData, groupId }),
+                body: JSON.stringify({ ...orderData, externalOrderId: externalOrderIdForLinePay }),
               })
                 .then((response) => response.json())
                 .then((data) => {
@@ -346,8 +342,8 @@ export default function OrdersDetailList() {
                 })
               break
             case '建立訂單成功，信用卡':
-              const groupIdForCreditCard = results.groupId
-              // 導向LINE PAY後端處理
+              const externalOrderIdForCreditCard = results.externalOrderId
+              // 導向後端處理
               fetch('http://localhost:3005/api/cart/credit-card', {
                 method: 'POST',
                 headers: {
@@ -359,7 +355,7 @@ export default function OrdersDetailList() {
                 .then((data) => {
                   console.log(data)
                   handleLevelPoint()
-                  window.location.href = `/cart/purchase?orderId=${groupIdForCreditCard}`
+                  window.location.href = `/cart/purchase?orderId=${externalOrderIdForCreditCard}`
                 })
                 .catch((error) => {
                   console.error('錯誤:', error)
@@ -383,11 +379,7 @@ export default function OrdersDetailList() {
         <div className={styles.pcBg}>
           <div className={styles.mainTitle}>訂單詳情</div>
           {/* 單一賣場訂單 */}
-          <OrderCheckout
-            updateTotalShippingFee={setTotalShippingFee}
-            updateShippingMethod={handleShippingMethodChange}
-            onShippingInfoReceived={handleShippingInfos}
-          />
+          <OrderCheckout />
         </div>
 
         <div className={`${styles.pcBg} ${styles.paymentPC}`}>
@@ -401,27 +393,24 @@ export default function OrdersDetailList() {
           <div className="border-bottom border-3 border-light py-4">
             <div className={styles.payMethodBar}>
               <span
-                className={`${styles.payBtn} ${
-                  paymentMethod === 1 ? styles.focus : ''
-                }`}
+                className={`${styles.payBtn} ${paymentMethod === 1 ? styles.focus : ''
+                  }`}
                 data-payment="cash"
                 onClick={() => handlePaymentMethodChange(1)}
               >
                 貨到付款
               </span>
               <span
-                className={`${styles.payBtn} ${
-                  paymentMethod === 3 ? styles.focus : ''
-                }`}
+                className={`${styles.payBtn} ${paymentMethod === 3 ? styles.focus : ''
+                  }`}
                 data-payment="credit-card"
                 onClick={() => handlePaymentMethodChange(3)}
               >
                 信用卡付款
               </span>
               <span
-                className={`${styles.linePay} ${
-                  paymentMethod === 2 ? styles.focus : ''
-                }`}
+                className={`${styles.linePay} ${paymentMethod === 2 ? styles.focus : ''
+                  }`}
                 data-payment="line-pay"
                 onClick={() => handlePaymentMethodChange(2)}
               >
@@ -463,9 +452,8 @@ export default function OrdersDetailList() {
                           const isReach = totalPrice >= coupon.price_rule
                           return (
                             <div
-                              className={`${styles.coupon} ${
-                                isReach ? '' : styles.disabledCoupon
-                              }`}
+                              className={`${styles.coupon} ${isReach ? '' : styles.disabledCoupon
+                                }`}
                               key={coupon.id}
                             >
                               {/* 勾選框框 */}
@@ -729,9 +717,8 @@ export default function OrdersDetailList() {
                           const isReach = totalPrice >= coupon.price_rule
                           return (
                             <div
-                              className={`${styles.coupon} ${
-                                isReach ? '' : styles.disabledCoupon
-                              }`}
+                              className={`${styles.coupon} ${isReach ? '' : styles.disabledCoupon
+                                }`}
                               key={coupon.id}
                             >
                               {/* 勾選框框 */}

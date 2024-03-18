@@ -7,6 +7,9 @@ import Form from 'react-bootstrap/Form'
 import Image from 'next/image'
 import Link from 'next/link'
 
+// 引入共同shipping鉤子
+import { useShipping } from '@/hooks/use-shipping'
+
 
 
 // 引入台灣城市區域json
@@ -14,11 +17,11 @@ import taiwanDistricts from '@/data/taiwan_districts.json'
 
 import { useAuth } from '@/hooks/use-Auth'
 
-export default function DeliveryCheckout({ items, updateShippingFee, updateShippingMethod, memberId, onShippingInfoUpdate }) {
+export default function DeliveryCheckout({ items, memberId }) {
 
   const { memberData } = useAuth()
-
-  const [selectAddrOption, setSelectAddrOption] = useState('')
+  const { selectAddrOption, handleSelectChange, calcUpdateShippingFee, addressType, setAddressType, selectedAddressIndex, addresses,
+    isMaxHomeAddresses, parseAddress, name, setName, phone, setPhone, selectedCity, setSelectedCity, selectedRegion, setSelectedRegion, detailAddress, setDetailAddress, deliveryTime, setDeliveryTime, handleCityChange, handleRegionChange, regions, homeField, shippingFee, updateSelectedAddressIndex, shippingOptions, selectedAddresses, setSelectedAddressIndex, handleAddressSelection, selectAddress, updateShippingMethod } = useShipping()
 
   // 點擊新增宅配地址按鈕狀態
   const [showAddrForm, setshowAddrForm] = useState(false)
@@ -27,52 +30,11 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
   const [isEditingAddress, setIsEditingAddress] = useState(false)
 
 
-  // 用戶是否有常用地址資料
-  const [hasCommonAddr, setHasCommonAddr] = useState(false)
-
-  // 紀錄宅配地址是否已滿3條
-  const [isMaxHomeAddresses, setIsMaxHomeAddresses] = useState(false)
-
-  // 選擇地址、區域狀態
-  const [selectedCity, setSelectedCity] = useState("")
-  const [selectedRegion, setSelectedRegion] = useState("")
-  // 紀錄除了城市、區域的其他詳細地址
-  const [detailAddress, setDetailAddress] = useState("")
-  // 收件姓名
-  const [name, setName] = useState("")
-  // 收件電話
-  const [phone, setPhone] = useState("")
-  // 寄送時間
-  const [deliveryTime, setDeliveryTime] = useState("")
-  // 地址類型
-  const [addressType, setAddressType] = useState("")
-
-  // 紀錄所選取的宅配欄位
-  const [homeField, setHomeField] = useState("")
-
-
-  // 紀錄被編輯地址的radio選項
-  const [editingAddressIndex, setEditingAddressIndex] = useState(null)
-  // 追蹤選中的宅配地址選項index
-  const [selectedAddressIndex, setSelectedAddressIndex] = useState(null)
-  // 追蹤選中的7-11地址選項index
-  const [selectedSevenIndex, setSelectedSevenIndex] = useState(null)
-
   // 單筆賣場商品品項數量
   const [totalProducts, setTotalProducts] = useState(0)
   // 單筆賣場訂單總價
   const [orderPrice, setOrderPrice] = useState(0)
-  // 設定運費價格，預設7-11運費價格
-  const [shippingFee, setShippingFee] = useState(0)
 
-
-
-
-  // 紀錄從後端傳來的地址資料
-  const [addresses, setAddresses] = useState({
-    homeAddresses: [],
-    sevenAddresses: [],
-  });
 
   const [windowWidth, setWindowWidth] = useState(null);
 
@@ -87,25 +49,6 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
       return () => window.removeEventListener("resize", updateWindowWidth)
     }
   }, [])
-
-
-  // 選擇物流方式下拉選單值
-  const handleSelectChange = (e) => {
-    const selectedMethod = e.target.value
-    setSelectAddrOption(selectedMethod)
-    // 清除超商地址或宅配地址的選擇
-    setSelectedAddressIndex(null)
-    setSelectedSevenIndex(null)
-    // 更新運費
-    if (selectedMethod === "1") {
-      setShippingFee(60);
-    } else if (selectedMethod === "2") {
-      setShippingFee(100);
-    }
-
-    updateShippingMethod(selectedMethod)
-  }
-
 
 
   // 判斷是新增宅配地址還是編輯宅配地址
@@ -128,104 +71,36 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
   // 編輯/新增地址時點擊取消
   const handleCancel = () => {
     setshowAddrForm(false)
-  };
-
-  // 處理城市選項變更
-  const handleCityChange = (e) => {
-    setSelectedCity(e.target.value)
-    setSelectedRegion("")
   }
 
-  // 處理區域選項變更
-  const handleRegionChange = (e) => {
-    setSelectedRegion(e.target.value)
-  }
 
-  //根據選擇的城市對應區域們
-  const regions = selectedCity
-    ? taiwanDistricts.find(city => city.name === selectedCity)?.districts || []
-    : []
+  // 設定各個物流運費，當用戶改變selectAddrOption就更新運費
+  useEffect(() => {
+    const selectedOption = shippingOptions[memberId]?.selectAddrOption
+    const shippingFee = selectedOption === '1' ? 60 : selectedOption === '2' ? 100 : 0
+    // 更新運費
+    calcUpdateShippingFee(memberId, selectedOption)
 
-  // 後端傳來的地址拆分
-  const parseAddress = (address) => {
-    const parts = address.split(' ')
-    return {
-      city: parts[0], // "台北市"
-      region: parts[1], // "北投區"
-      detail: parts.slice(2).join(' '), // "立農街二段155號"
-    };
-  }
-  // 範例
-  // const address = "台北市 北投區 立農街二段155號";
-  // const { city, region, detail } = parseAddress(address);
-  // console.log(city, region, detail);
+    const totalItemsPrice = items.reduce((acc, item) => acc + (item.quantity * item.price), 0)
+    const totalPriceWithShipping = totalItemsPrice + shippingFee
+    setOrderPrice(totalPriceWithShipping)
+  }, [items, shippingOptions, memberId, calcUpdateShippingFee])
 
-  // 根據被選擇的宅配地址radio來拆分地址
-  const handleAddressSelection = (index) => {
-    const selectedAddress = addresses.homeAddresses[index]
-    // 解析地址的城市、區域和詳細地址
-    const { city, region, detail } = parseAddress(selectedAddress.address)
-
-    // 姓名、電話、配送類型時間
-    const { name, phone } = selectedAddress
-    const { AddressType, DeliveryTimePreference } = selectedAddress.specialPreferences
-
-    let fieldMapping = ['home1', 'home2', 'home3']
-    let selectedField = fieldMapping[index]
-    setHomeField(selectedField)
-
-
-    setSelectedCity(city)
-    setSelectedRegion(region)
-    setDetailAddress(detail)
-    setName(name)
-    setPhone(phone)
-    setDeliveryTime(DeliveryTimePreference) // 更新配送時間
-    setAddressType(AddressType) // 更新地址類型
-    setSelectedAddressIndex(index)
-
-    //儲存傳給父層的收件資訊
-    onShippingInfoUpdate({
-      name,
-      phone,
-      address: `${city} ${region} ${detail}`,
-      deliveryTime: DeliveryTimePreference,
-      addressType: AddressType,
-    })
-
-  }
-
-  // 根據被選擇的7-11地址radio選項顯示
-  const handleSevenAddressChange = (index) => {
-    // console.log(index);
-    setSelectedSevenIndex(index)
-
-    const selectedSevenAddress = addresses.sevenAddresses[index]
-    if (selectedSevenAddress) {
-      // 傳給父元件的超商地址資訊
-      const shippingInfo = {
-        name: selectedSevenAddress.name, 
-        phone: selectedSevenAddress.phone, 
-        address: `${selectedSevenAddress.seventInfo.storeName} | ${selectedSevenAddress.seventInfo.address}`, 
-        deliveryTime: "", 
-        addressType: "7-11超商取货" 
-      }
-  
-      onShippingInfoUpdate(shippingInfo)
-  }
-}
 
 
   // 點擊編輯地址按鈕
   const handleEditClick = () => {
-    if (selectAddrOption === '2' && selectedAddressIndex !== null && addresses.homeAddresses[selectedAddressIndex]) {
+    const currentSelectedIndex = selectedAddresses[memberId]?.home
+
+    if (currentSelectedIndex !== undefined) {
+      selectAddress(currentSelectedIndex)
       // 使用selectedAddressIndex來設計表單資料
-      const selectedAddress = addresses.homeAddresses[selectedAddressIndex]
+      const selectedAddress = addresses.homeAddresses[currentSelectedIndex]
       if (selectedAddress) {
-        const { name, phone } = selectedAddress;
+        const { name, phone } = selectedAddress
         const { AddressType, DeliveryTimePreference } = selectedAddress.specialPreferences
         const { city, region, detail } = parseAddress(selectedAddress.address)
-        console.log(selectedAddress.address);
+        console.log(selectedAddress.address)
 
         setName(name)
         setPhone(phone)
@@ -243,14 +118,44 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
   }
   const router = useRouter()
 
+
+  useEffect(() => {
+    console.log("選取的地址: ", selectedAddresses)
+    console.log("地址資訊: ", addresses)
+    const currentSelectedIndex = selectedAddresses[memberId]?.home
+    if (currentSelectedIndex !== undefined) {
+      const selectedAddress = addresses.homeAddresses[currentSelectedIndex]
+      if (selectedAddress) {
+        const { city, region, detail } = parseAddress(selectedAddress.address)
+        const { name, phone } = selectedAddress
+        const { AddressType, DeliveryTimePreference } = selectedAddress.specialPreferences
+
+        setSelectedCity(city)
+        setSelectedRegion(region)
+        setDetailAddress(detail)
+        setName(name)
+        setPhone(phone)
+        setDeliveryTime(DeliveryTimePreference)
+        setAddressType(AddressType)
+      }
+    }
+  }, [selectedAddresses, memberId, addresses.homeAddresses])
+
+
   // 編輯地址點擊送出提交表單
   const handleSubmit = async (e) => {
     e.preventDefault()
     console.log("提交表單，編輯模式：", isEditingAddress);
+    console.log("當前選擇的物流方式: ", selectAddrOption);
 
     // 送出前檢查表單欄位是否為空
     if (!name.trim() || !phone.trim() || !selectedCity.trim() || !selectedRegion.trim() || !detailAddress.trim() || !deliveryTime.trim() || !addressType.trim()) {
       alert('所有欄位資訊都需要填寫！')
+      return
+    }
+
+    if (isEditingAddress && !["home1", "home2", "home3"].includes(homeField)) {
+      alert('無效的地址欄位！')
       return
     }
 
@@ -290,6 +195,7 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
       .then((results) => {
         console.log(results)
         alert(isEditingAddress ? '地址更新成功' : '地址新增成功')
+
         setshowAddrForm(false)
         router.push('/cart/checkout')
       })
@@ -322,101 +228,33 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
   useEffect(() => {
     let total = items.length
     let totalPrice = items.reduce((order, item) => order + (item.quantity * item.price), 0)
-    if(selectAddrOption){
+    if (selectAddrOption) {
       totalPrice += shippingFee
     }
     setTotalProducts(total)
     setOrderPrice(totalPrice)
   }, [items, shippingFee, selectAddrOption])
 
-  // 利用updateShippingFee傳遞給父層的函數
-  const calcShippingFee = () => {
-    let fee = 0
-    if (selectAddrOption === '1') {
-      // 7-11
-      fee = 60
-    } else if (selectAddrOption === '2') {
-      // 宅配
-      fee = 100
-    }
-    updateShippingFee(fee)
+
+  // 更新選中的地址選項
+  const handleAddressChange = (memberId, index, shippingType) => {
+    // 依據物流方式去判斷是選7-11還是宅配
+    console.log("memberId", memberId, "index", index, "type:", shippingType)
+
+    handleAddressSelection(memberId, index)
+
+    updateSelectedAddressIndex(memberId, index, shippingType)
   }
 
-  // 當用戶改變selectAddrOption就更新運費
+  // 每當selectedAddresses發生變化時，同步更新selectedAddressIndex
   useEffect(() => {
-    calcShippingFee()
-  }, [selectAddrOption])
-
-
-  // 連線server端接收到常用地址資料
-  useEffect(() => {
-    if (memberData && memberData.id) {
-      const memberId = memberData.id;
-      const url = `http://localhost:3005/api/cart/common-address/${memberId}`
-      fetch(url).then(response => {
-        if (!response.ok) {
-          throw new Error('連線後端失敗')
-        }
-        return response.json()
-      })
-        .then(data => {
-          if (data && data.length > 0) {
-            const homeAddresses = []
-            const sevenAddresses = []
-            console.log(data);
-
-            data.forEach((item) => {
-              if (item.shipping_method === 2) {
-                // 宅配地址
-                ['home1', 'home2', 'home3'].forEach(homeField => {
-                  try {
-                    if (item[homeField]) {
-                      let parsedData = JSON.parse(item[homeField])
-
-                      // 判斷資料是否為陣列
-                      if (!Array.isArray(parsedData)) {
-                        parsedData = [parsedData]
-                      }
-                      homeAddresses.push(...parsedData);
-                      console.log(homeAddresses)
-                    }
-                  } catch (error) {
-                    console.error('解析宅配地址data發生錯誤', error)
-                  }
-                });
-              } else if (item.shipping_method === 1) {
-                // 超商地址
-                ['seven1', 'seven2', 'seven3'].forEach(sevenField => {
-                  try {
-                    if (item[sevenField]) {
-                      const parsedData = JSON.parse(item[sevenField])
-                      sevenAddresses.push(...parsedData)
-                      console.log(sevenAddresses)
-                    }
-                  } catch (error) {
-                    console.error('解析超商地址data發生錯誤', error)
-                  }
-                });
-              }
-            });
-            setAddresses({ homeAddresses, sevenAddresses })
-            setHasCommonAddr(true)
-            // 檢查是否達到最大地址數量
-            setIsMaxHomeAddresses(homeAddresses.length >= 3)
-
-          } else {
-            setHasCommonAddr(false)
-          }
-        })
-        .catch(error => {
-          console.error('fetch 失敗', error)
-        })
-    } else {
-      console.log('取得memberId失敗，請確認是否有登入')
+    const currentSelected = selectedAddresses[memberId]?.home
+    if (currentSelected !== undefined) {
+      setSelectedAddressIndex(currentSelected)
     }
-  }, [memberData])
+  }, [selectedAddresses, memberId])
 
-
+  const currentShippingOption = shippingOptions[memberId] || {}
 
   return (
     <>
@@ -438,11 +276,12 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
           <div className={styles.selectFrame}>
             <label htmlFor="select">
               物流方式：
-              <span className={styles.deliveryName}>7-11 超商寄送</span>
+              {/* <span className={styles.deliveryName}>7-11 超商寄送</span> */}
             </label>
             <Form.Select
               className={styles.formSelect}
-              onChange={handleSelectChange}
+              onChange={(e) => handleSelectChange(e, memberId)}
+              value={currentShippingOption.selectAddrOption || ''}
               disabled={showAddrForm}
             >
               <option value="">請選擇物流方式</option>
@@ -455,7 +294,7 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
             !showAddrForm && (
               <div
                 className={
-                  selectAddrOption === '2' ? styles.addHomeAdrBtn : 'd-none'
+                  currentShippingOption.selectAddrOption === '2' ? styles.addHomeAdrBtn : 'd-none'
                 }
               >
                 <div className={styles.editHomeAdr} onClick={handleEditClick}>
@@ -472,42 +311,46 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
             )
           }
           {/* 選擇常用地址radio 區塊 (block)*/}
-          {selectAddrOption !== '' && (
+          {currentShippingOption.selectAddrOption && (
             <div className={`${styles.adressFrame} ${!showAddrForm ? 'd-block' : 'd-none'}`}>
-              {selectAddrOption === '1' && (
-                <div>
-                  {addresses.sevenAddresses.map((addr, index) => (
-                    // 渲染每個超商地址radio
+              {currentShippingOption.selectAddrOption === '1' ? (
+                // 7-11超商寄送地址選項
+                addresses.sevenAddresses.map((addr, index) => {
+                  const isSelected = selectedAddresses[memberId]?.['seven'] === index
+                  return (
                     <div key={index} className="form-check mb-3 d-flex align-items-center">
                       <input
                         className="form-check-input me-3"
                         type="radio"
                         name={`seven-address-${memberId}`}
                         value={index}
-                        checked={selectedSevenIndex === index}
-                        onChange={() => { handleSevenAddressChange(index) }}
+                        checked={isSelected}
+                        onChange={() => {
+                          handleAddressChange(memberId, index, currentShippingOption.selectAddrOption === "1" ? "seven" : "home")
+                        }}
                       />
                       <label className="form-check-label">
                         <div>{addr.name} {addr.phone}</div>
                         <div>{addr.seventInfo.storeName} ｜ {addr.seventInfo.address}</div>
                       </label>
                     </div>
-                  ))}
-                </div>
-              )}
-
-              {selectAddrOption === '2' && (
-                <div>
-                  {addresses.homeAddresses.map((addr, index) => (
-                    // 渲染每個宅配地址radio
+                  )
+                })
+              ) : (
+                // 宅配地址選項
+                addresses.homeAddresses.map((addr, index) => {
+                  const isSelected = selectedAddresses[memberId]?.['home'] === index
+                  return (
                     <div key={index} className="form-check mb-3 d-flex align-items-center">
                       <input
                         className="form-check-input me-3"
                         type="radio"
                         name={`home-address-${memberId}`}
-                        checked={selectedAddressIndex === index}
+                        checked={isSelected}
                         value={index}
-                        onChange={() => { handleAddressSelection(index) }}
+                        onChange={() => {
+                          handleAddressChange(memberId, index, "home");
+                        }}
                       />
                       <label className="form-check-label">
                         <div>{addr.name} {addr.phone}</div>
@@ -515,8 +358,8 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
                         <div>{addr.specialPreferences.AddressType}，{addr.specialPreferences.DeliveryTimePreference}</div>
                       </label>
                     </div>
-                  ))}
-                </div>
+                  )
+                })
               )}
             </div>
           )}
@@ -716,45 +559,46 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
 
 
         {/* 手機版 - 寄送資訊明細區塊 */}
-        {windowWidth <= 431 && !showAddrForm && selectAddrOption !== '' && (selectedAddressIndex !== null || selectedSevenIndex !== null) && (
+        {windowWidth <= 431 && !showAddrForm && currentShippingOption.selectAddrOption && (
           <div className={`col-12 bg-secondary-subtle rounded-3 p-3 ${styles.deliveryInfoMobile} $ `}>
             <div className="row align-items-center">
-              {selectedAddressIndex !== null && (
+              {currentShippingOption.selectAddrOption === '2' && selectedAddresses[memberId]?.home !== undefined && (
                 // 宅配地址被選中時顯示的資訊
                 <>
-                  <div className="col-12">
-                    <div>{addresses.homeAddresses[selectedAddressIndex].name}</div>
-                    <div>{addresses.homeAddresses[selectedAddressIndex].address}</div>
-                    <div>
-                      <span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.AddressType}</span>｜
-                      <span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.DeliveryTimePreference}</span>
+                  {addresses.homeAddresses[selectedAddresses[memberId]?.home] && (
+                    <div className="col-12">
+                      <div>{addresses.homeAddresses[selectedAddresses[memberId]?.home].name}</div>
+                      <div>{addresses.homeAddresses[selectedAddresses[memberId]?.home].address}</div>
+                      <div>
+                        <span>{addresses.homeAddresses[selectedAddresses[memberId]?.home].specialPreferences.AddressType}</span>｜
+                        <span>{addresses.homeAddresses[selectedAddresses[memberId]?.home].specialPreferences.DeliveryTimePreference}</span>
+                      </div>
+                      <div>{addresses.homeAddresses[selectedAddresses[memberId]?.home].phone}</div>
+                      <div className={styles.time}>預計到貨時間 {start} - {end}</div>
+                      <div className="col-12 text-end mt-3">
+                        <b>運費：$100</b>
+                      </div>
                     </div>
-                    <div>{addresses.homeAddresses[selectedAddressIndex].phone}</div>
-                    <div className={styles.time}>預計到貨時間 {start} - {end}</div>
-                  </div>
-                  <div className="col-12 text-end mt-3">
-                    <b>運費：$100</b>
-                  </div>
+                  )}
                 </>
               )}
-            </div>
-            <div className="row align-items-center">
-              {selectedSevenIndex !== null && (
-                // 7-11地址被選中時顯示的資訊
+              {currentShippingOption.selectAddrOption === '1' && selectedAddresses[memberId]?.seven !== undefined && (
+                // 7-11地址被選取時顯示的資訊
                 <>
-                  <div className="col-12">
-                    <div>{addresses.sevenAddresses[selectedSevenIndex].name}</div>
-                    <div>{addresses.sevenAddresses[selectedSevenIndex].seventInfo.storeName} ｜ {addresses.sevenAddresses[selectedSevenIndex].seventInfo.address}</div>
-                    <div>{addresses.sevenAddresses[selectedSevenIndex].phone}</div>
-                    <div className={styles.time}>預計到貨時間 {start} - {end}</div>
-                  </div>
-                  <div className="col-12 text-end mt-3">
-                    <b>運費：$60</b>
-                  </div>
+                  {addresses.sevenAddresses[selectedAddresses[memberId]?.seven] && (
+                    <div className="col-12">
+                      <div>{addresses.sevenAddresses[selectedAddresses[memberId]?.seven].name}</div>
+                      <div>{addresses.sevenAddresses[selectedAddresses[memberId]?.seven].seventInfo.storeName} ｜ {addresses.sevenAddresses[selectedAddresses[memberId]?.seven].seventInfo.address}</div>
+                      <div>{addresses.sevenAddresses[selectedAddresses[memberId]?.seven].phone}</div>
+                      <div className={styles.time}>預計到貨時間 {start} - {end}</div>
+                      <div className="col-12 text-end mt-3">
+                        <b>運費：$60</b>
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
             </div>
-
           </div>
         )}
 
@@ -773,34 +617,51 @@ export default function DeliveryCheckout({ items, updateShippingFee, updateShipp
           </div>
           {/* 有選擇收件地址後顯示地址細項 */}
           <div className={`${styles.infoBar}`}>
-            {selectedAddressIndex !== null && (
+            {currentShippingOption.selectAddrOption === '2' && selectedAddresses[memberId]?.home !== undefined && (
+              // 顯示選中的宅配地址
               <>
-                <div>{addresses.homeAddresses[selectedAddressIndex].address} </div>
-                <div>
-                  <span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.AddressType}</span>｜<span>{addresses.homeAddresses[selectedAddressIndex].specialPreferences.DeliveryTimePreference}</span>
-                </div>
-                <div>{addresses.homeAddresses[selectedAddressIndex].name}  {addresses.homeAddresses[selectedAddressIndex].phone} </div>
-                <div className={styles.feeTime}>
-                  <div className={styles.time}>預計到貨時間 {start} - {end}</div>
+                {addresses.homeAddresses[selectedAddresses[memberId]?.home] && (
                   <div>
-                    <b>運費：$100</b>
+                    <div>{addresses.homeAddresses[selectedAddresses[memberId]?.home].address}</div>
+                    <div>
+                      <span>{addresses.homeAddresses[selectedAddresses[memberId]?.home].specialPreferences.AddressType}</span>｜
+                      <span>{addresses.homeAddresses[selectedAddresses[memberId]?.home].specialPreferences.DeliveryTimePreference}</span>
+                    </div>
+                    <div>{addresses.homeAddresses[selectedAddresses[memberId]?.home].name} {addresses.homeAddresses[selectedAddresses[memberId]?.home].phone}</div>
+                    <div className={styles.feeTime}>
+                      <div className={styles.time}>預計到貨時間 {start} - {end}</div>
+                      <div>
+                        <b>運費：$100</b>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
               </>
             )}
-            {selectedSevenIndex !== null && (
-              <><div>{addresses.sevenAddresses[selectedSevenIndex].name} {addresses.sevenAddresses[selectedSevenIndex].phone}</div>
-                <div>{addresses.sevenAddresses[selectedSevenIndex].seventInfo.storeName} ｜{addresses.sevenAddresses[selectedSevenIndex].seventInfo.address}</div>
-                <div className={styles.feeTime}>
-                  <div className={styles.time}>預計到貨時間 {start} - {end}</div>
+            {currentShippingOption.selectAddrOption === '1' && selectedAddresses[memberId]?.seven !== undefined && (
+              // 顯示選中的7-11收件地址
+              <>
+                {addresses.sevenAddresses[selectedAddresses[memberId]?.seven] && (
                   <div>
-                    <b>運費：$60</b>
+                    <div>{addresses.sevenAddresses[selectedAddresses[memberId]?.seven].name} {addresses.sevenAddresses[selectedAddresses[memberId]?.seven].phone}</div>
+                    <div>{addresses.sevenAddresses[selectedAddresses[memberId]?.seven].seventInfo.storeName} ｜{addresses.sevenAddresses[selectedAddresses[memberId]?.seven].seventInfo.address}</div>
+                    <div className={styles.feeTime}>
+                      <div className={styles.time}>預計到貨時間 {start} - {end}</div>
+                      <div>
+                        <b>運費：$60</b>
+                      </div>
+                    </div>
                   </div>
-                </div></>
+                )}
+              </>
             )}
-            {(selectedAddressIndex === null && selectedSevenIndex === null) && (
-              // 沒有地址被選擇時
-              <div>請選擇一個寄送地址</div>
+            {currentShippingOption.selectAddrOption === '2' && selectedAddresses[memberId]?.home === undefined && (
+              // 當選擇店家宅配，但没有選擇宅配地址時
+              <div>請選擇一個宅配地址</div>
+            )}
+            {currentShippingOption.selectAddrOption === '1' && selectedAddresses[memberId]?.seven === undefined && (
+              // 當選擇超商方式，但沒有選擇超商地址時
+              <div>請選擇一個超商地址</div>
             )}
           </div>
         </div>

@@ -352,7 +352,7 @@ router.get('/', async (req, res) => {
   let [shop] = await db.execute(
     'SELECT `id`, `shop_name`, `shop_site`, `pic` FROM `member` WHERE `shop_valid` = 1'
   )
-  console.log(shop)
+  // console.log(shop)
 
   if (shopRating.length > 0 && shop.length) {
     // 如果找到了所有的shop和rating
