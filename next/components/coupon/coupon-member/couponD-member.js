@@ -14,32 +14,33 @@ import logo from '@/public/images/coupon/logominiFig.png'
 import { useAuth } from '@/hooks/use-Auth'
 
 
-export default function CouponMember() {
+export default function CouponMember({ currentFilter }) {
   const [claimed, setClaimed] = useState([])
   const router = useRouter()
   const { isLoggedIn, memberId } = useAuth()
 
   useEffect(() => {
-    fetch('http://localhost:3005/api/coupon/member-coupons', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ memberId }),
+    fetch(`http://localhost:3005/api/coupon/memberCP?memberId=${memberId}&filter=${currentFilter}`, {
+      method: 'GET',
+      credentials: 'include',
     })
       .then((response) => response.json())
       .then((result) => {
         //讀除了運費以外的優惠券
-        const results = result.some(coupon => coupon.discount_value == '0')
-        
-        const memberCP = results? result.filter(coupon => coupon.discount_value == '0'): result
-        console.log(memberCP)
-       
+        console.log("Original data:", result);
+        // console.log("Filter condition check for each item:");
+        // result.forEach(coupon => console.log(coupon.discount_value === '0'))
+
+        const memberCP = result.filter(coupon => coupon.discount_value == '0')
+        // console.log(memberCP)
+
         setClaimed(memberCP)
       })
 
       .catch((error) => {
         console.log('Error:', error)
       })
-  }, [memberId])
+  }, [memberId, currentFilter, isLoggedIn])
 
 
   const visit = () => {
@@ -58,7 +59,8 @@ export default function CouponMember() {
                 className="d-none d-md-block grid text-center row d-flex justify-content-center w-100 mx-5 px-5 my-3"
               >
                 <div
-                  className={`${styles.cardBG} p-2 row align-items-center col-lg-6`}
+                  className={`${styles.cardBG} p-2 row align-items-center col-lg-6 ${(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? styles.unvalid : ''
+                    }`}
                 >
                   <div className="col-3">
                     <Image
@@ -84,14 +86,15 @@ export default function CouponMember() {
                         {coupon.discount_value}
                         <span className='fs-2 ms-3'>元</span>
                       </div>
-                      
+
                       <button
-                        className={`${styles.btnCTA} btn-sm btn-lg bg-dark
+                        className={`${styles.btnCTA} btn btn-sm ${(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? "btn-secondary" : "btn-dark"}
                         ms-3 col-6}`}
                         onClick={() => visit()}
+                        disabled={(new Date(coupon.expiration_date) < new Date() || coupon.status === 1)}
                       >
                         <h5 className="text-white">
-                          去逛一下
+                          {(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? "不能用囉" : "再逛一下"}
                         </h5>
                       </button>
                     </div>
@@ -119,7 +122,7 @@ export default function CouponMember() {
           key={coupon.id}
         >
           <div
-            className={`${styles.cardBG} py-3 px-1 row align-items-center col-lg-6 m-2`}
+            className={`${styles.cardBG} py-3 px-1 row align-items-center col-lg-6 m-2 ${(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? styles.unvalid : ''}`}
           >
             <div className=" col-3">
               <Image src={logo} width={35} height={35} alt="YSL coupon Logo" />
@@ -134,7 +137,7 @@ export default function CouponMember() {
                   {/* <h4 className="text-white fw-bold col-2 p-0 m-0">$</h4> */}
                   <div className='d-flex justify-content-center align-items-end'>
                     <h3 className="text-white fw-bold col-3 ">
-                    {coupon.discount_value}
+                      {coupon.discount_value}
                     </h3>
                     <h5 className="text-white fw-bold col-2 ms-3">元</h5>
                   </div>

@@ -3,6 +3,7 @@ import Navbar from '@/components/layout/navbar/navbar'
 import Footer from '@/components/layout/footer/footer-front'
 import Image from 'next/image'
 import styles from '@/styles/coupon/coupon.module.scss'
+import Link from 'next/link'
 
 //components
 import GoTopButton from '@/components/go-to-top/go-top-button'
@@ -62,7 +63,7 @@ export default function CouponPage() {
           <div className={styles.addMember_btn}>
             <div className={styles.btn_frame}>
               <button className={`btn btn-light ${styles.title_CTA}`}>
-                加入會員
+                <Link href='/member/register' className='text-decoration-none text-dark'>加入會員</Link>
               </button>
             </div>
           </div>
@@ -77,7 +78,9 @@ export default function CouponPage() {
             layout="responsive"
             alt="加入會員"
           />
-          <button className={`btn btn-info ${styles.btn}`}>趕緊加入會員</button>
+          <button className={`btn btn-info ${styles.btn}`}>
+          <Link href='/member/register' className='text-decoration-none text-white'>趕緊加入會員</Link>
+          </button>
         </div>
 
         <div>
@@ -87,7 +90,7 @@ export default function CouponPage() {
       </section>
 
       <section className="text-white mt-3">
-        <div className={`${styles.missionBG} `}>
+        <div className={`${styles.missionBG}`}>
           <div className="d-flex flex-column justify-content-center align-items-center pt-3">
             <h4 className={`${styles.missionHeader} ms-5 pt-5`}>
               加入會員，解會員任務，送優惠券
@@ -99,7 +102,7 @@ export default function CouponPage() {
 
             <div className="pt-4 mt-3 ms-5">
               <button className={`${styles.missionBTN} btn btn-lg btn-danger`}>
-                立即解任務
+                <Link href='/member/mission-ing' className='text-decoration-none text-white'>立即解任務</Link>
               </button>
             </div>
           </div>

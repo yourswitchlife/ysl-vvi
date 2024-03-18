@@ -17,7 +17,42 @@ router.get('/', async (req, res) => {
   }
 })
 
-//讀取單一優惠券路由
+//會員在個人頁面優惠券的篩選&讀取
+router.get('/memberCP', async (req, res) => {
+  const memberId = req.query.memberId
+  const filter = req.query.filter
+
+  let condition = ''
+  if (filter === 'valid') {
+    condition =
+      'AND discount_coupon.expiration_date > NOW() AND member_coupon.status = 0'
+  } else if (filter === 'expiredORUsed') {
+    condition =
+      'AND (discount_coupon.expiration_date < NOW() OR member_coupon.status = 1)'
+  }
+
+  const query = `
+    SELECT
+      member_coupon.*,
+      discount_coupon.expiration_date,
+      discount_coupon.discount_value,
+      discount_coupon.title,
+      discount_coupon.price_rule
+    FROM member_coupon
+    JOIN discount_coupon ON member_coupon.coupon_id = discount_coupon.id
+    WHERE member_coupon.member_id = ? ${condition}
+  `
+
+  try {
+    const [coupons] = await db.execute(query, [parseInt(memberId)])
+    res.json(coupons)
+  } catch (error) {
+    console.error(error)
+    res.status(500).send({ message: 'Server error', error: error.message })
+  }
+})
+
+// 讀取單一優惠券路由
 router.get('/:id', async (req, res) => {
   const id = req.params.id
   const coupon = await getSingle(id)
@@ -28,11 +63,6 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-// router.get('/memberCP', (req, res) => {
-//   const { memberID, couponID } = req.body
-
-// })
-
 //領取優惠券，寫新資料到member_coupon裡
 router.post('/insert', upload.none(), async (req, res) => {
   const { memberID, couponID } = req.body
@@ -41,32 +71,38 @@ router.post('/insert', upload.none(), async (req, res) => {
 })
 
 //member_coupon及購物車能看到的優惠券
-router.post('/member-coupons', upload.none(), async (req, res) => {
-  const { memberId } = req.body
-  const validCP = await getMemberCoupon(memberId)
-  res.status(201).send(validCP)
-})
+// router.post('/member-coupons', upload.none(), async (req, res) => {
+//   const { memberId } = req.body
+//   const validCP = await getValidCP(memberId)
+//   res.status(201).send(validCP)
+// })
 
 //新加入會員同時寫入新任務到mission
-router.post('/mission-insert', upload.none(), async (req, res) => {
-  const { memberId } = req.body
-  const missionData = await missionInsert(memberId)
-  res.status(201).send(missionData)
-})
+// router.post('/mission-insert', upload.none(), async (req, res) => {
+//   const { memberId } = req.body
+//   const missionData = await missionInsert(memberId)
+//   res.status(201).send(missionData)
+// })
 
 //任務:收藏賣家
-router.post('/fav-shop', upload.none(), async (req, res) => {
-  const { buyerId: memberId } = req.body
-  const favShop = await checkFavShop(memberId)
-  if (favShop.length === 0) {
-    return res.status(201).send({ message: '還沒收藏過賣家喔' })
-  } else {
-    return res.status(201).send({ message: '已經收藏過了' })
-  }
-  // const checkIfClaimed = await checkIfClaimed(memberId, couponId)
+// router.post('/fav-shop', upload.none(), async (req, res) => {
+//   const { memberId } = req.body
+//   const favShop = await checkFavShop(memberId)
+//   if (favShop.length === 0) {
+//     return res.status(201).json({ message: '還沒收藏過賣家喔' })
+//   } else {
+//     const hasClaimed = await checkIfClaimed(memberId, 43)
+//     if (hasClaimed) {
+//       return res.status(200).json({ message: '已經領取過優惠券了' })
+//     } else {
+//       return res.status(200).json({ message: '優惠券領取成功' })
+//     }
+//   }
 
-  // res.status(201).send(favShop)
-})
+// const checkIfClaimed = await checkIfClaimed(memberId, couponId)
+
+// res.status(201).send(favShop)
+// })
 
 //讀取leading page全部優惠券
 async function getAll() {
@@ -102,8 +138,8 @@ async function getSingle(id) {
   }
 }
 
-//讀取memebr_coupon其中一個會員的資料庫
-async function getMemberCoupon(id) {
+//讀取memebr_coupon其中一個會員的可使用優惠券資料庫
+async function getValidCP(id) {
   const [memberCP] = await db.execute(
     `SELECT
     member_coupon.*,
@@ -120,22 +156,40 @@ async function getMemberCoupon(id) {
   return memberCP
 }
 
-//讀取memebr_coupon其中一個會員的資料庫
-// async function getUnusedCP(id) {
-// const [usedCP] = await db.execute(
-//   `SELECT
-//   member_coupon.*,
-//   discount_coupon.expiration_date,
-//   discount_coupon.discount_value,
-//   discount_coupon.title,
-//   discount_coupon.price_rule
-//   FROM member_coupon
-//   JOIN discount_coupon
-//   ON member_coupon.coupon_id = discount_coupon.id
-//   WHERE (member_coupon.member_id = ? AND member_coupon.status = 1) OR expiration_date <= NOW()`,
-//   [3]
-// )
-// console.log(usedCP)
+//讀取memebr_coupon其中一個會員的不能使用(過期或已使用)優惠券資料庫
+async function getUnusedCP(id) {
+  const [usedCP] = await db.execute(
+    `SELECT
+  member_coupon.*,
+  discount_coupon.expiration_date,
+  discount_coupon.discount_value,
+  discount_coupon.title,
+  discount_coupon.price_rule
+  FROM member_coupon
+  JOIN discount_coupon
+  ON member_coupon.coupon_id = discount_coupon.id
+  WHERE (member_coupon.member_id = ? AND member_coupon.status = 1) OR expiration_date <= NOW()`,
+    [id]
+  )
+  return getUnusedCP
+}
+
+async function getMemberCP(id) {
+  const [memberCP] = await db.execute(
+    `SELECT
+    member_coupon.*,
+    discount_coupon.expiration_date,
+    discount_coupon.discount_value, 
+    discount_coupon.title,
+    discount_coupon.price_rule
+    FROM member_coupon
+    JOIN discount_coupon
+    ON member_coupon.coupon_id = discount_coupon.id
+    WHERE member_coupon.member_id = ?`,
+    [id]
+  )
+  return memberCP
+}
 
 //任務寫入:只要加入會員，且mission_start非0，就寫入新資料
 // async function missionInsert(id) {
@@ -162,46 +216,11 @@ async function getMemberCoupon(id) {
 //   }
 // }
 
-const [i] = await db.execute(
-  'INSERT INTO mission (mission_id, member_id, status) VALUES (2, ?, 0)',
-  [45]
-)
-console.log(i)
-
-//任務:查詢是否有收藏賣家
-async function checkFavShop(id) {
-  const [favShop] = await db.execute(
-    'SELECT * FROM fav_shop WHERE buyer_id=?',
-    [id]
-  )
-  return favShop
-}
-
-//任務:查詢會員是否有獎勵優惠券，有得話就不送，沒得話就送
-async function checkIfClaimed(memberId, couponId) {
-  try {
-    const [checkCP] = await db.execute(
-      'SELECT * FROM member_coupon where member_id=? AND coupon_id=?',
-      [memberId, couponId]
-    )
-    if (checkCP.length > 0) {
-      console.log('User has already claimed a coupon.')
-      return true
-    } else {
-      const [results] = await db.execute(
-        'INSERT INTO member_coupon (member_id, coupon_id, status, valid) VALUES (?, ?, 0, 1)',
-        [memberId, couponId]
-      )
-      if (results.affectedRows > 0) {
-        console.log('Coupon issued successfully.')
-      } else {
-        console.log('Failed to issue a coupon.')
-      }
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
+// const [i] = await db.execute(
+//   'INSERT INTO mission (mission_id, member_id, status) VALUES (2, ?, 0)',
+//   [45]
+// )
+// console.log(i)
 
 // const cc = await checkIfClaimed(4, 43)
 // console.log(cc)
