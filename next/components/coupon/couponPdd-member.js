@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Swal from 'sweetalert2'
 
 //scss
-import styles from './coupon-uni.module.scss'
+import styles from './couponPdd.module.scss'
 
 //pics
 import logo from '@/public/images/coupon/logominiFig.png'
@@ -14,7 +14,7 @@ import logo from '@/public/images/coupon/logominiFig.png'
 import { useAuth } from '@/hooks/use-Auth'
 import logIn from '@/pages/member/login'
 
-export default function Coupons() {
+export default function CC() {
   const [claimed, setClaimed] = useState([])
   const router = useRouter()
   const { isLoggedIn, memberId } = useAuth()
@@ -32,7 +32,7 @@ export default function Coupons() {
     },
   })
 
-
+  
 
   useEffect(() => {
     fetch('http://localhost:3005/api/coupon/')
@@ -61,12 +61,12 @@ export default function Coupons() {
   const handleGet = (id) => {
     // const memberID = ''
 
-    if (!isLoggedIn) {
+    if(!isLoggedIn){
       router.push('/member/login')
-      return
+      return 
     }
     const didClaimed = claimed.some((coupon) => coupon.id === id && coupon.get)
-
+    
     if (didClaimed) {
       //如果領過，按領取按鈕就導頁
       router.push('/member/coupon-product')
@@ -76,24 +76,24 @@ export default function Coupons() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ memberID: memberId, couponID: id }),
       }).then(response => response.json())
-        .then(data => {
-          console.log(data)
-          if (data) {
-            const updatedGet = claimed.map((v) => {
-              if (v.id === id && !v.get) {
-                Toast.fire({
-                  icon: 'success',
-                  title: '優惠券領取成功',
-                })
-                return { ...v, get: true }
-              } else {
-                return v
-              }
-            })
-            setClaimed(updatedGet)
-          }
-        })
-
+      .then(data => {
+        console.log(data)
+        if(data){
+          const updatedGet = claimed.map((v) => {
+            if (v.id === id && !v.get) {
+              Toast.fire({
+                icon: 'success',
+                title: '優惠券領取成功',
+              })
+              return { ...v, get: true }
+            } else {
+              return v
+            }
+          })
+          setClaimed(updatedGet)
+        }
+      })
+    
     }
   }
 
@@ -124,34 +124,35 @@ export default function Coupons() {
                       全館{coupon.title}
                     </h4>
                     <div className="row justify-content-around align-items-center">
-                      {coupon.discount_value < 10 ? (<div className='col-6 row justify-content-around align-items-end'>
-                        <h1
-                          className={`${styles.font} text-white d-none d-md-block col-2 p-0 ms-4`}
-                        >
-                          {coupon.discount_value}
-                        </h1>
-                        <span className='text-white d-none d-md-block col-1 p-0 me-3 fs-1'>折</span>
-                      </div>) : (<div className='col-6 row justify-content-around align-items-center'>
-                        <span
-                          className={`text-white d-none d-md-block col-1 p-0 fs-1  `}
-                        >
-                          $
-                        </span>
-                        <h1
-                          className={`${styles.font} text-white d-none d-md-block col-5 p-0 me-5`}
-                        >
-                          {coupon.discount_value}
-                        </h1>
+                     {coupon.discount_value <10? (<div className='col-6 row justify-content-around align-items-end'>
+                      <h1
+                        className={`${styles.font} text-white d-none d-md-block col-2 p-0 ms-4`}
+                      >
+                        {coupon.discount_value}
+                      </h1>
+                      <span className='text-white d-none d-md-block col-1 p-0 me-3 fs-1'>折</span>
+                     </div>):(<div className='col-6 row justify-content-around align-items-center'>
+                     <span
+                        className={`text-white d-none d-md-block col-1 p-0 fs-1  `}
+                      >
+                        $
+                      </span>
+                      <h1
+                        className={`${styles.font} text-white d-none d-md-block col-5 p-0 me-5`}
+                      >
+                        {coupon.discount_value}
+                      </h1>
                       </div>)}
-
-
+                      
+                      
                       {/* <span className=''>
                       {coupon.discount_value<10? "折":""}
                       </span> */}
 
                       <button
-                        className={`${styles.btnCTA} btn btn-lg ${!coupon.get ? 'btn-danger' : 'btn-info'
-                          } col-6 ms-5 }`}
+                        className={`${styles.btnCTA} btn btn-lg ${
+                          !coupon.get ? 'btn-danger' : 'btn-info'
+                        } col-6 ms-5 }`}
                         onClick={() => handleGet(coupon.id)}
                       >
                         <h5 className="">
@@ -163,8 +164,8 @@ export default function Coupons() {
                       效期至:{' '}
                       {coupon.expiration_date
                         ? moment(coupon.expiration_date).format(
-                          'YYYY-MM-DD HH:mm:ss'
-                        )
+                            'YYYY-MM-DD HH:mm:ss'
+                          )
                         : 'Unknown'}
                     </h6>
                   </div>
@@ -191,27 +192,18 @@ export default function Coupons() {
 
             <div className="col-9 row">
               <p className="text-white text-start fw-bold fs-6 mb-0 col-12">
-                全館{coupon.title}
+                {coupon.title}優惠券
               </p>
-              <div className="col-12">
+              <div className="col-12  ">
                 <div className="d-flex justify-content-center align-items-center">
-                  {coupon.discount_value < 10 ? (<div className='d-flex justify-content-center align-items-center ms-5'>
-                    <h2
-                      className="text-white fw-bold"
-                    >
-                      {coupon.discount_value}
-                    </h2>
-                    <h5 className='text-white fw-bold'>折</h5>
-                    </div>) : (<div className='d-flex justify-content-center align-items-end'>
-                      <h4 className="text-white fw-bold">$</h4>
-                      <h2 className="text-white fw-bold col-7">
-                        {coupon.discount_value}
-                      </h2>
-                    </div>)}
-
+                  <h4 className="text-white fw-bold col-2 p-0 m-0">$</h4>
+                  <h2 className="text-white fw-bold col-3 p-0">
+                    {coupon.discount_value}
+                  </h2>
                   <button
-                    className={`${styles.btnCTA} btn btn-sm ${!coupon.get ? 'btn-danger' : 'btn-info'
-                      } col-5 ms-4`}
+                    className={`${styles.btnCTA} btn btn-sm ${
+                      !coupon.get ? 'btn-danger' : 'btn-info'
+                    } col-5 ms-5`}
                     onClick={() => handleGet(coupon.id)}
                   >
                     <p className={`${styles.btnCTA}`}>

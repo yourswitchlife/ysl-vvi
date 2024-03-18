@@ -3,11 +3,15 @@
 /**
  * Module dependencies.
  */
-import app from '../app.js';
+import app from '../app.js'
 // 使用debug模組讀取環境變量DEBUG來決定是否輸出調試信息
-import debugLib from 'debug';
+import debugLib from 'debug'
 const debug = debugLib('node-express-es6:server')
-import http from 'http';
+import http from 'http'
+
+import { Server as SocketIOServer } from 'socket.io'
+import { setupMission } from '../routes/mission.mjs'
+import { setupChat } from '../routes/chat.mjs'
 
 // 導入dotenv 使用 .env 檔案中的設定值 process.env
 import 'dotenv/config.js'
@@ -23,34 +27,44 @@ app.set('port', port)
  * Create HTTP server.
  */
 
-const server = http.createServer(app);
+const server = http.createServer(app)
+
+const io = new SocketIOServer(server, {
+  cors: {
+    origin: 'http://localhost:3000', // Adjust according to your front-end origin
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+})
 
 /**
  * Listen on provided port, on all network interfaces.
    啟動服務器
  */
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+server.listen(port)
+server.on('error', onError)
+server.on('listening', onListening)
+setupMission(io)
+setupChat(io)
 
 /**
  * Normalize a port into a number, string, or false.
    normalizePort函數檢查端口值是否有效，並將其正規化為數字或字符串，或者在無效時返回false
  */
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  var port = parseInt(val, 10)
 
   if (isNaN(port)) {
     // named pipe
-    return val;
+    return val
   }
 
   if (port >= 0) {
     // port number
-    return port;
+    return port
   }
 
-  return false;
+  return false
 }
 
 /**
@@ -60,25 +74,23 @@ function normalizePort(val) {
 
 function onError(error) {
   if (error.syscall !== 'listen') {
-    throw error;
+    throw error
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
+      console.error(bind + ' requires elevated privileges')
+      process.exit(1)
+      break
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
+      console.error(bind + ' is already in use')
+      process.exit(1)
+      break
     default:
-      throw error;
+      throw error
   }
 }
 
@@ -98,17 +110,17 @@ function onError(error) {
 } */
 
 function onListening() {
-  var addr = server.address();
-  var bind;
+  var addr = server.address()
+  var bind
 
   // 如果 server.address() 傳回的 addr 是字串，表示伺服器正在監聽一個命名管道（pipe）
   if (typeof addr === 'string') {
-    console.log('Listening on pipe ' + addr);
+    console.log('Listening on pipe ' + addr)
   } else {
     // 如果 server.address() 傳回的 addr 是 Object 對象，通常表示伺服器監聽的是一個網頁連接埠（port）
-    bind = 'http://localhost:' + addr.port;
-    console.log('Listening on ' + bind);
+    bind = 'http://localhost:' + addr.port
+    console.log('Listening on ' + bind)
   }
 
-  debug('express api Listening on ' + bind); 
+  debug('express api Listening on ' + bind)
 }
