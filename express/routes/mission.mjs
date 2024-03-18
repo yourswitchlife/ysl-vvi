@@ -8,8 +8,20 @@ const upload = multer()
 //任務要不要顯示的邏輯
 router.get('/missionDisplay', async (req, res) => {
   const memberId = req.query.memberId
-  const missionShow = await missionDisplay(memberId)
-  res.status(200).json(missionShow)
+  const status = req.query.status
+
+  let condition = ''
+  if (status === '0') {
+    condition = `AND (mission.status = 0 OR mission.coupon_id = '')`
+  } else if (status === '1') {
+    condition = `AND mission.status = 1 AND mission.coupon_id <> ''`
+  }
+
+  let query = `SELECT mission_content.*, mission.member_id, mission.mission_id, mission.coupon_id, mission.status FROM mission_content JOIN mission ON mission_content.id = mission.mission_id WHERE mission.member_id = ? ${condition}`
+  let queryParams = [memberId]
+
+  const [missions] = await db.execute(query, queryParams)
+  res.status(200).json(missions)
 })
 
 export function setupMission(io) {
@@ -50,42 +62,43 @@ export function setupMission(io) {
 }
 
 //任務收藏賣家:任務狀態更新&查看
-router.get('/check-favshop', async (req, res) => {
-  const memberId = req.query.memberId
-  const favShop = await checkFavShop(memberId)
-  if (favShop.length === 0) {
-    return res.status(201).json({ success: false, message: '還沒收藏過賣家喔' })
-  } else {
-    const [checkID] = await db.execute(
-      'SELECT * FROM mission WHERE member_id = ? AND mission_id = 2',
-      [memberId]
-    )
+// router.get('/check-favshop', async (req, res) => {
+//   const memberId = req.query.memberId
+//   const favShop = await checkFavShop(memberId)
+//   if (favShop.length === 0) {
+//     return res.status(201).json({ success: false, message: '還沒收藏過賣家喔' })
+//   } else {
+//     const [checkID] = await db.execute(
+//       'SELECT * FROM mission WHERE member_id = ? AND mission_id = 2',
+//       [memberId]
+//     )
 
-    if (checkID.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: '任務資料表中無此用戶' })
-    } else {
-      const updateResult = await updateShopMission(memberId)
-      if (updateResult.affectedRows > 0) {
-        return res.status(200).json({ success: true, message: '任務更新成功' })
-      } else {
-        return res
-          .status(500)
-          .json({ success: false, message: '無執行任務更新' })
-      }
-    }
+//     if (checkID.length === 0) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: '任務資料表中無此用戶' })
+//     } else {
+//       const updateResult = await updateShopMission(memberId)
+//       if (updateResult.affectedRows > 0) {
+//         return res.status(200).json({ success: true, message: '任務更新成功' })
+//       } else {
+//         return res
+//           .status(500)
+//           .json({ success: false, message: '無執行任務更新' })
+//       }
+//     }
 
-    // const updateResult = await updateShopMission(memberId)
-    // if (updateResult.updated) {
-    //   return res.status(200).json({ message: '任務更新成功' })
-    // } else if (updateResult.reason === '無更新執行') {
-    //   return res.status(404).json({ message: '任務表中沒有此用戶' })
-    // } else {
-    //   return res.status(500).json({ message: '已完成任務不須更新' })
-    // }
-  }
-})
+// const updateResult = await updateShopMission(memberId)
+// if (updateResult.updated) {
+//   return res.status(200).json({ message: '任務更新成功' })
+// } else if (updateResult.reason === '無更新執行') {
+//   return res.status(404).json({ message: '任務表中沒有此用戶' })
+// } else {
+//   return res.status(500).json({ message: '已完成任務不須更新' })
+// }
+
+//   }
+// })
 
 //任務:獎勵是否發劵的判斷
 router.post('/get-prize', upload.none(), async (req, res) => {
@@ -107,7 +120,7 @@ router.post('/get-prize', upload.none(), async (req, res) => {
   }
 })
 
-//任務:收藏賣家
+//任務:確認有無收藏賣家
 router.post('/fav-shop', upload.none(), async (req, res) => {
   const { memberId } = req.body
   const favShop = await checkFavShop(memberId)
@@ -177,25 +190,35 @@ async function checkIfClaimed(memberId, couponId) {
     if (checkCP.length > 0) {
       return { result: false, reason: '使用者已經領過此優惠券' }
     } else {
-      const [results] = await db.execute(
+      const [insertResult] = await db.execute(
         'INSERT INTO member_coupon (member_id, coupon_id, status, valid) VALUES (?, ?, 0, 1)',
         [memberId, couponId]
       )
-      if (results.affectedRows > 0) {
-        return { result: true, reason: '優惠券成功發放' }
+      if (insertResult.affectedRows > 0) {
+        const [updateResult] = await db.execute(
+          'UPDATE mission SET coupon_id = 43 WHERE member_id =? AND mission_id =2',
+          [memberId]
+        )
+
+        if (updateResult.affectedRows > 0) {
+          return { reason: '優惠券成功發放，且更新任務資料表' }
+        } else {
+          return { reason: '優惠券成功發放，但任務更新失敗' }
+        }
       } else {
         return { result: false, reason: '無法發放優惠券' }
       }
     }
   } catch (error) {
     console.log(error)
+    return { result: false, reason: '任務流程錯誤，請稍後再試' }
   }
 }
 
 //完成任務後更新狀態
 async function updateShopMission(memberId) {
   const [updateResult] = await db.execute(
-    'UPDATE mission SET status = 1 WHERE member_id = ? AND mission_id = 2',
+    'UPDATE mission SET status = 1, finished_at = CURRENT_TIMESTAMP WHERE member_id = ? AND mission_id = 2',
     [memberId]
   )
   if (updateResult.affectedRows > 0) {
@@ -204,5 +227,15 @@ async function updateShopMission(memberId) {
     return { updated: false, reason: '無更新執行' }
   }
 }
+
+async function test(memberId) {
+  const [dd] = await db.execute(
+    'UPDATE mission SET coupon_id = 43, coupon_id =43 WHERE member_id = ? AND mission_id = 2',
+    [memberId]
+  )
+  return dd
+}
+// const cc = await test(3)
+// console.log(cc)
 
 export default router

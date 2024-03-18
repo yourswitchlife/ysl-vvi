@@ -10,7 +10,7 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import sStyles from '@/styles/member/mseller.module.scss'
 
 import CC from '@/components/coupon/couponPdd-member'
-import MissionTest from '@/components/mission/mission-test'
+import MissionTest from '@/components/mission/mission-favshop'
 import { useAuth } from '@/hooks/use-Auth'
 
 

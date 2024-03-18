@@ -11,6 +11,7 @@ import http from 'http'
 
 import { Server as SocketIOServer } from 'socket.io'
 import { setupMission } from '../routes/mission.mjs'
+import { setupChat } from '../routes/chat.mjs'
 
 // 導入dotenv 使用 .env 檔案中的設定值 process.env
 import 'dotenv/config.js'
@@ -44,6 +45,7 @@ server.listen(port)
 server.on('error', onError)
 server.on('listening', onListening)
 setupMission(io)
+setupChat(io)
 
 /**
  * Normalize a port into a number, string, or false.

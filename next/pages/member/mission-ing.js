@@ -25,7 +25,11 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import CouponMember from '@/components/coupon/coupon-member/couponD-member'
 
 export default function MissionIng() {
+const [status, setStatus] = useState('0')
 
+const handleStatus = (newStatus) =>{
+  setStatus(newStatus);
+}
 
 
   return (
@@ -37,11 +41,13 @@ export default function MissionIng() {
 
           <div className={mStyle.card + ' container d-flex flex-column pb-5 mb-5 align-items-center pt-5'}>
             <div className={fpStyle.page_check + " pt-5"}>
-              <Link href="/member/mission-ing" className={fsStyle.pages_btn}>
+              <Link href="/member/mission-ing" className={fsStyle.pages_btn} 
+              onClick = {()=>{handleStatus('0')}}>
                 進行中的任務
               </Link>
               <h3 className={pStyle.gray_text}>|</h3>
-              <Link href="/member/mission-finished" className={fsStyle.pagep_btn}>
+              <Link href="/member/mission-finished" className={fsStyle.pagep_btn}
+              onClick = {()=>{handleStatus('1')}}>
                 <span></span>完成中的任務
               </Link>
             </div>
@@ -155,7 +161,7 @@ export default function MissionIng() {
 
             </div> */}
 
-            <Mission/>
+            <Mission status={status}/>
             <Paginage className={mStyle.paginag} />
           </div>
 

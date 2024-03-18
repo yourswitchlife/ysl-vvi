@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import Swal from 'sweetalert2'
 import io from 'socket.io-client'
+import JSConfetti from 'js-confetti'
 
 //pics
 import redMario from '@/public/images/mission/redMario.png'
@@ -15,20 +16,32 @@ import { useAuth } from '@/hooks/use-Auth'
 
 
 
-export default function Mission() {
+export default function MissionFavShop({ status }) {
   const { isLoggedIn, memberId } = useAuth()
   const router = useRouter()
+  
+  //讀取任務&其狀態
   const [mission, setMission] = useState([])
+
+  //解任務&領獎
   const [solved, setSolved] = useState(null)
   const [prize, setPrize] = useState(false);
   const socket = io.connect('http://localhost:3005')
+
+  //丟彩帶
+  const [jsConfetti, setJsConfetti] = useState(null);
+
+  useEffect(() => {
+    const jsConfetti = new JSConfetti();
+    setJsConfetti(jsConfetti);
+  }, []);
 
 
   //任務要不要顯示的判讀
   useEffect(() => {
     if (!isLoggedIn || !memberId) return
 
-    fetch(`http://localhost:3005/api/mission/missionDisplay?memberId=${memberId}`, {
+    fetch(`http://localhost:3005/api/mission/missionDisplay?memberId=${memberId}&status=${status}`, {
       method: 'GET',
       credentials: 'include',
     })
@@ -38,123 +51,83 @@ export default function Mission() {
         // const ShopMission = [result[0]]
         setMission(result)
       })
-  }, [memberId, isLoggedIn])
+  }, [memberId, isLoggedIn, status])
 
 
-  // const handleShopM = async (mission)=>{
-  //   if(!isLoggedIn){
-  //     return 
-  //   }
 
-  // const missionCheck = fetch('http://localhost:3005/api/mission/fav-shop', {
-  //   method: 'POST',
-  //   headers:{
-  //     'Content-Type':'application/json',
-  //   },
-  //   body:JSON.stringify({memberId}),
-  //   credentials: 'include',
-  // })
-  // .then(response => response.json())
-  // .then(data => {
-  //   // console.log(data);
-  //   // alert(data.message)
-  //   if(data.message === '還沒收藏過賣家喔'){
-  //     router.push('/products')
-  //   }else if(data.message === '優惠券領取成功'){
-  //     // setSolved
+  const favoriteShop = () => {
+    // console.log(`Emitting 'favoriteShop' event for memberId: ${memberId}`);
+    socket.emit('favoriteShop', memberId);
+  };
 
-  //   }
-  // })
-  // const missionData = missionCheck.json()
-  // console.log(missionData);
-  // }
+  useEffect(() => {
+    // console.log('連線到 socket...')
+    socket.on('connect', () => {
+      //   console.log('連線id', socket.id);
+    })
 
-  const checkMission = async () => {
-    try {
-       await fetch(`http://localhost:3005/api/mission/check-favshop?memberId=${memberId}`, {
-        method: 'GET',
-        credentials: 'include',
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          console.log(result)
-          // if (result.success === true){
-          //   setMission(prevMissions => prevMissions.map(mission => {
-          //     if (mission.mission_id === 2) { 
-          //       return { ...mission, status: 1 }
-          //     }
-          //     return mission;
-          //   }))
-          // }
-          // setSolved(true)
+    favoriteShop()
 
-        //   if (result.success && !solved) {
-        //     setSolved(true)
-        // } else if (!result.success && solved) {
-        //     setSolved(false)
+    socket.on('missionUpdated', (updated) => {
+      console.log(updated)
+      if (updated) {
+        console.log('恭喜解任務成功');
+        setSolved(true);
+
+        // if (!prize) {
+        //   jsConfetti && jsConfetti.addConfetti({
+        //     confettiNumber: 300,
+        //     confettiRadius: 6,
+        //   });
         // }
-        if (result.success) {
-          console.log('Mission update successful, updating UI...');
-          // Proceed to update UI based on the successful update
-      } else {
-          console.error('Mission update failed:', result.message);
-          // Handle failure scenario
-      }
 
-        
-        })
-    } catch (error) {
-      console.error(error)
+      } else {
+        console.log("還沒解完任務喔!");
+      }
+    })
+
+    return () => socket.off('missionUpdated')
+
+  }, [memberId, isLoggedIn, socket, jsConfetti, prize]);
+
+
+
+  
+  const claimPrize = async () => {
+    const response = await fetch('http://localhost:3005/api/mission/get-prize',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ memberId }),
+      });
+    const data = await response.json();
+    console.log(data)
+    if (data.success) {
+      Swal.fire({
+        icon: "success",
+        title: "恭喜完成任務",
+        text: "免運券已發放，趕快去查看有沒有領到吧！",
+        confirmButtonText: '查看優惠券',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push('/member/coupon-delivery')
+        }
+
+
+      })
+      setPrize(true)
+      if (jsConfetti) {
+        jsConfetti.clearCanvas()
+      }
+    } else {
+      Swal.fire({
+        icon: "info",
+        title: "系統錯誤",
+        text: "與我們聯絡吧，我們看看哪裡有問題",
+      })
     }
   }
 
-
-
-  useEffect(() => {
-    console.log('Connecting to socket...');
-    socket.on('connect', () => {
-      console.log('Connected to socket server', socket.id);
-    });
-    // const interval = setInterval(()=>{
-    //   if (isLoggedIn && memberId) {
-    //     checkMission()
-    //   }
-    // }, 15000)
-
-    // return () => clearInterval(interval)
-    // socket.on('missionUpdated', (updated) =>{
-    //   console.log(updated)
-    //   if(updated){
-    //     console.log('任務狀態更新成功')
-    //     setSolved(true)
-    //   }else{
-    //     console.log("無任務狀態更新");
-    //   }
-    // })
-
-    // return () =>socket.off('missionUpdated')
-
-  }, [memberId, isLoggedIn, socket]);
-
-
-  // const claimPrize = async () => {
-  //   const response = await fetch('http://localhost:3005/api/mission/get-prize', 
-  //   { method: 'POST', 
-  //   headers: { 'Content-Type': 'application/json' }, 
-  //   body: JSON.stringify({ memberId}), });
-  //   const data = await response.json();
-  //   console.log(data)
-  //   if (data.success) {
-  //     Swal.fire('Success', '領獎成功', 'success');
-  //     alert('Prize claimed successfully!');
-  //   } else {
-  //     alert('Failed to claim the prize.');
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   claimPrize()
-  // }, [])
 
 
   return (
@@ -170,7 +143,15 @@ export default function Mission() {
             </div>
 
             <div className='d-flex justify-content-center align-items-center mt-3 mb-3'>
-              <button className={`btn ${m.status === 1  && solved? 'btn-info' : 'btn-danger'}`}> {m.status === 1 && solved? '快來領獎勵' : '去解任務'}</button>
+              <button className={`btn ${m.status === 1 ? (m.coupon_id || prize ? 'btn-dark' : 'btn-info') : 'btn-danger'}`}
+                onClick={() => {
+                  if (m.status === 1 && !m.coupon_id) {
+                    claimPrize()
+                  } else if (m.status === 0) {
+                    router.push('/products')
+                  }
+                }}
+                disabled={m.status === 1 && m.coupon_id}> {m.status === 1 || !prize ?(m.coupon_id || prize ? '任務完成' : '快來領獎勵') : '去解任務'}</button>
             </div>
           </div>
         ))}

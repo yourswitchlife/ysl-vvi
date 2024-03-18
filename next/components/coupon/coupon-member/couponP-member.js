@@ -14,7 +14,7 @@ import logo from '@/public/images/coupon/logominiFig.png'
 import { useAuth } from '@/hooks/use-Auth'
 
 
-export default function Couponn({ currentFilter }) {
+export default function CouponP({ currentFilter }) {
   const [claimed, setClaimed] = useState([])
   const router = useRouter()
   const { isLoggedIn, memberId } = useAuth()
