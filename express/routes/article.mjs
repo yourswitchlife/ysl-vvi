@@ -137,16 +137,67 @@ ORDER BY article_time DESC
   }
 })
 
-router.get('/:ai_id', async (req, res) => {
-  const { ai_id } = req.params
+router.get('/:aid', async (req, res) => {
+  const { aid } = req.params
   try {
     const [article] = await db.execute(
       `SELECT *, DATE_FORMAT(article_time, '%Y-%m-%d') AS article_time
       FROM article_1 
       JOIN article_category ON article_1.category_id = article_category.id
       WHERE article_1.ai_id = ?`,
-      [ai_id]
+      [aid]
     )
+    const [comment] = await db.execute(
+      `SELECT *, DATE_FORMAT(create_at, '%Y-%m-%d') AS create_at
+      FROM article_comment 
+      JOIN member ON article_comment.member_id = member.id
+      WHERE article_comment.article_id = ?`,
+      [aid]
+    )
+    const resData = {
+      article,
+      comment,
+    }
+    res.json(resData)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Internal Server Error' })
+  }
+})
+router.post('/article/:aid', async (req, res) => {
+  try {
+    const { aid } = req.params
+    const { emo } = req.body
+
+    // 在这里执行更新数据库的操作，将 emo 更新为新的值
+    // 假设您的数据库中有名为 article 的表，其中有一个名为 emo 的字段
+    const updateResult = await db.execute(
+      `UPDATE article SET emo = ? WHERE article_id = ?`,
+      [emo, aid]
+    )
+
+    if (updateResult.affectedRows === 1) {
+      res.status(200).json({ message: 'Emo value updated successfully' })
+    } else {
+      res.status(500).json({ error: 'Failed to update emo value in database' })
+    }
+  } catch (error) {
+    console.error('Error updating emo value:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
+  }
+})
+
+router.get('/list/:sid', async (req, res) => {
+  const { sid } = req.params
+  try {
+    const searchKeyword = `%${sid}%`
+    const queryString = `
+      SELECT *, DATE_FORMAT(article_time, '%Y-%m-%d') AS article_time 
+      FROM article_1 
+      JOIN article_category ON article_1.category_id = article_category.id 
+      WHERE article_1.article_title LIKE ?`
+
+    const [article] = await db.execute(queryString, [searchKeyword])
     res.json(article)
     console.log(article)
   } catch (error) {
@@ -154,18 +205,36 @@ router.get('/:ai_id', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' })
   }
 })
-router.get('/list/:search', async (req, res) => {
-  const { search } = req.params
+
+router.get('/comment', async (req, res) => {
   try {
-    const [article] = await db.execute(
-      `SELECT *, DATE_FORMAT(article_time, '%Y-%m-%d') AS article_time
-      FROM article_1 
-      JOIN article_category ON article_1.category_id = article_category.id
-      WHERE article_1.article_p1 = ?`,
-      [search]
-    )
+    const [article] = await db.execute(`SELECT * FROM article_comment`)
     res.json(article)
     console.log(article)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Internal Server Error' })
+  }
+})
+
+router.post('/comment', async (req, res) => {
+  try {
+    const { content } = req.body
+    console.log(content)
+    // 在这里执行将评论存储到数据库的操作
+    // 假设您使用的是 article_comment 表存储评论数据
+    const [result] = await db.execute(
+      `INSERT INTO article_comment (content) VALUES (?)
+      `,
+      [content]
+    )
+
+    // 检查是否成功插入评论
+    if (result.affectedRows === 1) {
+      res.status(201).json({ message: '评论已成功提交' })
+    } else {
+      res.status(500).json({ error: '评论提交失败' })
+    }
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Internal Server Error' })

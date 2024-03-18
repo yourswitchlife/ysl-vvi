@@ -5,6 +5,7 @@ import Navbar from '@/components/layout/navbar/navbar'
 import { FaSearch } from 'react-icons/fa'
 import Link from 'next/link'
 import Slider from 'react-slick'
+import { useRouter } from 'next/router';
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import settings from '../article/setting'
@@ -19,14 +20,27 @@ export default function index() {
   const [title, setTitle] = useState([])
   const [more, setMore] = useState([])
   const [hot, setHot] = useState([])
-  const [tag, setTag] = useState([])
+
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const router = useRouter();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (searchKeyword.trim() !== '') {
+      const url = `/article/list/${encodeURIComponent(searchKeyword)}`;
+      router.push(url);
+    }
+  };
+
+  const handleChange = (e) => {
+    setSearchKeyword(e.target.value);
+  };
 
 
   const getArticle = async () => {
     try {
       const res = await fetch('http://localhost:3005/api/article')
       const data = await res.json()
-      // console.log(data)
 
       if (data) {
         setArticle(data.article)
@@ -36,11 +50,8 @@ export default function index() {
         setTitle(data.title)
         setMore(data.more)
         setHot(data.hot)
-        setTag(data.tag)
 
       }
-      // console.log(data.article);
-      // console.log(data.title);
 
     } catch (e) {
       console.error(e)
@@ -77,11 +88,8 @@ export default function index() {
         >
           <div className={style.left_main}>
             <div className="mb-4">
-              <form className="d-flex" role="search">
-                <button
-                  className={`btn btn-primary ${style.search_btn}`}
-                  type="submit"
-                >
+              <form className="d-flex" role="search" onSubmit={handleSubmit}>
+                <button className={`btn btn-primary ${style.search_btn}`} type="submit">
                   <FaSearch />
                 </button>
                 <input
@@ -89,6 +97,8 @@ export default function index() {
                   type="search"
                   placeholder="搜尋文章"
                   aria-label="Search"
+                  value={searchKeyword}
+                  onChange={handleChange}
                 />
               </form>
             </div>

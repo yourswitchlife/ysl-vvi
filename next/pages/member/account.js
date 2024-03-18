@@ -143,9 +143,9 @@ export default function account() {
               title: "旅途的開始",
               text: "您的個人資料已更新！",
               icon: "success",
-              confirmButtonColor: "#43B0FF",
-              confirmButtonText: "好的"
+              showConfirmButton: false,
             });
+            
             window.location.href = '/member/account';
             // console.log('資料更新成功！');
           } else {

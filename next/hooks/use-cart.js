@@ -145,6 +145,18 @@ export function CartProvider({ children }) {
     })
   }
 
+  // 轉換商品語言版本為中文
+  const changeLanguage = (language)=>{
+    console.log(language)
+    const languageList = {
+      CH:'中文',
+      EN:'英文',
+      JP:'日文'
+    }
+    const languageNames = language.split(',').map(item => languageList[item] || item).join(', ')
+    return languageNames
+  }
+
   // 計算被勾選的商品總價
   const filterItems = cartItems.filter((item) => item.userSelect === true)
   let totalPrice = 0
@@ -267,6 +279,7 @@ export function CartProvider({ children }) {
           return cartItem
         })
         setCartItems(updateCartItems)
+        notifySuccess()
       } else {
         // 超過庫存量
         notifyCartQunanty(item.product_quanty)
@@ -278,6 +291,7 @@ export function CartProvider({ children }) {
       const newItem = { ...item, quantity: item.quantity || 1, userSelect: item.userSelect || false, timeStamp }
       const newItems = [newItem, ...cartItems]
       setCartItems(newItems)
+      notifySuccess()
       // sellers
       setMemberIds([item.member_id, ...memberIds])
     }
@@ -302,6 +316,7 @@ export function CartProvider({ children }) {
         notifyMax,
         totalProducts,
         totalPrice,
+        changeLanguage,
       }}
     >
       {children}

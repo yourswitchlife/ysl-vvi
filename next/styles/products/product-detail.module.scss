@@ -108,7 +108,7 @@
 }
 .pHistory {
   position: fixed;
-  bottom: 50px;
+  bottom: 80px;
   right: 20px;
   // background-color: #15505e;
 }
@@ -145,8 +145,35 @@
   align-items: center;
 }
 
+.textEllipsis {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal; 
+}
+
+.pLanguageBig {
+  border: 1px solid $danger;
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  h5 {
+    color: $danger;
+    text-align: center;
+    line-height: 35px;
+  }
+}
+
+.imgSlider{
+  width: 580px;
+}
 // ------------------------------ RWD
 @media (max-width: 576px) {
+  .imgSlider{
+    width: 100%;
+  }
   .wrap {
     display: flex;
     overflow-x: scroll;
@@ -188,14 +215,13 @@
   position: relative;
   height: 100px;
   width: 100px;
-  border: 2px dashed $light-gray;
   border-radius: 10px;
   overflow: hidden;
 }
 .myLabel .icon {
   position: absolute;
-  right: 28px;
-  bottom: 28px;
+  right: 32px;
+  bottom: 33px;
   width: 40px;
   height: 40px;
   // background-color: rgb(232, 163, 255);

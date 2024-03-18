@@ -27,8 +27,14 @@ const app = express()
 // cors設定，參數為必要，注意不要只寫`app.use(cors())` 跨域用設定
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'https://localhost:9000'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3005',
+      'https://localhost:9000',
+      'https://sandbox-web-pay.line.me',
+      undefined,
+    ],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
   })
 )

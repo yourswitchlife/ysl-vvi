@@ -8,8 +8,12 @@ import Form from 'react-bootstrap/Form'
 import typeName from '@/data/type.json'
 import ratings from '@/data/rating.json'
 
-export default function TypeFilter() {
+export default function TypeFilter({ productFilter = () => {} }) {
   //offcanvas const
+  const [pFilter,setPFilter]=useState({
+    type:'',
+    rating:'',
+  })
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
@@ -18,13 +22,13 @@ export default function TypeFilter() {
   const [openRate, setOpenRate] = useState(false)
   //控制表單元件:遊戲類別
   const newTypeOptions = typeName.map((v, i) => {
-    return {...v, checked: false}
-  }) 
+    return { ...v, checked: false }
+  })
   const [typeCheck, setTypeCheck] = useState(newTypeOptions)
   //控制表單元件:遊戲分級
   const newRateOptions = ratings.map((v, i) => {
-    return {...v, checked: false}
-  }) 
+    return { ...v, checked: false }
+  })
   const [ratingCheck, setRatingCheck] = useState(newRateOptions)
   //漏斗選擇項目
   const toggleCheckbox = (check, id) => {
@@ -35,19 +39,26 @@ export default function TypeFilter() {
     })
   }
 
+  const typechecked = typeCheck.filter((v) => v.checked === true)
+  console.log(typechecked)
+  const ratingchecked = ratingCheck.filter((v) => v.checked === true)
+  console.log(ratingchecked)
+  productFilter(typechecked)
 
   return (
     <>
-        {/* offcanvas btn */}
-        <button
-          type="button"
-          onClick={handleShow}
-          className={`me-3 btn d-flex justify-content-center align-items-center ${styles.offcanvasBtn}`}
-        >
-          <h6 className="mb-0 d-none d-md-block">條件篩選</h6>
-          <p className="mb-0 d-block d-md-none">條件篩選(0)</p>
-          <FaFilter className={`ms-1 ${styles.iconsmall} text-light d-none d-md-block`} />
-        </button>
+      {/* offcanvas btn */}
+      <button
+        type="button"
+        onClick={handleShow}
+        className={`me-3 btn d-flex justify-content-center align-items-center ${styles.offcanvasBtn}`}
+      >
+        <h6 className="mb-0 d-none d-md-block">條件篩選</h6>
+        <p className="mb-0 d-block d-md-none">條件篩選(0)</p>
+        <FaFilter
+          className={`ms-1 ${styles.iconsmall} text-light d-none d-md-block`}
+        />
+      </button>
 
       {/* offcanvas */}
       <Offcanvas show={show} onHide={handleClose} className={styles.offcanvas}>
@@ -67,28 +78,28 @@ export default function TypeFilter() {
               className={`btn d-flex justify-content-center align-items-center ${styles.togglebtn}`}
             >
               <h5 className="mb-0 me-2 text-light">遊戲類別</h5>
-              <FaPlus className='text-light'/>
+              <FaPlus className="text-light" />
             </button>
             <Collapse in={openSort}>
               <div id="sort-collapse-text">
                 <div className="d-flex flex-column align-items-center pt-2">
-                {typeCheck.map((t) => {
-                  return (
-                    <div key={t.id}>
-                    <Form.Check // prettier-ignore
-                    type="checkbox"
-                    checked={t.checked}
-                    value={t.name}
-                    id={t.id}
-                    label={t.name}
-                    onChange={() => {
-                      setTypeCheck(toggleCheckbox(typeCheck, t.id))
-                    }}
-                    className="my-1"
-                  />
-                    </div>
-                  )
-                })}
+                  {typeCheck.map((t) => {
+                    return (
+                      <div key={t.id}>
+                        <Form.Check // prettier-ignore
+                          type="checkbox"
+                          checked={t.checked}
+                          value={t.name}
+                          id={t.id}
+                          label={t.name}
+                          onChange={(e) => {
+                            setTypeCheck(toggleCheckbox(typeCheck, t.id))
+                          }}
+                          className="my-1"
+                        />
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </Collapse>
@@ -101,28 +112,28 @@ export default function TypeFilter() {
               className={`btn d-flex justify-content-center align-items-center ${styles.togglebtn}`}
             >
               <h5 className="mb-0 me-2 text-light">遊戲分級</h5>
-              <FaPlus className='text-light'/>
+              <FaPlus className="text-light" />
             </button>
             <Collapse in={openRate}>
               <div id="rate-collapse-text">
                 <div className="d-flex flex-column align-items-center pt-2">
-                {ratingCheck.map((r) => {
-                  return (
-                    <div key={r.id}>
-                    <Form.Check // prettier-ignore
-                    type="checkbox"
-                    id={r.id}
-                    checked={r.checked}
-                    value={r.name}
-                    onChange={() => {
-                      setRatingCheck(toggleCheckbox(ratingCheck, r.id))
-                    }}
-                    label={r.name}
-                    className="my-1"
-                  />
-                    </div>
-                  )
-                })}
+                  {ratingCheck.map((r) => {
+                    return (
+                      <div key={r.id}>
+                        <Form.Check // prettier-ignore
+                          type="checkbox"
+                          id={r.id}
+                          checked={r.checked}
+                          value={r.name}
+                          onChange={() => {
+                            setRatingCheck(toggleCheckbox(ratingCheck, r.id))
+                          }}
+                          label={r.name}
+                          className="my-1"
+                        />
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </Collapse>

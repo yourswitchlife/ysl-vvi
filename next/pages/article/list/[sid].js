@@ -18,20 +18,32 @@ export default function list() {
   const [showB, setShowB] = useState(false);
   const toggleShowB = () => setShowB(!showB);
 
-  const getArticle = async (search) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (searchKeyword.trim() !== '') {
+      const url = `/article/list/${encodeURIComponent(searchKeyword)}`;
+      router.push(url);
+    }
+  };
+
+  const handleChange = (e) => {
+    setSearchKeyword(e.target.value);
+  };
+
+  const getArticle = async (sid) => {
     try {
-      const res = await fetch(`http://localhost:3005/api/article/${search}`);
+      const res = await fetch(`http://localhost:3005/api/article/list/${sid}`);
       const data = await res.json();
       setArticle(data);
-      console.log(data);
+      // console.log(data);
     } catch (e) {
       console.error(e);
     }
   };
   useEffect(() => {
     if (router.isReady) {
-      const { search } = router.query
-      getArticle(search)
+      const { sid } = router.query
+      getArticle(sid)
     }
   }, [router.isReady, router.query])
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
@@ -8,8 +8,12 @@ import SellerFooter from '@/components/layout/footer/footer-backstage'
 // import Form from 'react-bootstrap/Form'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import BreadCrumb from '@/components/common/breadcrumb'
+import { useAuth } from '@/hooks/use-Auth'
+import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 
 export default function New() {
+  const { isLoggedIn, memberId } = useAuth()
+  // console.log(memberId)
   //body style
   useEffect(() => {
     // 當元件掛載時添加樣式
@@ -29,6 +33,7 @@ export default function New() {
     pLanguage: [],
     pPrice: '',
     pDiscribe: '',
+    release_time: '',
   })
 
   const [errorMsg, setErrorMsg] = useState('')
@@ -46,7 +51,8 @@ export default function New() {
 
   const ratingOptions = ['普遍級', '保護級', '輔導級', '限制級']
 
-  const languageOptions = ['中文版', '英文版', '日文版']
+  const languageOptions = ['CH-中文', 'EN-英文', 'JP-日文']
+  // const fileInputRef = useRef();
 
   const handleChange = (e) => {
     if (e.target.type === 'file') {
@@ -77,6 +83,7 @@ export default function New() {
   }
 
   const handleForm = async (e) => {
+    console.log(e.target)
     e.preventDefault()
     if (
       !newP.pName ||
@@ -88,19 +95,50 @@ export default function New() {
       !newP.pImgs ||
       !newP.pType
     ) {
-      setErrorMsg('請檢查是否輸入完整欄位資訊')
+      alert('請檢查是否輸入完整欄位資訊')
       return
-    }else{
-      const fd = new FormData(newP)
-      fetch('http://localhost:3005/api/products/addNewProduct',{
-        method: 'POST',
-        body: JSON.stringify(fd)
-      })
-      .then(res => res.json())
-      .then(data => console.log(data))
+    } else {
+      const fd = new FormData(e.target)
+      console.log(fd.get('pLanguage'))
+      fetch(
+        `http://localhost:3005/api/products/addNewProduct?memberId=${memberId}`,
+        {
+          credentials: 'include',
+          method: 'POST',
+          body: fd,
+        }
+      )
+        .then((res) => res.json())
+        .then(
+          (data) => alert('新增成功！'),
+
+          setTimeout(() => {
+            clearForm()
+          }, 1000)
+        )
+        .catch((error) => {
+          console.error('error', error)
+        })
     }
   }
   console.log(newP)
+
+  const clearForm = ()=>{
+    setNewP({
+      pName: '',
+      pCover: '',
+      pImgs: [],
+      pType: 0,
+      pRating: '',
+      pLanguage: [],
+      pPrice: '',
+      pDiscribe: '',
+      release_time: '',
+    })
+    document.getElementById('pCover').value = ''
+    document.getElementById('pImgs').value = ''
+  }
+  // console.log(fd)
 
   return (
     <>
@@ -116,7 +154,7 @@ export default function New() {
           </div>
           <div className={`${styles.dashboardMargin}`}>
             <div className="d-lg-block d-none">
-            <BreadCrumb />
+              <BreadCrumb />
             </div>
 
             <div className={`mb-4 mt-lg-0 ${styles.dashboardStyle}`}>
@@ -127,9 +165,9 @@ export default function New() {
 
               <form
                 className=""
-                method="post"
-                action={'/addNewProduct'}
-                encType="multipart/form-data"
+                // method="post"
+                // action={'/addNewProduct'}
+                // encType="multipart/form-data"
                 onSubmit={handleForm}
               >
                 <div className="row">
@@ -162,6 +200,7 @@ export default function New() {
                       className="form-control"
                       id="pCover"
                       name="pCover"
+                      accept="image/*"
                       // value={newP.pCover}
                       onChange={handleChange}
                     />
@@ -189,7 +228,7 @@ export default function New() {
                         const files = e.target.files
                         if (files.length > 3) {
                           alert('最多只能上傳3張')
-                          setNewP({...newP,pImgs:[]})
+                          setNewP({ ...newP, pImgs: [] })
                           e.target.value = ''
                           return
                         }
@@ -244,6 +283,26 @@ export default function New() {
                         )
                       })}
                     </select>
+                  </div>
+                  {/* 商品發售時間 */}
+                  <div className="mb-3 col-12 d-flex justify-content-center align-items-center">
+                    <label
+                      htmlFor="release_time"
+                      className="h6 me-2 flex-shrink-0"
+                    >
+                      <h5 className="text-dark">
+                        發售時間<span className="text-danger">*</span>
+                      </h5>
+                    </label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="release_time"
+                      name="release_time"
+                      value={newP.release_time}
+                      // placeholder="請輸入商品名稱"
+                      onChange={handleChange}
+                    />
                   </div>
                   {/* 商品語言 */}
                   <div className="mb-3 col-lg-6 col-12 d-flex ">
@@ -316,15 +375,19 @@ export default function New() {
                   <button type="submit" className="btn btn-danger me-2">
                     儲存並上架
                   </button>
-                  <button
+                  {/* <button
                     type="button"
                     className={`btn ${styles.btnDangerOutlined} me-2`}
                   >
                     儲存暫不上架
-                  </button>
+                  </button> */}
+                  {/* 清空表單 */}
                   <button
                     type="button"
                     className={`btn ${styles.btnGrayOutlined}`}
+                    onClick={() => {
+                      clearForm()
+                    }}
                   >
                     取消
                   </button>
@@ -343,4 +406,8 @@ export default function New() {
       </main>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  return await mainCheckToLogin(context)
 }

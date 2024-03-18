@@ -6,9 +6,6 @@ import Link from 'next/link'
 // 引入use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
 
-// 引用優惠券選擇區
-import UseCoupon from './order/use-coupon'
-
 // 引用星星優惠券
 import CouponStar from '@/public/images/cart/couponStar.svg'
 // 引用漸層優惠券
@@ -87,7 +84,6 @@ export default function OrderList() {
                         $60
                       </div>
                     </div> */}
-                    {/* <UseCoupon /> */}
                     <div className={styles.summeryTotal}>
                       <div className={styles.totalText}>訂單總金額</div>
                       <div className={styles.totalPrice}>${totalPrice}</div>
@@ -106,7 +102,7 @@ export default function OrderList() {
       </section>
       {/* 手機版訂單總覽 */}
       <div className={styles.stickyMobileBar}>
-        <div className={styles.orderOverviewMobileBar}>
+        {/* <div className={styles.orderOverviewMobileBar}>
           <div className={styles.useDiscountBar}>
             <div className={styles.discountLeft}>
               <Image src={CouponStar} />
@@ -123,7 +119,7 @@ export default function OrderList() {
             </div>
             <div className={styles.infoRight}>顯示完整折扣細節</div>
           </div>
-        </div>
+        </div> */}
         <div className={styles.checkoutBar}>
           <div className={styles.checkout}>
             <div className={styles.textContent}>

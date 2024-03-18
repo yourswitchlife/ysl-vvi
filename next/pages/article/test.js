@@ -10,16 +10,13 @@ import 'slick-carousel/slick/slick-theme.css'
 import settings from '../article/setting'
 import Link from 'next/link'
 
-// import data from '@/public/images/card'
 
 export default function index() {
-  // const initState = data.map((v, i) => {
-  //   return { ...v, fav: false }
-  // })
-
-  // const [article, setArticle] = useState(initState)
+  
   const [showB, setShowB] = useState(true);
   const toggleShowB = () => setShowB(!showB);
+
+  
 
 
   return (

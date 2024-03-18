@@ -71,7 +71,7 @@ export default function register() {
             showConfirmButton: false,
             timer: 1300
           });
-          router.push('/member/login');
+          router.replace('/member/login'); 
           
         } else {
           // 處理錯誤情況
