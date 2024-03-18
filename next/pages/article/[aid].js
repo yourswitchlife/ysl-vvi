@@ -35,6 +35,8 @@ export default function article_main() {
           },
           body: JSON.stringify({ emo: newEmo }),
         });
+        console.log(newEmo);
+        
 
         if (res.ok) {
           setEmo(newEmo);

@@ -172,7 +172,7 @@ router.post('/article/:aid', async (req, res) => {
     // 在这里执行更新数据库的操作，将 emo 更新为新的值
     // 假设您的数据库中有名为 article 的表，其中有一个名为 emo 的字段
     const updateResult = await db.execute(
-      `UPDATE article SET emo = ? WHERE article_id = ?`,
+      `UPDATE article_comment SET emo = ? WHERE article_id = ?`,
       [emo, aid]
     )
 
