@@ -21,8 +21,8 @@ export default function ProductCard({
   member_id,
   fav,
   handleToggleFav,
-  cardIcon = () => {},
   language,
+  cardIcon = () => {},
 }) {
   const ratingStyle = (v) => {
     let ratingId = '',
@@ -219,6 +219,7 @@ export default function ProductCard({
                     language,
                     quantity: 1,
                   })
+                  // console.log(language)
                 }}
               />
             </div>
@@ -238,14 +239,10 @@ export default function ProductCard({
             <h6>
               <b className="text-danger">NT${price}</b>
             </h6>
-            {display_price == null ? (
-              ''
-            ) : (
-              <p className="text-white-50 text-decoration-line-through">
-                NT ${display_price}
-              </p>
-            )}
-
+            {display_price == null || display_price == price ? (''):(<p className="text-white-50 text-decoration-line-through">
+              NT ${display_price}
+            </p>)}
+         
             {/* <p className="text-white-50 text-decoration-line-through">
               NT${display_price}
             </p> */}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import BreadCrumb from '@/components/common/breadcrumb'
 import Image from 'next/image'
-import { FaRegHeart, FaCartPlus, FaShoppingCart } from 'react-icons/fa'
+import { FaRegHeart, FaCartPlus, FaShoppingCart, FaStore} from 'react-icons/fa'
 import ProductCard from '@/components/products/product-card'
 import Link from 'next/link'
 import styles from '../../styles/products/product-detail.module.scss'
@@ -43,9 +43,72 @@ export default function ProductDetail() {
     launch_valid: '',
     created_at: '',
   })
+  const [sameTypeP, setSameTypeP] = useState({
+    id: '',
+    type_id: '',
+    name: '',
+    product_quanty: '0',
+    fav: '',
+    display_price: '',
+    price: '',
+    img_cover: '',
+    img_details: [],
+    release_time: '',
+    language: [],
+    rating_id: '3',
+    co_op_valid: '0',
+    description: '',
+    member_id: '',
+    valid: '',
+    launch_valid: '',
+    created_at: '',
+  })
+  const [sameShopP, setSameShopP] = useState({
+    id: '',
+    type_id: '',
+    name: '',
+    product_quanty: '0',
+    fav: '',
+    display_price: '',
+    price: '',
+    img_cover: '',
+    img_details: [],
+    release_time: '',
+    language: [],
+    rating_id: '3',
+    co_op_valid: '0',
+    description: '',
+    member_id: '',
+    valid: '',
+    launch_valid: '',
+    created_at: '',
+  })
+  const [shopSelect, setShopSelect] = useState({
+    id: '',
+    type_id: '',
+    name: '',
+    product_quanty: '0',
+    fav: '',
+    display_price: '',
+    price: '',
+    img_cover: '',
+    img_details: [],
+    release_time: '',
+    language: [],
+    rating_id: '3',
+    co_op_valid: '0',
+    description: '',
+    member_id: '',
+    valid: '',
+    launch_valid: '',
+    created_at: '',
+  })
+  const [shopData, setShopData] = useState({})
+  const [shopComment, setShopComment] = useState({})
   const [ben, setBen] = useState(false)
   // const [detailImgs,setDetailImgs] = useState(product.img_details)
   // 商品數量+1
+  // console.log(shopData)
   const handleIncrement = () => {
     // 查看當前購物車的該商品數量
     const currentQuantyInCart =
@@ -60,6 +123,7 @@ export default function ProductDetail() {
       }))
     }
   }
+
 
   // 商品數量-1
   const reduce = () => {
@@ -90,12 +154,52 @@ export default function ProductDetail() {
     try {
       const res = await fetch(`http://localhost:3005/api/products/${pid}`)
       const data = await res.json()
-      // console.log(data[0])
+      // console.log(data.responseData[0]) //相對應id的商品
+      // console.log(data.shopData[0]) //找同類型的商品
       // console.log(data[0].img_details)
       // console.log(data[0].img_details.split(","))
+      // console.log(sameTypeP)
+      if(data.shopData[0].name){
+        setShopData(data.shopData[0])
+        // console.log(shopData.id)
+      }
+      if(data.shopComment[0].id){
+        setShopComment(data.shopComment)
+        // console.log(shopData.id)
+      }
+      // console.log(data.shopComment)
+      // if(data.shopComment[0].name){
+      //   setShopData(data.shopData[0])
+      //   // console.log(shopData.id)
+      // }
+      // const shopid = shopData.id  
 
-      if (data[0].name) {
-        setProduct({ ...data[0], quantity: 1, userSelect: false })
+      if(data.productTypeResult[0].name){
+        const sameTypeP = data.productTypeResult.filter((p,i) => p.id != data.responseData[0].id)
+        const sTypeP = sameTypeP.slice(1,5)
+        setSameTypeP(sTypeP)
+        // console.log(sTypeP)
+      }
+      
+      if(data.sameShopP[0].name){
+        const sameShopP = data.sameShopP.filter((p,i) => p.id != data.responseData[0].id)
+        const sSP = sameShopP.slice(1,3)
+        setSameShopP(sSP)
+        // console.log(sSP)
+      }
+      // setShopSelect(product)
+      // console.log(shopSelect)
+      // if(data.shopSelect[0].name){
+      //   const filteredShopSelect = shopSelect.filter((p) => p.id != p.member_id === product.member_id)
+      //   const filterShopSelect = filteredShopSelect.slice(1,3)
+      //   setShopSelect(filterShopSelect)
+      //   console.log(shopSelect)
+      // }
+
+
+      if (data.responseData[0].name) {
+        setProduct({ ...data.responseData[0], quantity: 1, userSelect: false })
+        setShopSelect({ ...data.responseData[0] })
       }
     } catch (e) {
       console.error(e)
@@ -135,6 +239,32 @@ export default function ProductDetail() {
     }
     return type
   }
+
+  const memberIdChange = (v) => {
+    let memberId = ''
+    switch (Number(v)) {
+      case 1:
+        memberId = '玩具熊的小窩'
+        break
+      case 2:
+        memberId = '煞氣欸路易吉'
+        break
+      case 3:
+        memberId = '碧姬公主的玩具城堡'
+        break
+      case 4:
+        memberId = '栗寶寶好物站'
+        break
+      case 5:
+        memberId = '庫巴很酷吧'
+        break
+      case 6:
+        memberId = '紅色死神的遊戲收藏'
+        break
+    }
+    return memberId
+  }
+
   const ratingStyle = (v) => {
     let ratingId = '',
       bgc = ''
@@ -180,13 +310,14 @@ export default function ProductDetail() {
   useEffect(() => {
     console.log(historyRecords)
   }, [historyRecords])
-  console.log(historyRecords)
+  // console.log(historyRecords)
   // let imgAry = [product.img_details.split(",")[0], product.img_details.split(",")[1], product.img_details.split(",")[2]]
 
   // console.log(product.img_details)
   if (product.img_details != '') {
     console.log(product.img_details.split(','))
   }
+
   return (
     <>
     <GoTopButton/>
@@ -320,7 +451,7 @@ export default function ProductDetail() {
             <ul className="h6 text-white">
               <li>主機平台：Switch</li>
               <li>遊戲類型：{typeChange(product.type_id)}</li>
-              <li>發售日期：{product.release_time} 上市</li>
+              <li>發售日期：{product.release_time.split('T')[0]} 上市</li>
               <li>作品分級：{rs.ratingId} ⁺</li>
               <li>遊戲人數：1~2人</li>
             </ul>
@@ -365,7 +496,7 @@ export default function ProductDetail() {
                       width={670}
                       height={400}
                       priority={true}
-                      className="my-3 w-100 h-auto"
+                      className="my-4 w-100 h-auto"
                     />
                   )
                 })
@@ -377,9 +508,10 @@ export default function ProductDetail() {
               className={`${styles.myshop} d-flex justify-content-between align-items-center mb-4`}
             >
               <div className="d-flex align-items-center">
-                <div>
+                <div style={{height:'85px',width:'75px'}}>
                   <Image
-                    src="https://i.ebayimg.com/images/g/ToYAAOSw-mJh6lHy/s-l1600.png"
+                    // src="https://i.ebayimg.com/images/g/ToYAAOSw-mJh6lHy/s-l1600.png"
+                    src={`http://localhost:3005/profile-pic/${shopData.pic}`}
                     alt="shop"
                     width={75}
                     height={75}
@@ -388,39 +520,73 @@ export default function ProductDetail() {
                   />
                 </div>
                 <div className="ms-3">
-                  <h6 className="text-white">我的ns小舖</h6>
+                  <h6 className="text-white">{memberIdChange(product.member_id)}</h6>
                   <RatingStars />
                 </div>
               </div>
               <div className="me-2">
-                <button
+                {/* <button
                   type="button"
                   className="btn btn-danger btn-sm d-block mb-1"
                 >
                   <FaRegHeart className="text-light pb-1" /> 關注店家
-                </button>
+                </button> */}
                 <button type="button" className="btn btn-danger btn-sm mt-1">
-                  <FaRegHeart className="text-light pb-1" /> 進入本店
+                  <FaStore className="text-light pb-1" /> 進入本店 
                 </button>
               </div>
             </div>
             <hr className="text-white border-3" />
             <h5 className="text-white mb-3">本店精選</h5>
             <div className={styles.wrap}>
-              <ProductCard></ProductCard>
-              <ProductCard></ProductCard>
+            {sameShopP.length > 0 ? sameShopP.map((p,i)=>{
+              return(
+                <ProductCard key={i}
+                id={p.id}
+                      name={p.name}
+                      price={p.price}
+                      display_price={p.display_price}
+                      releaseTime={p.release_time.split('T')[0]}
+                      img_cover={p.img_cover}
+                      img_details={p.img_details}
+                      type={p.type_id}
+                      ratingId={p.rating_id}
+                      fav={p.fav}
+                      // handleToggleFav={handleToggleFav}
+                      member_id={p.member_id}
+                      // cardIcon={cardIcon}
+              />
+              )
+            }):''}
             </div>
             <hr className="text-white border-3" />
 
             <h5 className="text-white mb-3">本分類熱銷</h5>
             <div className={styles.wrap}>
-              <ProductCard></ProductCard>
-              <ProductCard></ProductCard>
-              <ProductCard></ProductCard>
-              <ProductCard></ProductCard>
+            {console.log(sameTypeP)}
+            {sameTypeP.length > 0 ? sameTypeP.map((p,i)=>{
+              return(
+                <ProductCard key={i}
+                id={p.id}
+                      name={p.name}
+                      price={p.price}
+                      display_price={p.display_price}
+                      releaseTime={p.release_time.split('T')[0]}
+                      img_cover={p.img_cover}
+                      img_details={p.img_details}
+                      type={p.type_id}
+                      ratingId={p.rating_id}
+                      fav={p.fav}
+                      // handleToggleFav={handleToggleFav}
+                      member_id={p.member_id}
+                      // cardIcon={cardIcon}
+              />
+              )
+            }):''}
+            
             </div>
             <Link
-              href=""
+              href="http://localhost:3000/products"
               className={`d-block mt-2 text-end more h6 text-white ${styles.more}`}
             >
               看更多...
@@ -430,7 +596,19 @@ export default function ProductDetail() {
         <section className="p-detail-sec-3">
           <h5 className="text-white">對賣家的評價</h5>
           <hr className="text-white border-3" />
-          <Reviewed />
+          {shopComment.length > 0 ?shopComment.map((v,i) => {
+            return (
+          <Reviewed key={i}
+            name={v.name}
+            pic={v.pic}
+            content={v.content}
+            created_at={v.created_at}
+            rating={v.rating}
+            comment_img={v.comment_img}
+            reply={v.reply}
+          />
+            )
+          }):''}
           <Review />
         </section>
       </div>

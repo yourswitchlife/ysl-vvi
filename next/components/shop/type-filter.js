@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Offcanvas from 'react-bootstrap/Offcanvas'
 //toggle list from react bootstrap
 import Collapse from 'react-bootstrap/Collapse'
@@ -10,10 +10,6 @@ import ratings from '@/data/rating.json'
 
 export default function TypeFilter({ productFilter = () => {} }) {
   //offcanvas const
-  const [pFilter,setPFilter]=useState({
-    type:'',
-    rating:'',
-  })
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
@@ -39,11 +35,28 @@ export default function TypeFilter({ productFilter = () => {} }) {
     })
   }
 
-  const typechecked = typeCheck.filter((v) => v.checked === true)
-  // console.log(typechecked)
-  const ratingchecked = ratingCheck.filter((v) => v.checked === true)
-  // console.log(ratingchecked)
-  productFilter(typechecked)
+  // 點按鈕後把選到的值傳給父層且同步
+  const handleSubmit = () => {
+    const typechecked = typeCheck.filter((v) => v.checked === true)
+    const ratingchecked = ratingCheck.filter((v) => v.checked === true)
+    // console.log(typechecked)
+    // console.log(ratingchecked)
+    const pFilterCondintion = { typechecked, ratingchecked }
+    productFilter(pFilterCondintion)
+
+    handleClose()
+  }
+  useEffect(() => {
+  }, [typeCheck, ratingCheck])
+  
+  const clearForm = () => {
+  //  const checkboxes = document.querySelectorAll('input[type="checkbox"]')
+  //  console.log(checkboxes)
+  //  checkboxes.forEach(checkbox => checkbox.checked = false)
+  setTypeCheck(typeCheck.map(v => ({ ...v, checked: false })))
+  setRatingCheck(ratingCheck.map(v => ({ ...v, checked: false })))
+  }
+
 
   return (
     <>
@@ -53,7 +66,7 @@ export default function TypeFilter({ productFilter = () => {} }) {
         onClick={handleShow}
         className={`me-3 btn d-flex justify-content-center align-items-center ${styles.offcanvasBtn}`}
       >
-        <h6 className="mb-0 d-none d-md-block">條件篩選</h6>
+        <h6 className="mb-0 d-none d-md-block">條件篩選(0)</h6>
         <p className="mb-0 d-block d-md-none">條件篩選(0)</p>
         <FaFilter
           className={`ms-1 ${styles.iconsmall} text-light d-none d-md-block`}
@@ -141,8 +154,12 @@ export default function TypeFilter({ productFilter = () => {} }) {
               className={`d-flex justify-content-center ${styles.selectBtn}`}
             >
               <button
-                type="submit"
+                type="button"
                 className="btn btn-danger d-flex align-items-center"
+                onClick={() => {
+                  handleSubmit();
+                  clearForm()
+                }}
               >
                 篩選商品
               </button>
