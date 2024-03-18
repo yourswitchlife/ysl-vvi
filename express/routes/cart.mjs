@@ -208,7 +208,7 @@ router.post('/create-order', async (req, res) => {
     selectedProductCoupon,
     selectedShippingCoupon,
   } = req.body
-  // console.log(req.body)
+  console.log(req.body)
 
   // 計算總優惠折抵(商品折抵金額+運費折抵金額)
   const totalDiscount = shippingDiscount + productDiscount
