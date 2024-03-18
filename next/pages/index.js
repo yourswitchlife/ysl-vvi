@@ -1,15 +1,67 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
+import Image from 'next/image'
 import ControlledCarousel from '@/components/common/ControlledCarousel'
 import styles from '../styles/index.module.scss'
-import Image from 'next/image'
 import Navbar from '@/components/layout/navbar/navbar'
 import ProductList from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
 import IndexSlider from '@/components/common/index-slider'
+import ShopCardA from '@/components/shop/shop-card-a'
+import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 // import Navbar from '@/components/layout/navbar/navbar'
 import GoTopButton from '@/components/go-to-top/go-top-button'
 
+
 export default function Index() {
+  const router = useRouter()
+  const [shop, setShop] = useState([])
+  const [selectedShops, setSelectedShops] = useState([null, null])
+  const [rating, setRating] = useState([])
+  const [bigPic, setBigPic] = useState(profilePhoto)
+  const [roundedRating, setRoundedRating] = useState(0)
+
+  const getShop = async () => {
+    try{
+      const res = await fetch (`http://localhost:3005/api/shop/`)
+      if(!res.ok){
+        throw new Error('網路請求失敗，找不到賣場資料評價')
+      }
+      const data = await res.json()
+      const {shopRating, shop} = data
+      // console.log(shop)
+      // {
+      //   "shopRating": [{....}],
+       //   "shop": [{....}],
+      // 確保返回的數據結構正確，並更新狀態
+      if (data && shop.length > 0 && shopRating.length > 0) {
+        setShop(shop)
+        setRating(shopRating)
+      }
+    }catch (e){
+      console.error(e)
+    }
+  }
+
+  useEffect(() => {
+    getShop()
+  }, [])
+  useEffect(() => {
+    if(shop.length > 1){
+      let firstIndex = Math.floor(Math.random() * shop.length)
+      let secondIndex = Math.floor(Math.random() * shop.length)
+      //確保兩個索引值不同
+      while (secondIndex === firstIndex){
+        secondIndex = Math.floor(Math.random() * shop.length)
+      }
+      setSelectedShops([shop[firstIndex], shop[secondIndex]])
+    }
+  }, [shop])
+
+
+  //隨機選擇精選賣場
+
   return (
     <>
     <GoTopButton/>
@@ -102,6 +154,10 @@ export default function Index() {
           <div class="col">
             <h4 className="text-white mb-2">好康資訊</h4>
             <h4 className="text-white mb-2">精選賣家</h4>
+            <div className='d-flex justify-content-between align-items-center flex-wrap'>
+              {selectedShops[0] && <ShopCardA avgRating={roundedRating} shopInfo={selectedShops[0]} />}
+              {selectedShops[1] && <ShopCardA avgRating={roundedRating} shopInfo={selectedShops[1]} />}
+            </div>
           </div>
         </div>
       </section>

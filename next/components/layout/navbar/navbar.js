@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import styles from '@/components/layout/navbar/navbar.module.scss'
 import yslLogoSm from '@/public/images/logo/logo-sm.svg'
 import yslLogoXs from '@/public/images/logo/logo-xs.svg'
-import SearchBar from './searchBar'
+// import SearchBar from './searchBar'
 import SearchBarB from './searchBarB'
 import Image from 'next/image'
 import Link from 'next/link'
-import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
-import { FaHeart, FaShoppingCart, FaBell, FaStore } from 'react-icons/fa'
+// import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
+import { FaHeart, FaShoppingCart, FaBell, FaStore, FaSearch } from 'react-icons/fa'
 import Dropdown from 'react-bootstrap/Dropdown';
 import BurgerMenu from './burgermenu'
 //登出邏輯
@@ -20,40 +20,53 @@ import { useAuth } from '@/hooks/use-Auth';
 import NavPic from '@/hooks/use-navpic';
 // 引入use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
-import { useRouter } from 'next/router'
 
 
-export default function Navbar() {
+export default function Navbar(props) {
+  const { searchWord, setSearchWord } = props
   const { isLoggedIn, memberData } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
-  const { totalProducts } = useCart()
+  const {totalProducts} = useCart()
   return (
     <>
-      <div className='d-none d-lg-block'>
-        <header
-          className={styles.navbar}
+    <div className='d-none d-lg-block'>
+      <header
+        className={styles.navbar}
+      >
+        <div // logo
         >
-          <div // logo
-          >
-            <Link href="/">
-              <Image src={yslLogoSm} alt="ysl-logo" />
-            </Link>
-          </div>
-          <div className={styles.links}>
-            <Link href="/products" className={styles.linkPr}>
-              商品專區
-            </Link>
-            <Link href="/coupon" className={styles.linkPr}>
-              優惠報報
-            </Link>
-            <Link href="/article" className={styles.link}>
-              最新攻略
-            </Link>
-          </div>
-          <div className="">
-            <SearchBar />
-          </div>
-          {isLoggedIn ? (
+          <Link href="/">
+            <Image src={yslLogoSm} alt="ysl-logo" />
+          </Link>
+        </div>
+        <div className={styles.links}>
+          <Link href="/products" className={styles.linkPr}>
+            商品專區
+          </Link>
+          <Link href="/coupon" className={styles.linkPr}>
+            優惠報報
+          </Link>
+          <Link href="/article" className={styles.link}>
+            最新攻略
+          </Link>
+        </div>
+        <div className="">
+        <div className={styles.display}>
+        <button type="button" className={`${styles.button}`}>
+          <FaSearch className={styles.icon} />
+        </button>
+        <input
+        type='text'
+          // text="search"
+          placeholder="搜尋所有商品..."
+          className={styles.search}
+          value={searchWord}
+          onChange={(e) => {
+            setSearchWord(e.target.value)}}
+        />
+      </div>
+        </div>
+        {isLoggedIn ? (
             // 登入後顯示
             <div className="d-flex align-items-center">
               <Link href="/member/fav-product" className={styles.loginIcon}>
