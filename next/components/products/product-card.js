@@ -21,8 +21,8 @@ export default function ProductCard({
   member_id,
   fav,
   handleToggleFav,
-  cardIcon = () => {},
   language,
+  cardIcon = () => {},
 }) {
   const ratingStyle = (v) => {
     let ratingId = '',
@@ -219,6 +219,7 @@ export default function ProductCard({
                     language,
                     quantity: 1,
                   })
+                  // console.log(language)
                 }}
               />
             </div>

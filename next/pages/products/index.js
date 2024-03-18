@@ -232,10 +232,7 @@ export default function Products() {
         ()=>{setDisplayProducts(products)}
       } class={styles.btnClean}>清除篩選條件</button>
          
-          {/* <div>
-            <FaBorderAll className="text-white me-2 h5" />
-            <IoReorderFour className="text-white h4 mb-0" />
-          </div> */}
+         
         </div>
         <div className="container px-0 py-2 mb-3">
           <div className="row row-cols-2 row-cols-lg-5 g-0 g-lg-3">
@@ -269,7 +266,8 @@ export default function Products() {
                       handleToggleFav={handleToggleFav}
                       member_id={p.member_id}
                       cardIcon={cardIcon}
-                      // imgDetails={p.img_details}
+                      product_quanty={p.product_quanty}
+                      language={p.language}
                     />
                   </div>
                 </div>

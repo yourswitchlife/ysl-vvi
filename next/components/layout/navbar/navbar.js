@@ -70,17 +70,20 @@ export default function Navbar(props) {
             // 登入後顯示
             <div className="d-flex align-items-center">
               <Link href="/member/fav-product" className={styles.loginIcon}>
-                <FaHeart className={styles.icon}/>
+                <FaHeart className={styles.icon} />
               </Link>
               <Link href="/cart" className={`${styles.loginIcon} position-relative`}>
                 <FaShoppingCart className={styles.icon} />
-                <span class="position-absolute top-0 start-99 translate-middle badge rounded-pill bg-danger">
-                {totalProducts}
-                <span className="visually-hidden">unread messages</span>
-              </span>
+                {totalProducts > 0 && (
+                  <span class="position-absolute top-0 start-99 translate-middle badge rounded-pill bg-danger">
+                    {totalProducts}
+                    <span className="visually-hidden">unread messages</span>
+                  </span>
+                )}
+
               </Link>
               <Link href="/member/notify-order" className={styles.loginIcon}>
-                <FaBell className={styles.icon}/>
+                <FaBell className={styles.icon} />
               </Link>
               <Link href="/seller" className={styles.loginIconEnd}>
                 <FaStore className={styles.icon} />
@@ -122,23 +125,23 @@ export default function Navbar(props) {
 
 
             ) : null}
-        </div>
-      </header>
+          </div>
+        </header>
       </div>
       {/* RWD */}
       <div className='d-flex flex-column d-lg-none'>
-      <header className={styles.navbarB}>
-        <div // logo
-        >
-          <Link href="/">
-            <Image src={yslLogoXs} alt="ysl-logo" />
-          </Link>
-        </div>
-        <div className="">
-          <SearchBarB />
-        </div>
-        <BurgerMenu />
-      </header>
+        <header className={styles.navbarB}>
+          <div // logo
+          >
+            <Link href="/">
+              <Image src={yslLogoXs} alt="ysl-logo" />
+            </Link>
+          </div>
+          <div className="">
+            <SearchBarB />
+          </div>
+          <BurgerMenu />
+        </header>
       </div>
     </>
   )
