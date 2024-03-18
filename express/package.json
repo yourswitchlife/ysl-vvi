@@ -12,7 +12,7 @@
   "dependencies": {
     "@sweetalert2/themes": "^5.0.16",
     "app-root-path": "^3.1.0",
-    "axios": "^1.6.7",
+    "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "bluebird": "^3.7.2",
     "body-parser": "^1.20.2",
