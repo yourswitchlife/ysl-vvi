@@ -46,15 +46,11 @@ export default function OrdersDetailList() {
   // 運費coupon_id存放區
   const [selectedShippingCoupon, setSelectedShippingCoupon] = useState(null)
 
-  
-  // 商品coupon_id暫存區
-  const [tempSelectedProductCoupon, setTempSelectedProductCoupon] = useState(null)
-  // 運費coupon_id暫存區
-  const [tempSelectedShippingCoupon, setTempSelectedShippingCoupon] = useState(null)
-  // 商品coupon_id存放區
-  const [selectedProductCoupon, setSelectedProductCoupon] = useState(null)
-  // 運費coupon_id存放區
-  const [selectedShippingCoupon, setSelectedShippingCoupon] = useState(null)
+  // 免運優惠券折抵金額
+  const [shippingDiscount, setShippingDiscount] = useState(0)
+  // 商品優惠券折抵金額
+  const [productDiscount, setProductDiscount] = useState(0)
+
   // 儲存從order-checkout傳來的物流方式
   const [shippingMethods, setShippingMethods] = useState({})
 
