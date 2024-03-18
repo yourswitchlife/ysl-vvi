@@ -98,10 +98,14 @@ export default function Seller() {
         // console.log(newZeroItems.length)
         setZeroItems(newZeroItems.length) 
         //取得評價平均
-        const totalRating = data.comments.reduce((acc, cur) => acc + cur.rating, 0);
-        const averageRating = (totalRating / data.comments.length).toFixed(1); // 保留一位小數
-        // console.log(averageRating)
-        setShopRating(averageRating)
+        if(data.comments.length > 0){
+          const totalRating = data.comments.reduce((acc, cur) => acc + cur.rating, 0);
+          const averageRating = (totalRating / data.comments.length).toFixed(1); // 保留一位小數
+          // console.log(averageRating)
+          setShopRating(averageRating)
+        } else {
+          setShopRating("0.0")
+        }
         //取得評價總數
         setCommentNum(data.comments.length)
       }
