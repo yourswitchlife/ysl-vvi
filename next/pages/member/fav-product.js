@@ -117,7 +117,8 @@ export default function FavProduct() {
       display_price: Number(displayPriceString),
       quantity: 1, // 預設1
       img_cover: product.img_cover,
-      user_select: false
+      user_select: false,
+      member_Id:product.memberId
     }
     console.log(newItem)
     addItem(newItem)

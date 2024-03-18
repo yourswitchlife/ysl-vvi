@@ -37,33 +37,39 @@ const io = new SocketIOServer(server, {
 });
 
 // io監聽事件設定
-io.on('connection', async (socket) => { 
-  console.log('A member connected.');
+io.on('connection', async (socket) => {
+  console.log('A member connected.')
 
-  const sendUnreadCount = async () => {
+  socket.on('member_connected', async (data) => {
+    console.log('A member reading.')
+    socket.memberId = data.memberId
+    await sendUnreadCount(socket.memberId); 
+  });
+
+  db.on('after_member_coupon_insert', async (data) => {
+    console.log('New notification received:', data);
+    await sendUnreadCount(socket.memberId); 
+  });
+  
+  const sendUnreadCount = async (memberId) => {
     try {
-      const [results] = await db.query("SELECT COUNT(*) AS unreadCount FROM notify_coupon WHERE valid = 0");
+      console.log('memberIDunread:', memberId)
+      const [results] = await db.query("SELECT COUNT(*) AS unreadCount FROM notify_coupon WHERE member_id = ? AND valid = 0", [memberId]);
       socket.emit('unread_count', results[0]['unreadCount']);
+      console.log('unread_count:', results[0]['unreadCount'])
     } catch (error) {
       console.error('Database query error:', error);
       socket.emit('error', 'An error occurred while fetching unread counts.');
     }
   };
 
-  // 20s
-  const intervalId = setInterval(() => {
-    sendUnreadCount(); 
-  }, 20000);
-
+  
   // clear
   socket.on('disconnect', () => {
     console.log('Member disconnected.');
-    clearInterval(intervalId);
   });
-
-  // 初始查詢
-  await sendUnreadCount(); 
 });
+
 
 /**
  * Listen on provided port, on all network interfaces.

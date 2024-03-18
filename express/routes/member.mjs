@@ -19,7 +19,6 @@ router.post('/register', async function (req, res) {
   let { password } = req.body
   const level_point = 0 // 預設積分
   const shop_valid = 0 // 預設賣場沒上架
-  const mission_start = 0 // 預設新戶
   const created_at = new Date() // 註冊時間
 
   try {
@@ -37,19 +36,20 @@ router.post('/register', async function (req, res) {
     if (emailResults.length > 0) {
       return res.status(400).send({ message: '信箱已經存在' })
     }
-    //
 
     password = await generateHash(password) // hash加密密碼
 
-    const Query = `INSERT INTO member (account, password, email, level_point, shop_valid, created_at) VALUES (?, ?, ?, ?, ?, ?)`
-    await db.execute(Query, [
-      account,
-      password,
-      email,
-      level_point,
-      shop_valid,
-      created_at,
-    ])
+    const [insertedMember] = await db.execute('INSERT INTO member (account, password, email, level_point, shop_valid, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+      [account, password, email, level_point, shop_valid, created_at]);
+
+    const lastInsertId = insertedMember.insertId;
+    // console.log(lastInsertId)
+
+    const conponGiftQuery = `INSERT INTO member_coupon (member_id, coupon_id, status) VALUES (?, 1, 0)`;
+    await db.execute(conponGiftQuery, [lastInsertId]);
+
+    const missionStartQuery = `INSERT INTO mission (mission_id, member_id, status) VALUES (2, ?, 0)`;
+    await db.execute(missionStartQuery, [lastInsertId]);
 
     res.status(201).send({ message: '會員註冊成功' })
   } catch (error) {
@@ -376,7 +376,6 @@ router.post('/get-code', async (req, res) => {
     expTimestamp.setMinutes(expTimestamp.getMinutes() + 10); // 10mins
 
     try {
-      // 插入或更新数据库中的OTP记录
       await db.execute(
         `INSERT INTO otp (member_id, email, token, exp_timestamp) VALUES ((SELECT id FROM member WHERE email = ?), ?, ?, ?)
              ON DUPLICATE KEY UPDATE token = ?, exp_timestamp = ?`,
@@ -642,7 +641,7 @@ router.delete('/unfav-product', async (req, res) => {
 });
 
 
-// order (含篩選)
+// order (含篩選) 分頁待修
 router.get('/order', async (req, res) => {
   const buyerId = req.query.memberId;
   const orderBy = req.query.orderBy || 'created_at';
@@ -679,7 +678,7 @@ router.get('/order', async (req, res) => {
     const totalseller = totalsellerResult[0].totalseller;
 
     // 總頁數
-    const totalPages = Math.ceil(totalseller / limit) - 1;
+    const totalPages = Math.ceil(totalseller / limit);
 
     // orderby
     let orderClause = '';
@@ -719,10 +718,10 @@ router.get('/order', async (req, res) => {
       totalseller,
       totalPages,
     };
-    console.log(offset)
+    // console.log(offset)
 
     res.json(responseData);
-    console.log(responseData)
+    // console.log(responseData)
 
   } catch (error) {
     console.error('取得收藏列表出錯:', error);
@@ -731,7 +730,7 @@ router.get('/order', async (req, res) => {
 });
 
 
-// coupon alert
+// coupon notify
 // trigger
 (async () => {
   try {
@@ -754,6 +753,93 @@ router.get('/order', async (req, res) => {
     }
   }
 })();
+
+// coupon notify render
+// 在 Express 應用中設置路由
+router.get('/notify-coupon', async (req, res) => {
+  const memberId = req.query.memberId;
+  // console.log(memberId)
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 6;
+  const offset = (page - 1) * limit;
+
+  try {
+    // Total items
+    const [totalItemsResult] = await db.execute(
+      'SELECT COUNT(*) AS totalItems FROM notify_coupon WHERE member_id = ?',
+      [memberId]
+    );
+    const totalItems = totalItemsResult[0].totalItems;
+
+    // Total pages
+    const totalPages = Math.ceil(totalItems / limit);
+
+    const query = `
+    SELECT
+      nc.member_id,
+      nc.coupon_id,
+      nc.valid,
+      DATE_FORMAT(nc.created_at, '%Y-%m-%d %H:%i:%s') AS created_at,
+      dc.title AS coupon_title,
+      dc.discount_value
+    FROM
+      notify_coupon nc
+    LEFT JOIN
+      discount_coupon dc ON nc.coupon_id = dc.id
+    WHERE
+      nc.member_id = ?
+    ORDER BY
+      nc.created_at DESC
+    LIMIT ?, ?
+  `;
+    const [data] = await db.query(query, [memberId, offset, limit]);
+    const responseData = {
+      items: data,
+      totalItems,
+      totalPages,
+    };
+    // console.log(responseData)
+    res.json(responseData);
+
+  } catch (error) {
+    console.error('Database query error:', error);
+    res.status(500).json({ error: 'error fetching notify coupon.' });
+  }
+});
+// notify readed
+router.put('/notify-couponRead', async (req, res) => {
+  const memberId = req.query.memberId;
+  try {
+    const query = `
+      UPDATE notify_coupon
+      SET valid = 1
+      WHERE member_id = ?
+    `;
+    await db.query(query, [memberId]);
+
+    //不想重整頁面
+    const newQuery = `
+      SELECT
+        nc.member_id,
+        nc.coupon_id,
+        nc.valid,
+        DATE_FORMAT(nc.created_at, '%Y-%m-%d %H:%i:%s') AS created_at,
+        dc.title AS coupon_title,
+        dc.discount_value
+      FROM
+        notify_coupon nc
+      LEFT JOIN
+        discount_coupon dc ON nc.coupon_id = dc.id
+      WHERE
+        nc.member_id = ?
+    `;
+    const [data] = await db.query(newQuery, [memberId]);
+    res.status(200).json({ message: 'success', items: data });
+  } catch (error) {
+    console.error('Database query error:', error);
+    res.status(500).json({ error: 'Error marking notifications as read.' });
+  }
+});
 
 
 

@@ -25,37 +25,41 @@ import { useRouter } from 'next/router'
 import { io } from 'socket.io-client';
 
 export default function Navbar() {
-  const { isLoggedIn, memberData } = useAuth();
+  const { isLoggedIn, memberId, memberData } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
   const { totalProducts } = useCart()
   const [unreadCount, setUnreadCount] = useState(0);
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const socket = io('http://localhost:3005', {
-      transports: ['polling'],
-    });
+    setSocket(io('http://localhost:3005'))
+  }, [])
 
-
-    console.log('Attempting to connect to the server...');
+  useEffect(() => {
+    const socket = io('http://localhost:3005');
 
     socket.on('connect', () => {
       console.log('Connected to the server');
+      if (memberId) {
+        console.log('emit memberid to server');
+        socket.emit('member_connected', { memberId });
+      }
     });
-
     socket.on('unread_count', (count) => {
       console.log('Received unread count:', count);
-      setUnreadCount(count); // 假設你有一個狀態變量叫做 unreadCount
+      setUnreadCount(count);
     });
 
+
     // 清理函數，在組件卸載時執行
-    return () => {
+    /* return () => {
       console.log('Disconnecting from the server...');
       socket.off('connect');
       socket.off('unread_count');
       socket.close();
-    };
+    }; */
 
-  }, []);
+  }, [socket]);
   return (
     <>
       <div className='d-none d-lg-block'>
