@@ -120,12 +120,15 @@ router.post('/edit-address', async (req, res) => {
       'SELECT home1, home2, home3 FROM shipping_address WHERE member_id = ? AND shipping_method = ?',
       [memberId, shipping_method]
     )
+    if (!existingAddresses.length) {
+      return res.status(404).json({ message: '未找到對應的地址欄位' })
+    }
     const existingAddress = existingAddresses[0]
     // 尋找第一個空的地址欄位
     const findFirstEmptyField = (address) => {
       const fields = ['home1', 'home2', 'home3']
       for (const field of fields) {
-        if (!address[field]) {
+        if (address && !address[field]) {
           return field
         }
       }
@@ -208,7 +211,7 @@ router.post('/create-order', async (req, res) => {
     selectedProductCoupon,
     selectedShippingCoupon,
   } = req.body
-  // console.log(req.body)
+  console.log(req.body)
 
   // 計算總優惠折抵(商品折抵金額+運費折抵金額)
   const totalDiscount = shippingDiscount + productDiscount
@@ -270,8 +273,15 @@ router.post('/create-order', async (req, res) => {
           console.error(`預期 itemsInGroup 是一個陣列，取得:`, itemsInGroup)
           continue
         }
+        // 先找到當前對應的shipping_method
+        const currentShippingMethod = shipping_method.find(
+          (method) => method.member_id === member_id
+        )
         // 查找每個賣場對應的配送方式的運費
-        const shippingCost = shipping_method[member_id] === '2' ? 100 : 60
+        const shippingCost =
+          currentShippingMethod && currentShippingMethod.shippingMethod === '2'
+            ? 100
+            : 60
 
         // 計算訂單總價格(未使用優惠券前)
         const orderPrice =
@@ -291,9 +301,7 @@ router.post('/create-order', async (req, res) => {
         const finalPrice = Math.round(orderPrice - discountAmount)
 
         // 每個賣場的收件人資訊
-        const shippingInfo = shippingInfos.find(
-          (info) => info.member_id.toString() === member_id.toString()
-        )
+        const shippingInfo = shippingInfos[member_id]
         // 如果沒有收件資訊
         if (!shippingInfo) {
           return res.status(400).json({ message: '缺少收件人資訊' })
@@ -315,15 +323,15 @@ router.post('/create-order', async (req, res) => {
               item.quantity,
               orderPrice,
               finalPrice,
-              shipping_method[member_id],
-              shippingInfo.receiveName,
-              shippingInfo.receivePhone,
-              shippingInfo.receiveaddress,
+              currentShippingMethod.shippingMethod,
+              shippingInfo.name,
+              shippingInfo.phone,
+              shippingInfo.address,
               paymentMethod,
               1,
               '待付款',
-              selectedProductCoupon,
-              selectedShippingCoupon,
+              selectedProductCoupon || null,
+              selectedShippingCoupon || null,
             ]
           )
         }

@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { useCart } from '@/hooks/use-cart'
 
 export default function ProductCheckout({ item }) {
-  const { totalProducts, totalPrice, changeLanguage } = useCart()
+  const { changeLanguage } = useCart()
 
   return (
     <>

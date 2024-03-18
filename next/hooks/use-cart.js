@@ -32,11 +32,12 @@ export const CartContext = createContext()
 // cartItems = {
 //   id:0,
 //   name:"",
-//   language:[],
+//   language:"",
 //   product_quanty=0
 //   price:0,
 //   display_price:0,
 //   quantity:1
+//   member_id:
 //   total_price:0,
 //   user_select:false
 // }
@@ -173,10 +174,6 @@ export function CartProvider({ children }) {
     const filterItems = cartItems.filter((item) => item.member_id !== id)
     setCartItems(filterItems)
   }
-
-  // 選取全部賣場商品
-
-
 
   // 選取全部checkbox
   const handleAllCheckboxChange = (cartItems) => {
