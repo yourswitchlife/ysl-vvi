@@ -130,7 +130,7 @@ export default function article_main() {
                   <h6 className="text-white">顯示所有留言...</h6>
                 </button>
               ) : (
-                <h3 className="text-danger d-flex justify-content-center">快来留言吧!!</h3>
+                <h3 className="text-danger d-flex justify-content-center">快來留言吧!!</h3>
               )}
 
               {limitedComments.map((c, i) => {
