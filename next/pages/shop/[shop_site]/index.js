@@ -398,7 +398,7 @@ export default function ShopPage() {
                   <h5 className='text-danger fw-bold'>{shopTotalItems}</h5>
                 </div>
                 <div className="d-flex flex-column align-items-center pe-4">
-                  <h5>已賣出件數</h5>
+                  <h5>售出件數</h5>
                   <h5 className='text-danger fw-bold'>{shopOrderNum}</h5>
                 </div>
                 <div className="d-flex flex-column align-items-center">
@@ -461,7 +461,7 @@ export default function ShopPage() {
               <h6 className="text-danger mb-0">{shopTotalItems}</h6>
             </div>
             <div className="d-flex flex-column align-items-center pe-4">
-              <h6>已賣出件數</h6>
+              <h6>售出件數</h6>
               <h6 className="text-danger mb-0">{shopOrderNum}</h6>
             </div>
             <div className="d-flex flex-column align-items-center">

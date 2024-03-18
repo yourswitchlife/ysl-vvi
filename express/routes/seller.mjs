@@ -185,7 +185,13 @@ router.get('/product', authenticate, async (req, res) => {
     }
 
     let [products] = await db.execute(
-      'SELECT * FROM `product` WHERE `member_id` = ?',
+      `SELECT product.*, COALESCE(SUM(orders.quantity), 0) AS total_quantity, COUNT(DISTINCT fav_product.id) AS favorite_count, p_type.name AS type_name
+   FROM product
+   LEFT JOIN orders ON orders.product_id = product.id
+   LEFT JOIN fav_product ON fav_product.product_id = product.id AND fav_product.valid = 1
+   LEFT JOIN p_type ON product.type_id = p_type.id
+   WHERE product.member_id = ? AND product.valid = 1
+   GROUP BY product.id`,
       [memberId]
     )
     res.json(products)

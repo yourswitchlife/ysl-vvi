@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { useRouter } from 'next/router'
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
@@ -24,6 +25,7 @@ export default function New() {
   const { isLoggedIn, memberId, memberData } = useAuth()
   const [bigPic, setBigPic] = useState(profilePhoto)
   const [shopCover, setShopCover] = useState(cover)
+  const router = useRouter()
   
   // const MySwal = withReactContent(Swal)
   // console.log(memberId)
@@ -164,7 +166,7 @@ export default function New() {
         })
     }
   }
-  console.log(newP)
+//   console.log(newP)
 
   const clearForm = ()=>{
     setNewP({
@@ -205,7 +207,7 @@ export default function New() {
             <div className={`mb-4 mt-lg-0 ${styles.dashboardStyle}`}>
               <div className="d-flex justify-content-start align-items-center mb-3">
                 <h5 className="text-dark fw-bold">商品基本資訊</h5>
-                <h6 className="text-secondary ms-2">新增您的賣場商品</h6>
+                <h6 className="text-secondary ms-2">編輯您的賣場商品</h6>
               </div>
 
               <form
@@ -418,20 +420,20 @@ export default function New() {
                 {/* buttons */}
                 <div className="d-flex justify-content-center align-items-center mt-2">
                   <button type="submit" className="btn btn-danger me-2">
-                    儲存並上架
+                    儲存
                   </button>
-                  {/* <button
+                  <button
                     type="button"
                     className={`btn ${styles.btnDangerOutlined} me-2`}
                   >
                     儲存暫不上架
-                  </button> */}
+                  </button>
                   {/* 清空表單 */}
                   <button
                     type="button"
                     className={`btn ${styles.btnGrayOutlined}`}
                     onClick={() => {
-                      clearForm()
+                      router.push('./')
                     }}
                   >
                     取消
