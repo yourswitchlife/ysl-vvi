@@ -1,7 +1,7 @@
 @import '../valuable.scss';
 
 .pIndexImg {
-  margin-top: 60px;
+  margin-top: 70px;
   position: relative;
   width: 100%;
   height: auto;
@@ -22,6 +22,16 @@
   padding: 0;
   margin: 0;
   gap: 12px;
+}
+.btnClean{
+  background-color: #ffffff00;
+  border-radius: 50px;
+  border: 1px solid white;
+  color: white;
+  padding: 0px 20px;
+  &:hover{
+  background-color: #ffffff53;
+  }
 }
 
 .more {

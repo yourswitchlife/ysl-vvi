@@ -2,33 +2,40 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import styles from '@/components/seller/seller.module.scss'
-import profileImg from '@/public/images/profile-photo/peach.png'
 import { FaHome, FaStore, FaFileAlt, FaStar, FaCoins } from 'react-icons/fa'
 import { IoGameController } from 'react-icons/io5'
 
-export default function Sidebar() {
+export default function Sidebar({
+  profilePhoto="",
+  memberShopSite="",
+  memberShopName="shop_name",
+}) {
+  
+  
+
   return (
     <>
       <div
         className={`d-flex flex-column flex-shrink-0 p-3 ${styles.sidebar}`}
       >
         <Link
-          href="/"
+          href={`http://localhost:3000/shop/${memberShopSite}`}
           className="d-flex flex-column align-items-center text-white text-decoration-none"
+          title='前往我的賣場'
         >
           {/* <svg className="bi pe-none me-2" width="40" height="32">
             <use xlink:href="#bootstrap" />
           </svg> */}
           <div className={styles.sellerprofile}>
-            <Image src={profileImg} alt="profile-photo" className={styles.fit} />
+            <Image src={profilePhoto} width={100} height={100} alt="profile-photo" className={styles.fit} />
           </div>
-          <h6>碧姬公主的玩具城堡</h6>
+          <h6>{memberShopName}</h6>
         </Link>
         <hr />
         <ul className="nav nav-pills flex-column mb-auto">
           <li className="nav-item">
             <Link
-              href="/seller"
+              href="http://localhost:3000/seller"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
               aria-current="page"
             >
@@ -38,7 +45,7 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="./shop"
+              href="http://localhost:3000/seller/shop"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <FaStore className={`${styles.navText} me-2`} />
@@ -47,7 +54,7 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="./product"
+              href="http://localhost:3000/seller/product"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <IoGameController className={`${styles.navText} me-2`} />
@@ -56,7 +63,7 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="./order"
+              href="http://localhost:3000/seller/order"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <FaFileAlt className={`${styles.navText} me-2`} />
@@ -65,7 +72,7 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="./comment"
+              href="http://localhost:3000/seller/comment"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
             >
               <FaStar className={`${styles.navText} me-2`} />

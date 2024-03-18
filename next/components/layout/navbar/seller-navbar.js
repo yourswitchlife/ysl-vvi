@@ -1,24 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '@/components/layout/navbar/navbar.module.scss'
 import yslLogo from '@/public/images/logo/logo-sm.svg'
 import yslLogoXs from '@/public/images/logo/logo-xs.svg'
 import Image from 'next/image'
 import Link from 'next/link'
-import profileImg from '@/public/images/profile-photo/peach.png'
+import { useRouter } from 'next/router'
 import { FaArrowRight, FaSearch } from "react-icons/fa";
 //登出邏輯
 import handleLogout from '@/services/logout';
 //context hooks
 import { useAuth } from '@/hooks/use-Auth';
-
+import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+//images
+import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 //我做完的組件 可以用到評論上 已套用會員等級框
 import NavPic from '@/hooks/use-navpic';
 // 引入use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
 
-export default function SellerNavbar() {
+export default function SellerNavbar({shopSite=""}) {
+  const router = useRouter()
   const { isLoggedIn, memberData } = useAuth();
+  const [bigPic, setBigPic] = useState(profilePhoto)
   const [isHovered, setIsHovered] = useState(false);
+
   return (
     <>
     <div className='d-none d-lg-block'>
@@ -26,7 +31,7 @@ export default function SellerNavbar() {
         <div // logo
         >
           <Link href="/seller" className={styles.link}>
-            <Image src={yslLogo} alt=""/>
+            <Image src={yslLogo} alt="ysl-logo"/>
             <span className="ps-4 pe-4">|</span>
             <h3 className={styles.text}>賣家中心</h3>
           </Link>
@@ -56,13 +61,13 @@ export default function SellerNavbar() {
               className="rounded-circle me-2"
             /> */}
             <NavPic />
-            <strong className='ms-2'>Peach princes</strong>
+            {memberData && <strong className='ms-2'>{memberData.account}</strong>}
           </Link>
-          <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
+          <ul className="dropdown-menu text-small shadow">
             <li>
-              <Link className="dropdown-item" href="/">
-                Your Switch Life
-              </Link>
+            {memberData && <Link className="dropdown-item" href={`/shop/${memberData.shop_site}`}>
+                我的賣場
+              </Link>}
             </li>
             <li>
               <Link className="dropdown-item" href="/member/account">
@@ -83,9 +88,10 @@ export default function SellerNavbar() {
               <hr className="dropdown-divider" />
             </li>
             <li>
-              <Link className="dropdown-item" href="/member/logout">
+            {/* 登出要 */}
+              <div className="dropdown-item" onClick={handleLogout}>
                 登出
-              </Link>
+              </div>
             </li>
           </ul>
         </div>
@@ -97,15 +103,14 @@ export default function SellerNavbar() {
         <div // logo
         >
           <Link href="/">
-            <Image src={yslLogoXs} alt="" />
+            <Image src={yslLogoXs} alt="ysl-logo" />
           </Link>
         </div>
-        <div className="">
-          <h5 className='mb-0'>我的賣場</h5>
+        <div onClick={() => {
+          router.push('http://localhost:3000/seller')
+        }}>
+          <h6 className='mb-0 me-2 fw-bold'>賣場中心</h6>
         </div>
-        <Link href="/" className="text-white ps-5">
-          <FaSearch />
-        </Link>
       </header>
       </div>
     </>

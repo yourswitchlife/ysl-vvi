@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import RatingStars from './rating-stars'
 import styles from '../../styles/products/product-detail.module.scss'
 import AddPhoto from '@/components/products/addPhoto'
+import { useAuth } from '@/hooks/use-Auth'
 
 export default function Review() {
+  const { isLoggedIn, memberId } = useAuth()
   const [review, setReview] = useState({
     rating: 0,
     review: '',
@@ -11,7 +13,7 @@ export default function Review() {
   })
   const [selectFile, setSelectFile] = useState(null)
   const [filePicked, setFilePicked] = useState(false)
-  const [preview, setPreview] = useState('')
+  // const [preview, setPreview] = useState('')
   const [imgServerUrl, setImgServerUrl] = useState('')
 
   // 當選擇檔案更動時建立預覽圖
@@ -33,6 +35,8 @@ export default function Review() {
       setFilePicked(true)
       setSelectFile(file)
       setImgServerUrl('')
+      // const fileName = file.name
+      // setReview(prevReview => ({ ...prevReview, reviewPhoto: fileName }))
     } else {
       setFilePicked(false)
       setSelectFile(null)
@@ -52,11 +56,25 @@ export default function Review() {
       return
     } else {
       const formData = new FormData(e.target)
-      console.log(formData.get('review'))
-      fetch('http://localhost:3005/api/products/addReview', {
-        method: 'POST',
-        body: formData,
-      })
+      formData.append('rating', review.rating)
+      formData.append('review', review.review)
+      if (selectFile) {
+        formData.append('reviewPhoto', selectFile)
+      }
+      // formData.append('reviewPhoto', review.reviewPhoto)
+      // console.log('File to upload:', selectFile); // 打印File对象
+      // console.log('File name:', selectFile.name)
+
+      console.log(review.reviewPhoto)
+      console.log(formData.get('rating'))
+      fetch(
+        `http://localhost:3005/api/products/addReview?memberId=${memberId}`,
+        {
+          credentials: 'include',
+          method: 'POST',
+          body: formData,
+        }
+      )
         .then((response) => response.json())
         .then((result) => {
           alert('評論已發佈！'),
@@ -66,7 +84,7 @@ export default function Review() {
                 review: '',
                 reviewPhoto: '',
               })
-            },1000)
+            }, 1000)
         })
         .catch((error) => {
           console.error('error', error)
@@ -86,13 +104,17 @@ export default function Review() {
         onSubmit={handleSubmit}
       >
         <div className="ms-3 flex-grow-1">
-          <RatingStars fieldChange={fieldChange} value={review.rating} />
+          <RatingStars
+            fieldChange={fieldChange}
+            value={review.rating}
+            name="rating"
+          />
 
           <input
             type="text"
             name="review"
             className="form-control mt-3"
-            placeholder="請留下您的評價... 限50字"
+            placeholder="請留下您的評價... 限30字"
             // aria-label="Recipient's username"
             // aria-describedby="button-addon2"
             maxLength={50}
@@ -102,8 +124,6 @@ export default function Review() {
         </div>
         <div className="m-2">
           <AddPhoto
-            // value={reviewPhoto.reviewPhoto}
-            // setReviewPhoto={setReviewPhoto}
             changHandler={changHandler}
             fieldChange={fieldChange}
             name="reviewPhoto"

@@ -1,33 +1,44 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useAuth } from '@/hooks/use-Auth'
+import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+import Link from 'next/link'
+import Image from 'next/image'
+//components
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
 import styles from '@/components/seller/seller.module.scss'
 import { FaStar, FaPlus, FaRegHeart } from 'react-icons/fa'
-import Link from 'next/link'
+import SellerFooter from '@/components/layout/footer/footer-backstage'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
+import BreadCrumb from '@/components/common/breadcrumb'
+import Pagination from '@/components/common/pagination'
+
+//images
+import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
+import cover from '@/public/images/shopCover/default-cover.jpg'
 import profileImg from '@/public/images/profile-photo/peach.png'
 import defaultHead from '@/public/images/profile-photo/default-profile-img.svg'
 import gameCover from '@/public/images/seller/product-cover/crymachina.jpg'
-import Image from 'next/image'
-import SellerFooter from '@/components/layout/footer/footer-backstage'
+
 import InputGroup from 'react-bootstrap/InputGroup'
-import { FaCalendarAlt } from 'react-icons/fa'
 import { BsFiles, BsSignStopLightsFill, BsHeart, BsFlag } from "react-icons/bs";
 import { IoBagCheckOutline } from "react-icons/io5";
 import Form from 'react-bootstrap/Form'
 import Nav from 'react-bootstrap/Nav'
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
-import Pagination from '@/components/common/pagination-front'
 import Button from 'react-bootstrap/Button'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Card from 'react-bootstrap/Card'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
-import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
-import BreadCrumb from '@/components/common/breadcrumb'
 
 export default function Product() {
+  const { isLoggedIn, memberId, memberData } = useAuth()
+  const [bigPic, setBigPic] = useState(profilePhoto)
+  const [shopCover, setShopCover] = useState(cover)
+
   //body style
   useEffect(() => {
     // 當元件掛載時添加樣式
@@ -37,6 +48,23 @@ export default function Product() {
       document.body.classList.remove(styles.bodyStyleA)
     }
   }, [])
+
+  useEffect(() => {
+    if(isLoggedIn && memberData) {
+      console.log(memberData.shop_cover)
+      const picUrl = memberData.pic ? (memberData.pic.startsWith("https://") 
+        ? memberData.pic 
+        : `http://localhost:3005/profile-pic/${memberData.pic}`) 
+      : profilePhoto
+      setBigPic(picUrl)
+      const coverUrl = memberData.shop_cover ? (memberData.shop_cover.startsWith("https://") ? memberData.shop_cover : `http://localhost:3005/shopCover/${memberData.shop_cover}`) : cover
+      setShopCover(coverUrl)
+      // console.log(memberData)
+      // getSellerData()
+    }
+  }, [isLoggedIn, memberId, memberData])
+
+ 
 
   // function handleSubmit(e) {
   //   e.prevent.default()
@@ -49,22 +77,33 @@ export default function Product() {
       </header>
       <main className={styles.mainContainer}>
         <div className="d-none d-md-block">
-          <Sidebar />
+        {memberData && (
+            <>
+              <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
+            </>
+          )}
         </div>
         <div>
           {/* cover */}
-          <SellerCover />
+          {memberData && (
+              <>
+                <SellerCover shopCover={shopCover}/>
+              </>
+            )}
           <div className="d-flex flex-column d-lg-none container ps-4 pe-4">
             <div className="d-flex justify-content-around align-items-center mt-4 mb-2">
               <div className={`${styles.profile}`}>
-                <Image src={profileImg} alt="" className={styles.fit} />
+              {memberData && <Image src={bigPic} width={75} height={75} alt="profile-photo" className={styles.fit} />}
               </div>
               <div className="d-flex flex-column align-items-start justify-content-center">
-                <h5 className="mb-1 fw-bold">碧姬公主的玩具城堡</h5>
-                <p className="mb-1">ysl.com/princepeach8888</p>
+              {memberData && <h5 className="mb-1 fw-bold">{memberData.shop_name}</h5>}
+              {memberData && <p className="mb-1">@{memberData.shop_site}</p>}
               </div>
               <div>
-                <button className="btn btn-danger btn-sm">查看賣場</button>
+              {memberData &&
+                <button className="btn btn-danger btn-sm" onClick={() => {
+                  router.push(`/shop/${memberData.shop_site}`)
+                }}>查看賣場</button>}
               </div>
             </div>
             <hr />
@@ -109,7 +148,7 @@ export default function Product() {
                   <button type="button" className="btn btn-danger me-2">
                     搜尋
                   </button>
-                  <button type="button" className="btn btn-danger">
+                  <button type="button" className={`btn btn-danger ${styles.btnDangerOutlined}`}>
                     取消
                   </button>
                 </div>
@@ -127,7 +166,7 @@ export default function Product() {
                 >
                   <div className="d-flex justify-content-between align-items-center">
                     <h5 className="text-dark fw-bold">152件商品</h5>
-                    <Link href="./new">
+                    <Link href="./new" className='text-decoration-none'>
                     <button
                       type="button"
                       className="btn btn-danger btn-sm d-flex align-items-center text-decoration-none"
@@ -1417,7 +1456,7 @@ export default function Product() {
                     >
                       搜尋
                     </button>
-                    <button type="button" className="btn btn-danger btn-sm">
+                    <button type="button" className={`btn btn-danger btn-sm ${styles.btnDangerOutlined}`}>
                       取消
                     </button>
                   </div>
