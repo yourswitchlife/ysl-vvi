@@ -283,27 +283,29 @@ export default function ShopPage() {
   }
   const handleFavShop = async () => {
     const url = `http://localhost:3005/api/shop/${shop_site}/fav_shop`
+
+    //準備請求的配置
+    const requestOptions = {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        valid: isFav ? 0 : 1
+      }) //根據目前收藏狀態來設定值
+    }
+
     try{
-      if(isFav){
-        //已經收藏者：執行取消收藏
-        const res = await fetch(url, { method: 'PUT', credentials: 'include'})
-        const data = await res.json()
-        if(res.ok){
-          setIsFav(false)
-          Swal.fire('取消收藏成功', '', 'success')
-        }else{
-          throw new Error(data.message || '取消收藏失敗')
-        }
+      const res = await fetch(url, requestOptions)
+      const data = await res.json()
+
+      if(res.ok){
+        setIsFav(!isFav) //反轉當前的收藏狀態
+        const actionMessage = isFav ? '取消收藏成功' : '收藏成功'
+        Swal.fire(actionMessage, '', 'success')
       }else{
-        //沒收藏過的人來收藏
-        const res = await fetch(url, { method: 'POST', credentials: 'include' })
-        const data = await res.json()
-        if(res.ok){
-          setIsFav(true)
-          Swal.fire('收藏成功', '', 'success')
-        }else{
-          throw new Error(data.message || '添加收藏失敗')
-        }
+        throw new Error(data.message || '操作失敗')
       }
     }catch(error){
       //用replace方法去除"Error:"前綴

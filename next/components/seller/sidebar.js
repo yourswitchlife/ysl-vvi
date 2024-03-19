@@ -11,8 +11,6 @@ export default function Sidebar({
   memberShopName="shop_name",
 }) {
   
-  
-
   return (
     <>
       <div

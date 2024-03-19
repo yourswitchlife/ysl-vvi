@@ -165,8 +165,8 @@ router.get('/:shop_site/fav_shop', async (req, res) => {
   }
 })
 
-//創建這個賣場的收藏
-router.post(
+//創建更新這個賣場的收藏
+router.put(
   '/:shop_site/fav_shop',
   upload.none(),
   authenticate,
@@ -174,83 +174,160 @@ router.post(
     const dateString = new Date() //創建商品日期
     const created_at = moment(dateString).format('YYYY-MM-DD HH:mm:ss')
     const buyer_id = req.memberData.id
-    const valid = 1
+    const valid = req.body.valid //前端來給
     let { shop_site } = req.params
-    if (!req.memberData.id) {
-      // 如果memberData不存在，则返回错误信息
-      return res.status(400).json({ message: '找不到member id' })
-    }
-    if (isNaN(buyer_id) || buyer_id < 0) {
+
+    if (!buyer_id || isNaN(buyer_id) || buyer_id < 0) {
       // 如果 memberId 不是一個正整數，返回錯誤響應
       return res.status(400).json({ message: 'Invalid member_id' })
     }
 
     try {
-      //取得shop_site的member_id
-      const [rows] = await db.execute(
+      //查詢賣家ID
+      const [sellerRows] = await db.execute(
         'SELECT `id` FROM `member` WHERE `shop_site` = ?',
         [shop_site]
       )
-      if (rows.length > 0) {
-        const seller_id = rows[0].id
+      if (sellerRows.length === 0) {
+        return res.status(404).json({ message: '找不到對應的賣場' })
+      }
+      const seller_id = sellerRows[0].id
 
-        //檢查buyer_id和seller_id是否相同
-        if (buyer_id === seller_id) {
-          return res.status(400).json({ message: '無法收藏自己的賣場喔！' })
+      if (buyer_id === seller_id) {
+        return res.status(400).json({ message: '無法收藏自己的賣場喔！' })
+      }
+      //檢查是否已收藏過此賣場
+      const [favRows] = await db.execute(
+        'SELECT * FROM `fav_shop` WHERE `buyer_id` = ? AND `seller_id` = ?',
+        [buyer_id, seller_id]
+      )
+      if (favRows.length > 0) {
+        //已經存在更新valid值
+        await db.execute(
+          'UPDATE `fav_shop` SET `valid` = ?, `created_at` = ? WHERE `buyer_id` = ? AND `seller_id` = ?',
+          [valid, created_at, buyer_id, seller_id]
+        )
+      } else {
+        //new
+        if (valid === 1) {
+          await db.execute(
+            'INSERT INTO `fav_shop` (`buyer_id`, `seller_id`, `created_at`, `valid`) VALUES (?, ?, ?, ?)',
+            [buyer_id, seller_id, created_at, valid]
+          )
+        } else {
+          return res
+            .status(400)
+            .json({ message: '無效的操作，該賣場尚未被收藏' })
         }
-        const Query =
-          'INSERT INTO `fav_shop` (`buyer_id`, `seller_id`, `created_at`, `valid`) VALUES (?, ?, ?, ?)'
-        await db.execute(Query, [buyer_id, seller_id, created_at, valid])
-        res.status(200).json({ message: '收藏成功' })
-      } else {
-        res.status(404).json({ message: '找不到對應的賣場' })
       }
+      const message = valid === 1 ? '收藏成功' : '取消收藏成功'
+      res.status(200).json({ message })
     } catch (error) {
       console.log(error)
       res.status(500).json({ message: '伺服器錯誤' })
     }
   }
 )
-//取消這個賣場的收藏
-router.put(
-  '/:shop_site/fav_shop',
-  upload.none(),
-  authenticate,
-  async (req, res) => {
-    console.log(req.memberData)
-    const buyer_id = req.memberData.id
-    let { shop_site } = req.params
-    if (!req.memberData.id) {
-      // 如果memberData不存在，则返回错误信息
-      return res.status(400).json({ message: '找不到member id' })
-    }
-    if (isNaN(buyer_id) || buyer_id < 0) {
-      // 如果 memberId 不是一個正整數，返回錯誤響應
-      return res.status(400).json({ message: 'Invalid member_id' })
-    }
+// router.post(
+//   '/:shop_site/fav_shop',
+//   upload.none(),
+//   authenticate,
+//   async (req, res) => {
+//     const dateString = new Date() //創建商品日期
+//     const created_at = moment(dateString).format('YYYY-MM-DD HH:mm:ss')
+//     const buyer_id = req.memberData.id
+//     const valid = 1
+//     let { shop_site } = req.params
+//     if (!req.memberData.id) {
+//       // 如果memberData不存在，则返回错误信息
+//       return res.status(400).json({ message: '找不到member id' })
+//     }
+//     if (isNaN(buyer_id) || buyer_id < 0) {
+//       // 如果 memberId 不是一個正整數，返回錯誤響應
+//       return res.status(400).json({ message: 'Invalid member_id' })
+//     }
 
-    try {
-      //取得shop_site的member_id
-      const [rows] = await db.execute(
-        'SELECT `id` FROM `member` WHERE `shop_site` = ?',
-        [shop_site]
-      )
-      if (rows.length > 0) {
-        const seller_id = rows[0].id
-        //更新而不是刪除紀錄
-        const Query =
-          'UPDATE `fav_shop` SET `valid` = ? WHERE `buyer_id` = ? AND `seller_id` = ?'
-        await db.execute(Query, [0, buyer_id, seller_id])
-        res.status(200).json({ message: '取消收藏成功' })
-      } else {
-        res.status(404).json({ message: '找不到對應的賣場' })
-      }
-    } catch (error) {
-      console.log(error)
-      res.status(500).json({ message: '伺服器錯誤' })
-    }
-  }
-)
+//     try {
+//       //取得shop_site的member_id
+//       const [rows] = await db.execute(
+//         'SELECT `id` FROM `member` WHERE `shop_site` = ?',
+//         [shop_site]
+//       )
+//       if (rows.length > 0) {
+//         const seller_id = rows[0].id
+
+//         //檢查buyer_id和seller_id是否相同
+//         if (buyer_id === seller_id) {
+//           return res.status(400).json({ message: '無法收藏自己的賣場喔！' })
+//         }
+//         //檢查是否已收藏過此賣場
+//         const [favRows] = await db.execute(
+//           'SELECT * FROM `fav_shop` WHERE `buyer_id` = ? AND `seller_id` = ?',
+//           [buyer_id, seller_id]
+//         )
+//         if (favRows.length > 0) {
+//           //已經存在更新valid值
+//           await db.execute(
+//             'UPDATE `fav_shop` SET `valid` = ?, `created_at` = ? WHERE `buyer_id` = ? AND `seller_id` = ?',
+//             [valid, created_at, buyer_id, seller_id]
+//           )
+//           res.status(200).json({ message: '收藏狀態已更新' })
+//         } else {
+//           //不存在則新增
+//           const Query =
+//             'INSERT INTO `fav_shop` (`buyer_id`, `seller_id`, `created_at`, `valid`) VALUES (?,?,?,?)'
+//           await db.execute(Query, [buyer_id, seller_id, created_at, valid])
+//           res.status(200).json({ message: '收藏成功' })
+//         }
+//       } else {
+//         res.status(404).json({ message: '找不到對應的賣場' })
+//       }
+//     } catch (error) {
+//       console.log(error)
+//       res.status(500).json({ message: '伺服器錯誤' })
+//     }
+//   }
+// )
+// //取消這個賣場的收藏
+// router.put(
+//   '/:shop_site/fav_shop',
+//   upload.none(),
+//   authenticate,
+//   async (req, res) => {
+//     console.log(req.memberData)
+//     const buyer_id = req.memberData.id
+//     let { shop_site } = req.params
+//     if (!req.memberData.id) {
+//       // 如果memberData不存在，则返回错误信息
+//       return res.status(400).json({ message: '找不到member id' })
+//     }
+//     if (isNaN(buyer_id) || buyer_id < 0) {
+//       // 如果 memberId 不是一個正整數，返回錯誤響應
+//       return res.status(400).json({ message: 'Invalid member_id' })
+//     }
+
+//     try {
+//       //取得shop_site的member_id
+//       const [rows] = await db.execute(
+//         'SELECT `id` FROM `member` WHERE `shop_site` = ?',
+//         [shop_site]
+//       )
+//       if (rows.length > 0) {
+//         const seller_id = rows[0].id
+//         //更新而不是刪除紀錄
+//         const Query =
+//           'UPDATE `fav_shop` SET `valid` = ? WHERE `buyer_id` = ? AND `seller_id` = ?'
+//         await db.execute(Query, [0, buyer_id, seller_id])
+//         res.status(200).json({ message: '取消收藏成功' })
+//       } else {
+//         res.status(404).json({ message: '找不到對應的賣場' })
+//       }
+//     } catch (error) {
+//       console.log(error)
+//       res.status(500).json({ message: '伺服器錯誤' })
+//     }
+//   }
+// )
 
 //--------------------賣場評價----------------------//
 //讀取此賣場評價

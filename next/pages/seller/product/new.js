@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { useRouter } from 'next/router'
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
@@ -24,6 +25,7 @@ export default function New() {
   const { isLoggedIn, memberId, memberData } = useAuth()
   const [bigPic, setBigPic] = useState(profilePhoto)
   const [shopCover, setShopCover] = useState(cover)
+  const router = useRouter()
   
   // const MySwal = withReactContent(Swal)
   // console.log(memberId)
@@ -432,6 +434,7 @@ export default function New() {
                     className={`btn ${styles.btnGrayOutlined}`}
                     onClick={() => {
                       clearForm()
+                      router.push('./')
                     }}
                   >
                     取消

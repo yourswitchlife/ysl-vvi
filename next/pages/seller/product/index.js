@@ -41,6 +41,17 @@ export default function Product() {
   const [shopCover, setShopCover] = useState(cover)
   const router = useRouter()
   const [product, setProduct] = useState([])
+  const [productNum, setProductNum] = useState(0)
+  //執行tabs篩選
+  const [selectedTab, setSelectedTab] = useState('all')
+  //頁數
+  const [totalPages, setTotalPages] = useState(1)
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(7)
+  //搜尋
+  const [searchQuery, setSearchQuery] = useState('')
+  // 新增狀態用來追蹤選中的產品
+  const [selectedProducts, setSelectedProducts] = useState(new Set());
 
   //body style
   useEffect(() => {
@@ -54,27 +65,44 @@ export default function Product() {
 
   const fetchProduct = async () => {
     try{
-      const res = await fetch(`http://localhost:3005/api/seller/product`, {
+      const res = await fetch(`http://localhost:3005/api/seller/product?tab=${selectedTab}&search=${encodeURIComponent(searchQuery)}&page=${page}&limit=${limit}`, {
         credentials: 'include'
       })
       if(!res.ok){
         throw new Error('網路請求失敗，找不到賣家產品資料')
       }
       let data = await res.json()
-
-      if(data && data.length > 0){
-        setProduct(data)
-      }else{
-        setProduct([])
-      }
+      // console.log(data)
+      data.items = formatLanguageToHtml(data.items)
+      setProduct(data.items)
+      setTotalPages(data.totalPages)
+      setProductNum(data.totalItems)
     }catch(error){
       console.error(error)
     }
   }
 
+  const formatLanguageToHtml = (products) => {
+    return products.map(p => {
+      const languageMap = {
+        CH: '中文版',
+        EN: '英文版',
+        JP: '日文版',
+      }
+       // 将语言字符串分割成数组，例如 "CH,EN,JP" 变成 ['CH', 'EN', 'JP']
+      const languages = p.language.split(',')
+      // 使用 map() 方法将每个语言代码转换为对应的 HTML 字符串，并使用 join() 方法合并成一个字符串
+      const formattedLanguages = languages.map(lang => languageMap[lang] || '').join('')
+      return {
+        ...p,
+        language: formattedLanguages
+      }
+    })
+  }
+
   useEffect(() => {
     if(isLoggedIn) {
-      fetchProduct()
+      fetchProduct(selectedTab)
       // console.log(memberData.shop_cover)
       const picUrl = memberData.pic ? (memberData.pic.startsWith("https://") 
         ? memberData.pic 
@@ -86,9 +114,60 @@ export default function Product() {
       // console.log(memberData)
       // getSellerData()
     }
-  }, [isLoggedIn, memberId, memberData])
+  }, [isLoggedIn, memberId, memberData,selectedTab, page, limit])
+
+  const handleTabChange = (selectedTab) => {
+    //更新狀態
+    setSelectedTab(selectedTab)
+    //更新url的查詢參數（但不加載頁面）
+    router.push(`./product?tab=${selectedTab}`, undefined, { shallow: true })
+  }
+
+  // 處理選擇框
+  const handleCheckboxChange = (productId) => {
+    setSelectedProducts((prevSelectedProducts) => {
+      const newSelection = new Set(prevSelectedProducts)
+      if (newSelection.has(productId)) {
+        newSelection.delete(productId)
+      } else {
+        newSelection.add(productId)
+      }
+      return newSelection;
+    })
+  }
+
+  // 批量删除產品
+  const handleDeleteSelected = async () => {
+    // 伪代码: 您需要根据自己的API实现具体的删除逻辑
+    // 例如:
+    // selectedProducts.forEach(async (productId) => {
+    //   await fetch(`API_ENDPOINT/${productId}`, { method: 'DELETE' });
+    // });
+
+    // 删除后从UI中移除这些产品
+    setProduct((prevProducts) => prevProducts.filter(p => !selectedProducts.has(p.id)));
+    setSelectedProducts(new Set()); // 清空选择
+  }
 
 
+  //加上搜尋按鈕的點擊事件處理函數
+  const handleSearch = () => {
+    setPage(1) //重置到第一頁
+    fetchProduct()
+  }
+
+  useEffect(() => {
+    //從url查詢中獲取tab值
+    const { tab } = router.query
+    //如果有tab值，更新狀態
+    if(tab){
+      setSelectedTab(tab)
+    }
+  }, [router.query.tab])
+
+  const handlePageChange = (newpage) => {
+    setPage(newpage)
+  }
  
 
   // function handleSubmit(e) {
@@ -141,7 +220,10 @@ export default function Product() {
                       <Form.Label className="mb-1 me-3 flex-shrink-0">
                         <h5 className="text-dark">商品名稱</h5>
                       </Form.Label>
-                      <Form.Control type="text" placeholder="請輸入商品名稱" />
+                      <Form.Control type="text" placeholder="請輸入商品名稱" value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                  }} />
                     </div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="typeName">
@@ -164,10 +246,14 @@ export default function Product() {
                   </Form.Group>
                 </div>
                 <div className="d-flex justify-content-start align-items-center mt-2">
-                  <button type="button" className="btn btn-danger me-2">
+                  <button type="button" className="btn btn-danger me-2" onClick={handleSearch}>
                     搜尋
                   </button>
-                  <button type="button" className={`btn btn-danger ${styles.btnDangerOutlined}`}>
+                  <button type="button" className={`btn btn-danger ${styles.btnDangerOutlined}`} onClick={() => {
+                    setSearchQuery("")
+                    setPage(1) //重置到第一頁
+                    fetchProduct()
+                  }}>
                     取消
                   </button>
                 </div>
@@ -175,16 +261,17 @@ export default function Product() {
             </div>
             <div className={`mb-4 ${styles.dashboardStyle}`}>
               <Tabs
-                defaultActiveKey="all-order"
-                id="orderStatusTabs"
+                defaultActiveKey="all"
+                id="product"
                 className="mb-3"
+                onSelect={handleTabChange}
               >
                 <Tab
-                  eventKey="all-order"
+                  eventKey="all" className={selectedTab === 'all' ? "text-danger" : "text-secondary"}
                   title={<span style={{ color: '#e41e49' }}>全部</span>}
                 >
                   <div className="d-flex justify-content-between align-items-center">
-                    <h5 className="text-dark fw-bold">{product.length}件商品</h5>
+                    <h5 className="text-dark fw-bold">{productNum}件商品</h5>
                     <Link href="./product/new" className='text-decoration-none'>
                     <button
                       type="button"
@@ -195,7 +282,60 @@ export default function Product() {
                     </button>
                     </Link>
                   </div>
-                  <div className="container">
+                </Tab>
+                <Tab
+                  eventKey="onShop"
+                  title={<span style={{ color: '#2D2D2D' }}>架上商品</span>}
+                >
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h5 className="text-dark fw-bold">{productNum}件商品</h5>
+                    <Link href="./product/new" className='text-decoration-none'>
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-sm d-flex align-items-center text-decoration-none"
+                    >
+                      <FaPlus className="me-1" />
+                      <h6 className='text-decoration-none'>新增商品</h6>
+                    </button>
+                    </Link>
+                  </div>
+                </Tab>
+                <Tab
+                  eventKey="soldout"
+                  title={<span style={{ color: '#2D2D2D' }}>已售完</span>}
+                >
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h5 className="text-dark fw-bold">{productNum}件商品</h5>
+                    <Link href="./product/new" className='text-decoration-none'>
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-sm d-flex align-items-center text-decoration-none"
+                    >
+                      <FaPlus className="me-1" />
+                      <h6 className='text-decoration-none'>新增商品</h6>
+                    </button>
+                    </Link>
+                  </div>
+                </Tab>
+                <Tab
+                  eventKey="unShop"
+                  title={<span style={{ color: '#2D2D2D' }}>未上架</span>}
+                >
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h5 className="text-dark fw-bold">{productNum}件商品</h5>
+                    <Link href="./product/new" className='text-decoration-none'>
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-sm d-flex align-items-center text-decoration-none"
+                    >
+                      <FaPlus className="me-1" />
+                      <h6 className='text-decoration-none'>新增商品</h6>
+                    </button>
+                    </Link>
+                  </div>
+                </Tab>
+              </Tabs>
+              <div className="container">
                     {/*--------------Rating Subtitle------------------ */}
                     <div
                       className={`row mt-3 py-2 text-center ${styles.ratingST}`}
@@ -280,815 +420,7 @@ export default function Product() {
                       )
                     })}
                   </>)}
-                  <Pagination />
-                </Tab>
-                <Tab
-                  eventKey="unsend"
-                  title={<span style={{ color: '#2D2D2D' }}>架上商品</span>}
-                >
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h5 className="text-dark fw-bold">152件商品</h5>
-                    <button
-                      type="button"
-                      className="btn btn-danger btn-sm d-flex align-items-center"
-                    >
-                      <FaPlus className="me-1" />
-                      新增商品
-                    </button>
-                  </div>
-                  <div className="container">
-                    {/*--------------Rating Subtitle------------------ */}
-                    <div
-                      className={`row mt-3 py-2 text-center ${styles.ratingST}`}
-                    >
-                      <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                      <h6 className="mb-0 col-3 fw-normal">商品名稱</h6>
-                      <h6 className="mb-0 col-1 fw-normal">級別</h6>
-                      <h6 className="mb-0 col-1 fw-normal">語言</h6>
-                      <h6 className="mb-0 col-2 fw-normal">
-                        售價 <span className={styles.fsSmall}>(原價)</span>
-                      </h6>
-                      <h6 className="mb-0 col-1 fw-normal">數量</h6>
-                      <h6 className="mb-0 col-1 fw-normal px-0">已售出</h6>
-                      <h6 className="mb-0 col-2 fw-normal">操作</h6>
-                    </div>
-                  </div>
-                  {/*--------------Rating Content------------------ */}
-                  <div className="px-3 py-2 border-bottom">
-                    <div className="text-dark">
-                      <div className="row align-items-center text-center">
-                        <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                        <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={42}
-                              height={70}
-                            />
-                            <div className="d-flex justify-content-start align-items-start flex-column">
-                              <p className="mb-0 text-dark ms-2">
-                                集合啦！動物森友會
-                              </p>
-                              <div className="d-flex justify-content-start align-items-center">
-                                <FaRegHeart className="ms-2 text-secondary" />
-                                <p className="text-secondary ms-1">9</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-1">
-                          <p className="text-secondary">普遍級</p>
-                        </div>
-                        <div className="col-1 d-flex flex-column justify-content-center align-items-center">
-                          <p className="text-secondary">中文版</p>
-                          <p className="text-secondary">英文版</p>
-                          <p className="text-secondary">日文版</p>
-                        </div>
-                        <div className="col-2">
-                          <p className="fw-bold">NT$ 760</p>
-                          <p className="text-secondary">(NT$ 990)</p>
-                        </div>
-                        <div className="col-1">
-                          <p>3</p>
-                        </div>
-                        <div className="col-1">
-                          <p>1</p>
-                        </div>
-                        <div className="col-2 d-flex flex-column justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm mb-1"
-                          >
-                            編輯
-                          </button>
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm"
-                          >
-                            下架
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-3 py-2 border-bottom">
-                    <div className="text-dark">
-                      <div className="row align-items-center text-center">
-                        <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                        <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={42}
-                              height={70}
-                            />
-                            <div className="d-flex justify-content-start align-items-start flex-column">
-                              <p className="mb-0 text-dark ms-2">
-                                集合啦！動物森友會
-                              </p>
-                              <div className="d-flex justify-content-start align-items-center">
-                                <FaRegHeart className="ms-2 text-secondary" />
-                                <p className="text-secondary ms-1">9</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-1">
-                          <p className="text-secondary">普遍級</p>
-                        </div>
-                        <div className="col-1 d-flex flex-column justify-content-center align-items-center">
-                          <p className="text-secondary">中文版</p>
-                          <p className="text-secondary">英文版</p>
-                          <p className="text-secondary">日文版</p>
-                        </div>
-                        <div className="col-2">
-                          <p className="fw-bold">NT$ 760</p>
-                          <p className="text-secondary">(NT$ 990)</p>
-                        </div>
-                        <div className="col-1">
-                          <p>3</p>
-                        </div>
-                        <div className="col-1">
-                          <p>1</p>
-                        </div>
-                        <div className="col-2 d-flex flex-column justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm mb-1"
-                          >
-                            編輯
-                          </button>
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm"
-                          >
-                            下架
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-3 py-2 border-bottom">
-                    <div className="text-dark">
-                      <div className="row align-items-center text-center">
-                        <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                        <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={42}
-                              height={70}
-                            />
-                            <div className="d-flex justify-content-start align-items-start flex-column">
-                              <p className="mb-0 text-dark ms-2">
-                                集合啦！動物森友會
-                              </p>
-                              <div className="d-flex justify-content-start align-items-center">
-                                <FaRegHeart className="ms-2 text-secondary" />
-                                <p className="text-secondary ms-1">9</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-1">
-                          <p className="text-secondary">普遍級</p>
-                        </div>
-                        <div className="col-1 d-flex flex-column justify-content-center align-items-center">
-                          <p className="text-secondary">中文版</p>
-                          <p className="text-secondary">英文版</p>
-                          <p className="text-secondary">日文版</p>
-                        </div>
-                        <div className="col-2">
-                          <p className="fw-bold">NT$ 760</p>
-                          <p className="text-secondary">(NT$ 990)</p>
-                        </div>
-                        <div className="col-1">
-                          <p>3</p>
-                        </div>
-                        <div className="col-1">
-                          <p>1</p>
-                        </div>
-                        <div className="col-2 d-flex flex-column justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm mb-1"
-                          >
-                            編輯
-                          </button>
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm"
-                          >
-                            下架
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-3 py-2 border-bottom">
-                    <div className="text-dark">
-                      <div className="row align-items-center text-center">
-                        <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                        <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={42}
-                              height={70}
-                            />
-                            <div className="d-flex justify-content-start align-items-start flex-column">
-                              <p className="mb-0 text-dark ms-2">
-                                集合啦！動物森友會
-                              </p>
-                              <div className="d-flex justify-content-start align-items-center">
-                                <FaRegHeart className="ms-2 text-secondary" />
-                                <p className="text-secondary ms-1">9</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-1">
-                          <p className="text-secondary">普遍級</p>
-                        </div>
-                        <div className="col-1 d-flex flex-column justify-content-center align-items-center">
-                          <p className="text-secondary">中文版</p>
-                          <p className="text-secondary">英文版</p>
-                          <p className="text-secondary">日文版</p>
-                        </div>
-                        <div className="col-2">
-                          <p className="fw-bold">NT$ 760</p>
-                          <p className="text-secondary">(NT$ 990)</p>
-                        </div>
-                        <div className="col-1">
-                          <p>3</p>
-                        </div>
-                        <div className="col-1">
-                          <p>1</p>
-                        </div>
-                        <div className="col-2 d-flex flex-column justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm mb-1"
-                          >
-                            編輯
-                          </button>
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm"
-                          >
-                            下架
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-3 py-2 border-bottom">
-                    <div className="text-dark">
-                      <div className="row align-items-center text-center">
-                        <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                        <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={42}
-                              height={70}
-                            />
-                            <div className="d-flex justify-content-start align-items-start flex-column">
-                              <p className="mb-0 text-dark ms-2">
-                                集合啦！動物森友會
-                              </p>
-                              <div className="d-flex justify-content-start align-items-center">
-                                <FaRegHeart className="ms-2 text-secondary" />
-                                <p className="text-secondary ms-1">9</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-1">
-                          <p className="text-secondary">普遍級</p>
-                        </div>
-                        <div className="col-1 d-flex flex-column justify-content-center align-items-center">
-                          <p className="text-secondary">中文版</p>
-                          <p className="text-secondary">英文版</p>
-                          <p className="text-secondary">日文版</p>
-                        </div>
-                        <div className="col-2">
-                          <p className="fw-bold">NT$ 760</p>
-                          <p className="text-secondary">(NT$ 990)</p>
-                        </div>
-                        <div className="col-1">
-                          <p>3</p>
-                        </div>
-                        <div className="col-1">
-                          <p>1</p>
-                        </div>
-                        <div className="col-2 d-flex flex-column justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm mb-1"
-                          >
-                            編輯
-                          </button>
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm"
-                          >
-                            下架
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-3 py-2">
-                    <div className="text-dark">
-                      <div className="row align-items-center text-center">
-                        <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                        <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={42}
-                              height={70}
-                            />
-                            <div className="d-flex justify-content-start align-items-start flex-column">
-                              <p className="mb-0 text-dark ms-2">
-                                集合啦！動物森友會
-                              </p>
-                              <div className="d-flex justify-content-start align-items-center">
-                                <FaRegHeart className="ms-2 text-secondary" />
-                                <p className="text-secondary ms-1">9</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-1">
-                          <p className="text-secondary">普遍級</p>
-                        </div>
-                        <div className="col-1 d-flex flex-column justify-content-center align-items-center">
-                          <p className="text-secondary">中文版</p>
-                          <p className="text-secondary">英文版</p>
-                          <p className="text-secondary">日文版</p>
-                        </div>
-                        <div className="col-2">
-                          <p className="fw-bold">NT$ 760</p>
-                          <p className="text-secondary">(NT$ 990)</p>
-                        </div>
-                        <div className="col-1">
-                          <p>3</p>
-                        </div>
-                        <div className="col-1">
-                          <p>1</p>
-                        </div>
-                        <div className="col-2 d-flex flex-column justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm mb-1"
-                          >
-                            編輯
-                          </button>
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm"
-                          >
-                            下架
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <Pagination />
-                </Tab>
-                <Tab
-                  eventKey="sending"
-                  title={<span style={{ color: '#2D2D2D' }}>已售完</span>}
-                >
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h5 className="text-dark fw-bold">152件商品</h5>
-                    <button
-                      type="button"
-                      className="btn btn-danger btn-sm d-flex align-items-center"
-                    >
-                      <FaPlus className="me-1" />
-                      新增商品
-                    </button>
-                  </div>
-                  <div className="container">
-                    {/*--------------Rating Subtitle------------------ */}
-                    <div
-                      className={`row mt-3 py-2 text-center ${styles.ratingST}`}
-                    >
-                      <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                      <h6 className="mb-0 col-3 fw-normal">商品名稱</h6>
-                      <h6 className="mb-0 col-1 fw-normal">級別</h6>
-                      <h6 className="mb-0 col-1 fw-normal">語言</h6>
-                      <h6 className="mb-0 col-2 fw-normal">
-                        售價 <span className={styles.fsSmall}>(原價)</span>
-                      </h6>
-                      <h6 className="mb-0 col-1 fw-normal">數量</h6>
-                      <h6 className="mb-0 col-1 fw-normal px-0">已售出</h6>
-                      <h6 className="mb-0 col-2 fw-normal">操作</h6>
-                    </div>
-                  </div>
-                  {/*--------------Rating Content------------------ */}
-                  <div className="px-3 py-2 border-bottom">
-                    <div className="text-dark">
-                      <div className="row align-items-center text-center">
-                        <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                        <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={42}
-                              height={70}
-                            />
-                            <div className="d-flex justify-content-start align-items-start flex-column">
-                              <p className="mb-0 text-dark ms-2">
-                                集合啦！動物森友會
-                              </p>
-                              <div className="d-flex justify-content-start align-items-center">
-                                <FaRegHeart className="ms-2 text-secondary" />
-                                <p className="text-secondary ms-1">9</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-1">
-                          <p className="text-secondary">普遍級</p>
-                        </div>
-                        <div className="col-1 d-flex flex-column justify-content-center align-items-center">
-                          <p className="text-secondary">中文版</p>
-                          <p className="text-secondary">英文版</p>
-                          <p className="text-secondary">日文版</p>
-                        </div>
-                        <div className="col-2">
-                          <p className="fw-bold">NT$ 760</p>
-                          <p className="text-secondary">(NT$ 990)</p>
-                        </div>
-                        <div className="col-1">
-                          <p>3</p>
-                        </div>
-                        <div className="col-1">
-                          <p>1</p>
-                        </div>
-                        <div className="col-2 d-flex flex-column justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm mb-1"
-                          >
-                            編輯
-                          </button>
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm"
-                          >
-                            下架
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-3 py-2 border-bottom">
-                    <div className="text-dark">
-                      <div className="row align-items-center text-center">
-                        <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                        <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={42}
-                              height={70}
-                            />
-                            <div className="d-flex justify-content-start align-items-start flex-column">
-                              <p className="mb-0 text-dark ms-2">
-                                集合啦！動物森友會
-                              </p>
-                              <div className="d-flex justify-content-start align-items-center">
-                                <FaRegHeart className="ms-2 text-secondary" />
-                                <p className="text-secondary ms-1">9</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-1">
-                          <p className="text-secondary">普遍級</p>
-                        </div>
-                        <div className="col-1 d-flex flex-column justify-content-center align-items-center">
-                          <p className="text-secondary">中文版</p>
-                          <p className="text-secondary">英文版</p>
-                          <p className="text-secondary">日文版</p>
-                        </div>
-                        <div className="col-2">
-                          <p className="fw-bold">NT$ 760</p>
-                          <p className="text-secondary">(NT$ 990)</p>
-                        </div>
-                        <div className="col-1">
-                          <p>3</p>
-                        </div>
-                        <div className="col-1">
-                          <p>1</p>
-                        </div>
-                        <div className="col-2 d-flex flex-column justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm mb-1"
-                          >
-                            編輯
-                          </button>
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm"
-                          >
-                            下架
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-3 py-2 border-bottom">
-                    <div className="text-dark">
-                      <div className="row align-items-center text-center">
-                        <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                        <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={42}
-                              height={70}
-                            />
-                            <div className="d-flex justify-content-start align-items-start flex-column">
-                              <p className="mb-0 text-dark ms-2">
-                                集合啦！動物森友會
-                              </p>
-                              <div className="d-flex justify-content-start align-items-center">
-                                <FaRegHeart className="ms-2 text-secondary" />
-                                <p className="text-secondary ms-1">9</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-1">
-                          <p className="text-secondary">普遍級</p>
-                        </div>
-                        <div className="col-1 d-flex flex-column justify-content-center align-items-center">
-                          <p className="text-secondary">中文版</p>
-                          <p className="text-secondary">英文版</p>
-                          <p className="text-secondary">日文版</p>
-                        </div>
-                        <div className="col-2">
-                          <p className="fw-bold">NT$ 760</p>
-                          <p className="text-secondary">(NT$ 990)</p>
-                        </div>
-                        <div className="col-1">
-                          <p>3</p>
-                        </div>
-                        <div className="col-1">
-                          <p>1</p>
-                        </div>
-                        <div className="col-2 d-flex flex-column justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm mb-1"
-                          >
-                            編輯
-                          </button>
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm"
-                          >
-                            下架
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-3 py-2 border-bottom">
-                    <div className="text-dark">
-                      <div className="row align-items-center text-center">
-                        <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                        <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={42}
-                              height={70}
-                            />
-                            <div className="d-flex justify-content-start align-items-start flex-column">
-                              <p className="mb-0 text-dark ms-2">
-                                集合啦！動物森友會
-                              </p>
-                              <div className="d-flex justify-content-start align-items-center">
-                                <FaRegHeart className="ms-2 text-secondary" />
-                                <p className="text-secondary ms-1">9</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-1">
-                          <p className="text-secondary">普遍級</p>
-                        </div>
-                        <div className="col-1 d-flex flex-column justify-content-center align-items-center">
-                          <p className="text-secondary">中文版</p>
-                          <p className="text-secondary">英文版</p>
-                          <p className="text-secondary">日文版</p>
-                        </div>
-                        <div className="col-2">
-                          <p className="fw-bold">NT$ 760</p>
-                          <p className="text-secondary">(NT$ 990)</p>
-                        </div>
-                        <div className="col-1">
-                          <p>3</p>
-                        </div>
-                        <div className="col-1">
-                          <p>1</p>
-                        </div>
-                        <div className="col-2 d-flex flex-column justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm mb-1"
-                          >
-                            編輯
-                          </button>
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm"
-                          >
-                            下架
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-3 py-2 border-bottom">
-                    <div className="text-dark">
-                      <div className="row align-items-center text-center">
-                        <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                        <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={42}
-                              height={70}
-                            />
-                            <div className="d-flex justify-content-start align-items-start flex-column">
-                              <p className="mb-0 text-dark ms-2">
-                                集合啦！動物森友會
-                              </p>
-                              <div className="d-flex justify-content-start align-items-center">
-                                <FaRegHeart className="ms-2 text-secondary" />
-                                <p className="text-secondary ms-1">9</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-1">
-                          <p className="text-secondary">普遍級</p>
-                        </div>
-                        <div className="col-1 d-flex flex-column justify-content-center align-items-center">
-                          <p className="text-secondary">中文版</p>
-                          <p className="text-secondary">英文版</p>
-                          <p className="text-secondary">日文版</p>
-                        </div>
-                        <div className="col-2">
-                          <p className="fw-bold">NT$ 760</p>
-                          <p className="text-secondary">(NT$ 990)</p>
-                        </div>
-                        <div className="col-1">
-                          <p>3</p>
-                        </div>
-                        <div className="col-1">
-                          <p>1</p>
-                        </div>
-                        <div className="col-2 d-flex flex-column justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm mb-1"
-                          >
-                            編輯
-                          </button>
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm"
-                          >
-                            下架
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-3 py-2">
-                    <div className="text-dark">
-                      <div className="row align-items-center text-center">
-                        <h6 className="mb-0 col-1 fw-normal text-start">O</h6>
-                        <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
-                          <div className="d-flex justify-content-start align-items-center mb-2">
-                            <Image
-                              src={gameCover}
-                              alt="game-cover"
-                              width={42}
-                              height={70}
-                            />
-                            <div className="d-flex justify-content-start align-items-start flex-column">
-                              <p className="mb-0 text-dark ms-2">
-                                集合啦！動物森友會
-                              </p>
-                              <div className="d-flex justify-content-start align-items-center">
-                                <FaRegHeart className="ms-2 text-secondary" />
-                                <p className="text-secondary ms-1">9</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-1">
-                          <p className="text-secondary">普遍級</p>
-                        </div>
-                        <div className="col-1 d-flex flex-column justify-content-center align-items-center">
-                          <p className="text-secondary">中文版</p>
-                          <p className="text-secondary">英文版</p>
-                          <p className="text-secondary">日文版</p>
-                        </div>
-                        <div className="col-2">
-                          <p className="fw-bold">NT$ 760</p>
-                          <p className="text-secondary">(NT$ 990)</p>
-                        </div>
-                        <div className="col-1">
-                          <p>3</p>
-                        </div>
-                        <div className="col-1">
-                          <p>1</p>
-                        </div>
-                        <div className="col-2 d-flex flex-column justify-content-center align-items-center">
-                          {/* 可以跳出一個MODAL來處理 */}
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm mb-1"
-                          >
-                            編輯
-                          </button>
-                          <button
-                            type="button"
-                            href="/comment/reply"
-                            className="btn btn-danger btn-sm"
-                          >
-                            下架
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <Pagination />
-                </Tab>
-                <Tab
-                  eventKey="done"
-                  title={<span style={{ color: '#2D2D2D' }}>未上架</span>}
-                >
-                  <h6 className="text-secondary">尚無商品資訊</h6>
-                </Tab>
-              </Tabs>
+                  <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
               {/* <div className="d-flex align-items-center justify-content-between mb-2">
                 <h5 className="text-dark mb-0 me-3">41筆評價</h5>
                 <div className="d-flex ">
