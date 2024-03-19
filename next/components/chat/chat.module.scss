@@ -32,6 +32,10 @@
     // min-height: 100%;
     // background-color: #F7F7F7;
     background-color: rgb(203, 203, 218);
+
+    .msgText{
+      color:palevioletred;
+    }
   }
 
   .footer{
@@ -55,7 +59,7 @@
     }
     
     .sendButton:hover {
-      background-color: #45a049;
+      background-color: #44d54b;
     }
     
     .inputField:focus {

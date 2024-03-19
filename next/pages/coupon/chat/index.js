@@ -10,7 +10,7 @@ export default function ChatControl() {
   const [account, setAccount] = useState("")
 
   //聊天室名字
-  // const [room, setRoom] = useState("")
+  const [room, setRoom] = useState("")
 
   const [socket, setSocket] = useState(null)
   const [showChat, setShowChat] = useState(false)
@@ -24,9 +24,11 @@ export default function ChatControl() {
 
   
 
-  const createRoom = ()=>{
+  const createRoom = (memberId)=>{
+    const room = `${memberId}的發訊息空間`
     if(socket) socket.emit("create_room", room)
     setShowChat(true)
+    setRoom(room)
     // if(!isLoggedIn){
     //   router.push('/member/login')
     //   return 
@@ -40,10 +42,10 @@ export default function ChatControl() {
     <>
     <div className='text-white'>Chat</div>
     <button className='btn btn-danger'
-    onClick={()=>createRoom() }>跟賣家聊聊</button>
+    onClick={()=>createRoom(memberId) }>跟賣家聊聊</button>
 
     {!showChat? (""):
-    (<Chat socket={socket} memberId={memberId} memberData={memberData}/>)
+    (<Chat socket={socket} memberId={memberId} memberData={memberData} room={room}/>)
     }
 
     </>
