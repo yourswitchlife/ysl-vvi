@@ -123,7 +123,7 @@ async function AddMemberCP(memberID, couponID) {
   return { id: results.insertId, memberID, couponID }
 }
 
-//讀取leading page單一優惠券
+//讀取單一優惠券
 async function getSingle(id) {
   try {
     const [coupon] = await db.execute(
