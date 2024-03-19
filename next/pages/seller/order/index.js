@@ -399,7 +399,7 @@ export default function Order() {
                               type="button"
                               className="btn btn-danger btn-sm"
                             >
-                              編輯
+                              查看
                             </button>
                           </div>
                         </div>
@@ -517,10 +517,9 @@ export default function Order() {
                             {/* 可以跳出一個MODAL來處理 */}
                             <button
                               type="button"
-                              href="/comment/reply"
                               className="btn btn-danger btn-sm"
                             >
-                              編輯
+                              查看
                             </button>
                           </div>
                         </div>
