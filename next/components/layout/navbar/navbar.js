@@ -29,37 +29,30 @@ export default function Navbar() {
   const [isHovered, setIsHovered] = useState(false);
   const { totalProducts } = useCart()
   const [unreadCount, setUnreadCount] = useState(0);
-  const [socket, setSocket] = useState(null);
+  const socket = io('http://localhost:3005');
 
   useEffect(() => {
-    setSocket(io('http://localhost:3005'))
-  }, [])
-
-  useEffect(() => {
-    const socket = io('http://localhost:3005');
-
     socket.on('connect', () => {
-      console.log('Connected to the server');
+      console.log('Connected to the webserver');
       if (memberId) {
-        console.log('emit memberid to server');
-        socket.emit('member_connected', { memberId });
+        // console.log('傳送memberId給後端');
+        socket.emit('member_connected', { memberId: memberId });
       }
     });
     socket.on('unread_count', (count) => {
-      console.log('Received unread count:', count);
+      console.log('收到未讀通知:', count);
       setUnreadCount(count);
     });
 
-
-    // 清理函數，在組件卸載時執行
-    /* return () => {
-      console.log('Disconnecting from the server...');
+    return () => {
+      console.log('Disconnecting from the webserver...');
       socket.off('connect');
       socket.off('unread_count');
       socket.close();
-    }; */
+    };
 
-  }, [socket]);
+  }, [memberId])
+
   return (
     <>
       <div className='d-none d-lg-block'>

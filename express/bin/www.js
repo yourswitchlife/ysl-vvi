@@ -10,8 +10,9 @@ const debug = debugLib('node-express-es6:server')
 import http from 'http';
 
 // websocket
-import { Server as SocketIOServer } from 'socket.io';
-import db from '../configs/db.mjs';
+import { Server as SocketIOServer } from 'socket.io'
+
+import { triggerWithWebsocket } from '../routes/member.mjs';
 
 // 導入dotenv 使用 .env 檔案中的設定值 process.env
 import 'dotenv/config.js'
@@ -36,40 +37,6 @@ const io = new SocketIOServer(server, {
   }
 });
 
-// io監聽事件設定
-io.on('connection', async (socket) => {
-  console.log('A member connected.')
-
-  socket.on('member_connected', async (data) => {
-    console.log('A member reading.')
-    socket.memberId = data.memberId
-    await sendUnreadCount(socket.memberId); 
-  });
-
-  db.on('after_member_coupon_insert', async (data) => {
-    console.log('New notification received:', data);
-    await sendUnreadCount(socket.memberId); 
-  });
-  
-  const sendUnreadCount = async (memberId) => {
-    try {
-      console.log('memberIDunread:', memberId)
-      const [results] = await db.query("SELECT COUNT(*) AS unreadCount FROM notify_coupon WHERE member_id = ? AND valid = 0", [memberId]);
-      socket.emit('unread_count', results[0]['unreadCount']);
-      console.log('unread_count:', results[0]['unreadCount'])
-    } catch (error) {
-      console.error('Database query error:', error);
-      socket.emit('error', 'An error occurred while fetching unread counts.');
-    }
-  };
-
-  
-  // clear
-  socket.on('disconnect', () => {
-    console.log('Member disconnected.');
-  });
-});
-
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -78,6 +45,9 @@ io.on('connection', async (socket) => {
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+
+triggerWithWebsocket(io);
 
 /**
  * Normalize a port into a number, string, or false.

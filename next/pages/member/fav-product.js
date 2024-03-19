@@ -80,7 +80,7 @@ export default function FavProduct() {
   const handleUnfavoriteSelected = async () => {
     try {
       const response = await fetch('http://localhost:3005/api/member/unfav-product', {
-        method: 'DELETE',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },

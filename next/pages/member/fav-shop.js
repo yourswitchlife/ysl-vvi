@@ -69,7 +69,7 @@ export default function FavShop() {
   const handleUnfavorite = async (seller_id) => {
     try {
       const response = await fetch(`http://localhost:3005/api/member/unfav-shop?memberId=${memberId}&sellerId=${seller_id}`, {
-        method: 'DELETE',
+        method: 'PATCH',
         credentials: 'include',
       });
 

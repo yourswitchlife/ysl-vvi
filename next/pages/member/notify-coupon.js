@@ -20,9 +20,6 @@ import Dropdown from 'react-bootstrap/Dropdown'
 //Auth
 import { useAuth } from '@/hooks/use-Auth';
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
-//websocket
-import { io } from 'socket.io-client';
-import { includes } from 'lodash';
 
 export default function notifyCoupon() {
   const router = useRouter();
@@ -127,7 +124,7 @@ export default function notifyCoupon() {
                   </div>
 
                   <Card.Body className={oStyles.wid_xs + " d-flex flex-row m-3 justify-content-between align-items-center"}>
-                    <h5 className={`${oStyles.coupon_text} mx-3 fw-bold`} style={{ width: 250, color: noti.valid === 0 ? '#0068f0' : '' }}>
+                    <h5 className={`${oStyles.coupon_text} mx-3 fw-bold`} style={{ width: 250, color: noti.valid === 0 ? '#0068f0' : '#676767' }}>
                       {noti.coupon_title} 優惠券已送達！
                     </h5>
 
@@ -155,4 +152,8 @@ export default function notifyCoupon() {
       </div>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  return await mainCheckToLogin(context);
 }

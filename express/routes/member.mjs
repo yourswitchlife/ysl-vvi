@@ -508,6 +508,8 @@ router.get('/fav-shop', async (req, res) => {
       shop_comment ON fs.seller_id = shop_comment.shop_id
     WHERE 
     fs.buyer_id = ?
+    AND
+    fs.valid = 1
     GROUP BY 
     fs.id
     ${orderClause}
@@ -529,12 +531,12 @@ router.get('/fav-shop', async (req, res) => {
 });
 
 // fav-shop-cancel
-router.delete('/unfav-shop', async (req, res) => {
+router.patch('/unfav-shop', async (req, res) => {
   const memberId = req.query.memberId;
   const sellerId = req.query.sellerId;
 
   try {
-    const unfavQuery = 'DELETE FROM fav_shop WHERE buyer_id = ? AND seller_id = ?';
+    const unfavQuery = 'UPDATE fav_shop SET valid = 0 WHERE buyer_id = ? AND seller_id = ?';
     const [unfavshopResult] = await db.execute(unfavQuery, [memberId, sellerId]);
 
     if (unfavshopResult.affectedRows > 0) {
@@ -599,6 +601,8 @@ router.get('/fav-product', async (req, res) => {
         member m ON p.member_id = m.id
       WHERE
         fp.member_id = ?
+      AND
+        fp.valid = 1
       ${orderClause}
       LIMIT ?, ?`,
       [buyerId, offset, limit]
@@ -619,14 +623,14 @@ router.get('/fav-product', async (req, res) => {
 });
 
 // fav-product-cancel
-router.delete('/unfav-product', async (req, res) => {
+router.patch('/unfav-product', async (req, res) => {
   const memberId = req.body.memberId;
   const productIds = req.body.productIds; // array
   // console.log(productIds)
   const productHolders = productIds.map(() => '?').join(', ');
 
   try {
-    const unfavPQuery = `DELETE FROM fav_product WHERE member_id = ? AND id IN (${productHolders})`;
+    const unfavPQuery = `UPDATE fav_product SET valid = 0 WHERE member_id = ? AND id IN (${productHolders})`;
     const [unfavPResult] = await db.execute(unfavPQuery, [memberId, ...productIds]);
 
     if (unfavPResult.affectedRows > 0) {
@@ -747,12 +751,75 @@ router.get('/order', async (req, res) => {
     console.log('trigger創建成功');
   } catch (error) {
     if (error.code === 'ER_TRG_ALREADY_EXISTS') {
-      console.log('trigger已存在');
+      console.log('trigger已存在(看到這個很正常)');
     } else {
       console.error('創建trigger發生錯誤:', error);
     }
   }
 })();
+
+export const triggerWithWebsocket = (io) => {
+  let pollingIntervalId = null;
+  const pollingInterval = 20 * 1000; // s
+
+  const memberSockets = new Map(); // 儲存已連接的客戶端的 memberId 和 socket 的映射
+
+  const startPolling = () => {
+    if (!pollingIntervalId) {
+      console.log('開始輪詢')
+      pollingIntervalId = setInterval(pollDatabase, pollingInterval);
+    }
+  };
+
+  const stopPolling = () => {
+    if (pollingIntervalId && memberSockets.size === 0) {
+      clearInterval(pollingIntervalId);
+      pollingIntervalId = null;
+    }
+  };
+
+  const pollDatabase = async () => {
+    for (let [memberId, socket] of memberSockets.entries()) {
+      sendUnreadCount(socket, memberId);
+    }
+  };
+
+  const sendUnreadCount = async (socket, memberId) => {
+    try {
+      console.log('memberID unread:', memberId);
+      const [results] = await db.query("SELECT COUNT(*) AS unreadCount FROM notify_coupon WHERE member_id = ? AND valid = 0", [memberId]);
+      socket.emit('unread_count', results[0]['unreadCount']);
+      console.log('unread_count:', results[0]['unreadCount']);
+    } catch (error) {
+      console.error('Database query error:', error);
+      socket.emit('error', 'An error occurred while fetching unread counts.');
+    }
+  };
+
+  io.on('connection', (socket) => {
+    // console.log('A member connected.');
+
+    socket.on('member_connected', (data) => {
+      console.log('A member reading.');
+      socket.memberId = data.memberId;
+      memberSockets.set(socket.memberId, socket);
+      sendUnreadCount(socket, data.memberId); // 初始發送
+      startPolling(); // 開始輪詢
+    });
+
+    socket.on('disconnect', () => {
+      // console.log('Member disconnected.');
+      memberSockets.delete(socket.memberId);
+      stopPolling();
+    });
+  });
+};
+
+
+
+
+
+
 
 // coupon notify render
 // 在 Express 應用中設置路由
