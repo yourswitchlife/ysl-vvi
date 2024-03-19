@@ -261,6 +261,7 @@
 }
 
 .cancel_btn {
+  font-weight: bold;
   color: $white;
   border: 2px solid $danger;
   background: $primary-black;
@@ -269,7 +270,13 @@
   &:hover {
     color: $white;
     border: 2px solid $danger;
-    background: $gray;
+    background: $dark-gray;
+    box-shadow: 0px 0px 10px 5px rgba(247, 39, 58, 0.25);
+  }
+  &:active {
+    color: $white;
+    border: 2px solid $danger !important;
+    background: $gray !important;
     box-shadow: 0px 0px 10px 5px rgba(247, 39, 58, 0.25);
   }
 }
@@ -291,8 +298,8 @@
   }
   .iconb{
     position: absolute;
-    right: 14%;
-
+    right: 0;
+    bottom: 1%;
   }
   .iconc{
     position: absolute;

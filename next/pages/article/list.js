@@ -1,10 +1,42 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Navbar from '@/components/layout/navbar/navbar'
 import Footer from '@/components/layout/footer/footer-front'
 import style from '@/styles/article/list.module.scss'
 import { FaSearch } from 'react-icons/fa'
 import Link from 'next/link'
+import Pagination from 'react-bootstrap/Pagination'
 export default function list() {
+
+  const [article, setArticle] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [articlesPerPage] = useState(5);
+
+  const fetchArticle = async () => {
+    try {
+      const res = await fetch('http://localhost:3005/api/article/list');
+      const data = await res.json();
+
+      if (Array.isArray(data)) {
+        setArticle(data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    fetchArticle();
+  }, []);
+
+  const indexOfLastArticle = currentPage * articlesPerPage;
+  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+  const currentArticle = article.slice(indexOfFirstArticle, indexOfLastArticle);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+
   return (
     <>
       <Navbar />
@@ -12,9 +44,13 @@ export default function list() {
         <div
           className={`container d-flex justify-content-between px-lg-5 ${style.tag_link}`}
         >
-          <div className='align-items-center d-flex'>
-            <Link href="index.html" className='text-decoration-none text-white' >首頁&gt;</Link>
-            <Link href="list.html" className='text-decoration-none text-white'>熱門標籤</Link>
+          <div className={`align-items-center d-flex ${style.index_padding}`}>
+            <Link href="/article" className="text-decoration-none text-white">
+              首頁&gt;
+            </Link>
+            <Link href="list.html" className="text-decoration-none text-white">
+              熱門標籤
+            </Link>
           </div>
           <div className="search">
             <form className="d-flex" role="search">
@@ -34,81 +70,66 @@ export default function list() {
           </div>
         </div>
         <div className="container">
-          <ul>
-            <li>
-              <div className={`${style.list} mt-5`}>
-                <a href="article_main.html" className={`d-flex text-decoration-none text-white`}>
-                  <div className={style.pic}>
-                    <img src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000" alt="" />
+          <ul className={style.ul}>
+            {currentArticle.map((a, i) => {
+              return (
+                <li className={style.li} >
+                  <div className={`${style.list} mt-5`}>
+                    <Link
+                      href={`/article/${a.ai_id}`}
+                      className={`d-flex text-decoration-none text-white ${style.li}`}
+                    >
+                      <div className={style.pic}>
+                        <img
+                          src={`/images/article/${a.article_img}`}
+                          alt={a.article_img}
+                        />
+
+                      </div>
+                      <div className={`${style.txt} mx-4 p-3`}>
+                        <div>
+                          <div
+                            className={`badge text-bg-secondary mb-3 ${style.tag_btn}`}
+                          >
+                            <h5 className={`${style.h5} mb-0`}>{a.name}</h5>
+                          </div>
+                        </div>
+                        <div>
+                          <h4>
+                            {a.article_title}
+                          </h4>
+                        </div>
+                        <div>
+                          <p className='d-flex justify-content-end'>{a.article_time}</p>
+                        </div>
+                      </div>
+                    </Link>
                   </div>
-                  <div className={`${style.txt} mx-4 p-3`}>
-                    <div className= {`badge text-bg-secondary mb-3 ${style.tag_btn}`}>
-                      <h5 className='mb-0'>冒險類</h5>
-                    </div>
-                    <div>
-                      <h6>
-                        《OPUS：心相吾山》是一款劇情導向的多結局冒險故事，玩家將扮演迷失在幻境的主角，透過攝影去挖掘世界的種種謎團，最後找到回家的辦法。官方表示，團隊一貫重視本作的音樂音效，由《OPUS》系列作曲家
-                        Triodust、質地有聲製樂所共同操刀；而在遊戲劇情部分由《OPUS：龍脈常歌》編劇、美國獨立遊戲節（Independent
-                        Games Festival）敘事大獎榮譽提名劇本家 Brian Lee 執筆。
-                      </h6>
-                    </div>
-                    <div>
-                      <p>2024/1/18</p>
-                    </div>
-                  </div>
-                </a>
-              </div>
-            </li>
-            <li>
-              <div className={`${style.list} mt-5`}>
-                <a href="article_main.html" className={`d-flex text-decoration-none text-white`}>
-                  <div className={style.pic}>
-                    <img src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000" alt="" />
-                  </div>
-                  <div className={`${style.txt} mx-4 p-3`}>
-                    <div className= {`badge text-bg-secondary mb-3 ${style.tag_btn}`}>
-                      <h5 className='mb-0'>冒險類</h5>
-                    </div>
-                    <div>
-                      <h6>
-                        《OPUS：心相吾山》是一款劇情導向的多結局冒險故事，玩家將扮演迷失在幻境的主角，透過攝影去挖掘世界的種種謎團，最後找到回家的辦法。官方表示，團隊一貫重視本作的音樂音效，由《OPUS》系列作曲家
-                        Triodust、質地有聲製樂所共同操刀；而在遊戲劇情部分由《OPUS：龍脈常歌》編劇、美國獨立遊戲節（Independent
-                        Games Festival）敘事大獎榮譽提名劇本家 Brian Lee 執筆。
-                      </h6>
-                    </div>
-                    <div>
-                      <p>2024/1/18</p>
-                    </div>
-                  </div>
-                </a>
-              </div>
-            </li>
-            <li>
-              <div className={`${style.list} mt-5`}>
-                <a href="article_main.html" className={`d-flex text-decoration-none text-white`}>
-                  <div className={style.pic}>
-                    <img src="https://p2.bahamut.com.tw/B/2KU/27/a0ba19cb973bccb43c19287bd91oknj5.PNG?w=1000" alt="" />
-                  </div>
-                  <div className={`${style.txt} mx-4 p-3`}>
-                    <div className= {`badge text-bg-secondary mb-3 ${style.tag_btn}`}>
-                      <h5 className='mb-0'>冒險類</h5>
-                    </div>
-                    <div>
-                      <h6>
-                        《OPUS：心相吾山》是一款劇情導向的多結局冒險故事，玩家將扮演迷失在幻境的主角，透過攝影去挖掘世界的種種謎團，最後找到回家的辦法。官方表示，團隊一貫重視本作的音樂音效，由《OPUS》系列作曲家
-                        Triodust、質地有聲製樂所共同操刀；而在遊戲劇情部分由《OPUS：龍脈常歌》編劇、美國獨立遊戲節（Independent
-                        Games Festival）敘事大獎榮譽提名劇本家 Brian Lee 執筆。
-                      </h6>
-                    </div>
-                    <div>
-                      <p>2024/1/18</p>
-                    </div>
-                  </div>
-                </a>
-              </div>
-            </li>
+                </li>
+              )
+            })}
           </ul>
         </div>
+        <Pagination className="justify-content-center mt-3 pt-3">
+          <Pagination.First onClick={() => handlePageChange(1)} />
+          <Pagination.Prev
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          />
+          {[...Array(Math.ceil(article.length / articlesPerPage)).keys()].map((number) => (
+            <Pagination.Item 
+              key={number + 1}
+              onClick={() => handlePageChange(number + 1)}
+            >
+              {number + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === Math.ceil(article.length / articlesPerPage)}
+          />
+          <Pagination.Last onClick={() => handlePageChange(Math.ceil(article.length / articlesPerPage))} />
+        </Pagination>
       </main>
       <Footer />
     </>

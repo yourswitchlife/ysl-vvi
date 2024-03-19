@@ -50,7 +50,6 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
     fontSize: 'larger',
   };
 
-  //超過頁數省略...還沒寫完
   return (
     <nav aria-label="Page navigation example d-flex justify-content-center">
       <ul className="pt-5 pagination d-flex justify-content-center align-items-center">
@@ -67,7 +66,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
             <MdOutlineFirstPage />
           </a>
         </li>
-        <li className={`pe-1 page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+        <li className={`pe-1 page-item ${currentPage === 1 ? 'd-none' : ''}`}>
           <a
             className="page-link"
             href="#"
@@ -97,7 +96,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
             </a>
           </li>
         ))}
-        <li className={`pe-1 page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+        <li className={`pe-1 page-item ${currentPage === totalPages || totalPages === 1 ? 'd-none' : ''}`}>
           <a
             className="page-link"
             href="#"
