@@ -38,7 +38,7 @@ export default function ProductCard({ isEditing, item }) {
           />
         </div>
         {/* 手機板商品圖 */}
-        <Link href="" className={styles.pImgMobile}>
+        <Link href={`/products/${item.id}`} className={styles.pImgMobile}>
           <Image
             src={`http://localhost:3005/productImg/cover/${item.img_cover}`}
             width={65}
@@ -50,17 +50,17 @@ export default function ProductCard({ isEditing, item }) {
           {/* 商品名稱、加入收藏 */}
           <div className={styles.pInfoBar}>
             <div className="d-flex">
-              <Link href="" className={styles.pImg}>
+              <Link href={`/products/${item.id}`} className={styles.pImg}>
                 <Image
                   src={`http://localhost:3005/productImg/cover/${item.img_cover}`}
                   width={85}
                   height={140}
-                  alt=""
+                  alt={item.name}
                 />
               </Link>
               <div className={styles.pInfo}>
                 <div className={styles.pInfoTop}>
-                  <Link href="" className={styles.pName}>
+                  <Link href={`/products/${item.id}`} className={styles.pName}>
                     {item.name}
                   </Link>
                   <div className="d-flex justify-content-between align-items-center">

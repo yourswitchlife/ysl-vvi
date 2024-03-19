@@ -21,7 +21,7 @@ import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 export default function FavProduct() {
   const router = useRouter();
   const { isLoggedIn, memberId } = useAuth();
-  const { addItem, notifySuccess } = useCart()
+  const { addItem } = useCart()
 
   const [favProducts, setFavProducts] = useState([]);
   // 排序
@@ -106,6 +106,7 @@ export default function FavProduct() {
   };
 
   const handleAddToCart = (product) => {
+    console.log(product);
     const priceString = product.price.replace(',', ''); 
     const displayPriceString = product.display_price.replace(',', ''); 
     const newItem = {
@@ -117,8 +118,8 @@ export default function FavProduct() {
       display_price: Number(displayPriceString),
       quantity: 1, // 預設1
       img_cover: product.img_cover,
-      user_select: false,
-      member_Id:product.memberId
+      member_id: product.memberId,
+      user_select: false
     }
     console.log(newItem)
     addItem(newItem)

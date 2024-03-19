@@ -14,6 +14,8 @@ import coupon from '@/public/images/cart/coupon.svg'
 export default function OrderList() {
   const { cartItems, handleAllCheckboxChange, totalProducts, totalPrice } =
     useCart()
+  const payingItems = cartItems.filter(item => item.userSelect !== false)
+  const selectedItems = payingItems.length
   return (
     <>
       <section className="container">
@@ -30,7 +32,7 @@ export default function OrderList() {
                   value={cartItems}
                   checked={
                     cartItems.every((item) => item.userSelect === true)
-                      
+
                   }
                   onChange={() => {
                     handleAllCheckboxChange(cartItems)
@@ -54,7 +56,13 @@ export default function OrderList() {
                   <div className={styles.framHeader}>
                     <h5 className={styles.title}>訂單總覽</h5>
                     <div className={styles.totalQuantity}>
-                      共 {totalProducts} 件商品
+                      {selectedItems ? (
+                        <>
+                          共 {selectedItems} 件商品
+                        </>
+                    ) : (
+                      <></>
+                    )}
                     </div>
                   </div>
                   <div className={styles.frameBody}>
