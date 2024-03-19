@@ -1,55 +1,57 @@
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import Carousel from 'react-bootstrap/Carousel'
 import styles from '@/styles/index.module.scss'
+import mstyles from '@/styles/member/index.module.scss'
 
 function ControlledCarousel() {
   const [index, setIndex] = useState(0)
+  // const [products, setProducts] = useState([]);
+  const [images, setImages] = useState([
+    'http://localhost:3005/main/001.jpg',
+    'http://localhost:3005/main/002.jpg',
+    'http://localhost:3005/main/003.jpg',
+    'http://localhost:3005/main/004.jpg',
+    'http://localhost:3005/main/005.jpg',
+  ]);
 
   const handleSelect = (selectedIndex) => {
     setIndex(selectedIndex)
   }
 
+  /* useEffect(() => {
+    fetchProducts();
+  }, []); */
+
+  /* const fetchProducts = async () => {
+    try {
+      const response = await fetch('http://localhost:3005/api/main');
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
+      }
+      const data = await response.json();
+      setProducts(data.items);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  }; */
+  
+
   return (
     <Carousel
       activeIndex={index}
       onSelect={handleSelect}
-      className={styles.sec}
+      className={styles.sec1}
     >
-      <Carousel.Item>
-        <img
-          className="w-100 d-block"
-          alt="First slide"
-          src="https://images.unsplash.com/photo-1558637845-c8b7ead71a3e?q=80&w=2532&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        />
-        {/* <Carousel.Caption>
-          <h3>First slide label</h3>
-          <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-        </Carousel.Caption> */}
-      </Carousel.Item>
-      <Carousel.Item>
-        <img
-          className="w-100 d-block"
-          alt="2 slide"
-          src="https://plus.unsplash.com/premium_photo-1701767501250-fda0c8f7907f?q=80&w=2532&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        />
-        {/* <Carousel.Caption>
-          <h3>Second slide label</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </Carousel.Caption> */}
-      </Carousel.Item>
-      <Carousel.Item>
-        <img
-          className="w-100 d-block carouselImg"
-          alt="3 slide"
-          src="https://plus.unsplash.com/premium_photo-1701770418128-c9abe0287e4c?q=80&w=2532&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        />
-        {/* <Carousel.Caption>
-          <h3>Third slide label</h3>
-          <p>
-            Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-          </p>
-        </Carousel.Caption> */}
-      </Carousel.Item>
+      {images.map((imageUrl, i) => (
+        <Carousel.Item key={i} className={mstyles.carousel}>
+          <img
+            className="d-block w-100"
+            src={imageUrl}
+            alt="mainimages"
+            className={mstyles.fit}
+          />
+        </Carousel.Item>
+      ))}
     </Carousel>
   )
 }
