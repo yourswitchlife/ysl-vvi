@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import CartNavbar from '@/components/layout/navbar/cart-navbar'
 import Footer from '@/components/layout/footer/footer-front'
 import CartStep from '@/components/cart/step-progress'
@@ -13,9 +13,11 @@ import { useAuth } from '@/hooks/use-Auth'
 export default function Checkout() {
   const { isLoggedIn, memberData } = useAuth()
   const { cartItems } = useCart()
+
+
   return (
     <>
-    <CartNavbar />
+      <CartNavbar />
       {cartItems.length > 0 ? (
         <>
           <CartStep />
@@ -28,7 +30,6 @@ export default function Checkout() {
           <Footer />
         </>
       )}
-
     </>
   )
 }

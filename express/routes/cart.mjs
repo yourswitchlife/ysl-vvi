@@ -236,111 +236,128 @@ router.post('/create-order', async (req, res) => {
       // 生成Linepay用的唯一識別訂單號
       const externalOrderId = `${groupId}${orderGroupUuid}`
 
-      // 測試
-      // const groupedItems = testItems.reduce((group, item) => {
-      //   if (!group[item.member_id]) {
-      //     group[item.member_id] = []
-      //   }
-      //   group[item.member_id].push(item)
-      //   return group
-      // }, {})
-
-      // console.log(req.body.items)
-
       try {
-        // 預處理，計算所有訂單的totalOrderPrice總金額
-        totalOrderPrice = items.reduce((total, item) => {
-          const shippingCost =
-            shipping_method[item.member_id] === '2' ? 100 : 60
-          return total + item.price * item.quantity + shippingCost
-        }, 0)
-      } catch (error) {
-        console.error('在 reduce 使用時出錯:', error)
-      }
+        const groupedItems = items.reduce((group, item) => {
+          if (!group[item.member_id]) {
+            group[item.member_id] = []
+          }
+          group[item.member_id].push(item)
+          return group
+        }, {})
 
-      const groupedItems = items.reduce((group, item) => {
-        if (!group[item.member_id]) {
-          group[item.member_id] = []
-        }
-        group[item.member_id].push(item)
-        return group
-      }, {})
-
-      // 遍歷每個賣場分組創建賣場訂單
-      for (const [member_id, itemsInGroup] of Object.entries(groupedItems)) {
-        // console.log(itemsInGroup)
-        if (!Array.isArray(itemsInGroup)) {
-          console.error(`預期 itemsInGroup 是一個陣列，取得:`, itemsInGroup)
-          continue
-        }
-        // 先找到當前對應的shipping_method
-        const currentShippingMethod = shipping_method.find(
-          (method) => method.member_id === member_id
+        totalOrderPrice = Object.entries(groupedItems).reduce(
+          (total, [member_id, itemsInGroup]) => {
+            // 找到當前賣場訂單運費
+            const currentShippingMethod = shipping_method.find(
+              (method) => method.member_id === member_id
+            )
+            // 根據shipping_method計算運費
+            const shippingCost =
+              currentShippingMethod &&
+              currentShippingMethod.shippingMethod === '2'
+                ? 100
+                : 60
+            // 計算賣場訂單總金額
+            const itemPrice = itemsInGroup.reduce(
+              (sum, item) => sum + item.price * item.quantity,
+              0
+            )
+            return total + itemPrice + shippingCost
+          },
+          0
         )
-        // 查找每個賣場對應的配送方式的運費
-        const shippingCost =
-          currentShippingMethod && currentShippingMethod.shippingMethod === '2'
-            ? 100
-            : 60
+        // 遍歷每個賣場分組創建賣場訂單
+        for (const [member_id, itemsInGroup] of Object.entries(groupedItems)) {
+          // console.log(itemsInGroup)
+          if (!Array.isArray(itemsInGroup)) {
+            console.error(`預期 itemsInGroup 是一個陣列，取得:`, itemsInGroup)
+            continue
+          }
+          // 產生不同賣場對應的order_number
+          const orderNumber = uuidv4()
+          // 先找到當前對應的shipping_method
+          const currentShippingMethod = shipping_method.find(
+            (method) => method.member_id === member_id
+          )
+          // 查找每個賣場對應的配送方式的運費
+          const shippingCost =
+            currentShippingMethod &&
+            currentShippingMethod.shippingMethod === '2'
+              ? 100
+              : 60
+          console.log(shippingCost)
 
-        // 計算訂單總價格(未使用優惠券前)
-        const orderPrice =
-          itemsInGroup.reduce(
-            (sum, { price, quantity }) => sum + price * quantity,
-            0
-          ) + shippingCost
+          // 計算訂單總價格(未使用優惠券前)
+          const orderPrice =
+            itemsInGroup.reduce(
+              (sum, { price, quantity }) => sum + price * quantity,
+              0
+            ) + shippingCost
 
-        // 計算每個賣場訂單在所有訂單總額的佔比
-        const proportion =
-          totalOrderPrice > 0 ? orderPrice / totalOrderPrice : 0
+          console.log(orderPrice)
+          // 計算每個賣場訂單在所有訂單總額的佔比
+          const proportion =
+            totalOrderPrice > 0 ? orderPrice / totalOrderPrice : 0
 
-        // 根據比例分配總折抵金額
-        const discountAmount = totalDiscount * proportion
+          // 根據比例分配總折抵金額
+          const discountAmount = totalDiscount * proportion
 
-        // 計算每個訂單實際付款的訂單總金額(使用優惠券)-先四捨五入測試
-        const finalPrice = Math.round(orderPrice - discountAmount)
+          // 計算每個訂單實際付款的訂單總金額(使用優惠券)-先四捨五入測試
+          const finalPrice = Math.round(orderPrice - discountAmount)
+          console.log(finalPrice)
 
-        // 每個賣場的收件人資訊
-        const shippingInfo = shippingInfos[member_id]
-        // 如果沒有收件資訊
-        if (!shippingInfo) {
-          return res.status(400).json({ message: '缺少收件人資訊' })
-        }
+          // 每個賣場的收件人資訊
+          const shippingInfo = shippingInfos[member_id]
+          // 如果沒有收件資訊
+          if (!shippingInfo) {
+            return res.status(400).json({ message: '缺少收件人資訊' })
+          }
+          console.log(totalOrderPrice)
+          console.log(totalDiscount)
 
-        // 計算要傳給金流使用的實際付款總金額
-        const amount = totalOrderPrice - totalDiscount
+          // 計算要傳給金流使用的實際付款總金額
+          const amount = totalOrderPrice - totalDiscount
 
-        for (const item of itemsInGroup) {
+          for (const item of itemsInGroup) {
+            await connection.execute(
+              `INSERT INTO orders (group_id, external_order_id, order_number, member_buyer_id, member_seller_id, product_id, quantity, order_price, final_price, shipping_method, receive_name, receive_phone, receive_address, payment_method, shipping_status, status, coupon_id, shipping_discount_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+              [
+                groupId,
+                externalOrderId,
+                orderNumber,
+                member_buyer_id,
+                member_id,
+                item.id,
+                item.quantity,
+                orderPrice,
+                finalPrice,
+                currentShippingMethod.shippingMethod,
+                shippingInfo.name,
+                shippingInfo.phone,
+                shippingInfo.address,
+                paymentMethod,
+                1,
+                '待付款',
+                selectedProductCoupon || null,
+                selectedShippingCoupon || null,
+              ]
+            )
+            // 更新商品資料表對應商品的庫存數量
+            // await connection.execute(
+            //   `UPDATE product SET product_quanty = product_quanty - ?, valid = CASE WHEN product_quanty - ? <= 0 THEN 0 ELSE 1 END WHERE id = ?`,
+            //   [item.quantity, item.quantity, item.id]
+            // )
+          }
+          // 更新寫入order_group資料表的amount欄位
           await connection.execute(
-            `INSERT INTO orders (group_id, external_order_id, order_number, member_buyer_id, member_seller_id, product_id, quantity, order_price, final_price, shipping_method, receive_name, receive_phone, receive_address, payment_method, shipping_status, status, coupon_id, shipping_discount_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-              groupId,
-              externalOrderId,
-              uuidv4(),
-              member_buyer_id,
-              member_id,
-              item.id,
-              item.quantity,
-              orderPrice,
-              finalPrice,
-              currentShippingMethod.shippingMethod,
-              shippingInfo.name,
-              shippingInfo.phone,
-              shippingInfo.address,
-              paymentMethod,
-              1,
-              '待付款',
-              selectedProductCoupon || null,
-              selectedShippingCoupon || null,
-            ]
+            `UPDATE order_group SET amount = ? WHERE id = ?`,
+            [amount, groupId]
           )
         }
-        // 更新寫入order_group資料表的amount欄位
-        await connection.execute(
-          `UPDATE order_group SET amount = ? WHERE id = ?`,
-          [amount, groupId]
-        )
+      } catch (error) {
+        console.error('使用reduce錯誤:', error)
       }
+
       await connection.commit()
       if (paymentMethod === 1) {
         // 貨到付款
@@ -534,6 +551,17 @@ router.get('/get-coupons', async (req, res) => {
   } catch (error) {
     console.error('取得用戶優惠券失敗', error)
     res.status(500).send({ error: '伺服器錯誤' })
+  }
+})
+
+// 綠界門市地圖
+router.post('/get-seven-address', async (req, res) => {
+  console.log(1)
+  const requset = {
+    LogisticsType: '超商取貨',
+    LogisticsSubType: 'UNIMARTC2C',
+    IsCollection: 'N',
+    ServerReplyURL: 'http://localhost:3000/cart/checkout',
   }
 })
 

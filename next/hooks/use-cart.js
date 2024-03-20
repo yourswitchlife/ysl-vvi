@@ -148,7 +148,6 @@ export function CartProvider({ children }) {
 
   // 轉換商品語言版本為中文
   const changeLanguage = (language)=>{
-    console.log(language)
     // 檢查language是否為非字串格式
     const languageStr = Array.isArray(language) ? language.join(',') : (typeof language === 'string' ? language : '')
     const languageList = {

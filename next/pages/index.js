@@ -12,6 +12,9 @@ import ShopCardA from '@/components/shop/shop-card-a'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 // import Navbar from '@/components/layout/navbar/navbar'
 import GoTopButton from '@/components/go-to-top/go-top-button'
+import WeeklySelect from '@/assets/weekly-select.svg'
+import { FaArrowRightLong } from 'react-icons/fa6'
+import { useAuth } from '@/hooks/use-Auth'
 
 
 export default function Index() {
@@ -21,25 +24,40 @@ export default function Index() {
   const [rating, setRating] = useState([])
   const [bigPic, setBigPic] = useState(profilePhoto)
   const [roundedRating, setRoundedRating] = useState(0)
+  const [products, setProducts] = useState([])
+  const [randomProducts, setRandomProducts] = useState([])
+  const { isLoggedIn, memberId } = useAuth()
+  // 設置本周精選卡片的翻面狀態
+  const [flippedStates, setFlippedStates] = useState({})
+
+  // 卡片翻轉的狀態
+  const flipCard = (id) => {
+    setFlippedStates((prev) => ({ ...prev, [id]: !prev[id] }))
+    console.log(id)
+  }
+
+  useEffect(() => {
+    console.log(flippedStates)
+  }, [flippedStates])
 
   const getShop = async () => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/shop/`)
-      if(!res.ok){
+    try {
+      const res = await fetch(`http://localhost:3005/api/shop/`)
+      if (!res.ok) {
         throw new Error('網路請求失敗，找不到賣場資料評價')
       }
       const data = await res.json()
-      const {shopRating, shop} = data
+      const { shopRating, shop } = data
       // console.log(shop)
       // {
       //   "shopRating": [{....}],
-       //   "shop": [{....}],
+      //   "shop": [{....}],
       // 確保返回的數據結構正確，並更新狀態
       if (data && shop.length > 0 && shopRating.length > 0) {
         setShop(shop)
         setRating(shopRating)
       }
-    }catch (e){
+    } catch (e) {
       console.error(e)
     }
   }
@@ -48,24 +66,93 @@ export default function Index() {
     getShop()
   }, [])
   useEffect(() => {
-    if(shop.length > 1){
+    if (shop.length > 1) {
       let firstIndex = Math.floor(Math.random() * shop.length)
       let secondIndex = Math.floor(Math.random() * shop.length)
       //確保兩個索引值不同
-      while (secondIndex === firstIndex){
+      while (secondIndex === firstIndex) {
         secondIndex = Math.floor(Math.random() * shop.length)
       }
       setSelectedShops([shop[firstIndex], shop[secondIndex]])
     }
   }, [shop])
 
+  // 取得商品資料
+  const getProducts = () => {
+    const url = 'http://localhost:3005/api/products/list'
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        if (Array.isArray(data.products)) {
+          setProducts(data.products)
+        }
+      })
+      .catch((error) => console.error('取得會員收藏清單失敗'))
+  }
+  useEffect(() => {
+    getProducts()
+  }, [])
+
+  useEffect(() => {
+    if (products.length > 0) {
+      // 過濾會員自己賣的商品
+      const filterProducts = products.filter((p) => p.member_id !== memberId)
+      // 過濾掉沒有	description內容的商品
+      const hasDescriptionProducts = filterProducts.filter((p) => p.description !== "")
+      // 打亂過濾後的產品列表
+      const shuffleProducts = hasDescriptionProducts.sort(() => 0.5 - Math.random())
+      // 從打亂的列表隨機取4個
+      const selectedProducts = shuffleProducts.slice(0, 3)
+      setRandomProducts(selectedProducts)
+    }
+  }, [products, memberId])
+
+  // 設定瀏覽紀錄
+  const historyRecord = (p) => {
+    if (!p) {
+      return
+    }
+    const existingRecordsStr = localStorage.getItem('readProduct')
+    let historyRecordArr
+    if (existingRecordsStr) {
+      historyRecordArr = JSON.parse(existingRecordsStr)
+      if (!Array.isArray(historyRecordArr)) {
+        historyRecordArr = []
+      }
+    } else {
+      historyRecordArr = []
+    }
+    const hasRecord = historyRecordArr.some(
+      (item) => JSON.stringify(item) === JSON.stringify(p)
+    )
+
+    if (!hasRecord) {
+      historyRecordArr.unshift(p)
+    }
+    if (historyRecordArr.length > 7) {
+      historyRecordArr.pop()
+    }
+    localStorage.setItem('readProduct', JSON.stringify(historyRecordArr))
+  }
+  useEffect(() => {
+    historyRecord()
+  }, [])
+
+  const handleToggleFav = (id) => {
+    const newProducts = products.map((p) => {
+      if (p.id === id) return { ...p, fav: !p.fav }
+      else return p
+    })
+    setProducts(newProducts)
+  }
 
   //隨機選擇精選賣場
 
   return (
     <>
-    <GoTopButton/>
-    <Navbar />
+      <GoTopButton />
+      <Navbar />
       <div
         className={`${styles.headTitleCard} z-1 position-absolute d-lg-inline-flex d-none flex-column justify-content-center`}
       >
@@ -87,49 +174,69 @@ export default function Index() {
       </div>
       <ControlledCarousel />
       <section className={styles.sec2}>
-        <div>
-          <h3 className="align-self-start text-white-50">
-            <b>WEEKLY SELECT WEEKLY SELECT</b>
-          </h3>
+        <div className={`${styles.weeklySelect} ${styles.top}`}>
+          <Image src={WeeklySelect} className={styles.img} />
+          <Image src={WeeklySelect} className={styles.img} />
         </div>
-        <div className="container d-flex justify-content-evenly align-items-center pt-2">
-          <Image
-            src="https://tshop.r10s.com/9d8/189/0ce7/b2d8/4078/5eba/1119/1117eb82f60242ac110006.jpg"
-            alt="product"
-            width={150}
-            height={244}
-            className="p-2"
-            layout="fixed"
-          />
-
-          <Image
-            src="https://tshop.r10s.com/9d8/189/0ce7/b2d8/4078/5eba/1119/1117eb82f60242ac110006.jpg"
-            alt="product"
-            width={225}
-            height={366}
-            className=""
-            layout="fixed"
-          />
-
-          <Image
-            src="https://tshop.r10s.com/9d8/189/0ce7/b2d8/4078/5eba/1119/1117eb82f60242ac110006.jpg"
-            alt="product"
-            width={150}
-            height={244}
-            className="p-2"
-            layout="fixed"
-          />
+        <div className={styles.cardFrame}>
+          <div className={`container ${styles.cardBody}`}>
+            {randomProducts.map((p) => {
+              const isFlipped = flippedStates[p.id] || false
+              return (
+                <div
+                  className={styles.cardLink}
+                  key={p.id}
+                  onClick={() => {
+                    flipCard(p.id)
+                  }}
+                >
+                  <div className={styles.card}>
+                    <div
+                      className={`${styles.ura} ${
+                        isFlipped ? styles.isFlipped : ''
+                      }`}
+                      style={{
+                        backgroundImage: `url(http://localhost:3005/productImg/cover/${p.img_cover})`,
+                      }}
+                    >
+                      <div className={styles.title}>{p.name}</div>
+                      <div className={styles.description}>{p.description}</div>
+                      <div className={styles.more} onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}>
+                        MORE <FaArrowRightLong />
+                      </div>
+                    </div>
+                    <div
+                      className={`${styles.inner} ${
+                        isFlipped ? styles.isFlipped : ''
+                      }`}
+                    >
+                      <figure className={styles.img}>
+                        <Image
+                          src={`http://localhost:3005/productImg/cover/${p.img_cover}`}
+                          width={250}
+                          height={407}
+                          alt={p.name}
+                        />
+                      </figure>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
-        <div className="d-flex align-items-end mb-0">
-          <h3 className="text-white-50">
-            <b>WEEKLY SELECT WEEKLY SELECT</b>
-          </h3>
+        <div className={`${styles.weeklySelect} ${styles.bottom}`}>
+          <Image src={WeeklySelect} className={styles.img} />
+          <Image src={WeeklySelect} className={styles.img} />
         </div>
       </section>
       <section class="sec3 container pt-5 pb-5">
         <h4 className="text-white mb-2">特賣焦點</h4>
-        <div className='container'>
-        <IndexSlider /></div>
+        <div className="container">
+          <IndexSlider />
+        </div>
         {/* <div className={styles.wrap}>
           <ProductList></ProductList>
           <ProductList></ProductList>
@@ -154,9 +261,19 @@ export default function Index() {
           <div class="col">
             <h4 className="text-white mb-2">好康資訊</h4>
             <h4 className="text-white mb-2">精選賣家</h4>
-            <div className='d-flex justify-content-between align-items-center flex-wrap'>
-              {selectedShops[0] && <ShopCardA avgRating={roundedRating} shopInfo={selectedShops[0]} />}
-              {selectedShops[1] && <ShopCardA avgRating={roundedRating} shopInfo={selectedShops[1]} />}
+            <div className="d-flex justify-content-between align-items-center flex-wrap">
+              {selectedShops[0] && (
+                <ShopCardA
+                  avgRating={roundedRating}
+                  shopInfo={selectedShops[0]}
+                />
+              )}
+              {selectedShops[1] && (
+                <ShopCardA
+                  avgRating={roundedRating}
+                  shopInfo={selectedShops[1]}
+                />
+              )}
             </div>
           </div>
         </div>
