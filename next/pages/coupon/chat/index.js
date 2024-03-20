@@ -7,7 +7,7 @@ import Chat from '@/components/chat/chat'
 
 export default function ChatControl() {
   //發起聊天室的會員帳號
-  const [account, setAccount] = useState("")
+  // const [account, setAccount] = useState("")
 
   //聊天室名字
   const [room, setRoom] = useState("")
@@ -22,19 +22,19 @@ export default function ChatControl() {
     return () => newSocket.close();
   }, [setSocket]);
 
-  
+  console.log(memberData)
 
-  const createRoom = (memberId)=>{
-    const room = `${memberId}的發訊息空間`
-    if(socket) socket.emit("create_room", room)
-    setShowChat(true)
-    setRoom(room)
-    // if(!isLoggedIn){
-    //   router.push('/member/login')
-    //   return 
-    // }else{
-
-    // }
+  const createRoom = (memberId, shop_site)=>{
+    
+    if(!isLoggedIn){
+      router.push('/member/login')
+      return 
+    }else{
+      const room = `${memberId}的發訊息空間`
+      if(socket) socket.emit("create_room", room)
+      setShowChat(true)
+      setRoom(room)
+    }
   }
 
 
@@ -45,7 +45,7 @@ export default function ChatControl() {
     onClick={()=>createRoom(memberId) }>跟賣家聊聊</button>
 
     {!showChat? (""):
-    (<Chat socket={socket} memberId={memberId} memberData={memberData} room={room}/>)
+    (<Chat socket={socket} memberId={memberId} memberData={memberData} room={room} isLoggedIn={isLoggedIn}/>)
     }
 
     </>
