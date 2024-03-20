@@ -11,15 +11,16 @@ export function setupChat(io) {
       console.log(`用戶: ${socket.id} 加入聊天室: ${room}`)
     })
     socket.on('send_message', async (msgData) => {
-      // socket.to(msgData.room).emit('receive_message', data)
-      const { id, message } = msgData
-      await chatInsert(id, message)
-      socket.broadcast.emit('receive_message', msgData)
+      socket.to(msgData.room).emit('receive_message', msgData)
+      socket.to(msgData.receiver).emit('popout', msgData)
+      // const { id, message } = msgData
+      // await chatInsert(id, message)
+      // socket.broadcast.emit('receive_message', msgData)
       console.log(msgData)
 
-      socket.on('disconnect', () => {
-        console.log(`用戶${socket.io}不在線上`)
-      })
+      // socket.on('disconnect', () => {
+      //   console.log(`用戶${socket.io}不在線上`)
+      // })
 
       //   const { room, message } = data
       // Implement saveMessageToDatabase or similar
