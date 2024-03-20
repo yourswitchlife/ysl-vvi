@@ -13,7 +13,7 @@ import ShopCardA from '@/components/shop/shop-card-a'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 // import Navbar from '@/components/layout/navbar/navbar'
 import GoTopButton from '@/components/go-to-top/go-top-button'
-
+import TypeSlider from '@/components/common/typeSlider'
 
 export default function Index() {
   const router = useRouter()
@@ -24,23 +24,23 @@ export default function Index() {
   const [roundedRating, setRoundedRating] = useState(0)
 
   const getShop = async () => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/shop/`)
-      if(!res.ok){
+    try {
+      const res = await fetch(`http://localhost:3005/api/shop/`)
+      if (!res.ok) {
         throw new Error('網路請求失敗，找不到賣場資料評價')
       }
       const data = await res.json()
-      const {shopRating, shop} = data
+      const { shopRating, shop } = data
       // console.log(shop)
       // {
       //   "shopRating": [{....}],
-       //   "shop": [{....}],
+      //   "shop": [{....}],
       // 確保返回的數據結構正確，並更新狀態
       if (data && shop.length > 0 && shopRating.length > 0) {
         setShop(shop)
         setRating(shopRating)
       }
-    }catch (e){
+    } catch (e) {
       console.error(e)
     }
   }
@@ -49,11 +49,11 @@ export default function Index() {
     getShop()
   }, [])
   useEffect(() => {
-    if(shop.length > 1){
+    if (shop.length > 1) {
       let firstIndex = Math.floor(Math.random() * shop.length)
       let secondIndex = Math.floor(Math.random() * shop.length)
       //確保兩個索引值不同
-      while (secondIndex === firstIndex){
+      while (secondIndex === firstIndex) {
         secondIndex = Math.floor(Math.random() * shop.length)
       }
       setSelectedShops([shop[firstIndex], shop[secondIndex]])
@@ -65,8 +65,8 @@ export default function Index() {
 
   return (
     <>
-    <GoTopButton/>
-    <Navbar />
+      <GoTopButton />
+      <Navbar />
       <div
         className={`${styles.headTitleCard} z-1 position-absolute d-lg-inline-flex d-none flex-column justify-content-center`}
       >
@@ -130,7 +130,7 @@ export default function Index() {
       <section class="sec3 container pt-5 pb-5">
         <h4 className="text-white mb-2">特賣焦點</h4>
         <div className='container'>
-        <IndexSlider /></div>
+          <IndexSlider /></div>
         {/* <div className={styles.wrap}>
           <ProductList></ProductList>
           <ProductList></ProductList>
@@ -146,6 +146,7 @@ export default function Index() {
       </section>
       <section class="container sec4 pt-5 pb-5">
         <h4 className="text-white mb-2">商品分類</h4>
+        <TypeSlider />
       </section>
       <section class="container sec5 pt-5 pb-5 ">
         <div className="row d-flex justify-content-between">

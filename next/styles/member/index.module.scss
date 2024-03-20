@@ -1,6 +1,6 @@
 @import "../valuable.scss";
 
-
+// main carousel
 .carousel {
     width: 100vw;
     height: 100vh;
@@ -13,3 +13,33 @@
     }
     
 }
+
+// typeslider
+.carouselWrapper {
+	position: relative;
+	max-width: 100%;
+	margin: auto;
+	.slick-slide {
+	  padding: 10px; // 根据需要调整
+	}
+	.slick-list {
+	  overflow: hidden;
+	}
+  }
+  
+  .customArrow {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 10;
+	// 添加更多样式来设计箭头的外观，如背景、大小、颜色等
+  }
+  
+  .nextArrow {
+	right: -25px; // 可以根据实际情况调整位置
+  }
+  
+  .prevArrow {
+	left: -25px; // 可以根据实际情况调整位置
+  }
+  

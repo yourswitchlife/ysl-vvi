@@ -13,6 +13,8 @@ import Link from 'next/link'
 import { FaRegHeart, FaCartPlus, FaStore } from 'react-icons/fa'
 import Paginage from '@/components/common/pagination'
 import Dropdown from 'react-bootstrap/Dropdown'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav';
+
 //hooks
 import { useAuth } from '@/hooks/use-Auth';
 import { useCart } from '@/hooks/use-cart'
@@ -264,6 +266,9 @@ export default function FavProduct() {
             <Paginage currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />
           </div>
         </div>
+      </div>
+      <div className={mStyle.PhoneTabNav}>
+      <PhoneTabNav />
       </div>
       <div className="d-none d-sm-block">
         <Footer />

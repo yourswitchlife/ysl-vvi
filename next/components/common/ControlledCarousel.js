@@ -45,7 +45,6 @@ function ControlledCarousel() {
       {images.map((imageUrl, i) => (
         <Carousel.Item key={i} className={mstyles.carousel}>
           <img
-            className="d-block w-100"
             src={imageUrl}
             alt="mainimages"
             className={mstyles.fit}

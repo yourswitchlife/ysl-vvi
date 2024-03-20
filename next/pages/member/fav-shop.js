@@ -15,6 +15,7 @@ import Link from 'next/link'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Paginage from '@/components/common/pagination'
 import { FaMinus, FaAngleDown, FaFilter, FaStar } from 'react-icons/fa'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav';
 //Auth
 import { useAuth } from '@/hooks/use-Auth';
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
@@ -255,6 +256,9 @@ export default function FavShop() {
 
           </div>
         </div>
+      </div>
+      <div className={mStyle.PhoneTabNav}>
+      <PhoneTabNav />
       </div>
       <div className="d-none d-sm-block">
         <Footer />
