@@ -133,7 +133,7 @@ export default function points() {
                   </h6>
                 </div>
                 <h6 className={pStyle.white_text}>
-                  歡迎您，勇者！初來乍到，盡情探索ysl世界吧！探險之旅，每一步都是成長的開始。
+                  歡迎您，勇者！初來乍到，盡情探索ysl世界吧！探險之旅，每一步都是成長！
                 </h6>
               </div>
 
@@ -150,7 +150,7 @@ export default function points() {
                   </h6>
                 </div>
                 <h6 className={pStyle.white_text}>
-                  恭喜您晉升為高手！您已經展翅高飛，挑戰更高的領域，無限可能的成就等著您發現！
+                  恭喜您晉升為高手！挑戰更高的領域，無限可能的成就等著您發現，我們將為高手的您準備$50折抵金的優惠禮物！
                 </h6>
               </div>
 
@@ -165,7 +165,7 @@ export default function points() {
                   <h6 className={pStyle.white_text}>積分 &nbsp; 13000</h6>
                 </div>
                 <h6 className={pStyle.white_text}>
-                  看來您已經成為菁英之一！在這個圈子裡，與您一同追求卓越的夥伴期待與您互動、挑戰極致。
+                  您成為菁英之一！圈子裡，夥伴們期待與您一起繼續挑戰極致，我們將為菁英們準備兩張$100折抵金的優惠禮物！
                 </h6>
               </div>
 
@@ -180,7 +180,7 @@ export default function points() {
                   <h6 className={pStyle.master_text}>積分 &nbsp; 20000</h6>
                 </div>
                 <h6 className={pStyle.white_text}>
-                  我們迎來了一位大師！您的智慧如光芒閃耀，大師降臨，智慧共享之旅展開。引領巔峰。
+                  我們迎來了一位大師！您的智慧如光芒閃耀，大師引領巔峰，我們將為大師準備兩張$200折抵金的優惠禮物！
                 </h6>
               </div>
             </div>

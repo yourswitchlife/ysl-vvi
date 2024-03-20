@@ -11,6 +11,7 @@ import { auth } from '@/utils/firebaseConfig';
 
 // 導入購物車Provider
 import { CartProvider } from '@/hooks/use-cart'
+import { ShippingProvider } from '@/hooks/use-shipping';
 
 export default function MyApp({ Component, pageProps }) {
   // 導入bootstrap的JS函式庫
@@ -70,7 +71,7 @@ export default function MyApp({ Component, pageProps }) {
   // 我把AuthProvider放在最外面 所有應用都能用
   return (
     <AuthProvider>
-    <CartProvider>{getLayout(<Component {...pageProps} />)}</CartProvider>
+    <CartProvider><ShippingProvider>{getLayout(<Component {...pageProps} />)}</ShippingProvider></CartProvider>
       
     </AuthProvider>
   );

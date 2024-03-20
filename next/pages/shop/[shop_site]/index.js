@@ -33,6 +33,7 @@ import { FaPlus, FaAngleDown, FaFilter, FaStar } from 'react-icons/fa'
 import Form from 'react-bootstrap/Form'
 import Offcanvas from 'react-bootstrap/Offcanvas'
 import Collapse from 'react-bootstrap/Collapse'
+import Dropdown from 'react-bootstrap/Dropdown';
 //sweetalert
 import Swal from 'sweetalert2'
 
@@ -46,8 +47,10 @@ export default function ShopPage() {
   //toggle的展示狀態
   const [openSort, setOpenSort] = useState(false)
   const [openRate, setOpenRate] = useState(false)
-  const [shopSite, setShopSite] = useState([])
-  const {id, shop_name, shop_site, shop_cover, shop_info} = shopSite //解構賦值賣家資料
+  //賣場資訊
+  const [shop, setShop] = useState([])
+  const {id, shop_name, shop_site, shop_cover, shop_info} = shop //解構賦值賣家資料
+  //賣場商品
   const [products, setProducts] = useState([])
   const [searchResults, setSearchResults] = useState([])
   const [searchQuery, setSearchQuery] = useState("") //用來看有沒有搜尋的值（來決定要不要渲染搜尋結果）
@@ -60,11 +63,14 @@ export default function ShopPage() {
   const [commentNum, setCommentNum] = useState(0)
   const [roundedRating, setRoundedRating] = useState(0)
   const [isFav, setIsFav] = useState(false)
+  
+  //排序
+  const [sort, setSort] = useState('id')
   const [sortProducts, setSortProducts] = useState([])
   //頁數
   const [totalPages, setTotalPages] = useState(1)
   const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(6)
+  const [limit, setLimit] = useState(15)
 
   //處理背景樣式
   useEffect(() => {
@@ -79,21 +85,24 @@ export default function ShopPage() {
 
   const getShop = async (shop_site) => {
     try{
-      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}`, {credentials: 'include'})
+      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}?page=${page}&limit=${limit}&sort=${sort}`, {credentials: 'include'})
       if(!res.ok){
-        throw new Error('網路請求失敗，找不到此賣場')
+        throw new Error('Failed to fetch: 找不到賣場及賣場商品資料')
       }
       const data = await res.json()
+
       // 確保返回的數據結構正確，並更新狀態
-      if (data && data.shop && data.shopProducts) {
+      if (data) {
         // 這裡假設後端返回的數據結構是 { shop: {...}, shopProducts: [...] }
-        setShopSite(data.shop[0])
+        setShop(data.shop)
         // 可能需要另一個狀態來存儲商品資訊
-        setProducts(data.shopProducts)
+        setProducts(data.items)
+        setTotalPages(data.totalPages)
+        router.push(`./${shop_site}?page=${page}`)
         // setSearchResults(data.shopProducts)
-        const picUrl = data.shop[0].pic ? (data.shop[0].pic.startsWith("https://") ? data.shop[0].pic : `http://localhost:3005/profile-pic/${data.shop[0].pic}`) : profilePhoto
+        const picUrl = data.shop.pic ? (data.shop.pic.startsWith("https://") ? data.shop.pic : `http://localhost:3005/profile-pic/${data.shop.pic}`) : profilePhoto
         setBigPic(picUrl)
-        const coverUrl = data.shop[0].shop_cover ? (data.shop[0].shop_cover.startsWith("https://") ? data.shop[0].shop_cover : `http://localhost:3005/shopCover/${data.shop[0].shop_cover}`) : cover
+        const coverUrl = data.shop.shop_cover ? (data.shop.shop_cover.startsWith("https://") ? data.shop.shop_cover : `http://localhost:3005/shopCover/${data.shop.shop_cover}`) : cover
         setShopCover(coverUrl)
       }
     }catch (e){
@@ -112,6 +121,13 @@ export default function ShopPage() {
         }
       })
     }
+  }
+  const handleSortChange = (sortKey) => {
+    setSort(sortKey)
+    setPage(1)
+  }
+  const handlePageChange = (newpage) => {
+    setPage(newpage)
   }
   
   const shopTotalItems = products.length //賣家總商品數
@@ -148,6 +164,39 @@ export default function ShopPage() {
     }
   }
 
+  // const getShopFav = async (shop_site) => {
+  //   try{
+  //     const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/fav_shop`, {
+  //       credentials: 'include',
+  //     })
+  //     if(!res.ok){
+  //       throw new Error('網路請求失敗，找不到此賣場')
+  //     }
+  //     const data = await res.json()
+  //     // 確保返回的數據結構正確，並更新狀態
+  //     if (data && data.length > 0) {
+  //       //檢查是否收藏：改成valid=0
+  //       const isValidFav = data.some(fav => fav.valid && fav.valid === 0)
+  //       if(isValidFav){
+  //         setShopFavNum(0)
+  //         setIsFav(false)
+  //       }else{
+  //         //取得加總數字
+  //         setShopFavNum(data.length)
+  //         //檢查是否收藏
+  //         const isFaved = data.some(fav => fav.buyer_id === memberData.id)
+  //         // console.log(isFaved)會是boolean
+  //         setIsFav(isFaved)
+  //       }
+  //     }else{
+  //       //沒有收藏紀錄
+  //       setShopFavNum(0)
+  //       setIsFav(false)
+  //     }
+  //   }catch(e){
+  //     console.error(e)
+  //   }
+  // }
   const getShopFav = async (shop_site) => {
     try{
       const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/fav_shop`, {
@@ -232,14 +281,15 @@ export default function ShopPage() {
     })
     setSearchResults(newProducts)
   }
-  const toggleFavShop = async () => {
+  const handleFavShop = async () => {
     const url = `http://localhost:3005/api/shop/${shop_site}/fav_shop`
     try{
       if(isFav){
         //已經收藏者：執行取消收藏
-        const res = await fetch(url, { method: 'DELETE', credentials: 'include'})
+        const res = await fetch(url, { method: 'PUT', credentials: 'include'})
         const data = await res.json()
         if(res.ok){
+          setIsFav(false)
           Swal.fire('取消收藏成功', '', 'success')
         }else{
           throw new Error(data.message || '取消收藏失敗')
@@ -249,13 +299,16 @@ export default function ShopPage() {
         const res = await fetch(url, { method: 'POST', credentials: 'include' })
         const data = await res.json()
         if(res.ok){
+          setIsFav(true)
           Swal.fire('收藏成功', '', 'success')
         }else{
           throw new Error(data.message || '添加收藏失敗')
         }
       }
     }catch(error){
-      Swal.fire('操作失敗', error.toString(), 'error')
+      //用replace方法去除"Error:"前綴
+      let errorMessage = error.toString().replace('Error: ', '')
+      Swal.fire('操作失敗', errorMessage, 'error')
     }finally{
       //無論操作成功或失敗，都重新獲取收藏狀態
       getShopFav(shop_site)
@@ -276,12 +329,6 @@ export default function ShopPage() {
       }
     })
   }
-  //排序的商品
-  const handleSort = (SortedData) => {
-    setSortProducts(SortedData)
-  }
-  // console.log(sortProducts)
-
   useEffect(()=>{
     if(router.isReady){
       const {shop_site} = router.query
@@ -289,20 +336,19 @@ export default function ShopPage() {
       getShopOrder(shop_site)
       getShopFav(shop_site)
       getShopRating(shop_site)
+    }
+  },[router.isReady, sort, page, limit])
+
+  useEffect(()=>{
       if(isLoggedIn){
         getShopFav(shop_site)
       }
-    }
-  },[router.isReady, isLoggedIn])
+  },[isLoggedIn])
 
   const cardIcon = (e) => {
     e.persist()
     e.nativeEvent.stopImmediatePropagation()
     e.stopPropagation()
-  }
-  //頁數
-  const handlePageChange = (newPage) => {
-    setPage(newPage)
   }
 
   return (
@@ -365,7 +411,7 @@ export default function ShopPage() {
               <button
                 type="button"
                 className="btn btn-danger d-flex align-items-center"
-                onClick={toggleFavShop}
+                onClick={handleFavShop}
               >
                 <FaPlus className="me-1" />
                   {isFav ? '取消收藏' : '收藏賣家'}
@@ -436,7 +482,7 @@ export default function ShopPage() {
             <button
               type="button"
               className="btn btn-danger d-flex align-items-center"
-              onClick={toggleFavShop}
+              onClick={handleFavShop}
             >
               <FaPlus className="me-1" />
               {isFav ? '取消收藏' : '收藏賣家'}
@@ -501,11 +547,31 @@ export default function ShopPage() {
           <div className="d-none d-md-flex justify-content-end">
             {/* offcanvas btn */}
             <TypeFilter />
-            <SortDropdown handleSort={handleSort}/>
+            {/* <SortDropdown handleSort={handleSort}/> */}
+            <Dropdown>
+              <Dropdown.Toggle 
+                variant="success" 
+                id="dropdown-basic"
+                type="button"
+                className={`btn d-flex justify-content-center align-items-center ${styles.offcanvasBtn}`}
+              >
+                <h6 className="mb-0 d-none d-md-block">排序</h6>
+                <p className="mb-0 d-block d-md-none">排序</p>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={() => handleSortChange('price_asc')}>價格由低到高</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleSortChange('price_desc')}>價格由高到低</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleSortChange('release_time_desc')}>發行時間由近到遠</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleSortChange('release_time_asc')}>發行時間由遠到近</Dropdown.Item>
+                {/* <Dropdown.Item href="#/action-5">收藏數量由低到高</Dropdown.Item>
+                <Dropdown.Item href="#/action-6">收藏數量由高到低</Dropdown.Item> */}
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
           <div className="d-flex d-md-none ps-4 pe-4">
             <TypeFilter />
-            <SortDropdown handleSort={handleSort}/>
+            {/* <SortDropdown handleSort={handleSort}/> */}
           </div>
         </div>
         { searchQuery && searchResults.length > 0 ? (
@@ -544,7 +610,7 @@ export default function ShopPage() {
         ) : (<>
           
           <div className='row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-0'>
-        {(sortProducts.length > 0 ? sortProducts : products).map((p)=> {
+        {products.map((p)=> {
           return (
             <div key={p.id} className='col mb-3'>
             <div
