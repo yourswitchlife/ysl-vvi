@@ -17,6 +17,7 @@ import Star from '@/components/shop/star'
 import GoTopButton from '@/components/go-to-top/go-top-button'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import CouponUni from '@/components/coupon/coupon-shop'
+import CouponProduct from '@/components/coupon/coupon-member/couponP-member'
 //images
 import cover from '@/public/images/shopCover/default-cover.jpg'
 import Image from 'next/image'
@@ -255,6 +256,11 @@ export default function ShopPage() {
     e.stopPropagation()
   }
 
+  const [currentFilter, setCurrentFilter] = useState('valid')
+  const handleFilter = (newFilter) => {
+    setCurrentFilter(newFilter)
+  }
+
   return (
     <>
       <GoTopButton />
@@ -406,6 +412,7 @@ export default function ShopPage() {
         <Sortbar />
         <div className="d-none d-md-block">
         <h4 className="mt-3 mb-2 d-none d-md-block">YSL官網優惠券</h4>
+          {/* <CouponProduct currentFilter={currentFilter}/> */}
           <CouponUni />
         </div>
         <div className={styles.hit}>

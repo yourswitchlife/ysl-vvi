@@ -66,83 +66,121 @@ import fetch from 'node-fetch'
 //   return data
 // }
 // export { createLogisticsOrder }
+async function createLogisticsOrder(orderDetails) {
+  // 假设这里您已经有了一个 ECPayLogistics 实例，且已正确配置
+  // 这里只是一个示范，实际情况可能需要调用实际的 API 方法
+  const create = new ECPayLogistics({
+    MerchantID: '2000933',
+    HashKey: 'XBERn1YOvpM9nfZc',
+    HashIV: 'h1ONHk4P4yqbl5LK',
+    MerchantTradeDate: orderDetails.MerchantTradeDate,
+    LogisticsType: 'CVS',
+    LogisticsSubType: 'UNIMARTC2C',
+    GoodsAmount: orderDetails.goodsAmount,
+    CollectionAmount: orderDetails.collectionAmount,
+    IsCollection: 'Y',
+    GoodsName: 'YSL商品訂單',
+    SenderName: orderDetails.senderName,
+    SenderPhone: orderDetails.senderPhone,
+    SenderCellPhone: orderDetails.senderCellPhone,
+    ReceiverName: orderDetails.receiverName,
+    ReceiverPhone: orderDetails.receiverPhone,
+    ReceiverCellPhone: orderDetails.receiverCellPhone,
+    ReceiverEmail: orderDetails.receiverEmail,
+    TradeDesc: '',
+    ServerReplyURL:
+      'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
+    ClientReplyURL:
+      'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app/',
+    LogisticsC2CReplyURL:
+      'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
+    Remark: '',
+    PlatformID: '',
+    ReceiverStoreID: '991182',
+    ReturnStoreID: '',
+  })
+
+  return create.create_client.create(orderDetails)
+}
+
+// let orderDetails = {
+//   //假設這裡有一些從其他地方獲取的數據
+//   merchantTradeDate: '2021/01/27 11:00:45',
+//   goodsAmount: 200,
+//   collectionAmount: 200,
+//   senderName: '林雅琳',
+//   senderPhone: '0934567891',
+//   senderCellPhone: '0934567891',
+//   receiverName: '鄭家豪',
+//   receiverPhone: '0989012345',
+//   receiverCellPhone: '0989012345',
+//   receiverEmail: '',
+// }
+
+//example文檔
+// 參數值為[PLEASE MODIFY]者，請在每次測試時給予獨特值
+// let base_param = {
+//   MerchantTradeNo: generateUniqueTradeNo(),
+//   MerchantTradeDate: orderDetails.merchantTradeDate.toString(),
+//   LogisticsType: 'CVS',
+//   LogisticsSubType: 'UNIMARTC2C',
+//   GoodsAmount: orderDetails.goodsAmount.toString(),
+//   CollectionAmount: orderDetails.collectionAmount.toString(),
+//   IsCollection: '',
+//   GoodsName: 'YSL遊戲商品',
+//   SenderName: orderDetails.senderName.toString(),
+//   SenderPhone: orderDetails.senderPhone.toString(),
+//   SenderCellPhone: orderDetails.senderCellPhone.toString(),
+//   ReceiverName: orderDetails.receiverName.toString(),
+//   ReceiverPhone: orderDetails.receiverPhone.toString(),
+//   ReceiverCellPhone: orderDetails.receiverCellPhone.toString(),
+//   ReceiverEmail: orderDetails.receiverEmail.toString(),
+//   TradeDesc: '',
+//   ServerReplyURL:
+//     'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
+//   ClientReplyURL:
+//     'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
+//   LogisticsC2CReplyURL:
+//     'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
+//   Remark: '',
+//   PlatformID: '',
+//   ReceiverStoreID: '991182',
+//   ReturnStoreID: '',
+// }
+//創建物流訂單
+// let create = new ECPayLogistics() // 注意這裡的構造函數調用
+
+// let res = create.create_client.create(base_param)
+// if (typeof res === 'string') {
+//   // console.log(res)
+// } else {
+//   res
+//     .then(function (result) {
+//       console.log(result)
+//     })
+//     .catch(function (err) {
+//       console.log(err)
+//     })
+// }
+
+router.post('/create-logistics-order', async (req, res) => {
+  try {
+    const orderDetails = {
+      ...req.body,
+      MerchantTradeNo: generateUniqueTradeNo(),
+    }
+    console.log(orderDetails)
+    const result = await createLogisticsOrder(orderDetails)
+    console.log(result)
+    res.json(result)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: error.message })
+  }
+})
 
 function generateUniqueTradeNo() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2, 10)
 }
-
-let orderDetails = {
-  //假設這裡有一些從其他地方獲取的數據
-  merchantTradeDate: '2021/01/27 11:00:45',
-  goodsAmount: 200,
-  collectionAmount: 200,
-  senderName: '林雅琳',
-  senderPhone: '0934567891',
-  senderCellPhone: '0934567891',
-  receiverName: '鄭家豪',
-  receiverPhone: '0989012345',
-  receiverCellPhone: '0989012345',
-  receiverEmail: '',
-}
-
-//example文檔
-// 參數值為[PLEASE MODIFY]者，請在每次測試時給予獨特值
-let base_param = {
-  MerchantTradeNo: generateUniqueTradeNo(),
-  MerchantTradeDate: orderDetails.merchantTradeDate.toString(),
-  LogisticsType: 'CVS',
-  LogisticsSubType: 'UNIMARTC2C',
-  GoodsAmount: orderDetails.goodsAmount.toString(),
-  CollectionAmount: orderDetails.collectionAmount.toString(),
-  IsCollection: '',
-  GoodsName: 'YSL遊戲商品',
-  SenderName: orderDetails.senderName.toString(),
-  SenderPhone: orderDetails.senderPhone.toString(),
-  SenderCellPhone: orderDetails.senderCellPhone.toString(),
-  ReceiverName: orderDetails.receiverName.toString(),
-  ReceiverPhone: orderDetails.receiverPhone.toString(),
-  ReceiverCellPhone: orderDetails.receiverCellPhone.toString(),
-  ReceiverEmail: orderDetails.receiverEmail.toString(),
-  TradeDesc: '',
-  ServerReplyURL:
-    'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
-  ClientReplyURL:
-    'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
-  LogisticsC2CReplyURL:
-    'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
-  Remark: '',
-  PlatformID: '',
-  ReceiverStoreID: '991182',
-  ReturnStoreID: '',
-}
-//創建物流訂單
-let create = new ECPayLogistics() // 注意這裡的構造函數調用
-
-let res = create.create_client.create(base_param)
-if (typeof res === 'string') {
-  // console.log(res)
-} else {
-  res
-    .then(function (result) {
-      console.log(result)
-    })
-    .catch(function (err) {
-      console.log(err)
-    })
-}
-
-// router.post('/create-logistics-order', async (req, res) => {
-//   console.log(req.body)
-//   try {
-//     // const result = await createLogisticsOrder(req.body)
-//     const orderDetails = req.body
-//     const result = await createLogisticsOrder(orderDetails)
-//     console.log(result)
-//     res.json(result)
-//   } catch (error) {
-//     console.error(error)
-//     res.status(500).json({ error: error.message })
-//   }
-// })
 
 export default router

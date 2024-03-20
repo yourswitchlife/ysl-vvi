@@ -188,18 +188,13 @@ export default function New() {
   return (
     <>
       <SellerNavbar />
-      <div className="d-none d-md-block">
-        <Sidebar />
-      </div>
-      <main style={{ marginTop: 58 }}>
-        <div>
-          <div className="d-none d-md-block">
-          {memberData && (
+      <div className={styles.mainContainer}>
+      {memberData && (
             <>
               <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
             </>
-          )}
-          </div>
+        )}
+        <main className='flex-grow-1'>
           <div className={`${styles.dashboardMargin}`}>
             <div className="d-lg-block d-none">
               <BreadCrumb />
@@ -443,15 +438,13 @@ export default function New() {
               </form>
             </div>
           </div>
-        </div>
-        <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
-        <div className="d-block d-md-none">
-          <PhoneTabNav />
-        </div>
-        <div className="d-none d-md-block">
+          <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
+        </main>
+      </div>
+      <PhoneTabNav />
+      <div className="d-none d-md-block">
           <SellerFooter />
-        </div>
-      </main>
+      </div>
     </>
   )
 }

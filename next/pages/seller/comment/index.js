@@ -60,7 +60,7 @@ export default function Comment() {
   //頁數
   const [totalPages, setTotalPages] = useState(1)
   const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(6)
+  const [limit, setLimit] = useState(4)
   //搜尋
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -249,15 +249,13 @@ export default function Comment() {
       <header>
         <SellerNavbar />
       </header>
-      <main className={styles.mainContainer}>
-        <div className="d-none d-md-block">
+      <div className={styles.mainContainer}>
         {memberData && (
             <>
               <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
             </>
           )}
-        </div>
-        <div>
+        <main className='flex-grow-1'>
           {/* cover */}
           {memberData && (
               <>
@@ -697,15 +695,13 @@ export default function Comment() {
               )}
                 <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
           </div>
-        </div>
-        <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
-        <div className="d-block d-md-none">
-          <PhoneTabNav />
-        </div>
-        <div className="d-none d-md-block">
+          <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
+        </main>
+      </div>
+      <PhoneTabNav />
+      <div className="d-none d-md-block">
           <SellerFooter />
-        </div>
-      </main>
+      </div>
       {/* Modal 放這裡ㄛ */}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>

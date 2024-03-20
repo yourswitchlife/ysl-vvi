@@ -179,15 +179,13 @@ export default function Product() {
       <header>
         <SellerNavbar />
       </header>
-      <main className={styles.mainContainer}>
-        <div className="d-none d-md-block">
+      <div className={styles.mainContainer}>
         {memberData && (
             <>
               <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
             </>
           )}
-        </div>
-        <div>
+        <main className='flex-grow-1'>
           <div className="d-flex flex-column d-lg-none container ps-4 pe-4">
             <div className="d-flex justify-content-around align-items-center mt-4 mb-2">
               <div className={`${styles.profile}`}>
@@ -986,13 +984,13 @@ export default function Product() {
               </Tab>
             </Tabs>
           </div>
-        </div>
-        <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
-        <PhoneTabNav />
-        <div className="d-none d-md-block">
-          <SellerFooter />
-        </div>
-      </main>
+          <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
+        </main>
+      </div>
+      <PhoneTabNav />
+      <div className="d-none d-md-block">
+        <SellerFooter />
+      </div>
     </>
   )
 }
