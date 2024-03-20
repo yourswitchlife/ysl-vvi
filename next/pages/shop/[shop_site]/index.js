@@ -8,7 +8,7 @@ import Navbar from '@/components/layout/navbar/navbar'
 import BreadCrumb from '@/components/common/breadcrumb'
 import Sortbar from '@/components/shop/sortbar'
 import SearchbarB from '@/components/shop/searchbar-b'
-import Pagination from '@/components/common/pagination-front'
+// import Pagination from '@/components/common/pagination-front'
 import ProductCard from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
 import SortDropdown from '@/components/common/sortDropdown'
@@ -23,7 +23,7 @@ import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 import Coupon from '@/components/shop/coupon'
 //styles
 import styles from '@/components/seller/seller.module.scss'
-import 'animate.css/animate.min.css'
+// import 'animate.css/animate.min.css'
 //data
 import typeName from '@/data/type.json'
 import ratings from '@/data/rating.json'
@@ -573,7 +573,7 @@ export default function ShopPage() {
         </>)
         }
         <div>
-          <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
+          {/* <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/> */}
         </div>
       </div>
       <PhoneTabNav />

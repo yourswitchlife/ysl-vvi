@@ -3,17 +3,16 @@ import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
 import styles from '@/components/seller/seller.module.scss'
-// import Link from 'next/link'
 import SellerFooter from '@/components/layout/footer/footer-backstage'
-// import Form from 'react-bootstrap/Form'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import BreadCrumb from '@/components/common/breadcrumb'
 import { useAuth } from '@/hooks/use-Auth'
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
 
 export default function New() {
-  const MySwal = withReactContent(Swal)
   const { isLoggedIn, memberId } = useAuth()
   // console.log(memberId)
   //body style
@@ -65,7 +64,7 @@ export default function New() {
   }
   const notifyMax = () => {
     MySwal.fire({
-      text: "已達購買上限",
+      text: '已達購買上限',
       confirmButtonColor: '#E41E49',
     })
   }
@@ -111,7 +110,11 @@ export default function New() {
       !newP.pImgs ||
       !newP.pType
     ) {
-      alert('請檢查是否輸入完整欄位資訊')
+      MySwal.fire({
+        icon: 'warning',
+        text: '請檢查是否輸入完整欄位資訊',
+        confirmButtonColor: '#E41E49',
+      })
       return
     } else {
       const fd = new FormData(e.target)
@@ -126,7 +129,11 @@ export default function New() {
       )
         .then((res) => res.json())
         .then(
-          (data) => alert('新增成功！'),
+          (data) =>
+            Swal.fire({
+              title: '商品新增成功！',
+              icon: 'success',
+            }),
 
           setTimeout(() => {
             clearForm()
@@ -139,7 +146,7 @@ export default function New() {
   }
   console.log(newP)
 
-  const clearForm = ()=>{
+  const clearForm = () => {
     setNewP({
       pName: '',
       pCover: '',
@@ -243,7 +250,11 @@ export default function New() {
                       onChange={(e) => {
                         const files = e.target.files
                         if (files.length > 3) {
-                          alert('最多只能上傳3張')
+                          MySwal.fire({
+                            icon: 'warning',
+                            text: '最多只能上傳3張',
+                            confirmButtonColor: '#E41E49',
+                          })
                           setNewP({ ...newP, pImgs: [] })
                           e.target.value = ''
                           return

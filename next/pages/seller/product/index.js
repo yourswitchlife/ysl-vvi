@@ -12,7 +12,7 @@ import { FaStar, FaPlus, FaRegHeart } from 'react-icons/fa'
 import SellerFooter from '@/components/layout/footer/footer-backstage'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import BreadCrumb from '@/components/common/breadcrumb'
-import Pagination from '@/components/common/pagination-front'
+// import Pagination from '@/components/common/pagination-front'
 
 //images
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
@@ -560,7 +560,7 @@ export default function Product() {
                       </div>
                     </div>
                   </div>
-                  <Pagination />
+                  {/* <Pagination /> */}
                 </Tab>
                 <Tab
                   eventKey="unsend"
@@ -960,7 +960,7 @@ export default function Product() {
                       </div>
                     </div>
                   </div>
-                  <Pagination />
+                  {/* <Pagination /> */}
                 </Tab>
                 <Tab
                   eventKey="sending"
@@ -1360,7 +1360,7 @@ export default function Product() {
                       </div>
                     </div>
                   </div>
-                  <Pagination />
+                  {/* <Pagination /> */}
                 </Tab>
                 <Tab
                   eventKey="done"
@@ -1827,7 +1827,7 @@ export default function Product() {
                     </div>
                   </div>
                 </div>
-                <Pagination />
+                {/* <Pagination /> */}
               </Tab>
               <Tab eventKey="unsend" title="架上商品">
               <Form>
