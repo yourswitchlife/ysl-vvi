@@ -19,7 +19,7 @@ import whitelog from '@/public/images/logo/logo_White-desktopLogo.svg'
 // import styles from '@/styles/products/product-list.module.scss'
 
 
-import Paginage from '@/components/common/pagination-front'
+// import Paginage from '@/components/common/pagination-front'
 import Dropdown from 'react-bootstrap/Dropdown'
 import CouponDelivery from '@/components/coupon/coupon-member/couponD-member'
 
@@ -75,7 +75,7 @@ export default function CouponD() {
 
             <CouponDelivery currentFilter={currentFilter}/>
 
-            <Paginage className={mStyle.paginag} />
+            {/* <Paginage className={mStyle.paginag} /> */}
           </div>
 
         </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import styles from '@/components/layout/navbar/navbar.module.scss'
 import yslLogoSm from '@/public/images/logo/logo-sm.svg'
@@ -22,17 +22,18 @@ import NavPic from '@/hooks/use-navpic';
 import { useCart } from '@/hooks/use-cart'
 import { useRouter } from 'next/router'
 //websocket
-import { io } from 'socket.io-client';
+import { useWebSocket } from '@/context/member/websocketLong'
 
 export default function Navbar(props) {
   const { searchWord, setSearchWord } = props
-  const { isLoggedIn, memberId, memberData } = useAuth();
+  const { isLoggedIn, memberData } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
   const { totalProducts } = useCart()
-  const [unreadCount, setUnreadCount] = useState(0);
-  const socket = io('http://localhost:3005');
+  const { unreadCount } = useWebSocket();
+  // const [unreadCount, setUnreadCount] = useState(0);
+  // const socket = io('http://localhost:3005');
 
-  useEffect(() => {
+/*   useEffect(() => {
     socket.on('connect', () => {
       console.log('Connected to the webserver');
       if (memberId) {
@@ -52,7 +53,7 @@ export default function Navbar(props) {
       socket.close();
     };
 
-  }, [memberId])
+  }, [memberId]) */
 
   return (
     <>

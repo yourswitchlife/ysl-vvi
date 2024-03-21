@@ -18,6 +18,9 @@ import PHistory from '@/components/products/p-history'
 import { useCart } from '@/hooks/use-cart'
 import { useAuth } from '@/hooks/use-Auth'
 import GoTopButton from '@/components/go-to-top/go-top-button'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
 
 export default function ProductDetail() {
   const { isLoggedIn, memberId } = useAuth()
@@ -103,6 +106,7 @@ export default function ProductDetail() {
     launch_valid: '',
     created_at: '',
   })
+  const [shopRating, setShopRating] = useState({})
   const [shopData, setShopData] = useState({})
   const [shopComment, setShopComment] = useState({})
   const [ben, setBen] = useState(false)
@@ -123,7 +127,6 @@ export default function ProductDetail() {
       }))
     }
   }
-
 
   // 商品數量-1
   const reduce = () => {
@@ -163,16 +166,18 @@ export default function ProductDetail() {
         setShopData(data.shopData[0])
         // console.log(shopData.id)
       }
+
+      if(data.shopRating[0]){
+        // setShopData(data.shopData[0])
+        const roundedRating = Math.round(data.shopRating[0].average_rating)
+        // console.log(roundedRating)
+        setShopRating(roundedRating)
+      }
+
       if(data.shopComment[0].id){
         setShopComment(data.shopComment)
         // console.log(shopData.id)
       }
-      // console.log(data.shopComment)
-      // if(data.shopComment[0].name){
-      //   setShopData(data.shopData[0])
-      //   // console.log(shopData.id)
-      // }
-      // const shopid = shopData.id  
 
       if(data.productTypeResult[0].name){
         const sameTypeP = data.productTypeResult.filter((p,i) => p.id != data.responseData[0].id)
@@ -187,15 +192,6 @@ export default function ProductDetail() {
         setSameShopP(sSP)
         // console.log(sSP)
       }
-      // setShopSelect(product)
-      // console.log(shopSelect)
-      // if(data.shopSelect[0].name){
-      //   const filteredShopSelect = shopSelect.filter((p) => p.id != p.member_id === product.member_id)
-      //   const filterShopSelect = filteredShopSelect.slice(1,3)
-      //   setShopSelect(filterShopSelect)
-      //   console.log(shopSelect)
-      // }
-
 
       if (data.responseData[0].name) {
         setProduct({ ...data.responseData[0], quantity: 1, userSelect: false })
@@ -261,6 +257,48 @@ export default function ProductDetail() {
       case 6:
         memberId = '紅色死神的遊戲收藏'
         break
+      case 7:
+        memberId = '魔法兔子的玩具坊'
+        break
+      case 8:
+        memberId = '星光小狐的玩樂世界'
+        break
+      case 9:
+        memberId = '夢幻精靈的小店鋪'
+        break
+      case 10:
+        memberId = '露西亞的小天地'
+        break
+      case 11:
+        memberId = '奇幻螢火蟲的寶庫'
+        break
+      case 12:
+        memberId = '糖果精靈的甜蜜天地'
+        break
+      case 13:
+        memberId = '秘境小巷的驚奇寶盒'
+        break
+      case 14:
+        memberId = '海盜船長的珍寶藏身處'
+        break
+      case 15:
+        memberId = '奇幻仙境的集市'
+        break
+      case 16:
+        memberId = '森林精靈的神秘市集'
+        break
+      case 17:
+        memberId = '星際冒險家的未知商鋪'
+        break
+      case 18:
+        memberId = '魔法城堡的奇蹟角落'
+        break
+      case 19:
+        memberId = '奇幻之鑰的神秘櫥窗'
+        break
+      case 20:
+        memberId = '傳說中的寶物堡壘'
+        break
     }
     return memberId
   }
@@ -313,9 +351,35 @@ export default function ProductDetail() {
   // console.log(historyRecords)
   // let imgAry = [product.img_details.split(",")[0], product.img_details.split(",")[1], product.img_details.split(",")[2]]
 
-  // console.log(product.img_details)
-  if (product.img_details != '') {
-    console.log(product.img_details.split(','))
+  // 蒐藏加入資料庫
+  const addFav = async (id) => {
+    if (!memberId) {
+      MySwal.fire({
+        icon: 'warning',
+        text: '請先登入',
+        confirmButtonColor: '#E41E49',
+      })
+      return
+    }
+    try {
+      const res = await fetch(
+        `http://localhost:3005/api/products/favProducts?memberId=${memberId}&pid=${id}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+        }
+      )
+      if (!res.ok) {
+        throw new Error('Failed to fetch fav products')
+      }
+      MySwal.fire({
+        icon: 'success',
+        text: '成功加入收藏!',
+        confirmButtonColor: '#E41E49',
+      })
+    } catch (err) {
+      console.log('Error')
+    }
   }
 
   return (
@@ -404,8 +468,8 @@ export default function ProductDetail() {
               >
                 <FaCartPlus className="text-light pb-1" /> 加入購物車
               </button>
-              <button type="button" className="btn btn-info">
-                <FaRegHeart className="text-light pb-1" /> 加入追蹤
+              <button type="button" className="btn btn-info" onClick={() => addFav(product.id)}>
+                <FaRegHeart className="text-light pb-1" /> 加入收藏
               </button>
               <button
                 type="button"
@@ -417,9 +481,7 @@ export default function ProductDetail() {
             </div>
 
             <div
-              className={`row d-lg-none m-0 ${styles.btns} ${
-                ben ? 'active' : ''
-              }`}
+              className={`row d-lg-none m-0 ${styles.btns}`}
               onClick={() => {
                 setBen(true)
               }}
@@ -521,7 +583,7 @@ export default function ProductDetail() {
                 </div>
                 <div className="ms-3">
                   <h6 className="text-white">{memberIdChange(product.member_id)}</h6>
-                  <RatingStars />
+                  <RatingStars rating={shopRating}/>
                 </div>
               </div>
               <div className="me-2">
@@ -531,9 +593,10 @@ export default function ProductDetail() {
                 >
                   <FaRegHeart className="text-light pb-1" /> 關注店家
                 </button> */}
+                <Link href={`http://localhost:3000/shop/${shopData.shop_site}`}>
                 <button type="button" className="btn btn-danger btn-sm mt-1">
                   <FaStore className="text-light pb-1" /> 進入本店 
-                </button>
+                </button></Link>
               </div>
             </div>
             <hr className="text-white border-3" />
@@ -541,6 +604,9 @@ export default function ProductDetail() {
             <div className={styles.wrap}>
             {sameShopP.length > 0 ? sameShopP.map((p,i)=>{
               return(
+                <div  onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}>
                 <ProductCard key={i}
                 id={p.id}
                       name={p.name}
@@ -552,10 +618,8 @@ export default function ProductDetail() {
                       type={p.type_id}
                       ratingId={p.rating_id}
                       fav={p.fav}
-                      // handleToggleFav={handleToggleFav}
                       member_id={p.member_id}
-                      // cardIcon={cardIcon}
-              />
+              /></div>
               )
             }):''}
             </div>
@@ -563,9 +627,12 @@ export default function ProductDetail() {
 
             <h5 className="text-white mb-3">本分類熱銷</h5>
             <div className={styles.wrap}>
-            {console.log(sameTypeP)}
+            {/* {console.log(sameTypeP)} */}
             {sameTypeP.length > 0 ? sameTypeP.map((p,i)=>{
               return(
+                <div  onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}>
                 <ProductCard key={i}
                 id={p.id}
                       name={p.name}
@@ -577,10 +644,8 @@ export default function ProductDetail() {
                       type={p.type_id}
                       ratingId={p.rating_id}
                       fav={p.fav}
-                      // handleToggleFav={handleToggleFav}
                       member_id={p.member_id}
-                      // cardIcon={cardIcon}
-              />
+              /></div>
               )
             }):''}
             
