@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { HiArrowCircleUp } from 'react-icons/hi';
 
 import styles from './go-to-top.module.scss'
+import { Image } from 'react-bootstrap';
 
 export default function GoTopButton() {
   const [goTopButton, setgoTopButton] = useState(false)
@@ -30,7 +31,8 @@ export default function GoTopButton() {
       {goTopButton && (
         <button className={styles.btn} onClick={scrollUp}
         >
-          <HiArrowCircleUp  className={styles.icon}/>
+          <Image src="/images/coupon/goTop.png" />
+          {/* <HiArrowCircleUp  className={styles.icon}/> */}
         </button>
       )}
     </div>

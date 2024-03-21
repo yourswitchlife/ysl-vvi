@@ -22,7 +22,6 @@ export default function ProductCard({
   fav,
   handleToggleFav,
   language,
-  cardIcon = () => {},
 }) {
   const ratingStyle = (v) => {
     let ratingId = '',
@@ -150,13 +149,10 @@ export default function ProductCard({
     return memberId
   }
 
+  
+
   const { addItem, notifySuccess } = useCart()
 
-  // const cardIcon = (e) => {
-  //   e.stopPropagation()
-  // }
-
-  // const HeartIcon = fav === '0' ? FaRegHeart : FaHeart
   return (
     <>
       <div className={styles.card}>
@@ -182,12 +178,10 @@ export default function ProductCard({
             </div>
             <div
               className="d-flex justify-content-center align-items-center"
-              onClick={cardIcon}
             >
               <div
                 onClick={(e) => {
                   e.stopPropagation()
-                  cardIcon(e)
                 }}
                 className="pb-1 p-0"
               >
@@ -195,33 +189,35 @@ export default function ProductCard({
                   src={fav ? heartFill : heratIcon}
                   className="me-2"
                   alt=""
-                  onClick={() => {
+                  onClick={(e) => {
+                    // e.stopPropagation()  
                     handleToggleFav(id)
                   }}
                 />
               </div>
               {/* 加入購物車 */}
-              <FaCartPlus
-                className={`text-light h5 pb-1 ${styles.Chover}`}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  addItem({
-                    name,
-                    releaseTime,
-                    display_price,
-                    price,
-                    img_cover,
-                    type,
-                    id,
-                    member_id,
-                    fav,
-                    product_quanty,
-                    language,
-                    quantity: 1,
-                  })
-                  // console.log(language)
-                }}
-              />
+                {<FaCartPlus
+                  className={`text-light h5 pb-1 ${styles.Chover}`}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    addItem({
+                      name,
+                      releaseTime,
+                      display_price,
+                      price,
+                      img_cover,
+                      type,
+                      id,
+                      member_id,
+                      fav,
+                      product_quanty,
+                      language,
+                      quantity: 1,
+                    })
+                    // console.log(language)
+                  }}
+                />}
+              
             </div>
           </div>
 
@@ -239,13 +235,13 @@ export default function ProductCard({
             <h6>
               <b className="text-danger">NT${price}</b>
             </h6>
-            {display_price == null || display_price == price ? (''):(<p className="text-white-50 text-decoration-line-through">
-              NT ${display_price}
-            </p>)}
-         
-            {/* <p className="text-white-50 text-decoration-line-through">
-              NT${display_price}
-            </p> */}
+            {display_price == null || display_price == price ? (
+              ''
+            ) : (
+              <p className="text-white-50 text-decoration-line-through">
+                NT ${display_price}
+              </p>
+            )}
 
             <div
               style={{
