@@ -54,6 +54,7 @@ export default function ShopPage() {
   //賣場資訊
   const [shop, setShop] = useState([])
   const {id, shop_name, shop_site, shop_cover, shop_info} = shop //解構賦值賣家資料
+  console.log(shop)
   //賣場商品
   const [products, setProducts] = useState([])
   const [searchResults, setSearchResults] = useState([])
@@ -105,6 +106,8 @@ export default function ShopPage() {
       if (data) {
         // 這裡假設後端返回的數據結構是 { shop: {...}, shopProducts: [...] }
         // console.log(data.shopComments)
+       
+        
         setShop(data.shopInfo)
         // console.log(data.shopInfo)
         // 可能需要另一個狀態來存儲商品資訊
@@ -277,8 +280,9 @@ export default function ShopPage() {
     return () => newSocket.close();
   }, [setSocket]);
 
-  let sellerId = shop.shop_id
-  // console.log(sellerId)
+
+  let sellerId = shop.seller_id
+  console.log(sellerId)
   const createRoom = (memberId, sellerId) => {
     if (!isLoggedIn) {
       router.push('/member/login');
