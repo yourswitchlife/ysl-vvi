@@ -60,7 +60,7 @@ export default function Comment() {
   //頁數
   const [totalPages, setTotalPages] = useState(1)
   const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(6)
+  const [limit, setLimit] = useState(4)
   //搜尋
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -249,15 +249,13 @@ export default function Comment() {
       <header>
         <SellerNavbar />
       </header>
-      <main className={styles.mainContainer}>
-        <div className="d-none d-md-block">
+      <div className={styles.mainContainer}>
         {memberData && (
             <>
               <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
             </>
           )}
-        </div>
-        <div>
+        <main className='flex-grow-1'>
           {/* cover */}
           {memberData && (
               <>
@@ -402,7 +400,7 @@ export default function Comment() {
                     <div className="d-flex align-items-center">
                       <p className="mb-0 text-secondary me-1">會員名稱:</p>
                       <div className={`me-1 ${styles.shapeCircle}`}>
-                        <Image
+                      <Image
                           src={v.pic ? (v.pic.startsWith("https://") 
                                 ? v.pic 
                                 : `http://localhost:3005/profile-pic/${v.pic}`) 
@@ -421,6 +419,21 @@ export default function Comment() {
                     </Card.Title>
                     <div className="text-dark">
                       <div className="row align-items-center">
+                      {v.comment_img && (
+                        <>
+                        <div className='col-12 my-2'>
+                      <Image
+                          src={v.comment_img ? (v.comment_img.startsWith("https://") 
+                                ? v.comment_img 
+                                : `http://localhost:3005/reviewImg/${v.comment_img}`) 
+                              : profilePhoto}
+                          alt="comment-photo"
+                          width={80}
+                          height={60}
+                        />
+                      </div>
+                        </>
+                      )}
                         <div className="col-5">
                           <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
                             <Star avgRating={v.rating}/>
@@ -682,15 +695,13 @@ export default function Comment() {
               )}
                 <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
           </div>
-        </div>
-        <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
-        <div className="d-block d-md-none">
-          <PhoneTabNav />
-        </div>
-        <div className="d-none d-md-block">
+          <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
+        </main>
+      </div>
+      <PhoneTabNav />
+      <div className="d-none d-md-block">
           <SellerFooter />
-        </div>
-      </main>
+      </div>
       {/* Modal 放這裡ㄛ */}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>

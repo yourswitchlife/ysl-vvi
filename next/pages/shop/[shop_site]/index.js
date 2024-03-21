@@ -16,11 +16,12 @@ import TypeFilter from '@/components/shop/type-filter'
 import Star from '@/components/shop/star'
 import GoTopButton from '@/components/go-to-top/go-top-button'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
+import CouponUni from '@/components/coupon/coupon-shop'
+import CouponProduct from '@/components/coupon/coupon-member/couponP-member'
 //images
 import cover from '@/public/images/shopCover/default-cover.jpg'
 import Image from 'next/image'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
-import Coupon from '@/components/shop/coupon'
 //styles
 import styles from '@/components/seller/seller.module.scss'
 // import 'animate.css/animate.min.css'
@@ -85,7 +86,7 @@ export default function ShopPage() {
 
   const getShop = async (shop_site) => {
     try{
-      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}?page=${page}&limit=${limit}&sort=${sort}`, {credentials: 'include'})
+      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/overview?page=${page}&limit=${limit}&sort=${sort}`, {credentials: 'include'})
       if(!res.ok){
         throw new Error('Failed to fetch: 找不到賣場及賣場商品資料')
       }
@@ -94,15 +95,25 @@ export default function ShopPage() {
       // 確保返回的數據結構正確，並更新狀態
       if (data) {
         // 這裡假設後端返回的數據結構是 { shop: {...}, shopProducts: [...] }
-        setShop(data.shop)
+        // console.log(data.shopComments)
+        setShop(data.shopInfo)
+        // console.log(data.shopInfo)
         // 可能需要另一個狀態來存儲商品資訊
-        setProducts(data.items)
-        setTotalPages(data.totalPages)
+        setProducts(data.products)
+        setTotalPages(data.shopInfo.totalPages)
+        setShopOrderNum(data.orders.length)
+        setShopFavNum(data.favCount)
+        
+        setShopRating(parseFloat(data.shopComments[0].avg_rating).toFixed(1))
+        setCommentNum(data.shopComments[0].total_comments)
+        const roundedRating = Math.round(parseFloat(data.shopComments[0].avg_rating).toFixed(1))
+        // console.log(roundedRating)
+        setRoundedRating(roundedRating)
         router.push(`./${shop_site}?page=${page}`)
         // setSearchResults(data.shopProducts)
-        const picUrl = data.shop.pic ? (data.shop.pic.startsWith("https://") ? data.shop.pic : `http://localhost:3005/profile-pic/${data.shop.pic}`) : profilePhoto
+        const picUrl = data.shopInfo.pic ? (data.shopInfo.pic.startsWith("https://") ? data.shopInfo.pic : `http://localhost:3005/profile-pic/${data.shopInfo.pic}`) : profilePhoto
         setBigPic(picUrl)
-        const coverUrl = data.shop.shop_cover ? (data.shop.shop_cover.startsWith("https://") ? data.shop.shop_cover : `http://localhost:3005/shopCover/${data.shop.shop_cover}`) : cover
+        const coverUrl = data.shopInfo.shop_cover ? (data.shopInfo.shop_cover.startsWith("https://") ? data.shopInfo.shop_cover : `http://localhost:3005/shopCover/${data.shopInfo.shop_cover}`) : cover
         setShopCover(coverUrl)
       }
     }catch (e){
@@ -130,7 +141,7 @@ export default function ShopPage() {
     setPage(newpage)
   }
   
-  const shopTotalItems = products.length //賣家總商品數
+  // const shopTotalItems = products.length //賣家總商品數
 
   const getRandomHit = (items, num) => {
   // 先shuffle副本
@@ -144,109 +155,6 @@ export default function ShopPage() {
     setHit(randomItems)
   }, [products])
 
-  const getShopOrder = async (shop_site) => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/order`, {credentials: 'include'})
-      if(!res.ok){
-        throw new Error('網路請求失敗，找不到此賣場')
-      }
-      const data = await res.json()
-      // 確保返回的數據結構正確，並更新狀態
-      if (data) {
-        //取得加總數字
-        let totalQty = data.reduce((total, order) => 
-          total + order.quantity, 0)
-        // console.log(totalQty)
-        setShopOrderNum(totalQty)
-      }
-    }catch(e){
-      console.error(e)
-    }
-  }
-
-  // const getShopFav = async (shop_site) => {
-  //   try{
-  //     const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/fav_shop`, {
-  //       credentials: 'include',
-  //     })
-  //     if(!res.ok){
-  //       throw new Error('網路請求失敗，找不到此賣場')
-  //     }
-  //     const data = await res.json()
-  //     // 確保返回的數據結構正確，並更新狀態
-  //     if (data && data.length > 0) {
-  //       //檢查是否收藏：改成valid=0
-  //       const isValidFav = data.some(fav => fav.valid && fav.valid === 0)
-  //       if(isValidFav){
-  //         setShopFavNum(0)
-  //         setIsFav(false)
-  //       }else{
-  //         //取得加總數字
-  //         setShopFavNum(data.length)
-  //         //檢查是否收藏
-  //         const isFaved = data.some(fav => fav.buyer_id === memberData.id)
-  //         // console.log(isFaved)會是boolean
-  //         setIsFav(isFaved)
-  //       }
-  //     }else{
-  //       //沒有收藏紀錄
-  //       setShopFavNum(0)
-  //       setIsFav(false)
-  //     }
-  //   }catch(e){
-  //     console.error(e)
-  //   }
-  // }
-  const getShopFav = async (shop_site) => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/fav_shop`, {
-        credentials: 'include',
-      })
-      if(!res.ok){
-        throw new Error('網路請求失敗，找不到此賣場')
-      }
-      const data = await res.json()
-      // 確保返回的數據結構正確，並更新狀態
-      if (data && data.length > 0) {
-        //取得加總數字
-        setShopFavNum(data.length)
-        //檢查是否收藏
-        const isFaved = data.some(fav => fav.buyer_id === memberData.id)
-        // console.log(isFaved)會是boolean
-        setIsFav(isFaved)
-      }else{
-        //沒有收藏紀錄
-        setShopFavNum(0)
-        setIsFav(false)
-      }
-    }catch(e){
-      console.error(e)
-    }
-  }
-  const getShopRating = async (shop_site) => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/shop_comment`, {credentials: 'include'})
-      if(!res.ok){
-        throw new Error('網路請求失敗，找不到此賣場')
-      }
-      const data = await res.json()
-      // 確保返回的數據結構正確，並更新狀態
-      if (data && data.length > 0) {
-        //取得評價平均(要有小數點一位)
-        const totalRating = data.reduce((acc, cur) => acc + cur.rating, 0);
-        const averageRating = (totalRating / data.length).toFixed(1); // 保留一位小數
-        // console.log(`平均評價: ${averageRating}`);
-        const roundedRating = Math.round(averageRating);
-        setShopRating(averageRating)
-        setCommentNum(data.length)
-        setRoundedRating(roundedRating)
-      } else {
-        console.log("沒有找到評價數據");
-      }
-    }catch(e){
-      console.error(e)
-    }
-  }
   //搜尋商品
   // const [searchText, setSearchText] = useState('')
   const handleSearch = (searchQuery) => {
@@ -283,27 +191,29 @@ export default function ShopPage() {
   }
   const handleFavShop = async () => {
     const url = `http://localhost:3005/api/shop/${shop_site}/fav_shop`
+
+    //準備請求的配置
+    const requestOptions = {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        valid: isFav ? 0 : 1
+      }) //根據目前收藏狀態來設定值
+    }
+
     try{
-      if(isFav){
-        //已經收藏者：執行取消收藏
-        const res = await fetch(url, { method: 'PUT', credentials: 'include'})
-        const data = await res.json()
-        if(res.ok){
-          setIsFav(false)
-          Swal.fire('取消收藏成功', '', 'success')
-        }else{
-          throw new Error(data.message || '取消收藏失敗')
-        }
+      const res = await fetch(url, requestOptions)
+      const data = await res.json()
+
+      if(res.ok){
+        setIsFav(!isFav) //反轉當前的收藏狀態
+        const actionMessage = isFav ? '取消收藏成功' : '收藏成功'
+        Swal.fire(actionMessage, '', 'success')
       }else{
-        //沒收藏過的人來收藏
-        const res = await fetch(url, { method: 'POST', credentials: 'include' })
-        const data = await res.json()
-        if(res.ok){
-          setIsFav(true)
-          Swal.fire('收藏成功', '', 'success')
-        }else{
-          throw new Error(data.message || '添加收藏失敗')
-        }
+        throw new Error(data.message || '操作失敗')
       }
     }catch(error){
       //用replace方法去除"Error:"前綴
@@ -332,23 +242,23 @@ export default function ShopPage() {
   useEffect(()=>{
     if(router.isReady){
       const {shop_site} = router.query
+      // console.log(shop_site)
       getShop(shop_site)
-      getShopOrder(shop_site)
-      getShopFav(shop_site)
-      getShopRating(shop_site)
+      // getShopFav(shop_site)
+      // getShopRating(shop_site)
     }
   },[router.isReady, sort, page, limit])
 
-  useEffect(()=>{
-      if(isLoggedIn){
-        getShopFav(shop_site)
-      }
-  },[isLoggedIn])
 
   const cardIcon = (e) => {
     e.persist()
     e.nativeEvent.stopImmediatePropagation()
     e.stopPropagation()
+  }
+
+  const [currentFilter, setCurrentFilter] = useState('valid')
+  const handleFilter = (newFilter) => {
+    setCurrentFilter(newFilter)
   }
 
   return (
@@ -395,10 +305,10 @@ export default function ShopPage() {
                 {/* little dashboard */}
                 <div className="d-flex flex-column align-items-center pe-4">
                   <h5>商品數量</h5>
-                  <h5 className='text-danger fw-bold'>{shopTotalItems}</h5>
+                  <h5 className='text-danger fw-bold'>{shop.totalItems}</h5>
                 </div>
                 <div className="d-flex flex-column align-items-center pe-4">
-                  <h5>已賣出件數</h5>
+                  <h5>售出件數</h5>
                   <h5 className='text-danger fw-bold'>{shopOrderNum}</h5>
                 </div>
                 <div className="d-flex flex-column align-items-center">
@@ -458,10 +368,10 @@ export default function ShopPage() {
             {/* little dashboard */}
             <div className="d-flex flex-column align-items-center pe-4">
               <h6>商品數量</h6>
-              <h6 className="text-danger mb-0">{shopTotalItems}</h6>
+              <h6 className="text-danger mb-0">{shop.totalItems}</h6>
             </div>
             <div className="d-flex flex-column align-items-center pe-4">
-              <h6>已賣出件數</h6>
+              <h6>售出件數</h6>
               <h6 className="text-danger mb-0">{shopOrderNum}</h6>
             </div>
             <div className="d-flex flex-column align-items-center">
@@ -501,7 +411,9 @@ export default function ShopPage() {
         </div>
         <Sortbar />
         <div className="d-none d-md-block">
-          <Coupon />
+        <h4 className="mt-3 mb-2 d-none d-md-block">YSL官網優惠券</h4>
+          {/* <CouponProduct currentFilter={currentFilter}/> */}
+          <CouponUni />
         </div>
         <div className={styles.hit}>
         <h4 className="mb-5 d-none d-md-block">焦點遊戲熱賣中</h4>
@@ -537,7 +449,7 @@ export default function ShopPage() {
         </div>
         <div className="d-flex d-md-none flex-column ps-4 pe-4">
           <h5 className="fw-bold mb-2">賣場商品</h5>
-          <h6 className="mb-3">共{shopTotalItems}項</h6>
+          <h6 className="mb-3">共{shop.totalItems}項</h6>
         </div>
         <h4 className="d-none d-md-block mb-4">賣場所有商品</h4>
         <div className="d-flex justify-content-between">

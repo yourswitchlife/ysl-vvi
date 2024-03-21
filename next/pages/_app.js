@@ -8,6 +8,7 @@ import DefaultLayout from '@/components/layout/default-layout'
 import { AuthProvider } from '@/hooks/use-Auth';
 import { getRedirectResult } from "firebase/auth";
 import { auth } from '@/utils/firebaseConfig';
+import WithWebSocketProvider from '@/context/member/withloginWebsocket';
 
 // 導入購物車Provider
 import { CartProvider } from '@/hooks/use-cart'
@@ -51,14 +52,14 @@ export default function MyApp({ Component, pageProps }) {
               photoURL: gmember.photoURL,
             }),
           })
-          .then(response => response.json())
-          .then(data => {
-            console.log('登入成功:', data);
-            router.replace('/'); 
-          })
-          .catch(error => {
-            console.error('登入失敗:', error);
-          });
+            .then(response => response.json())
+            .then(data => {
+              console.log('登入成功:', data);
+              router.replace('/');
+            })
+            .catch(error => {
+              console.error('登入失敗:', error);
+            });
         }
       })
       .catch((error) => {
@@ -71,8 +72,13 @@ export default function MyApp({ Component, pageProps }) {
   // 我把AuthProvider放在最外面 所有應用都能用
   return (
     <AuthProvider>
-    <CartProvider><ShippingProvider>{getLayout(<Component {...pageProps} />)}</ShippingProvider></CartProvider>
-      
+      <CartProvider>
+        <ShippingProvider>
+          <WithWebSocketProvider>
+            {getLayout(<Component {...pageProps} />)}
+          </WithWebSocketProvider>
+        </ShippingProvider>
+      </CartProvider>
     </AuthProvider>
   );
 }

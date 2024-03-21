@@ -12,6 +12,16 @@
   }
 }
 
+.title_card{
+  border-radius: 0;
+  background: linear-gradient(
+    180deg,
+    #4c5668 0%,
+    rgba(22, 23, 25, 0) 46.35%,
+    #3f4858 100%
+  );
+}
+
 .bg_card {
   background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 1)), url('/images/member/1709974047758.jpg') left/cover no-repeat;
 

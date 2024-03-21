@@ -9,15 +9,16 @@ import { Form, InputGroup, Button, FormControl } from 'react-bootstrap';
 import { FaUser, FaTransgender, FaEnvelope, FaHome, FaBirthdayCake, FaPhone } from 'react-icons/fa';
 import { FaLocationDot } from "react-icons/fa6";
 import { IoNewspaper } from "react-icons/io5";
-import { BsPersonVcardFill } from "react-icons/bs";
+// import { BsPersonVcardFill } from "react-icons/bs";
 
 import Swal from 'sweetalert2'
 
-import RePassword from '@/components/member/re-password';
+// import RePassword from '@/components/member/re-password';
 import { uploadExam } from '@/context/member/upload-exam';
 import { useAuth } from '@/hooks/use-Auth';
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav';
 
 
 
@@ -249,8 +250,11 @@ export default function account() {
                 <IoNewspaper />
               </div>
               <h5 className={mStyle.title_text + " align-self-center"}>基本資料</h5>
-              <div className='ms-auto me-3'>
+              {/* <div className='ms-auto me-3'>
                 <RePassword />
+              </div> */}
+              <div className='ms-auto'>
+              <Button onClick={handleSubmit} className={mStyle.confirm_btn + ' me-3 fw-bold'} disabled={!isDataChanged}>儲存</Button>
               </div>
             </div>
 
@@ -259,20 +263,20 @@ export default function account() {
               <div className={mStyle.input_frame + " me-5 d-flex"}>
                 <Form className="ms-4 py-3 mb-4">
                   <div className="d-flex flex-row mb-3">
-                    <InputGroup className={mStyle.text_input + " me-2"}>
+                    <InputGroup className="flex-grow-1">
                       <InputGroup.Text>
                         <FaUser />
                       </InputGroup.Text>
                       <Form.Control
                         onChange={handleaccount}
                         name="name"
-                        placeholder="真實姓名(必填)"
+                        placeholder="姓名(必填)"
                         value={memberData?.name}
                         disabled={!!memberData?.name}
                       />
                     </InputGroup>
 
-                    <InputGroup className="flex-grow-1">
+                    <InputGroup className={mStyle.text_input + " ms-2"}>
                       <InputGroup.Text>
                         <FaTransgender />
                       </InputGroup.Text>
@@ -330,7 +334,7 @@ export default function account() {
                       <Form.Control
                         onChange={handleaccount}
                         name="phone"
-                        placeholder="手機號碼(必填)"
+                        placeholder="手機(必填)"
                         value={formData.phone}
                       />
                     </InputGroup>
@@ -387,12 +391,15 @@ export default function account() {
 
 
           </div>
-          <div className='container d-flex justify-content-center mt-5'>
+          {/* <div className='d-flex justify-content-end mt-5 m-sm-0'>
             <Button onClick={handleSubmit} className={mStyle.confirm_btn + ' me-5'} disabled={!isDataChanged}>儲存</Button>
             <Button className={mStyle.cancel_btn}>取消</Button>
-          </div>
+          </div> */}
         </div>
 
+      </div>
+      <div className={mStyle.PhoneTabNav}>
+      <PhoneTabNav />
       </div>
       <div className="d-none d-sm-block">
         <Footer />

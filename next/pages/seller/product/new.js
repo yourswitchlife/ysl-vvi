@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { useRouter } from 'next/router'
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
@@ -9,11 +10,22 @@ import BreadCrumb from '@/components/common/breadcrumb'
 import { useAuth } from '@/hooks/use-Auth'
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
-const MySwal = withReactContent(Swal)
+
+//images
+import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
+import cover from '@/public/images/shopCover/default-cover.jpg'
+import profileImg from '@/public/images/profile-photo/peach.png'
+import defaultHead from '@/public/images/profile-photo/default-profile-img.svg'
+import gameCover from '@/public/images/seller/product-cover/crymachina.jpg'
 
 export default function New() {
-  const { isLoggedIn, memberId } = useAuth()
+  //抓會員資料
+  const { isLoggedIn, memberId, memberData } = useAuth()
+  const [bigPic, setBigPic] = useState(profilePhoto)
+  const [shopCover, setShopCover] = useState(cover)
+  const router = useRouter()
+  
+  // const MySwal = withReactContent(Swal)
   // console.log(memberId)
   //body style
   useEffect(() => {
@@ -24,6 +36,22 @@ export default function New() {
       document.body.classList.remove(styles.bodyStyleA)
     }
   }, [])
+
+  //抓會員資料：cover and profile photo
+  useEffect(() => {
+    if(isLoggedIn && memberData) {
+      console.log(memberData.shop_cover)
+      const picUrl = memberData.pic ? (memberData.pic.startsWith("https://") 
+        ? memberData.pic 
+        : `http://localhost:3005/profile-pic/${memberData.pic}`) 
+      : profilePhoto
+      setBigPic(picUrl)
+      const coverUrl = memberData.shop_cover ? (memberData.shop_cover.startsWith("https://") ? memberData.shop_cover : `http://localhost:3005/shopCover/${memberData.shop_cover}`) : cover
+      setShopCover(coverUrl)
+      // console.log(memberData)
+      // getSellerData()
+    }
+  }, [isLoggedIn, memberId, memberData])
 
   const [newP, setNewP] = useState({
     pName: '',
@@ -166,20 +194,17 @@ export default function New() {
   return (
     <>
       <SellerNavbar />
-      <div className="d-none d-md-block">
-        <Sidebar />
-      </div>
-      <main style={{ marginTop: 58 }}>
-        <div>
-          {/* cover */}
-          <div className="d-none d-md-block">
-            <SellerCover />
-          </div>
+      <div className={styles.mainContainer}>
+      {memberData && (
+            <>
+              <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
+            </>
+        )}
+        <main className='flex-grow-1'>
           <div className={`${styles.dashboardMargin}`}>
             <div className="d-lg-block d-none">
               <BreadCrumb />
             </div>
-
             <div className={`mb-4 mt-lg-0 ${styles.dashboardStyle}`}>
               <div className="d-flex justify-content-start align-items-center mb-3">
                 <h5 className="text-dark fw-bold">商品基本資訊</h5>
@@ -414,6 +439,7 @@ export default function New() {
                     className={`btn ${styles.btnGrayOutlined}`}
                     onClick={() => {
                       clearForm()
+                      router.push('./')
                     }}
                   >
                     取消
@@ -422,15 +448,13 @@ export default function New() {
               </form>
             </div>
           </div>
-        </div>
-        <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
-        <div className="d-block d-md-none">
-          <PhoneTabNav />
-        </div>
-        <div className="d-none d-md-block">
+          <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
+        </main>
+      </div>
+      <PhoneTabNav />
+      <div className="d-none d-md-block">
           <SellerFooter />
-        </div>
-      </main>
+      </div>
     </>
   )
 }
