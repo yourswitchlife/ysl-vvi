@@ -34,7 +34,7 @@ export default function notifyNormal() {
                 訂單通知<IoNotificationsCircle className={mStyle.iconb+' text-danger mb-1'}/>
               </Link>
               <h3 className={pStyle.gray_text}>|</h3>
-              <Link href="" className={fsStyle.pagep_btn}>
+              <Link href="/member/notify-normal" className={fsStyle.pagep_btn}>
               <span></span>優惠通知 <IoNotificationsCircle className={mStyle.iconc+' text-danger mb-1'}/>
               </Link>
             </div>

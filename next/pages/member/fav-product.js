@@ -13,6 +13,8 @@ import Link from 'next/link'
 import { FaRegHeart, FaCartPlus, FaStore } from 'react-icons/fa'
 import Paginage from '@/components/common/pagination'
 import Dropdown from 'react-bootstrap/Dropdown'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav';
+
 //hooks
 import { useAuth } from '@/hooks/use-Auth';
 import { useCart } from '@/hooks/use-cart'
@@ -21,7 +23,7 @@ import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 export default function FavProduct() {
   const router = useRouter();
   const { isLoggedIn, memberId } = useAuth();
-  const { addItem, notifySuccess } = useCart()
+  const { addItem } = useCart()
 
   const [favProducts, setFavProducts] = useState([]);
   // 排序
@@ -80,7 +82,7 @@ export default function FavProduct() {
   const handleUnfavoriteSelected = async () => {
     try {
       const response = await fetch('http://localhost:3005/api/member/unfav-product', {
-        method: 'DELETE',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -106,6 +108,7 @@ export default function FavProduct() {
   };
 
   const handleAddToCart = (product) => {
+    console.log(product);
     const priceString = product.price.replace(',', ''); 
     const displayPriceString = product.display_price.replace(',', ''); 
     const newItem = {
@@ -117,6 +120,7 @@ export default function FavProduct() {
       display_price: Number(displayPriceString),
       quantity: 1, // 預設1
       img_cover: product.img_cover,
+      member_id: product.memberId,
       user_select: false
     }
     console.log(newItem)
@@ -262,6 +266,9 @@ export default function FavProduct() {
             <Paginage currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />
           </div>
         </div>
+      </div>
+      <div className={mStyle.PhoneTabNav}>
+      <PhoneTabNav />
       </div>
       <div className="d-none d-sm-block">
         <Footer />

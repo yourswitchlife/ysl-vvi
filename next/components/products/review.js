@@ -3,6 +3,9 @@ import RatingStars from './rating-stars'
 import styles from '../../styles/products/product-detail.module.scss'
 import AddPhoto from '@/components/products/addPhoto'
 import { useAuth } from '@/hooks/use-Auth'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
 
 export default function Review() {
   const { isLoggedIn, memberId } = useAuth()
@@ -36,11 +39,12 @@ export default function Review() {
       setSelectFile(file)
       setImgServerUrl('')
       // const fileName = file.name
-      // setReview(prevReview => ({ ...prevReview, reviewPhoto: fileName }))
+      setReview(prevReview => ({ ...prevReview, reviewPhoto: file.Name }))
     } else {
       setFilePicked(false)
       setSelectFile(null)
       setImgServerUrl('')
+      setReview(prevReview => ({ ...prevReview, reviewPhoto: '' }))
     }
   }
 
@@ -51,44 +55,59 @@ export default function Review() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!review.review) {
-      alert('請輸入您的評論')
-      return
-    } else {
-      const formData = new FormData(e.target)
-      formData.append('rating', review.rating)
-      formData.append('review', review.review)
-      if (selectFile) {
-        formData.append('reviewPhoto', selectFile)
-      }
-      // formData.append('reviewPhoto', review.reviewPhoto)
-      // console.log('File to upload:', selectFile); // 打印File对象
-      // console.log('File name:', selectFile.name)
+    if(!memberId){
+      MySwal.fire({
+        icon: 'warning',
+        text: '請先登入',
+        confirmButtonColor: '#E41E49',
+      })
+    }else{
 
-      console.log(review.reviewPhoto)
-      console.log(formData.get('rating'))
-      fetch(
-        `http://localhost:3005/api/products/addReview?memberId=${memberId}`,
-        {
-          credentials: 'include',
-          method: 'POST',
-          body: formData,
+      if (!review.review) {
+        MySwal.fire({
+          icon: 'warning',
+          text: '請輸入您的評論',
+          confirmButtonColor: '#E41E49',
+        })
+        return
+      } else {
+        const formData = new FormData(e.target)
+        formData.append('rating', review.rating)
+        if (selectFile) {
+          formData.append('reviewPhoto', selectFile)
         }
-      )
-        .then((response) => response.json())
-        .then((result) => {
-          alert('評論已發佈！'),
-            setTimeout(() => {
-              setReview({
-                rating: 0,
-                review: '',
-                reviewPhoto: '',
-              })
-            }, 1000)
-        })
-        .catch((error) => {
-          console.error('error', error)
-        })
+  
+        console.log(review.reviewPhoto)
+        console.log(formData.get('rating'))
+        console.log([...formData])
+
+        fetch(
+          `http://localhost:3005/api/products/addReview?memberId=${memberId}`,
+          {
+            credentials: 'include',
+            method: 'POST',
+            body: formData,
+          }
+        )
+          .then((response) => response.json())
+          .then((result) => {
+            Swal.fire({
+              title: '評論發佈成功！',
+              icon: 'success',
+            })
+            // alert('評論已發佈！'),
+              setTimeout(() => {
+                setReview({
+                  rating: 0,
+                  review: '',
+                  reviewPhoto: '',
+                })
+              }, 1000)
+          })
+          .catch((error) => {
+            console.error('error', error)
+          })
+      }
     }
   }
 

@@ -12,12 +12,74 @@
   }
 }
 
+.title_card{
+  border-radius: 0;
+  background: linear-gradient(
+    180deg,
+    #4c5668 0%,
+    rgba(22, 23, 25, 0) 46.35%,
+    #3f4858 100%
+  );
+}
+
 .bg_card {
-  /* background: url('/images/member/cardbg2 (2).webp') left/cover no-repeat; */
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 1)), url('/images/member/1709974047758.jpg') left/cover no-repeat;
+
   background-color: $bright-gray;
 }
 
+.text_frame {
+  width: 650px;
+}
+
+.coupon_pages {
+  position: absolute;
+  left: 51%;
+  padding-inline:40px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: verdana;
+  letter-spacing: 4px;
+  text-decoration: none;
+  color: $red-secondary;
+  cursor: default;
+  border-bottom: 2px solid $red-secondary;
+}
+.cancel_btn {
+  font-weight: bold;
+  color: $white;
+  border: 2px solid $danger;
+  background: $primary-black;
+  box-shadow: 0px 0px 10px 5px rgba(247, 39, 58, 0.25);
+
+  &:hover {
+    color: $white;
+    border: 2px solid $danger;
+    background: $dark-gray;
+    box-shadow: 0px 0px 10px 5px rgba(247, 39, 58, 0.25);
+  }
+  &:active {
+    color: $white;
+    border: 2px solid $danger !important;
+    background: $gray !important;
+    box-shadow: 0px 0px 10px 5px rgba(247, 39, 58, 0.25);
+  }
+}
+
 @media (max-width: 430px) {
+  .cancel_btn{
+    padding-inline:10px;
+    position: relative;
+    left: 48%;
+  }
+  .coupon_pages {
+    position: absolute;
+    padding-inline: 15px;
+    left: 35%;
+    bottom: -9%;
+    font-size: 20px;
+    font-weight: bold;
+  }
   .bg_card {
     margin-inline: 0 !important;
     padding-inline: 0 !important;
@@ -52,6 +114,13 @@
     font-size: 16px;
   }
 
+  .coupon_text {
+    width: 130px !important;
+    padding: 5px;
+    margin: 10px;
+    font-size: 16px;
+  }
+
   .card_xs {
     padding-inline: 10px !important;
   }
@@ -71,6 +140,7 @@
     padding-inline: 0 !important;
     margin-inline: 0 !important;
   }
+
   .nopd_xs {
     padding-inline: 0 !important;
   }
@@ -85,11 +155,21 @@
     height: 140px;
     align-self: center;
   }
-  .text_frame{
+
+  .text_frame {
     max-width: 160px;
   }
 
   .shop_name {
+    width: 83px;
+    font-size: 16px;
+    padding-inline: 5px !important;
+    padding-block: 5px !important;
+    margin-inline: 0 !important;
+  }
+
+  .shop_name_front {
+    width: 120px;
     font-size: 16px;
     padding-inline: 5px !important;
     padding-block: 5px !important;
@@ -98,6 +178,6 @@
 
   .flex_c {
     flex-direction: column;
-    padding-left: 20px;
+    padding-left: 60px;
   }
 }

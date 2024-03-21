@@ -12,6 +12,8 @@ import http from 'http'
 import { Server as SocketIOServer } from 'socket.io'
 import { setupMission } from '../routes/mission.mjs'
 import { setupChat } from '../routes/chat.mjs'
+import { triggerWithWebsocket } from '../routes/member.mjs';
+
 
 // 導入dotenv 使用 .env 檔案中的設定值 process.env
 import 'dotenv/config.js'
@@ -28,12 +30,12 @@ app.set('port', port)
  */
 
 const server = http.createServer(app)
-
+// Socket.IO 附加到 HTTP 服務器上
 const io = new SocketIOServer(server, {
   cors: {
-    origin: 'http://localhost:3000', // Adjust according to your front-end origin
+    origin: 'http://localhost:3000', 
     methods: ['GET', 'POST'],
-    credentials: true,
+    credentials: true, 
   },
 })
 
@@ -46,6 +48,7 @@ server.on('error', onError)
 server.on('listening', onListening)
 setupMission(io)
 setupChat(io)
+triggerWithWebsocket(io);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -108,6 +111,7 @@ function onError(error) {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 } */
+
 
 function onListening() {
   var addr = server.address()

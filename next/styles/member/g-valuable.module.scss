@@ -56,7 +56,9 @@
           padding: 0;
           width: 95%;
           .text_input {
-            width: 90%;
+            width: 100%;
+            /* margin-inline-start: 0 !important;
+            padding-top: 15px; */
           }
         }
     
@@ -261,6 +263,7 @@
 }
 
 .cancel_btn {
+  font-weight: bold;
   color: $white;
   border: 2px solid $danger;
   background: $primary-black;
@@ -269,7 +272,13 @@
   &:hover {
     color: $white;
     border: 2px solid $danger;
-    background: $gray;
+    background: $dark-gray;
+    box-shadow: 0px 0px 10px 5px rgba(247, 39, 58, 0.25);
+  }
+  &:active {
+    color: $white;
+    border: 2px solid $danger !important;
+    background: $gray !important;
     box-shadow: 0px 0px 10px 5px rgba(247, 39, 58, 0.25);
   }
 }
@@ -278,7 +287,7 @@
 }
 
 @media (max-width: 430px) {
-  .confirm_btn, .cancel_btn {
+  .cancel_btn {
     margin-bottom: 20px;
   }
   .card{
@@ -291,8 +300,8 @@
   }
   .iconb{
     position: absolute;
-    right: 14%;
-
+    right: 0;
+    bottom: 1%;
   }
   .iconc{
     position: absolute;
@@ -300,5 +309,8 @@
   }
   .form_input{
     width: 360px;
+  }
+  .PhoneTabNav{
+    padding-top: 85px;
   }
 }

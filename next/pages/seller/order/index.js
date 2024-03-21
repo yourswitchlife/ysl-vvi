@@ -66,14 +66,55 @@ export default function Order() {
   //頁數
   const [totalPages, setTotalPages] = useState(1)
   const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(6)
+  const [limit, setLimit] = useState(5)
   //執行tabs篩選
   const [selectedTab, setSelectedTab] = useState('all')
   // 表單控制狀態
   const orderOptions = ['訂單編號', '會員名稱']
   const [orderSelect, setOrderSelect] = useState('訂單編號')
   const [searchText, setSearchText] = useState('')
-
+  //接應綠界
+  const handleViewClick = async () => {
+    try {
+      const response = await fetch('http://localhost:3005/api/logisticsService/create-logistics-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          MerchantTradeDate: '2024/02/15 08:40:00',
+          LogisticsType: 'CVS',
+          LogisticsSubType: 'UNIMARTC2C',
+          GoodsAmount: '950',
+          CollectionAmount: '950',
+          IsCollection: 'Y',
+          GoodsName: 'YSL商品訂單',
+          SenderName: '林雅琳',
+          SenderPhone: '0934567891',
+          SenderCellPhone: '0934567891',
+          ReceiverName: '鄭家豪',
+          ReceiverPhone: '0989012345',
+          ReceiverCellPhone: '0989012345',
+          ReceiverEmail: '',
+          TradeDesc: '',
+          ServerReplyURL:
+            'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
+          ClientReplyURL: 'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
+          LogisticsC2CReplyURL: 'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
+          Remark: '',
+          PlatformID: '',
+          ReceiverStoreID: '131386',
+          ReturnStoreID: '131386',
+        }),
+      })
+      const htmlContent = await response.text();
+      // 将响应的 HTML 内容设置到页面中某个元素，以便自动提交
+      document.getElementById('formContainer').innerHTML = htmlContent;
+    } catch (error) {
+      console.error('請求失敗:', error);
+    }
+  };
+  
   const fetchShopOrders = async() => {
     try{
       const res = await fetch(`http://localhost:3005/api/seller/order?page=${page}&limit=${limit}&tab=${selectedTab}`, { credentials: 'include'})
@@ -249,21 +290,18 @@ export default function Order() {
       <header>
         <SellerNavbar />
       </header>
-      <main className={styles.mainContainer}>
-        <div className="d-none d-md-block">
+      <div id="formContainer" style={{ display: 'none' }}></div>
+      <div className={styles.mainContainer}>
           {memberData && (
             <>
               <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
             </>
           )}
-        </div>
-        <div>
+        <main className='flex-grow-1'>
           {/* cover */}
-          {memberData && (
-              <>
-                <SellerCover shopCover={shopCover}/>
-              </>
-            )}
+          <div className={styles.coverB}>
+          <Image height={170} width={1172} src={shopCover} alt="shop-cover" className={styles.fit} />
+          </div>
           <div className="d-flex flex-column d-lg-none container ps-4 pe-4">
             <div className="d-flex justify-content-around align-items-center mt-4 mb-2">
               <div className={`${styles.profile}`}>
@@ -398,8 +436,9 @@ export default function Order() {
                             <button
                               type="button"
                               className="btn btn-danger btn-sm"
+                              onClick={handleViewClick}
                             >
-                              編輯
+                              查看
                             </button>
                           </div>
                         </div>
@@ -517,10 +556,9 @@ export default function Order() {
                             {/* 可以跳出一個MODAL來處理 */}
                             <button
                               type="button"
-                              href="/comment/reply"
                               className="btn btn-danger btn-sm"
                             >
-                              編輯
+                              查看
                             </button>
                           </div>
                         </div>
@@ -533,15 +571,13 @@ export default function Order() {
                   <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
             
           </div>
-        </div>
-        <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
-        <div className="d-block d-md-none">
-          <PhoneTabNav />
-        </div>
-        <div className="d-none d-md-block">
+          <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
+        </main>
+      </div>
+      <PhoneTabNav />
+      <footer className="d-none d-md-block">
           <SellerFooter />
-        </div>
-      </main>
+      </footer>
     </>
   )
 }

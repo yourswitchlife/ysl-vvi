@@ -25,20 +25,14 @@ export default function Reviewed({
         />
         <div className="ms-2">
           <h6 className="text-white mb-1">{name}</h6>
-          <p className="text-white">{created_at}</p>
+          <p className="text-white">{created_at.split('T')[0]}</p>
         </div>
       </div>
       <div className="d-flex justify-content-between">
         <div className='d-flex'>
           <div>
             <RatingStars rating={rating} />
-            {/* <div className="tages mb-2 mt-2">
-            <span className="badge rounded-pill text-bg-primary p">運送快速</span>
-            <span className="badge rounded-pill text-bg-primary ms-2 me-2 p">
-              服務貼心
-            </span>
-            <span className="badge rounded-pill text-bg-primary p">符合期望</span>
-          </div> */}
+         
             <h6 className="text-white py-2 me-lg-5 me-0">{content}</h6>
           </div>
           {comment_img != '' ? (

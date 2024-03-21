@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import styles from '@/components/layout/navbar/navbar.module.scss'
 import yslLogoSm from '@/public/images/logo/logo-sm.svg'
@@ -20,13 +20,41 @@ import { useAuth } from '@/hooks/use-Auth';
 import NavPic from '@/hooks/use-navpic';
 // 引入use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
-
+import { useRouter } from 'next/router'
+//websocket
+import { useWebSocket } from '@/context/member/websocketLong'
 
 export default function Navbar(props) {
   const { searchWord, setSearchWord } = props
   const { isLoggedIn, memberData } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
-  const {totalProducts} = useCart()
+  const { totalProducts } = useCart()
+  const { unreadCount } = useWebSocket();
+  // const [unreadCount, setUnreadCount] = useState(0);
+  // const socket = io('http://localhost:3005');
+
+/*   useEffect(() => {
+    socket.on('connect', () => {
+      console.log('Connected to the webserver');
+      if (memberId) {
+        // console.log('傳送memberId給後端');
+        socket.emit('member_connected', { memberId: memberId });
+      }
+    });
+    socket.on('unread_count', (count) => {
+      console.log('收到未讀通知:', count);
+      setUnreadCount(count);
+    });
+
+    return () => {
+      console.log('Disconnecting from the webserver...');
+      socket.off('connect');
+      socket.off('unread_count');
+      socket.close();
+    };
+
+  }, [memberId]) */
+
   return (
     <>
     <div className='d-none d-lg-block'>
@@ -35,11 +63,11 @@ export default function Navbar(props) {
       >
         <div // logo
         >
-          <Link href="/">
+          <Link href="/" title='Your Switch Life首頁'>
             <Image src={yslLogoSm} alt="ysl-logo" />
           </Link>
         </div>
-        <div className={styles.links}>
+        <div>
           <Link href="/products" className={styles.linkPr}>
             商品專區
           </Link>
@@ -82,8 +110,15 @@ export default function Navbar(props) {
                 )}
 
               </Link>
-              <Link href="/member/notify-order" className={styles.loginIcon}>
+              <Link href="/member/notify-coupon" className={styles.loginIcon}>
                 <FaBell className={styles.icon} />
+                {unreadCount > 0 && (
+                  <span className="position-absolute start-99 translate-middle badge rounded-pill bg-danger">
+                    {unreadCount}
+                    <span className="visually-hidden">unread messages</span>
+                  </span>
+                )}
+
               </Link>
               <Link href="/seller" className={styles.loginIconEnd}>
                 <FaStore className={styles.icon} />
@@ -91,7 +126,7 @@ export default function Navbar(props) {
             </div>
           ) : (
             // 未登入時顯示
-            <div>
+            <div className={styles.height}>
               <Link href="/member/login" className={styles.link}>
                 登入
               </Link>
@@ -109,6 +144,7 @@ export default function Navbar(props) {
               <Dropdown >
                 <Dropdown.Toggle className={`${styles.member_drop} ${isHovered ? 'hover_toggle' : ''}`} variant="black" id="dropdown-basic">
                   <NavPic />
+                  <h6 className="ps-2 fw-bold">{memberData.account}</h6>
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu onMouseEnter={() => setIsHovered(true)}
@@ -127,9 +163,9 @@ export default function Navbar(props) {
             ) : null}
           </div>
         </header>
-      </div>
-      {/* RWD */}
-      <div className='d-flex flex-column d-lg-none'>
+    </div>
+    {/* RWD */}
+    <div className='d-flex flex-column d-lg-none'>
         <header className={styles.navbarB}>
           <div // logo
           >
@@ -142,7 +178,7 @@ export default function Navbar(props) {
           </div>
           <BurgerMenu />
         </header>
-      </div>
+    </div>
     </>
   )
 }

@@ -9,14 +9,14 @@ import mStyle from '@/styles/member/g-valuable.module.scss'
 import styles from '@/styles/member/mseller.module.scss'
 import oStyles from '@/styles/member/order.module.scss'
 
-import aragami from '@/public/images/member/aragami2.jpg'
 import { FaShop } from 'react-icons/fa6'
 import profileImg from '@/public/images/profile-photo/default-profile-img.svg'
-import Button from 'react-bootstrap/Button'
+// import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
-import Link from 'next/link'
+// import Link from 'next/link'
 import Paginage from '@/components/common/pagination'
 import Dropdown from 'react-bootstrap/Dropdown'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav';
 //Auth
 import { useAuth } from '@/hooks/use-Auth';
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
@@ -140,7 +140,7 @@ export default function order() {
                     <Card.Body className={oStyles.nopd_xs + ' d-flex flex-row m-2 justify-content-between align-items-center'}>
                       <div className={oStyles.nopdmn_xs + ' me-3 text-info d-flex align-items-center'}>
                         <FaShop className="me-2 fw-bold" />
-                        <h5 className={oStyles.shop_name + " text-info fw-bold d-flex flex-wrap"}>{od.seller_shop_name}</h5>
+                        <h5 className={oStyles.shop_name_front + " text-info fw-bold d-flex flex-wrap"}>{od.seller_shop_name}</h5>
                       </div>
                       <div className='d-flex align-items-center'>
                         {od.shipping_status === 1 ? (
@@ -169,9 +169,9 @@ export default function order() {
                     <Card.Body className={oStyles.nopdmn_xs + ' d-flex flex-row m-3 justify-content-between '}>
                       <div className={oStyles.text_frame + " d-flex flex-column justify-content-center"}>
                         <h5 className={oStyles.h4text_xs + ' mx-3'}>{product.name}</h5>
-                        <h5 className={oStyles.h6text_xs + ' mx-3 my-3'}>* {od.quantity}</h5>
+                        <h5 className={oStyles.h6text_xs + ' mx-3 my-3 text-secondary'}>* {od.quantity}</h5>
                       </div>
-                      <h5 className={oStyles.h5text_xs + ' mx-2 me-5 mt-4 d-flex justify-content-center'}>$ {product.price}</h5>
+                      <h5 className={oStyles.h5text_xs + ' mx-2 me-5 mt-4 d-flex justify-content-center text-danger'}>$ {product.price}</h5>
                     </Card.Body>
                   </Card>
                 ))}
@@ -183,6 +183,9 @@ export default function order() {
             <Paginage currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />
           </div>
         </div>
+      </div>
+      <div className={mStyle.PhoneTabNav}>
+      <PhoneTabNav />
       </div>
       <div className="d-none d-sm-block">
         <Footer />
