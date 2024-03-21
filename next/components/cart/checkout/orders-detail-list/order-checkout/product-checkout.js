@@ -40,7 +40,7 @@ export default function ProductCheckout({ item }) {
                   <Link href="" className={styles.pName}>
                     {item.name}
                   </Link>
-                  <h6 className={styles.language}>{changeLanguage(item.language)}版</h6>
+                  <h6 className={styles.language} title={changeLanguage(item.language)}>{changeLanguage(item.language)}版</h6>
                 </div>
                 {item.display_price > item.price ? (
                   <>
