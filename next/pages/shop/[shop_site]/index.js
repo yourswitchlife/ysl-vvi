@@ -400,6 +400,9 @@ export default function ShopPage() {
       </div>
       {/* shop info */}
       <div className="container">
+      {!showChat ? ("") :
+                  (<Chat socket={socket} memberId={memberId} memberData={memberData} room={room} isLoggedIn={isLoggedIn}/>)
+                }
         <div className="d-none d-lg-block">
           <div className='mt-2'><BreadCrumb /></div>
           <div className="d-flex justify-content-around mb-5 mt-5">
@@ -476,9 +479,9 @@ export default function ShopPage() {
                   與賣家聊聊
                 </button>
 
-                {!showChat ? ("") :
+                {/* {!showChat ? ("") :
                   (<Chat socket={socket} memberId={memberId} memberData={memberData} room={room} isLoggedIn={isLoggedIn}/>)
-                }
+                } */}
               </div>
             </div>
             <div className="d-flex flex-column align-items-start justify-content-center">
@@ -550,6 +553,17 @@ export default function ShopPage() {
                 收藏賣家
               </button>
             )}
+
+            <button
+                  type="button"
+                  className="btn btn-danger d-flex align-items-center ms-3"
+                  onClick={() => createRoom(memberId, sellerId)}
+                  
+                >
+                  <IoChatbubblesOutline className="me-1" />
+                  與賣家聊聊
+            </button>
+            
           </div>
         </div>
         <Sortbar />

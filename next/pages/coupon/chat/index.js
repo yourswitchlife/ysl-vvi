@@ -31,9 +31,13 @@ export default function ChatControl() {
       return 
     }else{
       const room = `${memberId}的發訊息空間`
-      if(socket) socket.emit("create_room", room)
-      setShowChat(true)
-      setRoom(room)
+      if(!room) {
+        if(socket) socket.emit("create_room", room)
+        setRoom(room)
+      }
+      
+      setShowChat((prevShowChat) => !prevShowChat)
+      
     }
   }
 
