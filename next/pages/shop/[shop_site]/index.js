@@ -17,9 +17,9 @@ import TypeFilter from '@/components/shop/type-filter'
 import Star from '@/components/shop/star'
 import GoTopButton from '@/components/go-to-top/go-top-button'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
-import Chat from '@/components/chat/chat'
 import CouponUni from '@/components/coupon/coupon-shop'
 import CouponProduct from '@/components/coupon/coupon-member/couponP-member'
+import Chat from '@/components/chat/chat'
 //images
 import cover from '@/public/images/shopCover/default-cover.jpg'
 import Image from 'next/image'
@@ -32,7 +32,7 @@ import typeName from '@/data/type.json'
 import ratings from '@/data/rating.json'
 //icon
 import { FaPlus, FaAngleDown, FaFilter, FaStar } from 'react-icons/fa'
-import { IoChatbubblesOutline } from "react-icons/io5";
+import { IoChatbubblesOutline } from "react-icons/io5"
 //React-bootstrap
 import Form from 'react-bootstrap/Form'
 import Offcanvas from 'react-bootstrap/Offcanvas'
@@ -40,7 +40,6 @@ import Collapse from 'react-bootstrap/Collapse'
 import Dropdown from 'react-bootstrap/Dropdown';
 //sweetalert
 import Swal from 'sweetalert2'
-import { create } from 'lodash'
 
 export default function ShopPage() {
   const router = useRouter()
@@ -54,8 +53,7 @@ export default function ShopPage() {
   const [openRate, setOpenRate] = useState(false)
   //賣場資訊
   const [shop, setShop] = useState([])
-  const { id, shop_name, shop_site, shop_cover, shop_info } = shop //解構賦值賣家資料
-
+  const {id, shop_name, shop_site, shop_cover, shop_info} = shop //解構賦值賣家資料
   //賣場商品
   const [products, setProducts] = useState([])
   const [searchResults, setSearchResults] = useState([])
@@ -69,7 +67,7 @@ export default function ShopPage() {
   const [commentNum, setCommentNum] = useState(0)
   const [roundedRating, setRoundedRating] = useState(0)
   const [isFav, setIsFav] = useState(false)
-
+  
   //排序
   const [sort, setSort] = useState('id')
   const [sortProducts, setSortProducts] = useState([])
@@ -78,7 +76,7 @@ export default function ShopPage() {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(15)
 
-
+  
   //聊天室相關
   const [room, setRoom] = useState("")
   const [socket, setSocket] = useState(null)
@@ -97,7 +95,7 @@ export default function ShopPage() {
 
   const getShop = async (shop_site) => {
     try{
-      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}?page=${page}&limit=${limit}&sort=${sort}`, {credentials: 'include'})
+      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/overview?page=${page}&limit=${limit}&sort=${sort}`, {credentials: 'include'})
       if(!res.ok){
         throw new Error('Failed to fetch: 找不到賣場及賣場商品資料')
       }
@@ -105,7 +103,6 @@ export default function ShopPage() {
 
       // 確保返回的數據結構正確，並更新狀態
       if (data) {
-        console.log(data)
         // 這裡假設後端返回的數據結構是 { shop: {...}, shopProducts: [...] }
         // console.log(data.shopComments)
         setShop(data.shopInfo)
@@ -128,7 +125,7 @@ export default function ShopPage() {
         const coverUrl = data.shopInfo.shop_cover ? (data.shopInfo.shop_cover.startsWith("https://") ? data.shopInfo.shop_cover : `http://localhost:3005/shopCover/${data.shopInfo.shop_cover}`) : cover
         setShopCover(coverUrl)
       }
-    } catch (e) {
+    }catch (e){
       console.error(e)
       Swal.fire({
         title: `找不到賣場:${shop_site}`,
@@ -153,13 +150,13 @@ export default function ShopPage() {
     setPage(newpage)
   }
   
-  const shopTotalItems = products.length //賣家總商品數
+  // const shopTotalItems = products.length //賣家總商品數
 
   const getRandomHit = (items, num) => {
-    // 先shuffle副本
-    const shuffled = [...items].sort(() => 0.5 - Math.random())
-    // 返回前num筆資料
-    return shuffled.slice(0, num)
+  // 先shuffle副本
+  const shuffled = [...items].sort(() => 0.5 - Math.random())
+  // 返回前num筆資料
+  return shuffled.slice(0, num)
   }
   const randomItems = getRandomHit(products, 5)
 
@@ -167,116 +164,13 @@ export default function ShopPage() {
     setHit(randomItems)
   }, [products])
 
-  const getShopOrder = async (shop_site) => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/order`, {credentials: 'include'})
-      if(!res.ok){
-        throw new Error('網路請求失敗，找不到此賣場')
-      }
-      const data = await res.json()
-      // 確保返回的數據結構正確，並更新狀態
-      if (data) {
-        //取得加總數字
-        let totalQty = data.reduce((total, order) => 
-          total + order.quantity, 0)
-        // console.log(totalQty)
-        setShopOrderNum(totalQty)
-      }
-    }catch(e){
-      console.error(e)
-    }
-  }
-
-  // const getShopFav = async (shop_site) => {
-  //   try{
-  //     const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/fav_shop`, {
-  //       credentials: 'include',
-  //     })
-  //     if(!res.ok){
-  //       throw new Error('網路請求失敗，找不到此賣場')
-  //     }
-  //     const data = await res.json()
-  //     // 確保返回的數據結構正確，並更新狀態
-  //     if (data && data.length > 0) {
-  //       //檢查是否收藏：改成valid=0
-  //       const isValidFav = data.some(fav => fav.valid && fav.valid === 0)
-  //       if(isValidFav){
-  //         setShopFavNum(0)
-  //         setIsFav(false)
-  //       }else{
-  //         //取得加總數字
-  //         setShopFavNum(data.length)
-  //         //檢查是否收藏
-  //         const isFaved = data.some(fav => fav.buyer_id === memberData.id)
-  //         // console.log(isFaved)會是boolean
-  //         setIsFav(isFaved)
-  //       }
-  //     }else{
-  //       //沒有收藏紀錄
-  //       setShopFavNum(0)
-  //       setIsFav(false)
-  //     }
-  //   }catch(e){
-  //     console.error(e)
-  //   }
-  // }
-  const getShopFav = async (shop_site) => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/fav_shop`, {
-        credentials: 'include',
-      })
-      if(!res.ok){
-        throw new Error('網路請求失敗，找不到此賣場')
-      }
-      const data = await res.json()
-      // 確保返回的數據結構正確，並更新狀態
-      if (data && data.length > 0) {
-        //取得加總數字
-        setShopFavNum(data.length)
-        //檢查是否收藏
-        const isFaved = data.some(fav => fav.buyer_id === memberData.id)
-        // console.log(isFaved)會是boolean
-        setIsFav(isFaved)
-      }else{
-        //沒有收藏紀錄
-        setShopFavNum(0)
-        setIsFav(false)
-      }
-    }catch(e){
-      console.error(e)
-    }
-  }
-  const getShopRating = async (shop_site) => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/shop_comment`, {credentials: 'include'})
-      if(!res.ok){
-        throw new Error('網路請求失敗，找不到此賣場')
-      }
-      const data = await res.json()
-      // 確保返回的數據結構正確，並更新狀態
-      if (data && data.length > 0) {
-        //取得評價平均(要有小數點一位)
-        const totalRating = data.reduce((acc, cur) => acc + cur.rating, 0);
-        const averageRating = (totalRating / data.length).toFixed(1); // 保留一位小數
-        // console.log(`平均評價: ${averageRating}`);
-        const roundedRating = Math.round(averageRating);
-        setShopRating(averageRating)
-        setCommentNum(data.length)
-        setRoundedRating(roundedRating)
-      } else {
-        console.log("沒有找到評價數據");
-      }
-    }catch(e){
-      console.error(e)
-    }
-  }
   //搜尋商品
   // const [searchText, setSearchText] = useState('')
   const handleSearch = (searchQuery) => {
-    if (!searchQuery.trim()) {
-      setSearchResults([])
+    if(!searchQuery.trim()){
+      setSearchResults([]) 
       setSearchQuery("")
-    } else {
+    }else{
       const filteredResults = products.filter(product => product.name.toLowerCase().includes(searchQuery.toLowerCase()));
       setSearchResults(filteredResults)
       setSearchQuery(searchQuery)
@@ -287,16 +181,16 @@ export default function ShopPage() {
     const newProducts = products.map((p) => {
       if (p.id === id) return { ...p, fav: !p.fav }
       else return p
-    })
-    setProducts(newProducts)
-  }
+      })
+      setProducts(newProducts)
+    }
   const handleHitToggleFav = (id) => {
     const newProducts = hit.map((p) => {
       if (p.id === id) return { ...p, fav: !p.fav }
       else return p
-    })
-    setHit(newProducts)
-  }
+      })
+      setHit(newProducts)
+    }
   const handleSearchToggleFav = (id) => {
     const newProducts = searchResults.map((p) => {
       if (p.id === id) return { ...p, fav: !p.fav }
@@ -306,33 +200,35 @@ export default function ShopPage() {
   }
   const handleFavShop = async () => {
     const url = `http://localhost:3005/api/shop/${shop_site}/fav_shop`
+
+    //準備請求的配置
+    const requestOptions = {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        valid: isFav ? 0 : 1
+      }) //根據目前收藏狀態來設定值
+    }
+
     try{
-      if(isFav){
-        //已經收藏者：執行取消收藏
-        const res = await fetch(url, { method: 'PUT', credentials: 'include'})
-        const data = await res.json()
-        if(res.ok){
-          setIsFav(false)
-          Swal.fire('取消收藏成功', '', 'success')
-        }else{
-          throw new Error(data.message || '取消收藏失敗')
-        }
+      const res = await fetch(url, requestOptions)
+      const data = await res.json()
+
+      if(res.ok){
+        setIsFav(!isFav) //反轉當前的收藏狀態
+        const actionMessage = isFav ? '取消收藏成功' : '收藏成功'
+        Swal.fire(actionMessage, '', 'success')
       }else{
-        //沒收藏過的人來收藏
-        const res = await fetch(url, { method: 'POST', credentials: 'include' })
-        const data = await res.json()
-        if(res.ok){
-          setIsFav(true)
-          Swal.fire('收藏成功', '', 'success')
-        }else{
-          throw new Error(data.message || '添加收藏失敗')
-        }
+        throw new Error(data.message || '操作失敗')
       }
-    } catch (error) {
+    }catch(error){
       //用replace方法去除"Error:"前綴
       let errorMessage = error.toString().replace('Error: ', '')
       Swal.fire('操作失敗', errorMessage, 'error')
-    } finally {
+    }finally{
       //無論操作成功或失敗，都重新獲取收藏狀態
       getShopFav(shop_site)
     }
@@ -346,7 +242,7 @@ export default function ShopPage() {
       cancelButtonText: '暫不登入',
       confirmButtonText: '好的'
     }).then((result) => {
-      if (result.isConfirmed) {
+      if(result.isConfirmed){
         //點"好的"之後的操作，導向登入頁面
         router.push('/member/login')
       }
@@ -355,17 +251,13 @@ export default function ShopPage() {
   useEffect(()=>{
     if(router.isReady){
       const {shop_site} = router.query
+      // console.log(shop_site)
       getShop(shop_site)
       // getShopFav(shop_site)
       // getShopRating(shop_site)
     }
-  }, [router.isReady, sort, page, limit])
+  },[router.isReady, sort, page, limit])
 
-  useEffect(()=>{
-      if(isLoggedIn){
-        getShopFav(shop_site)
-      }
-  },[isLoggedIn])
 
   const cardIcon = (e) => {
     e.persist()
@@ -377,7 +269,6 @@ export default function ShopPage() {
   const handleFilter = (newFilter) => {
     setCurrentFilter(newFilter)
   }
-
 
   //聊天室相關
   useEffect(() => {
@@ -402,7 +293,6 @@ export default function ShopPage() {
       }
     }
   }
-  
 
   return (
     <>
@@ -419,9 +309,9 @@ export default function ShopPage() {
                   (<Chat socket={socket} memberId={memberId} memberData={memberData} room={room} isLoggedIn={isLoggedIn}/>)
                 }
         <div className="d-none d-lg-block">
-          <div className='mt-2'><BreadCrumb /></div>
+        <div className='mt-2'><BreadCrumb /></div>
           <div className="d-flex justify-content-around mb-5 mt-5">
-
+          
             {/* seller detail */}
             <div className={styles.profile}>
               <Image width={250} height={250} src={bigPic} alt="profile-photo" className={styles.fit} />
@@ -439,13 +329,13 @@ export default function ShopPage() {
             <div className="d-flex flex-column align-items-start justify-content-between">
               <h3 className='fw-bold'>{shop_name}</h3>
               <div>
-                <h5 className='fw-light'>@{shop_site}</h5>
-                <div className="d-flex align-items-center">
-                  {/* star rating */}
-                  <h6 className="pe-2">{shopRating}</h6>
-                  <Star avgRating={roundedRating} />
-                  <h6 className="ps-2">({commentNum})</h6>
-                </div>
+              <h5 className='fw-light'>@{shop_site}</h5>
+              <div className="d-flex align-items-center">
+                {/* star rating */}
+                <h6 className="pe-2">{shopRating}</h6>
+                <Star avgRating={roundedRating} />
+                <h6 className="ps-2">({commentNum})</h6>
+              </div>
               </div>
               <div className="d-flex my-2">
                 {/* little dashboard */}
@@ -463,28 +353,28 @@ export default function ShopPage() {
                 </div>
               </div>
               <div className='d-flex justify-content-center '>
-                {/* 這裡要加上登入判斷：沒登入跳出modal導向登入，有登入要判斷這個有沒有加入收藏 */}
-                {isLoggedIn ? (//有登入
-                  <button
-                    type="button"
-                    className="btn btn-danger d-flex align-items-center"
-                    onClick={handleFavShop}
-                  >
-                    <FaPlus className="me-1" />
-                    {isFav ? '取消收藏' : '收藏賣家'}
-                  </button>
-                ) : (//沒登入
-                  <button
-                    type="button"
-                    className="btn btn-danger d-flex align-items-center"
-                    onClick={handleLogin}
-                  >
-                    <FaPlus className="me-1" />
-                    收藏賣家
-                  </button>
-                )}
+              {/* 這裡要加上登入判斷：沒登入跳出modal導向登入，有登入要判斷這個有沒有加入收藏 */}
+              {isLoggedIn ? (//有登入
+              <button
+                type="button"
+                className="btn btn-danger d-flex align-items-center"
+                onClick={handleFavShop}
+              >
+                <FaPlus className="me-1" />
+                  {isFav ? '取消收藏' : '收藏賣家'}
+              </button>
+              ) : (//沒登入
+              <button
+                type="button"
+                className="btn btn-danger d-flex align-items-center"
+                onClick={handleLogin}
+              >
+                <FaPlus className="me-1" />
+                收藏賣家
+              </button>
+              )}
 
-                <button
+              <button
                   type="button"
                   className="btn btn-danger d-flex align-items-center ms-3"
                   onClick={() => createRoom(memberId, sellerId)}
@@ -493,11 +383,8 @@ export default function ShopPage() {
                   <IoChatbubblesOutline className="me-1" />
                   與賣家聊聊
                 </button>
-
-                {/* {!showChat ? ("") :
-                  (<Chat socket={socket} memberId={memberId} memberData={memberData} room={room} isLoggedIn={isLoggedIn}/>)
-                } */}
-              </div>
+                </div>       
+              
             </div>
             <div className="d-flex flex-column align-items-start justify-content-center">
               {/* shop detail */}
@@ -545,21 +432,21 @@ export default function ShopPage() {
             {/* shop detail */}
             <h5 className="mb-3">賣場介紹</h5>
             <p className="mb-0 ps-2 pe-2">
-              {shop_info}
+            {shop_info}
             </p>
           </div>
           <div className="d-flex justify-content-center mb-4">
-            {isLoggedIn ? (//有登入
-              <button
-                type="button"
-                className="btn btn-danger d-flex align-items-center"
-                onClick={handleFavShop}
-              >
-                <FaPlus className="me-1" />
-                {isFav ? '取消收藏' : '收藏賣家'}
-              </button>
+          {isLoggedIn ? (//有登入
+            <button
+              type="button"
+              className="btn btn-danger d-flex align-items-center"
+              onClick={handleFavShop}
+            >
+              <FaPlus className="me-1" />
+              {isFav ? '取消收藏' : '收藏賣家'}
+            </button>
             ) : (//沒登入
-              <button
+            <button
                 type="button"
                 className="btn btn-danger d-flex align-items-center"
                 onClick={handleLogin}
@@ -567,9 +454,9 @@ export default function ShopPage() {
                 <FaPlus className="me-1" />
                 收藏賣家
               </button>
-            )}
+              )}
 
-            <button
+              <button
                   type="button"
                   className="btn btn-danger d-flex align-items-center ms-3"
                   onClick={() => createRoom(memberId, sellerId)}
@@ -577,8 +464,8 @@ export default function ShopPage() {
                 >
                   <IoChatbubblesOutline className="me-1" />
                   與賣家聊聊
-            </button>
-            
+                </button>
+
           </div>
         </div>
         <Sortbar />
@@ -588,36 +475,36 @@ export default function ShopPage() {
           <CouponUni />
         </div>
         <div className={styles.hit}>
-          <h4 className="mb-5 d-none d-md-block">焦點遊戲熱賣中</h4>
-          <h5 className="mb-4 d-block d-md-none ps-4">焦點遊戲熱賣中</h5>
-          <div className={`justify-content-md-around align-items-md-center ${styles.scroller}`}>
-            {hit.map((v) => {
-              return (
-                <div className={styles.insideScr} key={v.id}>
-                  <div
-                    onClick={() => {
-                      router.push(`/products/${v.id}`)
-                    }}>
-
-                    <ProductCard
-                      className="p-5"
-                      id={v.id}
-                      name={v.name}
-                      releaseTime={v.release_time.split('T')[0]}
-                      display_price={v.display_price}
-                      price={v.price}
-                      img_cover={v.img_cover}
-                      type={v.type_id}
-                      ratingId={v.rating_id}
-                      member_id={v.member_id}
-                      fav={v.fav}
-                      handleToggleFav={handleHitToggleFav}
-                      img_details={v.img_details}
-                      cardIcon={cardIcon}
-                    /></div>
-                </div>
-              )
-            })}</div>
+        <h4 className="mb-5 d-none d-md-block">焦點遊戲熱賣中</h4>
+        <h5 className="mb-4 d-block d-md-none ps-4">焦點遊戲熱賣中</h5>
+        <div className={`justify-content-md-around align-items-md-center ${styles.scroller}`}>
+        {hit.map((v) => {
+          return (
+            <div className={styles.insideScr} key={v.id}>
+            <div
+            onClick={() => {
+              router.push(`/products/${v.id}`)
+            }}>
+            
+          <ProductCard
+          className="p-5"
+          id={v.id} 
+          name={v.name}
+          releaseTime={v.release_time.split('T')[0]}
+          display_price={v.display_price}
+          price={v.price}
+          img_cover={v.img_cover}
+          type={v.type_id}
+          ratingId={v.rating_id}
+          member_id={v.member_id}
+          fav={v.fav}
+          handleToggleFav={handleHitToggleFav}
+          img_details={v.img_details}
+          cardIcon={cardIcon}
+          /></div>
+          </div>
+          )
+        })}</div>
         </div>
         <div className="d-flex d-md-none flex-column ps-4 pe-4">
           <h5 className="fw-bold mb-2">賣場商品</h5>
@@ -626,15 +513,15 @@ export default function ShopPage() {
         <h4 className="d-none d-md-block mb-4">賣場所有商品</h4>
         <div className="d-flex justify-content-between">
           <div className="d-none d-md-block">
-            <SearchbarB onSearch={handleSearch} />
+            <SearchbarB onSearch={handleSearch}/>
           </div>
           <div className="d-none d-md-flex justify-content-end">
             {/* offcanvas btn */}
             <TypeFilter />
             {/* <SortDropdown handleSort={handleSort}/> */}
             <Dropdown>
-              <Dropdown.Toggle
-                variant="success"
+              <Dropdown.Toggle 
+                variant="success" 
                 id="dropdown-basic"
                 type="button"
                 className={`btn d-flex justify-content-center align-items-center ${styles.offcanvasBtn}`}
@@ -658,69 +545,69 @@ export default function ShopPage() {
             {/* <SortDropdown handleSort={handleSort}/> */}
           </div>
         </div>
-        {searchQuery && searchResults.length > 0 ? (
+        { searchQuery && searchResults.length > 0 ? (
           <>
-            <h5 className='my-1'>"{searchQuery}"的搜尋結果：共有{searchResults.length}項商品</h5>
-            <div className='row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-0'>
-              {searchResults.map((p) => {
-                return (
-                  <div key={p.id} className='col-6 col-md-2 mb-3'>
-                    <div
-                      onClick={() => {
-                        router.push(`/products/${p.id}`)
-                      }}
-                    >
-                      <ProductCard className="p-5"
-                        id={p.id}
-                        name={p.name}
-                        price={p.price}
-                        display_price={p.display_price}
-                        releaseTime={p.release_time.split('T')[0]}
-                        img_cover={p.img_cover}
-                        type={p.type_id}
-                        ratingId={p.rating_id}
-                        fav={p.fav}
-                        handleToggleFav={handleSearchToggleFav}
-                        member_id={p.member_id}
-                        img_details={p.img_details}
-                        cardIcon={cardIcon}
-                      /></div>
-                  </div>
-                )
-              })}</div>
-          </>)
-          : searchQuery && !searchResults.length ? (
-            <h5 className='mb-3'>"{searchQuery}"的搜尋結果：沒有找到相關商品</h5>
-          ) : (<>
-
-            <div className='row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-0'>
-              {products.map((p) => {
-                return (
-                  <div key={p.id} className='col mb-3'>
-                    <div
-                      onClick={() => {
-                        router.push(`/products/${p.id}`)
-                      }}
-                    >
-                      <ProductCard className="p-5"
-                        id={p.id}
-                        name={p.name}
-                        price={p.price}
-                        display_price={p.display_price}
-                        releaseTime={p.release_time.split('T')[0]}
-                        img_cover={p.img_cover}
-                        type={p.type_id}
-                        ratingId={p.rating_id}
-                        fav={p.fav}
-                        handleToggleFav={handleToggleFav}
-                        member_id={p.member_id}
-                        img_details={p.img_details}
-                        cardIcon={cardIcon}
-                      /></div>
-                  </div>
-                )
-              })}</div>
-          </>)
+          <h5 className='my-1'>"{searchQuery}"的搜尋結果：共有{searchResults.length}項商品</h5>
+          <div className='row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-0'>
+        {searchResults.map((p) => {
+          return (
+            <div key={p.id} className='col-6 col-md-2 mb-3'>
+            <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+                  >
+              <ProductCard className="p-5" 
+              id={p.id}
+              name={p.name} 
+              price={p.price} 
+              display_price={p.display_price} 
+              releaseTime={p.release_time.split('T')[0]} 
+              img_cover={p.img_cover} 
+              type={p.type_id} 
+              ratingId={p.rating_id}
+              fav={p.fav}
+              handleToggleFav={handleSearchToggleFav}
+              member_id={p.member_id}
+              img_details={p.img_details}
+              cardIcon={cardIcon}
+              /></div>
+            </div>
+          )
+        })}</div>
+        </>)
+         : searchQuery && !searchResults.length ? (
+          <h5 className='mb-3'>"{searchQuery}"的搜尋結果：沒有找到相關商品</h5>
+        ) : (<>
+          
+          <div className='row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-0'>
+        {products.map((p)=> {
+          return (
+            <div key={p.id} className='col mb-3'>
+            <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+                  >
+              <ProductCard className="p-5" 
+              id={p.id}
+              name={p.name} 
+              price={p.price} 
+              display_price={p.display_price} 
+              releaseTime={p.release_time.split('T')[0]} 
+              img_cover={p.img_cover} 
+              type={p.type_id} 
+              ratingId={p.rating_id}
+              fav={p.fav}
+              handleToggleFav={handleToggleFav}
+              member_id={p.member_id}
+              img_details={p.img_details}
+              cardIcon={cardIcon}
+              /></div>
+            </div>
+          )
+        })}</div>
+        </>)
         }
         <div>
           {/* <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/> */}
