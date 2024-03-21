@@ -64,7 +64,7 @@ async function createLogisticsOrder(orderDetails) {
 
 // }
 
-//在這裡收集前端使用者的訂單資訊
+//創建物流訂單：在這裡也同時收集前端使用者的訂單資訊
 router.post('/create-logistics-order', async (req, res) => {
   const merchantTradeNo = generateUniqueTradeNo()
   const orderDetails = {
@@ -110,6 +110,61 @@ function generateUniqueTradeNo() {
 //     )
 //     console.log(`訂單${}`)
 //   }
+async function createMap(base_params) {
+  const serverReplyURL = process.env.REACT_APP_SERVER_REPLY_URL
+  const merchantTradeNo = generateUniqueTradeNo()
+
+  const create = new ECPayLogistics({
+    MerchantTradeNo: merchantTradeNo, // 請帶20碼uid, ex: f0a0d7e9fae1bb72bc93
+    ServerReplyURL: serverReplyURL, // 物流狀況會通知到此URL
+    LogisticsType: 'CVS',
+    LogisticsSubType: 'UNIMARTC2C',
+    IsCollection: 'Y',
+    ExtraData: '',
+    Device: 0,
+  })
+
+  return create.query_client.expressmap(base_params)
+}
+
+//創建電子地圖
+router.post('/c2cMap', async (req, res) => {
+  const merchantTradeNo = generateUniqueTradeNo()
+  const base_params = {
+    ...req.body,
+    MerchantTradeNo: merchantTradeNo,
+  }
+
+  try {
+    const htmlForm = await createMap(base_params)
+    console.log('我要看到result是啥:', htmlForm)
+    //在這裡保存訂單存到資料庫，包含merchantTradeNo
+    // await createOrder(req.body, merchantTradeNo)
+
+    res.json({
+      form: htmlForm,
+    })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({
+      success: false,
+      error: '內部伺服器錯誤',
+    })
+  }
+})
+
+// let res = create.query_client.expressmap((parameters = base_param))
+// if (typeof res === 'string') {
+//   console.log(res)
+// } else {
+//   res
+//     .then(function (result) {
+//       console.log(result)
+//     })
+//     .catch(function (err) {
+//       console.log(err)
+//     })
+// }
 
 router.post('/ecpay/serverReply', async (req, res) => {
   //處理來自綠界物流的回應
