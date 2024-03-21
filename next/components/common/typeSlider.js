@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Slider from "react-slick";
+import Link from 'next/link'
 import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
 import { IoMdArrowDroprightCircle, IoMdArrowDropleftCircle } from "react-icons/io";
 
@@ -66,6 +67,12 @@ export default function TypeSlider() {
           </div>
         ))}
       </Slider>
+      {/* <Slider {...settings}>
+        <div><h1>55555</h1></div>
+        <div><h1>66666</h1></div>
+        <div><h1>77777</h1></div>
+      </Slider> */}
+      
     </div>
   );
 }

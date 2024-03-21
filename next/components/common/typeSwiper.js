@@ -2,6 +2,7 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import React, { useEffect, useState } from 'react'
 import styles from '@/styles/member/index.module.scss';
+import Link from 'next/link'
 
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
@@ -11,7 +12,7 @@ import 'swiper/css/pagination';
 // Import Swiper styles
 
 export default function TypeSwiper() {
-    const [type, setType] = useState([])
+  const [type, setType] = useState([])
   const [imageIndex, setImageIndex] = useState(0);
 
   useEffect(() => {
@@ -50,45 +51,35 @@ export default function TypeSwiper() {
     );
   };
 
-    return (
-        <div>
-            <h1>New Movies</h1>
-            <Swiper
-                className="mySwiper"
-                effect="coverflow"
-                grabCursor={true}
-                centeredSlides={true}
-                slidesPerView="auto"
-                coverflowEffect={{
-                    rotate: 15,
-                    stretch: 0,
-                    depth: 300,
-                    modifier: 1,
-                    slideShadows: true,
-                }}
-                loop={true}
-            >
-                {/* <SwiperSlide>
-                    {type.map((ty, idx) => (
-                        <div className={styles.slide} key={idx}>
-                            <img src={`http://localhost:3005/type/${ty.image}`} alt={ty.image} className={styles.fit} />
-                        </div>
-                    ))}
-                </SwiperSlide> */}
-                <SwiperSlide>
-                   <h1>11111</h1>
-                </SwiperSlide>
-                <SwiperSlide>
-                   <h1>11111</h1>
-                </SwiperSlide>
-                <SwiperSlide>
-                   <h1>11111</h1>
-                </SwiperSlide>
-                <SwiperSlide>
-                   <h1>11111</h1>
-                </SwiperSlide>
-            </Swiper>
-        </div>
-    );
+  return (
+    <div>
+      <h1>New Movies</h1>
+      <Swiper
+        className="mySwiper"
+        effect="coverflow"
+        grabCursor={true}
+        centeredSlides={true}
+        slidesPerView="4"
+        coverflowEffect={{
+          rotate: 15,
+          stretch: 10,
+          depth: 300,
+          modifier: 1,
+          slideShadows: true,
+        }}
+        loop={true}
+      >{type.map((ty, idx) => (
+        <SwiperSlide>
+          <div className={styles.slidebox} key={idx}>
+            <Link href="/member/account">
+              <img src={`http://localhost:3005/type/${ty.image}`} alt={ty.image} className={styles.fit} />
+            </Link>
+          </div>
+          <h4 className={styles.slitext}>{ty.name}</h4>
+        </SwiperSlide>
+      ))}
+      </Swiper>
+    </div>
+  );
 };
 

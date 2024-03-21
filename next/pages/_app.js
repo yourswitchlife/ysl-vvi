@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router';
+
 // 樣式
 import '@/styles/globals.scss'
 import Swal from 'sweetalert2';
 import DefaultLayout from '@/components/layout/default-layout'
+
 //身分驗證
 import { AuthProvider } from '@/hooks/use-Auth';
 import { getRedirectResult } from "firebase/auth";
@@ -55,7 +57,7 @@ export default function MyApp({ Component, pageProps }) {
             .then(response => response.json())
             .then(data => {
               console.log('登入成功:', data);
-              router.replace('/');
+              // router.replace('/');
             })
             .catch(error => {
               console.error('登入失敗:', error);
