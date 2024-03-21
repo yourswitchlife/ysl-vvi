@@ -17,6 +17,12 @@ router.get('/', async (req, res) => {
   }
 })
 
+router.get('/all', async (req, res) => {
+  const memberId = req.query.memberId
+  const coupons = await Coupons(memberId)
+  res.json(coupons)
+})
+
 //會員在個人頁面優惠券的篩選&讀取
 router.get('/memberCP', async (req, res) => {
   const memberId = req.query.memberId
@@ -123,7 +129,7 @@ async function AddMemberCP(memberID, couponID) {
   return { id: results.insertId, memberID, couponID }
 }
 
-//讀取leading page單一優惠券
+//讀取單一優惠券
 async function getSingle(id) {
   try {
     const [coupon] = await db.execute(
@@ -146,7 +152,8 @@ async function getValidCP(id) {
     discount_coupon.expiration_date,
     discount_coupon.discount_value, 
     discount_coupon.title,
-    discount_coupon.price_rule
+    discount_coupon.price_rule,
+    discount_coupon.rules_description
     FROM member_coupon
     JOIN discount_coupon
     ON member_coupon.coupon_id = discount_coupon.id
@@ -181,7 +188,8 @@ async function getMemberCP(id) {
     discount_coupon.expiration_date,
     discount_coupon.discount_value, 
     discount_coupon.title,
-    discount_coupon.price_rule
+    discount_coupon.price_rule,
+    discount_coupon.rules_description
     FROM member_coupon
     JOIN discount_coupon
     ON member_coupon.coupon_id = discount_coupon.id
@@ -189,6 +197,18 @@ async function getMemberCP(id) {
     [id]
   )
   return memberCP
+}
+
+async function Coupons(memberId) {
+  const [coupons] = await db.execute(
+    `SELECT dc.*, 
+  CASE WHEN mc.coupon_id IS NOT NULL THEN true ELSE false END as claimed
+  FROM discount_coupon dc
+  LEFT JOIN member_coupon mc ON dc.id = mc.coupon_id AND mc.member_id = ?
+  `,
+    [memberId]
+  )
+  return coupons
 }
 
 export default router

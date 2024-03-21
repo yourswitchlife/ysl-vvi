@@ -64,6 +64,7 @@ router.get('/:shop_site/overview', async (req, res) => {
     const shop_cover = memberCheck[0].shop_cover
     const shop_info = memberCheck[0].shop_info
     const shop_name = memberCheck[0].shop_name
+    const seller_id = memberCheck[0].id
 
     // 商品列表+排序
     let orderByClause = 'ORDER BY product.id'
@@ -125,6 +126,7 @@ router.get('/:shop_site/overview', async (req, res) => {
 
     const responseData = {
       shopInfo: {
+        seller_id,
         shop_name,
         shop_site,
         shop_info,
