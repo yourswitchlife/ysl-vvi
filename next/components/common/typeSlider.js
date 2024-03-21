@@ -1,49 +1,73 @@
-import React from 'react';
-import Slider from 'react-slick';
+import React, { useEffect, useState } from 'react'
+import Slider from "react-slick";
+import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
+import { IoMdArrowDroprightCircle, IoMdArrowDropleftCircle } from "react-icons/io";
+
 import styles from '@/styles/member/index.module.scss';
 
-// 自定义左右箭头组件
-function SampleNextArrow(props) {
-    const { className, style, onClick } = props;
+export default function TypeSlider() {
+  const [type, setType] = useState([])
+  const [imageIndex, setImageIndex] = useState(0);
+
+  useEffect(() => {
+    fetchType();
+  }, []);
+
+  const fetchType = async () => {
+    try {
+      const response = await fetch('http://localhost:3005/api/main/type');
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
+      }
+      const data = await response.json();
+      setType(data.items);
+      console.log(type)
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+
+
+
+  const NextArrow = ({ onClick }) => {
     return (
-      <div
-        className={`${className} ${styles.customArrow} ${styles.nextArrow}`}
-        style={{ ...style, display: 'block' }} // 确保箭头可见
-        onClick={onClick}
-      />
-    );
-  }
-  
-  function SamplePrevArrow(props) {
-    const { className, style, onClick } = props;
-    return (
-      <div
-        className={`${className} ${styles.customArrow} ${styles.prevArrow}`}
-        style={{ ...style, display: 'block' }} // 确保箭头可见
-        onClick={onClick}
-      />
-    );
-  }
-  
-  export default function TypeSlider() {
-    const settings = {
-      dots: false, // 是否显示底部导航点
-      infinite: true, // 是否循环滚动
-      centerMode: true, // 启用中央模式
-      centerPadding: '60px', // 两边的padding，根据需要进行调整
-      slidesToShow: 3, // 同时显示的滑块数量
-      speed: 500, // 切换速度
-      slidesToScroll: 1, // 每次滚动的滑块数量
-      nextArrow: <SampleNextArrow />, // 使用自定义的下一张箭头组件
-      prevArrow: <SamplePrevArrow />, // 使用自定义的上一张箭头组件
-    };
-  
-    return (
-      <div className={styles.carouselWrapper}>
-        <Slider {...settings}>
-          {/* 这里插入图片或者卡片组件 */}
-        </Slider>
+      <div className={`${styles.arrow} ${styles.next}`} onClick={onClick}>
+        <IoMdArrowDroprightCircle />
       </div>
     );
-  }
+  };
+
+  const PrevArrow = ({ onClick }) => {
+    return (
+      <div className={`${styles.arrow} ${styles.prev}`} onClick={onClick}>
+        <IoMdArrowDropleftCircle />
+      </div>
+    );
+  };
+
+  const settings = {
+    infinite: true,
+    lazyLoad: true,
+    speed: 300,
+    slidesToShow: 3,
+    centerMode: true,
+    centerPadding: 0,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+    beforeChange: (current, next) => setImageIndex(next),
+    vertical: false,
+  };
+
+  return (
+    <div className={styles.App}>
+      <Slider {...settings}>
+        {type.map((ty, idx) => (
+          <div className={`${styles.slide} ${idx === imageIndex ? styles.activeSlide : ''}`} key={idx}>
+            <img src={`http://localhost:3005/type/${ty.image}`} alt={ty.image} className={styles.fit}/>
+          </div>
+        ))}
+      </Slider>
+    </div>
+  );
+}
 

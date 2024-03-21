@@ -25,6 +25,26 @@ import db from '../configs/db.mjs';
     }
 }); */
 
+router.get('/type', async (req, res) => {
+    try {
+        const query = `
+        SELECT id, name, image 
+        FROM p_type
+    `;
+        const [data] = await db.query(query);
+        
+        const responseData = {
+            items: data
+        };
+        // console.log(responseData)
+        res.json(responseData);
+
+    } catch (error) {
+        console.error('Database query error:', error);
+        res.status(500).json({ error: 'error fetching notify coupon.' });
+    }
+});
+
 
 
 

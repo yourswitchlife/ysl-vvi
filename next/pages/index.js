@@ -145,8 +145,10 @@ export default function Index() {
         </div> */}
       </section>
       <section class="container sec4 pt-5 pb-5">
-        <h4 className="text-white mb-2">商品分類</h4>
-        <TypeSlider />
+        <h4 className="text-white mb-2 d-flex justify-content-center">商品分類</h4>
+        <div className='d-flex flex-row'>
+          <TypeSlider />
+        </div>
       </section>
       <section class="container sec5 pt-5 pb-5 ">
         <div className="row d-flex justify-content-between">
