@@ -342,6 +342,13 @@ router.post('/create-order', async (req, res) => {
                 selectedShippingCoupon || null,
               ]
             )
+
+            // 增加商家評論
+            await connection.execute(
+              `INSERT INTO shop_comment (order_number, member_id, shop_id) VALUES (?, ?, ?)`,
+              [orderNumber, member_buyer_id, member_id]
+            )
+
             // 更新商品資料表對應商品的庫存數量
             // await connection.execute(
             //   `UPDATE product SET product_quanty = product_quanty - ?, valid = CASE WHEN product_quanty - ? <= 0 THEN 0 ELSE 1 END WHERE id = ?`,
