@@ -50,6 +50,7 @@ function ControlledCarousel() {
             className={mstyles.fit}
           />
         </Carousel.Item>
+        
       ))}
     </Carousel>
   )

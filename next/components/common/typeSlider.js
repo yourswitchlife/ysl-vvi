@@ -46,16 +46,15 @@ export default function TypeSlider() {
   };
 
   const settings = {
-    infinite: true,
-    lazyLoad: true,
-    speed: 300,
-    slidesToShow: 3,
+    className: "center",
     centerMode: true,
-    centerPadding: 0,
+    infinite: false,
+    centerPadding: "60px",
+    slidesToShow: 3,
+    speed: 500,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
     beforeChange: (current, next) => setImageIndex(next),
-    vertical: false,
   };
 
   return (
