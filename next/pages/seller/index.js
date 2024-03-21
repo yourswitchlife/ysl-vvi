@@ -39,7 +39,7 @@ export default function Seller() {
   
   useEffect(() => {
     if(isLoggedIn && memberData) {
-      console.log(memberData.shop_cover)
+      // console.log(memberData.shop_cover)
       const picUrl = memberData.pic ? (memberData.pic.startsWith("https://") 
         ? memberData.pic 
         : `http://localhost:3005/profile-pic/${memberData.pic}`) 
@@ -121,19 +121,17 @@ export default function Seller() {
       <header>
         <SellerNavbar />
       </header>
-      <main className={styles.mainContainer}>
-        <div className="d-none d-md-block">
+      <div className={styles.mainContainer}>
         {memberData && (
           <>
           <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
           </>
           )}
-        </div>
-        <div>
+        <main className='flex-grow-1'>
           {/* cover */}
           <div className={styles.coverB}>
-        <Image height={216} width={1172} src={shopCover} alt="shop-cover" className={styles.fit} />
-      </div>
+          <Image height={170} width={1172} src={shopCover} alt="shop-cover" className={styles.fit} />
+          </div>
           <div className="d-flex flex-column d-lg-none container ps-4 pe-4">
             <div className="d-flex justify-content-around align-items-center mt-4 mb-2">
               <div className={`${styles.profile}`}>
@@ -318,15 +316,14 @@ export default function Seller() {
           </li>
         </ul>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
       <PhoneTabNav />
       <footer><SellerFooter /></footer>
       {/* </div> */}
     </>
   )
 }
-
 export async function getServerSideProps(context) {
   return await mainCheckToLogin(context);
 }

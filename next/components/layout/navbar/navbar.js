@@ -63,11 +63,11 @@ export default function Navbar(props) {
       >
         <div // logo
         >
-          <Link href="/">
+          <Link href="/" title='Your Switch Life首頁'>
             <Image src={yslLogoSm} alt="ysl-logo" />
           </Link>
         </div>
-        <div className={styles.links}>
+        <div>
           <Link href="/products" className={styles.linkPr}>
             商品專區
           </Link>
@@ -126,7 +126,7 @@ export default function Navbar(props) {
             </div>
           ) : (
             // 未登入時顯示
-            <div>
+            <div className={styles.height}>
               <Link href="/member/login" className={styles.link}>
                 登入
               </Link>
@@ -163,9 +163,9 @@ export default function Navbar(props) {
             ) : null}
           </div>
         </header>
-      </div>
-      {/* RWD */}
-      <div className='d-flex flex-column d-lg-none'>
+    </div>
+    {/* RWD */}
+    <div className='d-flex flex-column d-lg-none'>
         <header className={styles.navbarB}>
           <div // logo
           >
@@ -178,7 +178,7 @@ export default function Navbar(props) {
           </div>
           <BurgerMenu />
         </header>
-      </div>
+    </div>
     </>
   )
 }
