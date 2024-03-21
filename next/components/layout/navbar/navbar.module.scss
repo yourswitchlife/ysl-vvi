@@ -356,3 +356,18 @@ $nav-black: #161719ae;
   top: 0;
   right: 17px;
 }
+
+.notifyBadge{
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background:$danger;
+  color: $white;
+  font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 14px;
+  right: 235px;
+}

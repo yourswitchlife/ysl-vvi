@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import ControlledCarousel from '@/components/common/ControlledCarousel'
 import styles from '../styles/index.module.scss'
+import mstyles from '../styles/member/index.module.scss'
 import Navbar from '@/components/layout/navbar/navbar'
 import ProductList from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
@@ -16,6 +17,7 @@ import ProductCard from '@/components/products/product-card'
 import WeeklySelect from '@/assets/weekly-select.svg'
 import { FaArrowRightLong } from 'react-icons/fa6'
 import { useAuth } from '@/hooks/use-Auth'
+import TypeSlider from '@/components/common/typeSlider'
 
 export default function Index() {
   const router = useRouter()
@@ -328,7 +330,10 @@ export default function Index() {
         </div>
       </section>
       <section class="container sec4 pt-5 pb-5">
-        <h4 className="text-white mb-2">商品分類</h4>
+        <h4 className="text-white mb-2 d-flex justify-content-center">商品分類</h4>
+        <div className='d-flex flex-row'>
+          <TypeSlider />
+        </div>
       </section>
       <section class="container sec5 pt-5 pb-5 ">
         <div className="row d-flex justify-content-between">

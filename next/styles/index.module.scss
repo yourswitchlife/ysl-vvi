@@ -1,18 +1,17 @@
 @import './valuable.scss';
 
 .sec1 {
-  height: calc(100vh - 70px);
-  position: relative;
-}
-
-.headTitleCard {
-  top: calc(70px + 10vh);
-  left: 120px;
-  width: 33vw;
-  height: 70vh;
-  background: linear-gradient(to bottom, #ff3c3c7c 0%, #4b69ff78 100%);
-  border-top-right-radius: 12%;
-  padding: 50px;
+    height: calc(100vh - 15px);
+    position: relative;
+  }
+  .headTitleCard {
+    top: calc(70px + 10vh);
+    left: 120px;
+    width: 33vw;
+    height: 70vh;
+    background: linear-gradient(to bottom, #ff3c3c7c 0%, #4b69ff78 100%);
+    border-top-right-radius: 12%;
+    padding: 50px;
 }
 
 .sec2 {

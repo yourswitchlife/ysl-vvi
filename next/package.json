@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@sweetalert2/themes": "^5.0.16",
-    "axios": "^1.4.0",
     "add": "^2.0.6",
     "animate.css": "^4.1.1",
+    "axios": "^1.4.0",
     "bootstrap": "^5.3.3",
     "firebase": "^10.8.1",
     "js-confetti": "^0.12.0",

@@ -17,6 +17,7 @@ import Card from 'react-bootstrap/Card'
 import Link from 'next/link'
 import Paginage from '@/components/common/pagination'
 import Dropdown from 'react-bootstrap/Dropdown'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav';
 //Auth
 import { useAuth } from '@/hooks/use-Auth';
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
@@ -68,7 +69,7 @@ export default function notifyCoupon() {
       }
       const newData = await response.json();
       setNotifyC(newData.items);
-      
+
       Swal.fire({
         position: "center",
         icon: "success",
@@ -103,7 +104,8 @@ export default function notifyCoupon() {
 
             {/* CARD TITLE */}
             <div>
-              <Card className={oStyles.nopd_xs + " px-5 d-flex flex-row border-0 bg-secondary fw-bold"}>
+              <Card className={`${oStyles.nopd_xs} px-5 d-flex flex-row border-0 bg-secondary fw-bold ${oStyles.title_card}`}>
+
                 <Card.Body className="d-flex flex-row m-2 justify-content-between align-items-center">
                   <h5 className={oStyles.nopd_xs + " fw-bold text-white ps-5"}>
                     賣場通知
@@ -146,6 +148,9 @@ export default function notifyCoupon() {
             <Paginage currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />
           </div>
         </div>
+      </div>
+      <div className={mStyle.PhoneTabNav}>
+        <PhoneTabNav />
       </div>
       <div className="d-none d-sm-block">
         <Footer />

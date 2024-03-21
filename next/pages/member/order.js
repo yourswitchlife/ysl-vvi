@@ -9,14 +9,14 @@ import mStyle from '@/styles/member/g-valuable.module.scss'
 import styles from '@/styles/member/mseller.module.scss'
 import oStyles from '@/styles/member/order.module.scss'
 
-import aragami from '@/public/images/member/aragami2.jpg'
 import { FaShop } from 'react-icons/fa6'
 import profileImg from '@/public/images/profile-photo/default-profile-img.svg'
-import Button from 'react-bootstrap/Button'
+// import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
-import Link from 'next/link'
+// import Link from 'next/link'
 import Paginage from '@/components/common/pagination'
 import Dropdown from 'react-bootstrap/Dropdown'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav';
 //Auth
 import { useAuth } from '@/hooks/use-Auth';
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
@@ -183,6 +183,9 @@ export default function order() {
             <Paginage currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />
           </div>
         </div>
+      </div>
+      <div className={mStyle.PhoneTabNav}>
+      <PhoneTabNav />
       </div>
       <div className="d-none d-sm-block">
         <Footer />

@@ -193,7 +193,7 @@ export default function register() {
 
             <div className="d-flex justify-content-center mb-3">
               <h6 className="me-5">已經加入YSL了嗎?</h6>
-              <Link href="/member/login" className={sStyle.sign_link+" fw-bold"}>
+              <Link href="/member/login" className={sStyle.sign_link+" fw-bold text-info"}>
                 立即快速登入
               </Link>
             </div>

@@ -802,7 +802,7 @@ export const triggerWithWebsocket = (io) => {
 
   const sendUnreadCount = async (socket, memberId) => {
     try {
-      console.log('收到登入會員id開始掛載通知:', memberId);
+      // console.log('收到登入會員id開始掛載通知:', memberId);
       const [results] = await db.query("SELECT COUNT(*) AS unreadCount FROM notify_coupon WHERE member_id = ? AND valid = 0", [memberId]);
       socket.emit('unread_count', results[0]['unreadCount']);
       console.log('未讀通知數:', results[0]['unreadCount']);
@@ -816,7 +816,7 @@ export const triggerWithWebsocket = (io) => {
     // console.log('A member connected.');
 
     socket.on('member_connected', (data) => {
-      console.log('A member reading.');
+      // console.log('A member reading.');
       socket.memberId = data.memberId;
       memberSockets.set(socket.memberId, socket);
       sendUnreadCount(socket, data.memberId); // 初始發送
