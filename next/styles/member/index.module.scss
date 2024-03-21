@@ -178,6 +178,7 @@ h1{
   background-position: center;
   background-size: cover;
   width: 250px;
+
 }
 
 .swiper-slide img {
@@ -186,9 +187,19 @@ h1{
   -webkit-box-reflect: below 1px linear-gradient(transparent, transparent , #0002 , #0004);
 }
 
+
+.slider{
+  margin: auto;
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
 .slidebox{
-  width: 500px;
-  height: 300px;
+  margin: auto;
+  width: 420px;
+  height: 250px;
+  padding-inline:10px ;
+  margin-block:20px ;
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
   
 }
 .slitext{
@@ -199,5 +210,6 @@ h1{
   top: 80%;
   letter-spacing: 3px;
   font-size: 30px;
-  right: 25%;
+  right: 14%;
+  text-shadow:2px 2px 2px #321fdb;
 }

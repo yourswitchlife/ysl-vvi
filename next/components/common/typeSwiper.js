@@ -3,7 +3,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import React, { useEffect, useState } from 'react'
 import styles from '@/styles/member/index.module.scss';
 import Link from 'next/link'
-
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
@@ -13,7 +12,6 @@ import 'swiper/css/pagination';
 
 export default function TypeSwiper() {
   const [type, setType] = useState([])
-  const [imageIndex, setImageIndex] = useState(0);
 
   useEffect(() => {
     fetchType();
@@ -51,35 +49,52 @@ export default function TypeSwiper() {
     );
   };
 
+  const handleInit = (swiper) => {
+    // Swiper 初始化
+    setActiveSlideStyle(swiper);
+  };
+
+  const handleSlideChange = (swiper) => {
+    setActiveSlideStyle(swiper);
+  };
+
+  const setActiveSlideStyle = (swiper) => {
+    swiper.slides.forEach((slide) => {
+      slide.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
+      slide.style.opacity = 0.3;
+      slide.style.transform = 'scale(0.8)';
+    });
+
+    // active
+    const activeSlide = swiper.slides[swiper.activeIndex];
+    if (activeSlide) {
+      activeSlide.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
+      activeSlide.style.opacity = 1;
+      activeSlide.style.transform = 'scale(1)';
+    }
+  };
+
+
   return (
-    <div>
-      <h1>New Movies</h1>
-      <Swiper
-        className="mySwiper"
-        effect="coverflow"
-        grabCursor={true}
-        centeredSlides={true}
-        slidesPerView="4"
-        coverflowEffect={{
-          rotate: 15,
-          stretch: 10,
-          depth: 300,
-          modifier: 1,
-          slideShadows: true,
-        }}
-        loop={true}
-      >{type.map((ty, idx) => (
-        <SwiperSlide>
-          <div className={styles.slidebox} key={idx}>
-            <Link href="/member/account">
-              <img src={`http://localhost:3005/type/${ty.image}`} alt={ty.image} className={styles.fit} />
+    <Swiper
+      className={styles.slider}
+      onSwiper={handleInit}
+      onSlideChange={handleSlideChange}
+      grabCursor={true}
+      centeredSlides={true}
+      slidesPerView={'5'}
+      loop={true}
+    >
+      {type.map((item, idx) => (
+        <SwiperSlide key={idx}>
+          <div className={styles.slidebox}>
+            <Link  href={`/products?type=${item.id}`}>
+              <img src={`http://localhost:3005/type/${item.image}`} alt={item.name} className={styles.fit} />
             </Link>
           </div>
-          <h4 className={styles.slitext}>{ty.name}</h4>
+          <h4 className={styles.slitext}>{item.name}</h4>
         </SwiperSlide>
       ))}
-      </Swiper>
-    </div>
+    </Swiper>
   );
-};
-
+}

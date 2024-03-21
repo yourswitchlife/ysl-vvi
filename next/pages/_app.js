@@ -53,11 +53,12 @@ export default function MyApp({ Component, pageProps }) {
               displayName: gmember.displayName,
               photoURL: gmember.photoURL,
             }),
+            credentials: 'include', 
           })
             .then(response => response.json())
             .then(data => {
               console.log('登入成功:', data);
-              // router.replace('/');
+              router.replace('/');
             })
             .catch(error => {
               console.error('登入失敗:', error);

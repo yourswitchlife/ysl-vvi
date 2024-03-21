@@ -27,9 +27,7 @@ import { useWebSocket } from '@/context/member/websocketLong'
 export default function Navbar(props) {
   const { searchWord, setSearchWord } = props
   const { isLoggedIn, memberId, memberData } = useAuth();
-  console.log(isLoggedIn)
-  console.log(memberData)
-  console.log(memberId)
+
   const [isHovered, setIsHovered] = useState(false);
   const { totalProducts } = useCart()
   const { unreadCount } = useWebSocket();

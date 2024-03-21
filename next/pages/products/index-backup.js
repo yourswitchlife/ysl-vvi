@@ -29,6 +29,7 @@ export default function Products() {
 
   // 首頁連結過來篩選
   const { type } = router.query;
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   // const [sortBy, setSortBy] = useState('')
   console.log(products)
@@ -58,13 +59,11 @@ export default function Products() {
   useEffect(() => {
     // console.log("page Changed: " + currentPage)
     const getProducts = async () => {
-      // 構建帶有查詢參數的URL
-      let queryUrl = `http://localhost:3005/api/products/list?page=${currentPage}`;
-      if (type) {
-        queryUrl += `&type=${type}`;
-      }
       try {
-        const res = await fetch(queryUrl, { credentials: 'include' });
+        const res = await fetch(
+          `http://localhost:3005/api/products/list?page=${currentPage}`,
+          { credentials: 'include' }
+        )
         const data = await res.json()
         console.log(data)
         if (Array.isArray(data.products)) {
@@ -75,15 +74,11 @@ export default function Products() {
       } catch (e) {
         console.error(e)
       }
-      let newUrl = `/products?page=${currentPage}`;
-      if (type) {
-        newUrl += `&type=${type}`;
-      }
-      router.push(newUrl);
+      router.push(`/products?page=${currentPage}`)
     }
 
     getProducts()
-  }, [currentPage, type, router.isReady])
+  }, [currentPage, isLoggedIn, memberId])
 
   // 控制蒐藏icon
   const handleToggleFav = async (id) => {
