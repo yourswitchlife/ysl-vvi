@@ -70,7 +70,7 @@ export default function MissionFavShop({ status }) {
 
     socket.on('missionUpdated', (updated) => {
       console.log(updated)
-      if (updated) {
+      if (updated.success === true) {
         console.log('恭喜解任務成功');
         setSolved(true);
 
@@ -151,7 +151,7 @@ export default function MissionFavShop({ status }) {
                     router.push('/products')
                   }
                 }}
-                disabled={m.status === 1 && m.coupon_id}> {m.status === 1 || !prize ?(m.coupon_id || prize ? '任務完成' : '快來領獎勵') : '去解任務'}</button>
+                disabled={m.status === 1 && m.coupon_id}> {m.status === 1 ?(m.coupon_id || prize ? '任務完成' : '快來領獎勵') : '去解任務'}</button>
             </div>
           </div>
         ))}

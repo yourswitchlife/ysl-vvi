@@ -17,7 +17,7 @@ import whitelog from '@/public/images/logo/logo_White-desktopLogo.svg'
 // import styles from '@/styles/products/product-list.module.scss'
 
 
-import Paginage from '@/components/common/pagination'
+// import Paginage from '@/components/common/pagination-front'
 import Dropdown from 'react-bootstrap/Dropdown'
 import CouponProduct from '@/components/coupon/coupon-member/couponP-member'
 
@@ -76,7 +76,7 @@ export default function CouponP() {
 
 
             <CouponProduct currentFilter={currentFilter}/>
-            <Paginage currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />
+            {/* <Paginage currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} /> */}
           </div>
 
         </div>
