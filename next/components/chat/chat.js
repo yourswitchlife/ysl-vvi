@@ -48,6 +48,7 @@ export default function Chat({ socket, memberId, memberData, room, isLoggedIn, s
 
         socket.on('popout', (msgData) => {
             console.log('有人傳訊息給你喔:', msgData.message)
+            
             setShowChat(true)
         });
 
