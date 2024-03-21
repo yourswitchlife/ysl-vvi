@@ -12,10 +12,10 @@ import ShopCardA from '@/components/shop/shop-card-a'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 // import Navbar from '@/components/layout/navbar/navbar'
 import GoTopButton from '@/components/go-to-top/go-top-button'
+import ProductCard from '@/components/products/product-card'
 import WeeklySelect from '@/assets/weekly-select.svg'
 import { FaArrowRightLong } from 'react-icons/fa6'
 import { useAuth } from '@/hooks/use-Auth'
-
 
 export default function Index() {
   const router = useRouter()
@@ -99,9 +99,13 @@ export default function Index() {
       // 過濾會員自己賣的商品
       const filterProducts = products.filter((p) => p.member_id !== memberId)
       // 過濾掉沒有	description內容的商品
-      const hasDescriptionProducts = filterProducts.filter((p) => p.description !== "")
+      const hasDescriptionProducts = filterProducts.filter(
+        (p) => p.description !== ''
+      )
       // 打亂過濾後的產品列表
-      const shuffleProducts = hasDescriptionProducts.sort(() => 0.5 - Math.random())
+      const shuffleProducts = hasDescriptionProducts.sort(
+        () => 0.5 - Math.random()
+      )
       // 從打亂的列表隨機取4個
       const selectedProducts = shuffleProducts.slice(0, 3)
       setRandomProducts(selectedProducts)
@@ -147,7 +151,11 @@ export default function Index() {
     setProducts(newProducts)
   }
 
-  //隨機選擇精選賣場
+  const cardIcon = (e) => {
+    e.persist()
+    e.nativeEvent.stopImmediatePropagation()
+    e.stopPropagation()
+  }
 
   return (
     <>
@@ -201,9 +209,12 @@ export default function Index() {
                     >
                       <div className={styles.title}>{p.name}</div>
                       <div className={styles.description}>{p.description}</div>
-                      <div className={styles.more} onClick={() => {
-                      router.push(`/products/${p.id}`)
-                    }}>
+                      <div
+                        className={styles.more}
+                        onClick={() => {
+                          router.push(`/products/${p.id}`)
+                        }}
+                      >
                         MORE <FaArrowRightLong />
                       </div>
                     </div>
@@ -235,20 +246,86 @@ export default function Index() {
       <section class="sec3 container pt-5 pb-5">
         <h4 className="text-white mb-2">特賣焦點</h4>
         <div className="container">
-          <IndexSlider />
+        <div className='row my-3'>
+        {products.slice(20, 24).map((p) => {
+            return (
+              <div
+                key={p.id}
+                className="col"
+                onClick={() => {
+                  historyRecord(p)
+                }}
+              >
+                <div
+                  onClick={() => {
+                    router.push(`/products/${p.id}`)
+                  }}
+                  className={styles.link}
+                >
+                  <ProductCard
+                    className="p-5 my-2"
+                    id={p.id}
+                    name={p.name}
+                    price={p.price}
+                    display_price={p.display_price}
+                    releaseTime={p.release_time.split('T')[0]}
+                    img_cover={p.img_cover}
+                    img_details={p.img_details}
+                    type={p.type_id}
+                    ratingId={p.rating_id}
+                    fav={p.fav}
+                    language={p.language}
+                    handleToggleFav={handleToggleFav}
+                    member_id={p.member_id}
+                    cardIcon={cardIcon}
+                    // imgDetails={p.img_details}
+                  />
+                </div>
+              </div>
+            )
+          })}
         </div>
-        {/* <div className={styles.wrap}>
-          <ProductList></ProductList>
-          <ProductList></ProductList>
-          <ProductList></ProductList>
-          <ProductList></ProductList>
-          <ProductList></ProductList>
-          <ProductList></ProductList>
-          <ProductList></ProductList>
-          <ProductList></ProductList>
-          <ProductList></ProductList>
-          <ProductList></ProductList>
-        </div> */}
+        <div className='row my-3'>
+        {products.slice(30, 34).map((p) => {
+            return (
+              <div
+                key={p.id}
+                className="col"
+                onClick={() => {
+                  historyRecord(p)
+                }}
+              >
+                <div
+                  onClick={() => {
+                    router.push(`/products/${p.id}`)
+                  }}
+                  className={styles.link}
+                >
+                  <ProductCard
+                    className="p-5 my-2"
+                    id={p.id}
+                    name={p.name}
+                    price={p.price}
+                    display_price={p.display_price}
+                    releaseTime={p.release_time.split('T')[0]}
+                    img_cover={p.img_cover}
+                    img_details={p.img_details}
+                    type={p.type_id}
+                    ratingId={p.rating_id}
+                    fav={p.fav}
+                    language={p.language}
+                    handleToggleFav={handleToggleFav}
+                    member_id={p.member_id}
+                    cardIcon={cardIcon}
+                    // imgDetails={p.img_details}
+                  />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+          
+        </div>
       </section>
       <section class="container sec4 pt-5 pb-5">
         <h4 className="text-white mb-2">商品分類</h4>

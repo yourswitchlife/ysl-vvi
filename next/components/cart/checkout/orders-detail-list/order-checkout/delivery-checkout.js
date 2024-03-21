@@ -81,6 +81,26 @@ export default function DeliveryCheckout({ items, memberId }) {
     }
   }, [])
 
+  // 串接綠界超商地圖
+  const getSevenAddress = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:3005/api/cart/get-seven-address',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      const data = await response.json()
+      console.log(data)
+    } catch (error) {
+      console.error('請求失敗', error)
+    }
+  }
+
   // 判斷是新增宅配地址還是編輯宅配地址
   const handleShowForm = (editMode = false) => {
     setshowAddrForm(true)
@@ -466,7 +486,7 @@ export default function DeliveryCheckout({ items, memberId }) {
                 : 'd-none'
             }`}
           >
-            <Link href="">
+            <div onClick={getSevenAddress}>
               <Image
                 src="/images/cart/7-eleven.svg"
                 width={50}
@@ -474,14 +494,14 @@ export default function DeliveryCheckout({ items, memberId }) {
                 alt="選擇7-ELEVEN超商地址"
                 className={styles.sevenimg}
               />
-            </Link>
+            </div>
             {/* 新增超商常用地址按鈕 */}
-            <Link href="" className={styles.addSevevnAdr}>
+            <div className={styles.addSevevnAdr} onClick={getSevenAddress}>
               <span className={styles.iconFrame}>
                 <FaPlus />
               </span>
               <span className={styles.text}>新增地址</span>
-            </Link>
+            </div>
           </div>
         </div>
         {/* 宅配地址表單區塊 */}

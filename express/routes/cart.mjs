@@ -6,7 +6,7 @@ import crypto from 'crypto'
 // 導入dotenv 使用 .env 檔案中的設定值 process.env
 import 'dotenv/config.js'
 import axios from 'axios'
-import { createLinePayClient } from 'line-pay-merchant'
+import queryString from 'query-string'
 
 // 取得商品對應的賣場名稱
 router.get('/shop-names', async (req, res) => {
@@ -556,13 +556,26 @@ router.get('/get-coupons', async (req, res) => {
 
 // 綠界門市地圖
 router.post('/get-seven-address', async (req, res) => {
-  console.log(1)
-  const requset = {
-    LogisticsType: '超商取貨',
+  const dataBody = queryString.stringify({
+    LogisticsType: 'CVS',
     LogisticsSubType: 'UNIMARTC2C',
     IsCollection: 'N',
-    ServerReplyURL: 'http://localhost:3000/cart/checkout',
+    ServerReplyURL: 'http://localhost:3005/api/cart/get-seven',
+    MerchantID: '2000933',
+    HashKey: 'XBERn1YOvpM9nfZc',
+    HashIV: 'h1ONHk4P4yqbl5LK',
+  })
+
+  const headers = {
+    Accept: 'text/html',
+    ContentType: 'application/x-www-form-urlencoded',
   }
+  // 綠界超商門市地圖串接路徑
+  const url = 'https://logistics-stage.ecpay.com.tw/Express/map'
+
+  const sevenRes = await axios.post(url, dataBody, { headers })
+  console.log(sevenRes)
+  console.log(sevenRes.responseUrl)
 })
 
 export default router
