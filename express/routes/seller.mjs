@@ -328,58 +328,43 @@ router.post(
     // }
   }
 )
-//商品編輯:只改成PUT裡面都還沒修改
-router.put('/product/:pid', authenticate, async (req, res) => {
-  const {
-    typeId,
-    name,
-    productQuantity,
-    fav,
-    displayPrice,
-    price,
-    imgCover,
-    img1,
-    img2,
-    img3,
-    imgDetails,
-    releaseTime,
-    language,
-    ratingId,
-    coOpValid,
-    description,
-  } = req.body
-  const created_at = new Date() //創建商品日期
+//商品讀一個產品
+router.get('/product/:pid', authenticate, async (req, res) => {
+  // const {
+  //   typeId,
+  //   name,
+  //   productQuantity,
+  //   fav,
+  //   displayPrice,
+  //   price,
+  //   imgCover,
+  //   img1,
+  //   img2,
+  //   img3,
+  //   imgDetails,
+  //   releaseTime,
+  //   language,
+  //   ratingId,
+  //   coOpValid,
+  //   description,
+  // } = req.body
+  // const created_at = new Date() //創建商品日期
   //const memberId = 抓當前使用者的id
   try {
-    //把資料存進去
-    const Query =
-      'UPDATE `product` (`type_id`, `name`,`product_quantity`, `fav`, `display_price`,`price`, `img_cover`, `img_1`,`img_2`,`img_3`,`img_details`,`release_time`,`language`,`rating_id`,`co_op_valid`,`description`,`created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) WHERE `product`.`member_id` = '
-    await db.execute(Query, [
-      typeId,
-      name,
-      productQuantity,
-      fav,
-      displayPrice,
-      price,
-      imgCover,
-      img1,
-      img2,
-      img3,
-      imgDetails,
-      releaseTime,
-      language,
-      ratingId,
-      coOpValid,
-      description,
-      created_at,
-    ])
-
-    res.status(201).send({ message: '新增商品成功' })
+    const memberId = req.memberData.id
+    let { pid } = req.params
+    console.log(memberId, pid)
+    let [product] = await db.execute(
+      'SELECT * FROM `product` WHERE `member_id` = ? AND `id` = ?',
+      [memberId, pid]
+    )
+    res.json(product)
   } catch (error) {
-    res.status(500).send({ message: '新增商品失敗' })
-    console.log('資料庫相關錯誤:', error)
+    console.error(error)
+    res.status(500).json({ message: '伺服器錯誤' })
   }
 })
+
 //商品編輯:只改成DELETE裡面都還沒修改
 router.delete('/product/:pid', authenticate, async (req, res) => {
   const {

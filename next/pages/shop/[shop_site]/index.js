@@ -221,7 +221,7 @@ export default function ShopPage() {
       Swal.fire('操作失敗', errorMessage, 'error')
     }finally{
       //無論操作成功或失敗，都重新獲取收藏狀態
-      getShopFav(shop_site)
+      getShop(shop_site)
     }
   }
   //點擊之後導向登入的函式

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useAuth } from '@/hooks/use-Auth'
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import { useRouter } from 'next/router';
@@ -28,6 +28,8 @@ import Tabs from 'react-bootstrap/Tabs'
 
 
 export default function Order() {
+  const formRef = useRef(null)
+  const [formHtml, setFormHtml] = useState('')
   //body style
   useEffect(() => {
     // 當元件掛載時添加樣式
@@ -73,16 +75,11 @@ export default function Order() {
   const orderOptions = ['訂單編號', '會員名稱']
   const [orderSelect, setOrderSelect] = useState('訂單編號')
   const [searchText, setSearchText] = useState('')
-  //接應綠界
+
+  //在這裡觸發來接應綠界
   const handleViewClick = async () => {
-    try {
-      const response = await fetch('http://localhost:3005/api/logisticsService/create-logistics-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          MerchantTradeDate: '2024/02/15 08:40:00',
+    const orderData = {
+      MerchantTradeDate: '2024/02/15 08:40:00',
           LogisticsType: 'CVS',
           LogisticsSubType: 'UNIMARTC2C',
           GoodsAmount: '950',
@@ -98,22 +95,45 @@ export default function Order() {
           ReceiverEmail: '',
           TradeDesc: '',
           ServerReplyURL:
-            'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
-          ClientReplyURL: 'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
-          LogisticsC2CReplyURL: 'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
+            'https://1bae-2001-b400-e332-fff7-7810-43d0-8b9d-6c84.ngrok-free.app/api/logisticsService/ecpay/serverReply',
+          ClientReplyURL: 'https://1bae-2001-b400-e332-fff7-7810-43d0-8b9d-6c84.ngrok-free.app/api/logisticsService/ecpay/clientReply',
+          LogisticsC2CReplyURL: 'https://1bae-2001-b400-e332-fff7-7810-43d0-8b9d-6c84.ngrok-free.app/api/logisticsService/ecpay/logisticsC2CReply',
           Remark: '',
           PlatformID: '',
           ReceiverStoreID: '131386',
           ReturnStoreID: '131386',
-        }),
-      })
-      const htmlContent = await response.text();
-      // 将响应的 HTML 内容设置到页面中某个元素，以便自动提交
-      document.getElementById('formContainer').innerHTML = htmlContent;
-    } catch (error) {
-      console.error('請求失敗:', error);
     }
-  };
+    const response = await fetch('http://localhost:3005/api/logisticsService/create-logistics-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      })
+
+      if(response.ok){
+        //如果後端有重新導引，這裡就不用幹嘛
+        //如果後端告訴我們要重新定向可以這樣處理：
+        const data = await response.json()
+        // window.location.href = data.redirectUrl
+        setFormHtml(data.form)
+      }else{
+        //處理錯誤
+        console.error('創建物流訂單失敗')
+      }
+  }
+
+  //用useEffect來監聽
+  useEffect(()=> {
+    if(formHtml && formRef.current){
+      // 找到当前组件中的<form>元素
+      const form = formRef.current.querySelector('form');
+      if (form) {
+          form.submit(); // 提交表单
+      }
+    }
+  }, [formHtml])
+
   
   const fetchShopOrders = async() => {
     try{
@@ -290,7 +310,7 @@ export default function Order() {
       <header>
         <SellerNavbar />
       </header>
-      <div id="formContainer" style={{ display: 'none' }}></div>
+      <div ref={formRef} dangerouslySetInnerHTML={{ __html: formHtml }} />
       <div className={styles.mainContainer}>
           {memberData && (
             <>
@@ -438,7 +458,7 @@ export default function Order() {
                               className="btn btn-danger btn-sm"
                               onClick={handleViewClick}
                             >
-                              查看
+                              寄貨處理
                             </button>
                           </div>
                         </div>
