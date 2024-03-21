@@ -567,10 +567,11 @@ router.post('/get-seven-address', async (req, res) => {
     LogisticsType: 'CVS',
     LogisticsSubType: 'UNIMARTC2C',
     IsCollection: 'N',
-    ServerReplyURL: 'http://localhost:3005/api/cart/get-seven',
-    MerchantID: '2000933',
-    HashKey: 'XBERn1YOvpM9nfZc',
-    HashIV: 'h1ONHk4P4yqbl5LK',
+    ServerReplyURL:
+      'https://f4df-2402-7500-4e6-92d1-51ba-7154-4a35-80c1.ngrok-free.app/api/cart/get-seven',
+    MerchantID: '3407566',
+    HashKey: 'OVqyEFNSVcj9szQb',
+    HashIV: 'BV6ifI9FtoQK6PkS',
   })
 
   const headers = {
@@ -582,7 +583,7 @@ router.post('/get-seven-address', async (req, res) => {
 
   const sevenRes = await axios.post(url, dataBody, { headers })
   console.log(sevenRes)
-  console.log(sevenRes.responseUrl)
+  console.log(sevenRes.data)
 })
 
 export default router
