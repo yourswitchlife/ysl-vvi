@@ -6,6 +6,7 @@ import SearchBarB from './searchBarB'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { FaHeart, FaBell, FaStore, FaArrowRight } from 'react-icons/fa'
 import Dropdown from 'react-bootstrap/Dropdown';
 import BurgerMenu from './burgermenu'
@@ -23,6 +24,14 @@ export default function CartNavbar() {
   const { isLoggedIn, memberData } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
   const {totalProducts} = useCart()
+  const router = useRouter()
+  const pathHref = {
+    "/cart":"/",
+    "/cart/checkout":"/cart"
+  }
+  // 獲取當前路徑
+  const currentPath = router.pathname
+  const href = pathHref[currentPath] || "/"
   return (
     <>
     <div className='d-none d-lg-block'>
@@ -71,6 +80,7 @@ export default function CartNavbar() {
                 <Dropdown >
                   <Dropdown.Toggle className={`${styles.member_drop} ${isHovered ? 'hover_toggle' : ''}`} variant="black" id="dropdown-basic">
                     <NavPic />
+                    <h6 className="ps-2 fw-bold">{memberData.account}</h6>
                   </Dropdown.Toggle>
   
                   <Dropdown.Menu onMouseEnter={() => setIsHovered(true)}
@@ -97,12 +107,12 @@ export default function CartNavbar() {
       <header className={styles.navbarB}>
         <div // logo
         >
-          <Link href="/cart">
+          <Link href="/">
             <Image src={yslLogoXs} alt="ysl-logo" />
           </Link>
         </div>
           <h5 className='mb-0'>結帳</h5>
-        <Link href="/" className="text-white ps-5">
+        <Link href={href} className="text-white ps-5">
           <FaArrowRight />
         </Link>
       </header>

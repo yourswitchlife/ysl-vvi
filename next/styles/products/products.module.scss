@@ -33,6 +33,10 @@
   background-color: #ffffff53;
   }
 }
+.activePage{
+  border: 2px solid white;
+  background-color: #fff;
+}
 
 .more {
   text-decoration: none;
@@ -45,7 +49,62 @@
   text-decoration: none ;
   // color: black;
 }
+.aniRed{
+  height: 100px;
+  width: 50px;
+  background-color: #ff0000;
+  margin-top: -100px;
+  border-radius: 0 15px 15px 0;
+  animation: RedAnimation 3s ease-in-out
+}
+.aniBlue{
+  height: 100px;
+  width: 50px;
+  background-color: #0077ff;
+  margin-top: 100px;
+  border-radius: 15px 0 0 15px;
+  animation: BlueAnimation 3s ease-in-out
+}
+.wrap{
+  top: 45vh;
+  left: calc((100vw - 100px)/2);
+}
 
+@keyframes RedAnimation {
+  0% {
+    transform: translateX(0px);
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateX(0px);
+    transform: translateY(100px); 
+    width: 50px;
+  height: 100px;
+  }
+  100% {
+    transform: translateX(0px);
+    transform: translateY(100px); 
+    width: 460px;
+  height: 398px;
+  left: calc((100vw - 398px)/2);
+  }
+}
+
+@keyframes BlueAnimation {
+  0% {
+    transform: translateX(0px);
+    transform: translateY(0px);
+  }
+  50%{
+    transform: translateY(-100px); 
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0px);
+    transform: translateY(-100px); 
+    opacity: 0;
+  }
+}
 
 @media (max-width: 576px) {
   .guessLike {

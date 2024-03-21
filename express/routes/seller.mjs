@@ -177,21 +177,58 @@ router.put(
 
 //賣家商品管理OK #Read
 router.get('/product', authenticate, async (req, res) => {
+  const tab = req.query.tab || 'all'
+  const search = req.query.search || ''
+  const page = parseInt(req.query.page) || 1
+  const limit = parseInt(req.query.limit) || 7
+  const offset = (page - 1) * limit
+
   try {
     const memberId = req.memberData.id
     if (!req.memberData) {
       // 如果memberData不存在，则返回错误信息
       return res.status(400).json({ message: '找不到member data' })
     }
+    const queryParams = [memberId]
+    let sqlBase = `
+  FROM product
+  LEFT JOIN orders ON orders.product_id = product.id
+  LEFT JOIN fav_product ON fav_product.product_id = product.id AND fav_product.valid = 1
+  LEFT JOIN p_type ON product.type_id = p_type.id
+  WHERE product.member_id = ? AND product.valid = ${tab === 'unShop' ? '0' : '1'}
+`
 
-    let [products] = await db.execute(
-      'SELECT * FROM `product` WHERE `member_id` = ?',
-      [memberId]
-    )
-    res.json(products)
+    if (tab === 'soldout') {
+      sqlBase += ` AND product.product_quanty = 0 
+    `
+    }
+
+    if (search.trim() !== '') {
+      sqlBase += ` AND product.name LIKE ?`
+      queryParams.push(`%${search}%`)
+    }
+
+    //計算總項目時也要考慮搜尋條件
+    let totalItemsQuery = `SELECT COUNT(DISTINCT product.id) AS totalItems ${sqlBase}`
+
+    const [totalItemsResult] = await db.execute(totalItemsQuery, queryParams)
+    const totalItems = totalItemsResult[0].totalItems
+    const totalPages = Math.ceil(totalItems / limit)
+
+    let sql = `SELECT product.*, COALESCE(SUM(orders.quantity), 0) AS total_quantity, COUNT(DISTINCT fav_product.id) AS favorite_count, p_type.name AS type_name ${sqlBase} GROUP BY product.id LIMIT ?, ?`
+    queryParams.push(offset, limit)
+
+    let [products] = await db.execute(sql, queryParams)
+
+    const responseData = {
+      items: products,
+      totalItems,
+      totalPages,
+    }
+    res.json(responseData)
   } catch (error) {
     console.log(error)
-    res.status(500)
+    res.status(500).json({ message: '伺服器錯誤' })
   }
 })
 //新增賣家商品

@@ -47,6 +47,13 @@ $nav-black: #161719ae;
     text-decoration: none;
     padding-right: 30px;
   }
+  .height{
+    height: 50px;
+    width: 317px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+  }
   .link {
     color: $white;
     text-decoration: none;
@@ -216,11 +223,11 @@ $nav-black: #161719ae;
   }
 }
 .member_drop{
+  color: $white;
   border: none;
   background-color: #16171900;
   display: flex;
   align-items: center;
-  width: 100px;
   height: 50px;
   &:hover{
     background-color: #16171900;
@@ -348,4 +355,19 @@ $nav-black: #161719ae;
   align-items: center;
   top: 0;
   right: 17px;
+}
+
+.notifyBadge{
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background:$danger;
+  color: $white;
+  font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 14px;
+  right: 235px;
 }

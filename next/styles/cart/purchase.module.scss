@@ -63,6 +63,7 @@
 .button {
   min-width: 185px;
   margin-top: 95px;
+  padding: 0.375rem, 0.75rem;
 }
 
 .guessLike {
@@ -98,67 +99,37 @@
   }
 }
 
-// 購物車是空的頁面
-.emptyFrame {
-  max-width: 770px;
-  margin: 90px auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  .ratio {
-    width: 60%;
-    height: 60%;
+
+@media screen and (max-width:431px) {
+  .mainBg{
+    max-width: 390px;
+    margin-top: 60px;
+  }
+  .button{
+    min-width: 120px;
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .checkFrame {
+    top: -35px;
+    left: 0;
     right: 0;
     margin: 0 auto;
+  
+    .text {
+      font-size: 22px;
+    }
   }
-  .text {
-    color: $white;
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 30px;
-  }
-}
-
-// 手機版430px
-@media screen and (max-width: 431px) {
-  .mainBg {
-    margin-top: 50px;
-  }
-  .mb {
-    margin: 0 8px;
-  }
-  .checkFrame {
-    top: -30px;
-  }
+  
   .iconCircle {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 10px;
+    width: 60px;
+    height: 60px;
+    margin-bottom: 5px;
     .icon {
       width: 30px;
       height: 30px;
+      color: $white;
     }
   }
-
-  .btnFrame {
-    gap: 20px;
-  }
-
-  .button {
-    min-width: 140px;
-    margin-top: 95px;
-  }
-}
-
-.guessLike {
-  .title {
-    font-size: 22px;
-  }
-}
-
-.emptyFrame {
-  .text {
-    font-size: 20px;
-  }
+  
 }

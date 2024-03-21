@@ -189,8 +189,8 @@ export default function forgetPassword() {
                   />
                 </InputGroup>
 
-                <div className={sStyle.error + " mt-2"}>
-                  {errorState && errorState}
+                <div className={sStyle.error + " mt-2 ps-1"}>
+                  <h6 className={sStyle.error_text}>{errorState && errorState}</h6>
                 </div>
 
               </div>
@@ -207,7 +207,7 @@ export default function forgetPassword() {
                   />
                   <Button className={sStyle.auth_btn+ " d-flex align-items-center"} onClick={handleGetCode} style={{height:38}}>取得驗証碼</Button>
                 </InputGroup>
-                <div className={`${sStyle.error} ${isCountingDown ? 'text-info' : ''} mt-2`}>
+                <div className={`${sStyle.error} ${isCountingDown ? 'text-info' : ''} ps-1 mt-2 fs-6`}>
                   {isCountingDown
                     ? `驗證碼過期時間：${Math.floor(countdown / 60)} 分 ${countdown % 60} 秒`
                     : showExpiredMessage
@@ -247,8 +247,8 @@ export default function forgetPassword() {
                   />
                 </InputGroup>
                 <Form.Check type="checkbox" label="顯示密碼" onChange={togglePasswordVisibility} />
-                <div className={sStyle.error + " mt-2"}>
-                  {errors && <h6>{errors}</h6>}
+                <div className={sStyle.error + " mt-2 ps-1"}>
+                  {errors && <h6 className={sStyle.error_text}>{errors}</h6>}
                 </div>
               </div>
               <div className="d-flex justify-content-center">

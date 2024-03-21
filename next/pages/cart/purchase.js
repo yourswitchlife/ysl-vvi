@@ -8,35 +8,31 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FaCheck } from 'react-icons/fa6'
+import ProductCard from '@/components/products/product-card'
 
 //使用SweetAlert2 API
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 
-import useRequireCart from '@/hooks/use-require-cart'
-
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import { useAuth } from '@/hooks/use-Auth'
 
-
 export default function Purchase() {
-
-  // useRequireCart()
   const router = useRouter()
-
-
   const { orderId, transactionId } = router.query
+  const [products, setProducts] = useState([])
+  const { isLoggedIn, memberId } = useAuth()
 
   // LINEPAY導頁進來
   useEffect(() => {
     if (orderId && transactionId) {
-      const checkTransactionUrl = `http://localhost:3005/api/cart/check-transaction?transactionId=${transactionId}&groupId=${orderId}`
+      const checkTransactionUrl = `http://localhost:3005/api/cart/check-transaction?orderId=${orderId}&transactionId=${transactionId}`
 
       fetch(checkTransactionUrl)
-        .then(response => response.json())
-        .then(data => {
-          console.log('交易結果:', data);
+        .then((response) => response.json())
+        .then((data) => {
+          console.log('交易結果:', data)
           if (data.status === 'success') {
             MySwal.fire({
               icon: 'success',
@@ -51,16 +47,88 @@ export default function Purchase() {
             })
           }
         })
-        .catch(error => console.error('付款驗證失敗:', error))
+        .catch((error) => console.error('付款驗證失敗:', error))
     }
   }, [orderId, transactionId])
+
+  // 取得商品資料
+  const getProducts = () => {
+    const url = 'http://localhost:3005/api/products/list'
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        if (Array.isArray(data.products)) {
+          setProducts(data.products)
+        }
+      })
+      .catch((error) => console.error('取得會員收藏清單失敗'))
+  }
+  useEffect(() => {
+    getProducts()
+  }, [])
+
+  // 過濾會員自己賣的商品
+  const filterProducts = products.filter((p) => p.member_id !== memberId)
+  // 過濾沒有description的商品
+  const hasDescriptionProducts = filterProducts.filter((p)=> p.description !== "" || null)
+  // 打亂過濾後的產品列表
+  const shuffleProducts = hasDescriptionProducts.sort(() => 0.5 - Math.random())
+  // 從打亂的列表隨機取4個
+  const randomProducts = shuffleProducts.slice(0,4)
+
+  // 設定瀏覽紀錄
+  const historyRecord = (p) => {
+    if (!p) {
+      return
+    }
+    const existingRecordsStr = localStorage.getItem('readProduct')
+    let historyRecordArr
+    if (existingRecordsStr) {
+      historyRecordArr = JSON.parse(existingRecordsStr)
+      if (!Array.isArray(historyRecordArr)) {
+        historyRecordArr = []
+      }
+    } else {
+      historyRecordArr = []
+    }
+    const hasRecord = historyRecordArr.some(
+      (item) => JSON.stringify(item) === JSON.stringify(p)
+    )
+
+    if (!hasRecord) {
+      historyRecordArr.unshift(p)
+    }
+    if (historyRecordArr.length > 7) {
+      historyRecordArr.pop()
+    }
+    localStorage.setItem('readProduct', JSON.stringify(historyRecordArr))
+  }
+  useEffect(() => {
+    historyRecord()
+  }, [])
+
+  const cardIcon = (e) => {
+    e.persist()
+    e.nativeEvent.stopImmediatePropagation()
+    e.stopPropagation()
+  }
+
+  const handleToggleFav = (id) => {
+    const newProducts = products.map((p) => {
+      if (p.id === id) return { ...p, fav: !p.fav }
+      else return p
+    })
+    setProducts(newProducts)
+  }
+
   return (
     <>
       <CartNavbar />
       <CartStep />
       <div className="container">
         <div className={styles.mb}>
-          <section className={styles.mainBg}>
+          <section className={`${styles.mainBg} container`}>
             <div className={styles.checkFrame}>
               <div className={styles.iconCircle}>
                 <FaCheck className={styles.icon} />
@@ -84,7 +152,7 @@ export default function Purchase() {
                 回首頁逛逛
               </Link>
               <Link
-                href=""
+                href="/member/order"
                 type="button"
                 className={`btn btn-danger ${styles.button}`}
               >
@@ -96,10 +164,43 @@ export default function Purchase() {
         <section className={styles.guessLike}>
           <div className={styles.title}>猜你喜歡</div>
           <div className="d-flex justify-content-between flex-wrap">
-            <ProductList />
-            <ProductList />
-            <ProductList />
-            <ProductList />
+            {randomProducts.map((p) => {
+              return (
+                <div
+                  key={p.id}
+                  className="col"
+                  onClick={() => {
+                    historyRecord(p)
+                  }}
+                >
+                  <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+                    className={styles.link}
+                  >
+                    <ProductCard
+                      className="p-5"
+                      id={p.id}
+                      name={p.name}
+                      price={p.price}
+                      display_price={p.display_price}
+                      releaseTime={p.release_time.split('T')[0]}
+                      img_cover={p.img_cover}
+                      img_details={p.img_details}
+                      type={p.type_id}
+                      ratingId={p.rating_id}
+                      fav={p.fav}
+                      handleToggleFav={handleToggleFav}
+                      member_id={p.member_id}
+                      language={p.language}
+                      cardIcon={cardIcon}
+                      // imgDetails={p.img_details}
+                    />
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </section>
       </div>
@@ -109,5 +210,5 @@ export default function Purchase() {
 }
 
 export async function getServerSideProps(context) {
-  return await mainCheckToLogin(context);
+  return await mainCheckToLogin(context)
 }

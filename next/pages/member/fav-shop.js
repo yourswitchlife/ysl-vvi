@@ -15,6 +15,7 @@ import Link from 'next/link'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Paginage from '@/components/common/pagination'
 import { FaMinus, FaAngleDown, FaFilter, FaStar } from 'react-icons/fa'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav';
 //Auth
 import { useAuth } from '@/hooks/use-Auth';
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
@@ -69,7 +70,7 @@ export default function FavShop() {
   const handleUnfavorite = async (seller_id) => {
     try {
       const response = await fetch(`http://localhost:3005/api/member/unfav-shop?memberId=${memberId}&sellerId=${seller_id}`, {
-        method: 'DELETE',
+        method: 'PATCH',
         credentials: 'include',
       });
 
@@ -144,7 +145,7 @@ export default function FavShop() {
                     {/* seller detail */}
                     <div className={styles.profile + ' me-5'}>
                       <Link href={`/shop/${shop.shop_site}`} style={{ textDecoration: 'none' }} >
-                        <Image width={50} height={50} src={`http://localhost:3005/profile-pic/${shop.pic}` || profileImg} alt="" className={styles.fit} />
+                        <Image width={100} height={100} src={`http://localhost:3005/profile-pic/${shop.pic}` || profileImg} alt={shop.pic} className={styles.fit} />
                       </Link>
                     </div>
                     <div className="d-flex flex-column align-items-between justify-content-center">
@@ -255,6 +256,9 @@ export default function FavShop() {
 
           </div>
         </div>
+      </div>
+      <div className={mStyle.PhoneTabNav}>
+      <PhoneTabNav />
       </div>
       <div className="d-none d-sm-block">
         <Footer />

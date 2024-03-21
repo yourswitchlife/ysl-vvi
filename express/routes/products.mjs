@@ -30,18 +30,7 @@ router.get('/list', async (req, res) => {
   console.log(`Type: ${type}`)
   console.log(`Rating: ${rating}`)
 
-  // const type = req.query.type
-  // console.log(type)
-  // const rating = req.query.rating
-  // console.log(parseInt(rating))
   console.log(req.query)
-
-  // const page = parseInt(req.query.page) || 1
-  // const limit = parseInt(req.query.limit) || 20
-  // const offset = (page - 1) * limit
-
-  // let sql = `SELECT * FROM product WHERE`
-  // let queryParams = []
 
   try {
     // 全部資料
@@ -58,6 +47,27 @@ router.get('/list', async (req, res) => {
     res.status(500)
   }
 })
+
+// 加入收藏
+router.post('/favProducts', async (req, res) => {
+  try {
+    const memberId = parseInt(req.query.memberId)
+    const pid = parseInt(req.query.pid)
+    // const { memberId, id } = req.body
+    console.log(memberId, pid)
+    const query =
+      'INSERT INTO `fav_product` (member_id,product_id,valid) VALUES (?, ?, 1)'
+    await db.execute(query, [memberId, pid])
+  } catch (error) {
+    console.error(error)
+    res
+      .status(500)
+      .json({ success: false, message: 'Error adding product to favorites' })
+  }
+})
+
+// 移除蒐藏
+// router
 
 // 新增商品
 router.post(
@@ -80,7 +90,6 @@ router.post(
         return v.split('-')[0]
       })
       pLanguage = pLanguage.join(',')
-      // const { pCover } = req.files
       // console.log(
       //   p.pName,
       //   parseInt(p.pType),
@@ -115,12 +124,23 @@ router.post(
     }
   }
 )
-// 單檔上傳
+// 新增評論 單檔上傳
 router.post('/addReview', upload.single('reviewPhoto'), async (req, res) => {
   if (req) {
     // console.log('Uploaded file name: ', req.file.originalname)
     console.log(req.body)
     console.log(req.file)
+    const memberId = req.query.memberId
+    const rating = req.body.rating
+    const review = req.body.review
+    // const shop_id =
+    console.log(memberId, rating, review)
+    // const comment_img = req.file
+
+    const query =
+      'INSERT INTO `shop_comment` (member_id,rating,content) VALUES (?, ?, ?)'
+    await db.execute(query, [memberId, rating, review])
+
     return res.json({ msg: 'success', code: '200' })
   } else {
     console.log('no upload')
@@ -149,6 +169,11 @@ router.get('/:pid', async (req, res) => {
     )
     const shopId = shopData[0].id
 
+    let [shopRating] = await db.execute(
+      'SELECT AVG(rating) AS average_rating FROM shop_comment WHERE member_id = ?',
+      [shopId]
+    )
+
     let [shopComment] = await db.execute(
       'SELECT sc.*, m.* FROM shop_comment AS sc JOIN member AS m ON sc.member_id = m.id WHERE sc.shop_id = ? ORDER BY `sc`.`created_at` ASC',
       [shopId]
@@ -172,6 +197,7 @@ router.get('/:pid', async (req, res) => {
       productTypeResult,
       shopComment,
       sameShopP,
+      shopRating,
     }
 
     if (result) {
