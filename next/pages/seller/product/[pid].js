@@ -42,7 +42,7 @@ export default function New() {
   //抓會員資料：cover and profile photo
   useEffect(() => {
     if(isLoggedIn && memberData) {
-      console.log(memberData.shop_cover)
+      // console.log(memberData.shop_cover)
       const picUrl = memberData.pic ? (memberData.pic.startsWith("https://") 
         ? memberData.pic 
         : `http://localhost:3005/profile-pic/${memberData.pic}`) 
@@ -166,7 +166,7 @@ export default function New() {
         })
     }
   }
-  console.log(newP)
+//   console.log(newP)
 
   const clearForm = ()=>{
     setNewP({
@@ -193,7 +193,7 @@ export default function New() {
             <>
               <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
             </>
-        )}
+          )}
         <main className='flex-grow-1'>
           <div className={`${styles.dashboardMargin}`}>
             <div className="d-lg-block d-none">
@@ -202,7 +202,7 @@ export default function New() {
             <div className={`mb-4 mt-lg-0 ${styles.dashboardStyle}`}>
               <div className="d-flex justify-content-start align-items-center mb-3">
                 <h5 className="text-dark fw-bold">商品基本資訊</h5>
-                <h6 className="text-secondary ms-2">新增您的賣場商品</h6>
+                <h6 className="text-secondary ms-2">編輯您的賣場商品</h6>
               </div>
 
               <form
@@ -415,20 +415,19 @@ export default function New() {
                 {/* buttons */}
                 <div className="d-flex justify-content-center align-items-center mt-2">
                   <button type="submit" className="btn btn-danger me-2">
-                    儲存並上架
+                    儲存
                   </button>
-                  {/* <button
+                  <button
                     type="button"
                     className={`btn ${styles.btnDangerOutlined} me-2`}
                   >
                     儲存暫不上架
-                  </button> */}
+                  </button>
                   {/* 清空表單 */}
                   <button
                     type="button"
                     className={`btn ${styles.btnGrayOutlined}`}
                     onClick={() => {
-                      clearForm()
                       router.push('./')
                     }}
                   >
@@ -440,10 +439,10 @@ export default function New() {
           </div>
           <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
         </main>
-      </div>
+       </div>
       <PhoneTabNav />
       <div className="d-none d-md-block">
-          <SellerFooter />
+        <SellerFooter />
       </div>
     </>
   )

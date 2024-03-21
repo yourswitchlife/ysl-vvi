@@ -47,6 +47,13 @@ $nav-black: #161719ae;
     text-decoration: none;
     padding-right: 30px;
   }
+  .height{
+    height: 50px;
+    width: 317px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+  }
   .link {
     color: $white;
     text-decoration: none;
