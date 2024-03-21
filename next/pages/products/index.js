@@ -13,6 +13,7 @@ import { useRouter } from 'next/router'
 import { useAuth } from '@/hooks/use-Auth'
 import GoTopButton from '@/components/go-to-top/go-top-button'
 import Pagination from 'react-bootstrap/Pagination'
+import Animation from '@/components/products/animation'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
@@ -32,7 +33,6 @@ export default function Products() {
   // 頁數
   const [currentPage, setCurrentPage] = useState(1)
   const [ProductsPerPage] = useState(20)
-
   const indexOfLastProduct = currentPage * ProductsPerPage
   const indexOfFirstProduct = indexOfLastProduct - ProductsPerPage
   const currentProduct = displayProducts.slice(
@@ -190,14 +190,15 @@ export default function Products() {
     <>
       <GoTopButton />
       <Navbar searchWord={searchWord} setSearchWord={setSearchWord} />
-      <Image
+      <Animation className="z-3 position-absolute"/>
+      {/* <Image
         src="/images/product/p-index.jpg"
         alt="product"
         width={1440}
         height={560}
         priority={true}
         className={`${styles.pIndexImg}`}
-      />
+      /> */}
       <PhoneTabNav />
 
       <div

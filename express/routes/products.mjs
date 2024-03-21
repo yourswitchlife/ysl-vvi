@@ -56,7 +56,7 @@ router.post('/favProducts', async (req, res) => {
     // const { memberId, id } = req.body
     console.log(memberId, pid)
     const query =
-      'INSERT INTO `fav_product` (member_id,product_id) VALUES (?, ?)'
+      'INSERT INTO `fav_product` (member_id,product_id,valid) VALUES (?, ?, 1)'
     await db.execute(query, [memberId, pid])
   } catch (error) {
     console.error(error)
@@ -124,7 +124,7 @@ router.post(
     }
   }
 )
-// 單檔上傳
+// 新增評論 單檔上傳
 router.post('/addReview', upload.single('reviewPhoto'), async (req, res) => {
   if (req) {
     // console.log('Uploaded file name: ', req.file.originalname)
