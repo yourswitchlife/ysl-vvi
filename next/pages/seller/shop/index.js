@@ -46,7 +46,7 @@ export default function ShopSetting() {
   });
   const isDataChanged = JSON.stringify(formData) !== JSON.stringify(initialFormData)
   const [newMemberData, setNewMemberData] = useState([])
-  console.log(newMemberData)
+  // console.log(newMemberData)
 
 
   //body style
@@ -241,16 +241,17 @@ export default function ShopSetting() {
           <SellerNavbar shopSite={newMemberData.shop_site}/>
         }
         </header>
-        <main className={styles.mainContainer}>
-          <div className="d-none d-md-block">
+        <div className={styles.mainContainer}>
           {memberData && (
             <>
               <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
             </>
           )}
-          </div>
-          <div>
+          <main className='flex-grow-1'>
             {/* cover */}
+            <div className={styles.coverB}>
+          <Image height={170} width={1172} src={shopCover} alt="shop-cover" className={styles.fit} />
+          </div>
             {/* {memberData && (
               <>
                 <SellerCover shopCover={shopCover}/>
@@ -355,7 +356,9 @@ export default function ShopSetting() {
               </Form>
             </div>
             {/* ----------------電腦版------------------- */}
+            
             <div className={`d-none d-md-block ${styles.dashboardMargin}`}>
+            
               <div className={`mb-4 ${styles.dashboardStyle}`}>
                 
                   <div className="d-flex align-items-end mb-4">
@@ -451,8 +454,8 @@ export default function ShopSetting() {
                 </Form>
               </div>
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
         <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
           <PhoneTabNav />
         <footer className='d-none d-md-block'>

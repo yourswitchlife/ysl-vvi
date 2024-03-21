@@ -11,12 +11,10 @@ export default function Sidebar({
   memberShopName="shop_name",
 }) {
   
-  
-
   return (
     <>
-      <div
-        className={`d-flex flex-column flex-shrink-0 p-3 ${styles.sidebar}`}
+      <aside
+        className={`d-none d-md-flex flex-column flex-shrink-0 ${styles.sidebar} align-self-stretch`}
       >
         <Link
           href={`http://localhost:3000/shop/${memberShopSite}`}
@@ -80,50 +78,7 @@ export default function Sidebar({
             </Link>
           </li>
         </ul>
-        {/* <hr /> */}
-        {/* <div className="dropdown">
-          <Link
-            href="#"
-            className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <Image
-              src={profileImg}
-              alt=""
-              width="32"
-              height="32"
-              className="rounded-circle me-2"
-            />
-            <strong>會員中心</strong>
-          </Link>
-          <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
-            <li>
-              <Link className="dropdown-item" href="#">
-                New project...
-              </Link>
-            </li>
-            <li>
-              <Link className="dropdown-item" href="#">
-                Settings
-              </Link>
-            </li>
-            <li>
-              <Link className="dropdown-item" href="#">
-                Profile
-              </Link>
-            </li>
-            <li>
-              <hr className="dropdown-divider" />
-            </li>
-            <li>
-              <Link className="dropdown-item" href="#">
-                Sign out
-              </Link>
-            </li>
-          </ul>
-        </div> */}
-      </div>
+      </aside>
     </>
   )
 }

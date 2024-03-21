@@ -17,7 +17,7 @@ import whitelog from '@/public/images/logo/logo_White-desktopLogo.svg'
 // import styles from '@/styles/products/product-list.module.scss'
 
 
-import Paginage from '@/components/common/pagination-front'
+import Paginage from '@/components/common/pagination'
 import Dropdown from 'react-bootstrap/Dropdown'
 import CouponProduct from '@/components/coupon/coupon-member/couponP-member'
 
