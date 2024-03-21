@@ -186,7 +186,7 @@ export default function article_main() {
                     <div className="d-flex justify-content-between">
                       <div className={style.avatar}>
                         <img
-                          src={`images/profile-photo/${c.pic}`}
+                          src={`http://localhost:3005/profile-pic/${c.pic}`}
                           alt=""
                         />
                       </div>
