@@ -66,9 +66,6 @@ router.post('/favProducts', async (req, res) => {
   }
 })
 
-// 移除蒐藏
-// router
-
 // 新增商品
 router.post(
   '/addNewProduct',
@@ -125,28 +122,54 @@ router.post(
   }
 )
 // 新增評論 單檔上傳
-router.post('/addReview', upload.single('reviewPhoto'), async (req, res) => {
-  if (req) {
-    // console.log('Uploaded file name: ', req.file.originalname)
-    console.log(req.body)
-    console.log(req.file)
-    const memberId = req.query.memberId
-    const rating = req.body.rating
-    const review = req.body.review
-    // const shop_id =
-    console.log(memberId, rating, review)
-    // const comment_img = req.file
+router.post(
+  '/addReview',
+  upload.single('reviewPhoto'),
+  async (req, res) => {
+    if (req) {
+      // console.log('Uploaded file name: ', req.file.originalname)
+      console.log(req.body)
+      console.log(req.file)
+      console.log(req.file.filename)
+      const memberId = req.query.memberId
+      const shopId = req.query.shopId
+      const rating = req.body.rating
+      const review = req.body.review
+      console.log(memberId, rating, review, shopId)
+      // const comment_img = req.file
+      if (req.file) {
+        const reviewImg = req.file.filename
+        const query =
+          'UPDATE `shop_comment`SET rating = ?, content = ?, comment_img = ? WHERE member_id = ? AND shop_id = ?'
+        await db.execute(query, [rating, review, reviewImg, memberId, shopId])
+      } else {
+        const query =
+          'UPDATE `shop_comment`SET rating = ?, content = ? WHERE member_id = ? AND shop_id = ?'
+        await db.execute(query, [rating, review, memberId, shopId])
+      }
 
-    const query =
-      'INSERT INTO `shop_comment` (member_id,rating,content) VALUES (?, ?, ?)'
-    await db.execute(query, [memberId, rating, review])
-
-    return res.json({ msg: 'success', code: '200' })
-  } else {
-    console.log('no upload')
-    return res.json({ msg: 'fail', code: '409' })
+      return res.json({ msg: 'success', code: '200' })
+    } else {
+      console.log('no upload')
+      return res.json({ msg: 'fail', code: '409' })
+    }
   }
   // res.json({ body: req.body, file: req.file })
+)
+
+// 拿訂單資料
+router.get('/orders', async (req, res) => {
+  try {
+    // 全部資料
+    let [orders] = await db.execute(`SELECT * FROM orders`)
+    const responseData = {
+      orders,
+    }
+    res.json(responseData)
+  } catch (error) {
+    console.log(error)
+    res.status(500)
+  }
 })
 
 // 商品詳細頁 ([0-9]+)

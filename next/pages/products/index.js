@@ -112,10 +112,12 @@ export default function Products() {
           method: 'POST',
           credentials: 'include',
         }
-      )
+        )
+        console.log('HIIII');
       if (!res.ok) {
         throw new Error('Failed to fetch fav products')
       }
+      
       MySwal.fire({
         icon: 'success',
         text: '成功加入收藏!',

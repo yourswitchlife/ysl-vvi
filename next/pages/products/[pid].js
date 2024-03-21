@@ -351,6 +351,24 @@ export default function ProductDetail() {
   // console.log(historyRecords)
   // let imgAry = [product.img_details.split(",")[0], product.img_details.split(",")[1], product.img_details.split(",")[2]]
 
+  const orders = async() => {
+    try{
+        const res = await fetch(
+        `http://localhost:3005/api/products/orders`,
+        {
+          credentials: 'include',
+        }
+      )
+      const {orders} = await res.json()
+      console.log(orders)
+      // member_buyer_id  member_seller_id
+    }
+    catch (e) {
+      console.error(e)
+    }
+  } 
+  orders()
+
   // 蒐藏加入資料庫
   const addFav = async (id) => {
     if (!memberId) {
@@ -674,7 +692,10 @@ export default function ProductDetail() {
           />
             )
           }):''}
-          <Review />
+          {/* {orders? orders.filter((v,i) => {
+            v.member_buyer_id
+          }) : null} */}
+          <Review shopId={product.member_id}/>
         </section>
       </div>
       <Footer />
