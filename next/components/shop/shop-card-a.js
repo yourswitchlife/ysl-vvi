@@ -26,7 +26,7 @@ export default function ShopCardA({
     </div>
     <div className='ms-3 d-flex flex-column align-items-start'>
     <h6 className='text-light'>{shopInfo.shop_name}</h6>
-    <Star avgRating={4} />
+    <Star avgRating={avgRating} />
     </div>
     </div>
     </Link>

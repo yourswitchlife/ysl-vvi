@@ -224,7 +224,7 @@ export default function Product() {
                   }} />
                     </div>
                   </Form.Group>
-                  <Form.Group className="mb-3" controlId="typeName">
+                  {/* <Form.Group className="mb-3" controlId="typeName">
                     <div className="d-flex justify-content-center align-items-center">
                       <Form.Label className="mb-1 me-3 flex-shrink-0">
                         <h5 className="text-dark">類別名稱</h5>
@@ -241,7 +241,7 @@ export default function Product() {
                       <p className="text-dark mx-2">-</p>
                       <Form.Control type="text" placeholder="最大值" />
                     </div>
-                  </Form.Group>
+                  </Form.Group> */}
                 </div>
                 <div className="d-flex justify-content-start align-items-center mt-2">
                   <button type="button" className="btn btn-danger me-2" onClick={handleSearch}>
@@ -491,14 +491,14 @@ export default function Product() {
                       <Form.Control type="text" placeholder="請輸入商品名稱" />
                     </div>
                   </Form.Group>
-                  <Form.Group className="mb-3" controlId="typeName">
+                  {/* <Form.Group className="mb-3" controlId="typeName">
                     <div className="d-flex justify-content-center align-items-center">
                       <Form.Label className="my-2 me-3 flex-shrink-0">
                         <h6>遊戲類別</h6>
                       </Form.Label>
                       <Form.Control type="text" placeholder="請輸入類別名稱" />
                     </div>
-                  </Form.Group>
+                  </Form.Group> */}
                   <div className="d-flex justify-content-start align-items-center mt-2">
                     <button
                       type="button"

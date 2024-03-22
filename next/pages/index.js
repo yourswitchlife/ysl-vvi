@@ -43,7 +43,7 @@ export default function Index() {
   }
 
   useEffect(() => {
-    console.log(flippedStates)
+    // console.log(flippedStates)
   }, [flippedStates])
 
   const getShop = async () => {
@@ -61,7 +61,6 @@ export default function Index() {
       // 確保返回的數據結構正確，並更新狀態
       if (data && shop.length > 0 && shopRating.length > 0) {
         setShop(shop)
-        setRating(shopRating)
       }
     } catch (e) {
       console.error(e)
@@ -71,17 +70,6 @@ export default function Index() {
   useEffect(() => {
     getShop()
   }, [])
-  useEffect(() => {
-    if (shop.length > 1) {
-      let firstIndex = Math.floor(Math.random() * shop.length)
-      let secondIndex = Math.floor(Math.random() * shop.length)
-      //確保兩個索引值不同
-      while (secondIndex === firstIndex) {
-        secondIndex = Math.floor(Math.random() * shop.length)
-      }
-      setSelectedShops([shop[firstIndex], shop[secondIndex]])
-    }
-  }, [shop])
 
   // 取得商品資料
   const getProducts = () => {
@@ -355,8 +343,8 @@ export default function Index() {
       </section>
       <section className="container sec4 pt-5">
         <h4 className="text-white mb-2 d-flex justify-content-center">商品分類</h4>
+        <TypeSwiper />
       </section>
-      <TypeSwiper />
       <section className={`sec5 pt-5 pb-5 ${estyles.eventBox}`}>
       <div className='container'>
       <div className="row d-flex justify-content-between">
@@ -369,7 +357,7 @@ export default function Index() {
             <h6 className='text-white d-none' id="yearAndMonth">{`${now.y}/${now.m}/${myDate ? myDate : ''}`}</h6>
             <table className={`align-middle ${estyles.tablestyle}`}>
               <thead id="title">
-                <tr>
+                <tr className={estyles.calenderHead}>
                   {weekDayList.map(function (v, i) {
                     return <th key={i} className='py-4 text-center'>{v}</th>
                   })}
@@ -391,7 +379,7 @@ export default function Index() {
                           style={{ cursor: 'pointer' }}
                           role="presentation"
                         >
-                          {item}
+                          <h5>{item}</h5>
                         </td>
                       ))}
                     </tr>
@@ -403,16 +391,28 @@ export default function Index() {
           <div>
           <h4 className="mb-3 fw-bold">SHOP / 精選賣家</h4>
           <div className="d-flex justify-content-between align-items-center flex-wrap">
-              {selectedShops[0] && (
+              {shop && (
                 <ShopCardA
-                  avgRating={roundedRating}
-                  shopInfo={selectedShops[0]}
+                  avgRating={5}
+                  shopInfo={shop[0]}
                 />
               )}
-              {selectedShops[1] && (
+              {shop && (
                 <ShopCardA
-                  avgRating={roundedRating}
-                  shopInfo={selectedShops[1]}
+                  avgRating={4}
+                  shopInfo={shop[1]}
+                />
+              )}
+              {shop && (
+                <ShopCardA
+                  avgRating={5}
+                  shopInfo={shop[2]}
+                />
+              )}
+              {shop && (
+                <ShopCardA
+                  avgRating={5}
+                  shopInfo={shop[3]}
                 />
               )}
             </div>
