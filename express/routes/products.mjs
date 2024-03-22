@@ -28,24 +28,44 @@ router.get('/list', async (req, res) => {
   // if(req.params)
   const { type, rating } = req.query
 
-  console.log(`Type: ${type}`)
-  console.log(`Rating: ${rating}`)
+  // console.log(`Type: ${type}`)
+  // console.log(`Rating: ${rating}`)
 
-  console.log(req.query)
+  // console.log(req.query)
+
+  let query = 'SELECT * FROM product'
+  const params = []
+
+  // 構建SQL查詢條件
+  if (type || rating) {
+    query += ' WHERE'
+
+    if (type) {
+      query += ' type_id = ?'
+      params.push(type)
+    }
+
+    if (rating) {
+      if (type) {
+        query += ' AND'
+      }
+      query += ' rating_id = ?'
+      params.push(rating)
+    }
+  }
 
   try {
-    // 全部資料
-    let [products] = await db.execute(`SELECT * FROM product `)
+    // 使用參數化查詢來預防SQL注入攻擊
+    const [products] = await db.execute(query, params)
 
     const responseData = {
       products,
-      // totalItems,
-      // totalPages,
+      // 如果需要其他相關資訊，如totalItems或totalPages，可以在這裡計算並添加
     }
     res.json(responseData)
   } catch (error) {
-    console.log(error)
-    res.status(500)
+    console.error(error)
+    res.status(500).send('Server error')
   }
 })
 
@@ -66,9 +86,6 @@ router.post('/favProducts', async (req, res) => {
       .json({ success: false, message: 'Error adding product to favorites' })
   }
 })
-
-// 移除蒐藏
-// router
 
 // 新增商品
 router.post(
@@ -181,28 +198,62 @@ router.put(
   }
 )
 // 新增評論 單檔上傳
-router.post('/addReview', upload.single('reviewPhoto'), async (req, res) => {
-  if (req) {
-    // console.log('Uploaded file name: ', req.file.originalname)
-    console.log(req.body)
-    console.log(req.file)
-    const memberId = req.query.memberId
-    const rating = req.body.rating
-    const review = req.body.review
-    // const shop_id =
-    console.log(memberId, rating, review)
-    // const comment_img = req.file
+router.post(
+  '/addReview',
+  upload.single('reviewPhoto'),
+  async (req, res) => {
+    if (req) {
+      // console.log('Uploaded file name: ', req.file.originalname)
+      console.log(req.body)
+      console.log(req.file)
+      console.log(req.file.filename)
+      const memberId = req.query.memberId
+      const shopId = req.query.shopId
+      const rating = req.body.rating
+      const review = req.body.review
+      console.log(memberId, rating, review, shopId)
+      // const comment_img = req.file
+      if (req.file) {
+        const reviewImg = req.file.filename
+        const created_at = new Date()
+        const query =
+          'UPDATE `shop_comment`SET rating = ?, content = ?, comment_img = ?, created_at = ? WHERE member_id = ? AND shop_id = ?'
+        await db.execute(query, [
+          rating,
+          review,
+          reviewImg,
+          created_at,
+          memberId,
+          shopId,
+        ])
+      } else {
+        const query =
+          'UPDATE `shop_comment`SET rating = ?, content = ? WHERE member_id = ? AND shop_id = ?'
+        await db.execute(query, [rating, review, memberId, shopId])
+      }
 
-    const query =
-      'INSERT INTO `shop_comment` (member_id,rating,content) VALUES (?, ?, ?)'
-    await db.execute(query, [memberId, rating, review])
-
-    return res.json({ msg: 'success', code: '200' })
-  } else {
-    console.log('no upload')
-    return res.json({ msg: 'fail', code: '409' })
+      return res.json({ msg: 'success', code: '200' })
+    } else {
+      console.log('no upload')
+      return res.json({ msg: 'fail', code: '409' })
+    }
   }
   // res.json({ body: req.body, file: req.file })
+)
+
+// 拿訂單資料
+router.get('/orders', async (req, res) => {
+  try {
+    // 全部資料
+    let [orders] = await db.execute(`SELECT * FROM orders`)
+    const responseData = {
+      orders,
+    }
+    res.json(responseData)
+  } catch (error) {
+    console.log(error)
+    res.status(500)
+  }
 })
 
 // 商品詳細頁 ([0-9]+)

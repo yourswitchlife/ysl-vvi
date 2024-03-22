@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import ProductCard from '@/components/products/product-card'
 import BreadCrumb from '@/components/common/breadcrumb'
-// import Link from 'next/link'
 import styles from '../../styles/products/products.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
 import Navbar from '@/components/layout/navbar/navbar'
@@ -26,6 +25,10 @@ export default function Products() {
   // 篩選搜尋
   const [displayProducts, setDisplayProducts] = useState([])
   const [searchWord, setSearchWord] = useState('')
+
+  // 首頁連結過來篩選
+  const { type } = router.query;
+
   // const [sortBy, setSortBy] = useState('')
   console.log(products)
   // const [pFilter, setPFilter] = useState('')
@@ -54,11 +57,13 @@ export default function Products() {
   useEffect(() => {
     // console.log("page Changed: " + currentPage)
     const getProducts = async () => {
+      // 構建帶有查詢參數的URL
+      let queryUrl = `http://localhost:3005/api/products/list?page=${currentPage}`;
+      if (type) {
+        queryUrl += `&type=${type}`;
+      }
       try {
-        const res = await fetch(
-          `http://localhost:3005/api/products/list?page=${currentPage}`,
-          { credentials: 'include' }
-        )
+        const res = await fetch(queryUrl, { credentials: 'include' });
         const data = await res.json()
         console.log(data)
         if (Array.isArray(data.products)) {
@@ -69,11 +74,15 @@ export default function Products() {
       } catch (e) {
         console.error(e)
       }
-      router.push(`/products?page=${currentPage}`)
+      let newUrl = `/products?page=${currentPage}`;
+      if (type) {
+        newUrl += `&type=${type}`;
+      }
+      router.push(newUrl);
     }
 
     getProducts()
-  }, [currentPage, isLoggedIn, memberId])
+  }, [currentPage, type, router.isReady])
 
   // 控制蒐藏icon
   const handleToggleFav = async (id) => {
@@ -112,10 +121,12 @@ export default function Products() {
           method: 'POST',
           credentials: 'include',
         }
-      )
+        )
+        console.log('HIIII');
       if (!res.ok) {
         throw new Error('Failed to fetch fav products')
       }
+      
       MySwal.fire({
         icon: 'success',
         text: '成功加入收藏!',
@@ -191,30 +202,7 @@ export default function Products() {
       <GoTopButton />
       <Navbar searchWord={searchWord} setSearchWord={setSearchWord} />
       <Animation className="z-3 position-absolute"/>
-      {/* <Image
-        src="/images/product/p-index.jpg"
-        alt="product"
-        width={1440}
-        height={560}
-        priority={true}
-        className={`${styles.pIndexImg}`}
-      /> */}
       <PhoneTabNav />
-
-      <div
-        className={`${styles.pTitle} z-2 position-absolute d-lg-grid d-none`}
-      >
-        <div className="p-slogan">
-          <h4 className="text-white">Enjoy Your Switch Life!</h4>
-          <h1 className="text-white">
-            盡情挑選
-            <br />
-            喜歡的
-            <br />
-            遊戲
-          </h1>
-        </div>
-      </div>
       <div className="container pt-3 px-lg-5 px-4">
         <BreadCrumb />
         <div className="d-flex mb-3">
@@ -317,8 +305,8 @@ export default function Products() {
           {/* Display the ellipsis if there are pages after the last displayed page */}
           {currentPage <
             Math.ceil(displayProducts.length / ProductsPerPage) - 2 && (
-            <Pagination.Ellipsis disabled />
-          )}
+              <Pagination.Ellipsis disabled />
+            )}
 
           <Pagination.Next
             onClick={() => handlePageChange(currentPage + 1)}

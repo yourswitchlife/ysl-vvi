@@ -18,10 +18,7 @@ import ProductCard from '@/components/products/product-card'
 import WeeklySelect from '@/assets/weekly-select.svg'
 import { FaArrowRightLong } from 'react-icons/fa6'
 import { useAuth } from '@/hooks/use-Auth'
-import TypeSlider from '@/components/common/typeSlider'
-//calender
-import { chunk } from 'lodash'
-        
+import TypeSwiper from '@/components/common/typeSwiper'
 
 export default function Index() {
   const router = useRouter()
@@ -272,7 +269,7 @@ export default function Index() {
         </div>
       </section>
       <section className="sec3 container pt-5 pb-5">
-        <h4 className="text-white mb-2">特賣焦點</h4>
+        <h4 className="text-white mb-2 d-flex justify-content-center">特賣焦點</h4>
         <div className="container">
         <div className='row my-3'>
         {products.slice(20, 24).map((p) => {
@@ -355,12 +352,10 @@ export default function Index() {
           
         </div>
       </section>
-      <section className="container sec4 pt-5 pb-5">
+      <section className="container sec4 pt-5">
         <h4 className="text-white mb-2 d-flex justify-content-center">商品分類</h4>
-        <div className='d-flex flex-row'>
-          <TypeSlider />
-        </div>
       </section>
+      <TypeSwiper />
       <section className={`sec5 pt-5 pb-5 ${estyles.eventBox}`}>
       <div className='container'>
       <div className="row d-flex justify-content-between">

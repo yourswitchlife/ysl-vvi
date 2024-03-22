@@ -16,7 +16,6 @@ export default function Reviewed({
     <>
       <div className="d-flex align-items-center mb-2">
         <Image
-          // src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_Q4MggV6w-pawJAzZs7iz4yeTMsQrSJsddA&usqp=CAU"
           src={`http://localhost:3005/profile-pic/${pic}`}
           className="rounded-circle img-fluid"
           alt={pic}
@@ -39,7 +38,7 @@ export default function Reviewed({
             <div className={`${styles.reviewImg} d-flex`}>
               <div className={styles.h100100px}>
                 <Image
-                  src="/images/product/reviewed.webp"
+                  src={`http://localhost:3005/reviewImg/${comment_img}`}
                   alt="product"
                   width={80}
                   height={80}
