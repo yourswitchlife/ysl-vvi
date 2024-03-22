@@ -70,12 +70,15 @@
         font-size: 1.75rem;
         background-color: $white;
         color: $primary-black;
-        border: 2px solid #ccc;
+        // border: 2px solid #ccc;
         transition: all 0.3s ease;
         cursor: pointer;
       }
 
       .title_CTA:hover {
+        // padding: 15px 100px;
+        // width: 350px;
+        // height: 80px;
         background-image: linear-gradient(to right, #ff0000, #0051ba);
         color: $white;
         border-color: #ff0000;

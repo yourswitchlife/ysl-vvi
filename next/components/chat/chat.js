@@ -43,18 +43,18 @@ export default function Chat({ socket, memberId, memberData, room, isLoggedIn, s
     useEffect(() => {
         socket.on("receive_message", (data) => {
             setMessageList((list) => [...list, data])
-
         })
 
-        socket.on('popout', (msgData) => {
-            console.log('有人傳訊息給你喔:', msgData.message)
+        // socket.on('popout', (msgData) => {
+        //     console.log('有人傳訊息給你喔:', msgData.message)
             
-            setShowChat(true)
-        });
+        //     setShowChat(true)
+        // });
 
     }, [socket])
 
 
+  
 
     //聊天視窗縮放
     const [show, setShow] = useState(false)

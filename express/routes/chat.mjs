@@ -12,8 +12,10 @@ export function setupChat(io) {
     })
     socket.on('send_message', async (msgData) => {
       socket.to(msgData.room).emit('receive_message', msgData)
-      socket.to(msgData.receiver).emit('popout', msgData)
+      // socket.to(msgData.receiver).emit('popout', msgData)
       // const { id, message } = msgData
+      // await chatRead(id)
+      // socket.to(msgData.room).emit('update_chat_history', msgData)
       // await chatInsert(id, message)
       // socket.broadcast.emit('receive_message', msgData)
       console.log(msgData)
@@ -21,13 +23,13 @@ export function setupChat(io) {
       // socket.on('disconnect', () => {
       //   console.log(`用戶${socket.io}不在線上`)
       // })
-
-      //   const { room, message } = data
-      // Implement saveMessageToDatabase or similar
-      //   saveMessageToDatabase(room, message).then(() => {
-      //     socket.to(room).emit('receive_message', message)
-      //   })
     })
+
+    // socket.on('request_chat_history', async (data) => {
+    //   const { memberId, room } = data
+    //   const history = await chatRead(memberId, room)
+    //   socket.emit('update_chat_history', history)
+    // })
   })
 }
 
@@ -37,6 +39,14 @@ async function chatInsert(memberId, content) {
     [memberId, content]
   )
   return { id: chat.insertId, memberId, content }
+}
+
+async function chatRead(memberId, chatname) {
+  const [history] = await db.execute(
+    'SELECT * FROM Chatroom WHERE member_id=? AND chat_name=?',
+    [memberId, chatname]
+  )
+  return history
 }
 
 export default router

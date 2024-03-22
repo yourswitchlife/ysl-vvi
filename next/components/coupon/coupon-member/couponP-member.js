@@ -96,12 +96,12 @@ export default function CouponP({ currentFilter }) {
                         )}
                       </div>
                       <button
-                        className={`${styles.btnCTA} btn-sm ${(new Date(coupon.expiration_date) < new Date()) || coupon.status === 1 ? "btn-secondary" : "btn-info"} btn
+                        className={`${styles.btnCTA} btn-sm ${coupon.status === 1 ? "btn-secondary" : "btn-info"} btn
                         ms-3 col-6}`}
                         onClick={() => visit()}
                       >
                         <h5 className="">
-                          {(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? "不能用囉" : "再逛一下"}
+                          {coupon.status === 1? "不能用囉" : "再逛一下"}
                         </h5>
                       </button>
                     </div>

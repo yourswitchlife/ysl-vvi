@@ -16,7 +16,7 @@ import { useAuth } from '@/hooks/use-Auth'
 
 
 
-export default function MissionFavShop({ status }) {
+export default function Miss({ status }) {
   const { isLoggedIn, memberId } = useAuth()
   const router = useRouter()
   
