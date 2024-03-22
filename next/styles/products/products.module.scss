@@ -5,6 +5,7 @@
   position: relative;
   width: 100%;
   height: auto;
+  animation: BgcAnimation 3s ease-in-out;
 }
 
 .pTitle {
@@ -23,17 +24,17 @@
   margin: 0;
   gap: 12px;
 }
-.btnClean{
+.btnClean {
   background-color: #ffffff00;
   border-radius: 50px;
   border: 1px solid white;
   color: white;
   padding: 0px 20px;
-  &:hover{
-  background-color: #ffffff53;
+  &:hover {
+    background-color: #ffffff53;
   }
 }
-.activePage{
+.activePage {
   border: 2px solid white;
   background-color: #fff;
 }
@@ -45,64 +46,112 @@
     text-underline-offset: 5px;
   }
 }
-.link{
-  text-decoration: none ;
+.link {
+  text-decoration: none;
   // color: black;
 }
-.aniRed{
+.bgc {
+  animation: BgcAnimation 5s ease-in-out;
+}
+.aniRed {
+  position: absolute;
+  z-index: 3;
   height: 100px;
   width: 50px;
-  background-color: #ff0000;
-  margin-top: -100px;
+  top: calc(45vh - 100px);
+  right: calc((100vw - 100px) / 2 - 25px);
+  background-color: #ff000000;
   border-radius: 0 15px 15px 0;
-  animation: RedAnimation 3s ease-in-out
+  // animation: RedAnimation 4s ease-in-out;
+  animation: RedBigAnimation 3s ease-in-out;
+  animation-fill-mode: forwards;
 }
-.aniBlue{
+.aniBlue {
+  position: absolute;
+  z-index: 3;
   height: 100px;
   width: 50px;
+  top: calc(45vh + 100px);
+  right: calc((100vw - 100px) / 2 + 25px);
   background-color: #0077ff;
-  margin-top: 100px;
   border-radius: 15px 0 0 15px;
-  animation: BlueAnimation 3s ease-in-out
+  animation: BlueAnimation 4s ease-in-out;
+  animation-fill-mode: forwards;
 }
-.wrap{
-  top: 45vh;
-  left: calc((100vw - 100px)/2);
+
+@keyframes BgcAnimation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes RedAnimation {
   0% {
     transform: translateX(0px);
     transform: translateY(0px);
+    // top: calc(45vh - 100px);
   }
-  50% {
+  30% {
     transform: translateX(0px);
-    transform: translateY(100px); 
+    transform: translateY(100px);
     width: 50px;
-  height: 100px;
+    height: 100px;
+    top: calc(45vh - 100px);
+  }
+  60% {
+    transform: translateX(0px);
+    transform: translateY(100px);
+    width: 650px;
+    // top: calc(45vh - 200px);
+    // height: 398px;
+    right: 100px;
+  }
+  80% {
+    width: 460px;
+    right: 100px;
   }
   100% {
-    transform: translateX(0px);
-    transform: translateY(100px); 
     width: 460px;
-  height: 398px;
-  left: calc((100vw - 398px)/2);
+    right: 7vw;
+    height: 398px;
+    top: calc(45vh - 160px);
+    background-color: rgba(255, 59, 59, 0.6);
+    border-radius: 0 70px 0 0;
+  }
+}
+
+@keyframes RedBigAnimation {
+  0% {
+    transform: translateX(0px);
+    transform: translateY(100px);
+    width: 650px;
+    right: 100px;
+    width: 460px;
+    right: 100px;
+  }
+  30%{
+    background-color: #ff000000;
+      }
+  100% {
+    width: 460px;
+    right: 7vw;
+    height: 398px;
+    top: calc(45vh - 160px);
+    background-color: rgba(255, 59, 59, 0.6);
+    border-radius: 0 70px 0 0;
   }
 }
 
 @keyframes BlueAnimation {
   0% {
     transform: translateX(0px);
-    transform: translateY(0px);
-  }
-  50%{
-    transform: translateY(-100px); 
-    opacity: 1;
+    transform: translateY(100px);
   }
   100% {
-    transform: translateX(0px);
-    transform: translateY(-100px); 
-    opacity: 0;
+    background-color: #0077ff00;
   }
 }
 
