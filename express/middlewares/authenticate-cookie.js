@@ -32,6 +32,7 @@ export default function authenticate(req, res, next) {
 
     // 將user資料加到req中
     req.memberData = user
+    // console.log(req.memberData)
     next()
   })
 }

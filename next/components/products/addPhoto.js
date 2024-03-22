@@ -3,9 +3,7 @@ import { MdAddPhotoAlternate } from 'react-icons/md'
 import styles from '@/styles/products/product-detail.module.scss'
 
 export default function AddPhoto({
-  // setReviewPhoto = '',
-  fieldChange = () => {},
-  // changHandler = () => {},
+   fileChangHandler = () => {},
 }) {
 
   const [selectFile, setSelectFile] = useState(null)
@@ -50,13 +48,6 @@ export default function AddPhoto({
       )} 
       {filePicked ? (
         <div className='d-none'>
-          {/* <p>Filename: {selectFile.name}</p>
-          <p>Filetype: {selectFile.type}</p>
-          <p>Size in bytes: {selectFile.size}</p>
-          <p>
-            lastModifiedDate:
-            {selectFile.lastModifiedDate.toLocaleDateString()}
-          </p> */}
         </div>
       ) : (
         <>
@@ -70,8 +61,8 @@ export default function AddPhoto({
           id="reviewPhoto"
           name="reviewPhoto"
           onChange={(e) => {
-            fieldChange(e)
             changHandler(e)
+            fileChangHandler(e)
           }}
           accept="image/*"
         /></>

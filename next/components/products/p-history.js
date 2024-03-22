@@ -24,7 +24,7 @@ export default function PHistory({ historyRecords }) {
       </div>
       <div
       id="scrollableContent"
-        style={{ height: '332px', overflow: 'scroll' }}
+        style={{ height: '332px', overflow: 'hidden' }}
       >
           {historyRecords.map((v, i) => {
             return (
