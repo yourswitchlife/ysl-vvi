@@ -10,6 +10,8 @@ import BreadCrumb from '@/components/common/breadcrumb'
 import { useAuth } from '@/hooks/use-Auth'
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
 
 //images
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
@@ -358,14 +360,16 @@ export default function New() {
                   </div>
                   {/* 商品語言 */}
                   <div className="mb-3 col-lg-6 col-12 d-flex ">
-                    <label
-                      htmlFor="pLanguage"
-                      className="h6 me-2 flex-shrink-0"
+                  <label
+                      htmlFor="pImgs"
+                      className="h6 me-2 flex-shrink-0 d-flex align-items-end"
                     >
-                      <h5 className="text-dark">
-                        語言<span className="text-danger">*</span>
-                      </h5>
+                      <h5 className="text-dark mb-0">語言</h5>
+                      <p className="text-secondary mb-1">
+                        (可複選)<span className="text-danger h5">*</span>
+                      </p>
                     </label>
+
                     {languageOptions.map((v, i) => {
                       return (
                         <label className="me-3 text-dark" key={i}>
