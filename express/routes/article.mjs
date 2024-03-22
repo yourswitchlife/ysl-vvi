@@ -151,7 +151,7 @@ router.get('/:aid', async (req, res) => {
       `SELECT *, DATE_FORMAT(create_at, '%Y-%m-%d') AS create_at
       FROM article_comment 
       JOIN member ON article_comment.member_id = member.id
-      WHERE article_comment.article_id = ?`,
+      WHERE article_comment.article_id = ? ORDER BY create_at DESC`,
       [aid]
     )
     const resData = {
@@ -164,13 +164,11 @@ router.get('/:aid', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' })
   }
 })
-router.post('/article/:aid', async (req, res) => {
+router.post('article/:aid', async (req, res) => {
   try {
     const { aid } = req.params
     const { emo } = req.body
 
-    // 在这里执行更新数据库的操作，将 emo 更新为新的值
-    // 假设您的数据库中有名为 article 的表，其中有一个名为 emo 的字段
     const updateResult = await db.execute(
       `UPDATE article_comment SET emo = ? WHERE article_id = ?`,
       [emo, aid]
@@ -206,26 +204,25 @@ router.get('/list/:sid', async (req, res) => {
   }
 })
 
-router.get('/comment', async (req, res) => {
+router.get('/comment/comment', async (req, res) => {
   try {
-    const [article] = await db.execute(`SELECT * FROM article_comment`)
-    res.json(article)
-    console.log(article)
+    let [comment] = await db.execute(`SELECT * FROM article_comment`)
+    res.json(comment)
+    console.log(comment)
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Internal Server Error' })
   }
 })
 
-router.post('/comment', async (req, res) => {
+router.post('/comment/comment', async (req, res) => {
   try {
     const { content } = req.body
     console.log(content)
     // 在这里执行将评论存储到数据库的操作
     // 假设您使用的是 article_comment 表存储评论数据
     const [result] = await db.execute(
-      `INSERT INTO article_comment (content) VALUES (?)
-      `,
+      `INSERT INTO article_comment (content, article_id, emo, member_id) VALUES (?, 3, 1, 3)`,
       [content]
     )
 

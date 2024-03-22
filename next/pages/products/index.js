@@ -27,6 +27,10 @@ export default function Products() {
   // 篩選搜尋
   const [displayProducts, setDisplayProducts] = useState([])
   const [searchWord, setSearchWord] = useState('')
+
+  // 首頁連結過來篩選
+  const { type } = router.query;
+
   // const [sortBy, setSortBy] = useState('')
   console.log(products)
   // const [pFilter, setPFilter] = useState('')
@@ -55,11 +59,13 @@ export default function Products() {
   useEffect(() => {
     // console.log("page Changed: " + currentPage)
     const getProducts = async () => {
+      // 構建帶有查詢參數的URL
+      let queryUrl = `http://localhost:3005/api/products/list?page=${currentPage}`;
+      if (type) {
+        queryUrl += `&type=${type}`;
+      }
       try {
-        const res = await fetch(
-          `http://localhost:3005/api/products/list?page=${currentPage}`,
-          { credentials: 'include' }
-        )
+        const res = await fetch(queryUrl, { credentials: 'include' });
         const data = await res.json()
         console.log(data)
         if (Array.isArray(data.products)) {
@@ -70,11 +76,15 @@ export default function Products() {
       } catch (e) {
         console.error(e)
       }
-      router.push(`/products?page=${currentPage}`)
+      let newUrl = `/products?page=${currentPage}`;
+      if (type) {
+        newUrl += `&type=${type}`;
+      }
+      router.push(newUrl);
     }
 
     getProducts()
-  }, [currentPage, isLoggedIn, memberId])
+  }, [currentPage, type, router.isReady])
 
   // 控制蒐藏icon
   const handleToggleFav = async (id) => {
@@ -299,8 +309,8 @@ export default function Products() {
           {/* Display the ellipsis if there are pages after the last displayed page */}
           {currentPage <
             Math.ceil(displayProducts.length / ProductsPerPage) - 2 && (
-            <Pagination.Ellipsis disabled />
-          )}
+              <Pagination.Ellipsis disabled />
+            )}
 
           <Pagination.Next
             onClick={() => handlePageChange(currentPage + 1)}
