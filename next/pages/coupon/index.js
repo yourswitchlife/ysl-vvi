@@ -5,10 +5,12 @@ import Image from 'next/image'
 import styles from '@/styles/coupon/coupon.module.scss'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import Swal from 'sweetalert2'
 
 //components
 import GoTopButton from '@/components/go-to-top/go-top-button'
 import CouponUni from '@/components/coupon/coupon-uni'
+
 
 //pictures
 import banner from '@/public/images/coupon/bgg.png'
@@ -23,16 +25,33 @@ import titleCm from '@/public/images/coupon/titleCm.png'
 
 import player from '@/public/images/coupon/sectionTwo.png'
 
-
+//hooks
+import { useAuth } from '@/hooks/use-Auth'
 
 export default function CouponPage() {
   const router = useRouter()
+  const { isLoggedIn, memberId } = useAuth()
   const GoRegister =()=>{
-    router.push('/member/register')
+    if (!isLoggedIn || !memberId) {
+      router.push('/member/register')
+    }else{
+      Swal.fire({
+        icon: "info",
+        title: "已經是會員囉",
+        // imageUrl: '/images/mission/redMario.png', 
+        // imageWidth: 80, 
+        // imageHeight: 80, 
+        // imageAlt: 'Red Mario', 
+      })
+    }
   }
 
   const GoMission =()=>{
-    router.push('/member/mission-ing')
+    if (!isLoggedIn || !memberId) {
+      router.push('/member/login')
+    }else{
+      router.push('/member/mission-ing')
+    }
   }
 
 
