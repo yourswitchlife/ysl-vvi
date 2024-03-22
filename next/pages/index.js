@@ -19,6 +19,7 @@ import WeeklySelect from '@/assets/weekly-select.svg'
 import { FaArrowRightLong } from 'react-icons/fa6'
 import { useAuth } from '@/hooks/use-Auth'
 import TypeSwiper from '@/components/common/typeSwiper'
+import { chunk } from 'lodash' 
 
 export default function Index() {
   const router = useRouter()
