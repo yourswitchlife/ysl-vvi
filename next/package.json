@@ -21,6 +21,7 @@
     "lottie-react": "^2.4.0",
     "moment": "^2.30.1",
     "next": "^14.0.1",
+    "primereact": "^10.5.3",
     "prop-types": "^15.8.1",
     "react": "18.2.0",
     "react-bootstrap": "^2.10.1",

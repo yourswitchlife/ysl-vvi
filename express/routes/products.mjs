@@ -1,6 +1,7 @@
 import express, { query } from 'express'
 import db from '../configs/db.mjs'
 import multer from 'multer'
+import authenticate from '../middlewares/authenticate-cookie.js'
 
 const router = express.Router()
 const storage = multer.diskStorage({
@@ -138,6 +139,61 @@ router.post(
     } else {
       console.log('no upload')
       return res.json({ msg: 'fail', code: '409' })
+    }
+  }
+)
+// 編輯商品
+router.put(
+  '/edit/:pid',
+  authenticate,
+  upload.fields([
+    { name: 'pCover', maxCount: 1 },
+    { name: 'pImgs', maxCount: 3 },
+  ]),
+  async (req, res) => {
+    try {
+      const memberId = req.memberData.id
+      let { pid } = req.params
+      const img = req.files
+      const p = req.body
+
+      let pCover = p.pCover
+      if (img.pCover && img.pCover.length > 0) {
+        pCover = img.pCover[0].filename
+      }
+
+      let pImgs = img.pImgs || []
+      if (img.pImgs && img.pImgs.length > 0) {
+        pImgs = img.pImgs.map((file) => file.filename)
+      }
+      pImgs = pImgs.join(',')
+
+      let pLanguage = p.pLanguage || []
+      if (typeof pLanguage === 'string') {
+        pLanguage = pLanguage.split(',')
+      }
+      pLanguage = pLanguage.map((v) => v.split('-')[0]).join(',')
+
+      //更新資料庫
+      const query = `UPDATE product SET name=?, type_id=?, price=?, img_cover=?, img_details=?, language=?, rating_id=?, description=?, release_time=? WHERE member_id=? AND id=?`
+      await db.execute(query, [
+        p.pName,
+        parseInt(p.pType),
+        parseInt(p.pPrice),
+        pCover,
+        pImgs,
+        pLanguage,
+        parseInt(p.pRating),
+        p.pDiscribe,
+        p.release_time,
+        memberId,
+        pid,
+      ])
+
+      res.json({ message: '商品更新成功', code: 200 })
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ message: 'Server error' })
     }
   }
 )
