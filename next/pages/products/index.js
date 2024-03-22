@@ -15,11 +15,9 @@ import Pagination from 'react-bootstrap/Pagination'
 import Animation from '@/components/products/animation'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { useLoader } from '@/hooks/use-loader'
 const MySwal = withReactContent(Swal)
 
 export default function Products() {
-  const { loader } = useLoader()
   const { isLoggedIn, memberId } = useAuth()
   const [products, setProducts] = useState([])
   const router = useRouter()
@@ -201,8 +199,6 @@ export default function Products() {
 
   return (
     <>
-    <main>
-    {loader()}
       <GoTopButton />
       <Navbar searchWord={searchWord} setSearchWord={setSearchWord} />
       <Animation className="z-3 position-absolute"/>
@@ -370,7 +366,6 @@ export default function Products() {
         </div>
       </div>
       <Footer />
-      </main>
     </>
   )
 }
