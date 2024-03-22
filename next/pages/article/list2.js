@@ -55,8 +55,8 @@ export default function list() {
         <div
           className={`container d-flex justify-content-between px-lg-5 ${style.tag_link}`}
         >
-          <div className={`  ${style.index_padding}`}>
-            <div>
+          <div className={` ${style.index_padding}`}>
+            <div className={` ${style.index_text}`}>
               <Link href="/article" className="text-decoration-none text-white">
                 首頁&gt;
               </Link>
@@ -143,7 +143,7 @@ export default function list() {
 
                       </div>
                       <div className={`${style.txt} mx-4 p-3`}>
-                        <div>
+                        <div className={`${style.tag_main}`}>
                           <div
                             className={`badge text-bg-secondary mb-3 ${style.tag_btn}`}
                           >

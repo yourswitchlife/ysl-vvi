@@ -55,12 +55,10 @@ router.get('/', async (req, res) => {
   const perPage3 = 3
   const perPage4 = 5
 
-
   const startIndex = (page - 1) * perPage
   const startIndex2 = (page - 1) * perPage2
   const startIndex3 = (page - 1) * perPage3
   const startIndex4 = (page - 1) * perPage4
-
 
   try {
     let [article] = await db.execute(
