@@ -1,12 +1,18 @@
 @import "../valuable.scss";
 
 .eventBox{
-    background-color: $light-gray;
+    // background-color: $light-gray;
+    background: $dark-gray;
+    // background: linear-gradient(180deg, rgb(25, 25, 25) 0%, rgba(112,112,112,1) 30%, rgba(124,124,124,1) 43%, rgba(113,113,113,1) 70%, rgba(19,19,19,1) 100%);
 }
-
+.calender{
+    border: 1px solid $gray;
+    padding: 48px 50px 100px;
+    border-radius: 20px;
+}
 .tablestyle{
     width: 100%;
-    height: 400px;
+    // height: 400px;
     // background-color: rgba(255, 255, 255, 0.764);
     // border: 3px solid white;
     border-radius: 10px;
@@ -15,10 +21,11 @@
     .tableCell {
         width: 70px; // 或其他固定的宽度
         height: 90px; // 或根据需要设置最小高度
-        text-align: center; // 可选，如果你想内容居中显示
+        text-align: center;
+        color: $bright-gray;
       }
     .chosenDate {
-        background-color: gold;
+        background-color: $info;
         border-radius: 50%;
     }
     .today {
@@ -34,11 +41,34 @@
             text-decoration: underline;
             text-underline-offset: 7px;
             border-radius: 50%;
+            color: $primary-black;
         }
     }
     .calenderHead{
+        border-top: 1px solid $gray;
         border-bottom: 1px solid $gray;
-        color: $gray;
+        color: $light-gray;
+        height: 100px;
     }
 }
 
+.cirleToday{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: $red-secondary;
+}
+.cirleSelectDate{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: $info;
+}
+.moreLink{
+    color: $red-secondary;
+    &:hover{
+        color: $danger;
+        text-decoration: underline;
+        text-underline-offset: 7px;
+    }
+}

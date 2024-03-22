@@ -12,6 +12,7 @@ import ProductList from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
 import IndexSlider from '@/components/common/index-slider'
 import ShopCardA from '@/components/shop/shop-card-a'
+import ShopCardB from '@/components/shop/shop-card-b'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 // import Navbar from '@/components/layout/navbar/navbar'
 import GoTopButton from '@/components/go-to-top/go-top-button'
@@ -180,6 +181,7 @@ export default function Index() {
       const data = await res.json()
 
       if (data) {
+        // console.log(data.hot2)
         setHot(data.hot2)
       }
 
@@ -360,19 +362,19 @@ export default function Index() {
 
         </div>
       </section>
-      <section className="container sec4 pt-5">
+      <section className="container sec4 py-5 mb-5">
         <h4 className="text-white mb-2 d-flex justify-content-center">商品分類</h4>
         <TypeSwiper />
       </section>
       <section className={`sec5 pt-5 pb-5 ${estyles.eventBox}`}>
         <div className='container'>
           <div className="row d-flex justify-content-between">
-            <div className="col-12 col-md-6">
-              <h4 className="mb-2 fw-bold">ARTICLE / 精選文章</h4>
+            <div className="col-12 col-md-5">
+              <h4 className="my-5 text-light fw-bold">ARTICLE / 精選文章</h4>
               {hot.map((h) => {
                 return (
-                  <div className={style.hot_main}>
-                    <div className={style.hot_main_img}>
+                  <div className={`${style.hot_main} mb-3`}>
+                    <div className={`${style.hot_main_img} col-4`}>
                       <Link href={`/article/${h.ai_id}`}>
                         <img
                           src={`/images/article/${h.article_img}`}
@@ -380,28 +382,34 @@ export default function Index() {
                         />
                       </Link>
                     </div>
-                    <div className={style.time}>
+                    <div className={`${style.time} col-8`}>
                       <div className="d-flex justify-content-between pb-2 ">
                         <div className={`btn btn-danger ${style.custom_btn}`}>
                           Hot
                         </div>
-                        <p className="text-black d-flex align-items-center">
+                        <p className="text-light d-flex align-items-center">
                           {h.article_time}
                         </p>
                       </div>
                       <Link href={`/article/${h.ai_id}`} className={style.a}>
-                        <p>
+                        <h6>
                           {h.article_title}
-                        </p>
+                        </h6>
                       </Link>
                     </div>
                   </div>
                 )
               })}
             </div>
-            <div className="col-12 col-md-6">
-              <div className='mb-3'>
-                <h4 className="mb-2 fw-bold">EVENT / 本月優惠活動</h4>
+            <div className="col-12 col-md-7">
+              <div className={`${estyles.calender} mb-3`}>
+                <h4 className="mb-2 text-light fw-bold">EVENT / 本月優惠活動</h4>
+                <div className='d-flex align-items-center justify-content-start mb-5'>
+                  <div className={estyles.cirleToday}></div>
+                  <h6 className='text-secondary ms-1'>TODAY</h6>
+                  <div className={`${estyles.cirleSelectDate} ms-3`}></div>
+                  <h6 className='text-secondary ms-1'>SELECT DATE</h6>
+                </div>
                 <h6 className='text-white d-none' id="yearAndMonth">{`${now.y}/${now.m}/${myDate ? myDate : ''}`}</h6>
                 <table className={`align-middle ${estyles.tablestyle}`}>
                   <thead id="title">
@@ -434,40 +442,49 @@ export default function Index() {
                     })}
                   </tbody>
                 </table>
-              </div>
-              <div>
-                <h4 className="mb-3 fw-bold">SHOP / 精選賣家</h4>
-                <div className="d-flex justify-content-between align-items-center flex-wrap">
-                  {shop && (
-                <ShopCardA
-                  avgRating={5}
-                  shopInfo={shop[0]}
-                />
-              )}
-              {shop && (
-                <ShopCardA
-                  avgRating={4}
-                  shopInfo={shop[1]}
-                />
-              )}
-              {shop && (
-                    <ShopCardA
-                      avgRating={5}
-                      shopInfo={shop[2]}
-                    />
-                  )}
-                  {shop && (
-                    <ShopCardA
-                      avgRating={5}
-                      shopInfo={shop[3]}
-                    />
-                  )}
+                <div className='d-flex justify-content-end'>
+                <Link href='./coupon' className='text-decoration-none'>
+                  <h5 className={`my-3 pe-4 ${estyles.moreLink}`}>More event ...</h5>
+                </Link>
                 </div>
               </div>
             </div>
           </div>
+          
         </div>
       </section>
+      <section className='pt-5 pb-5 container'>
+      <div className='mb-4'>
+                  <h4 className="mb-5 fw-bold text-light">SHOP / 精選賣家</h4>
+                  <div className="d-flex justify-content-between align-items-center flex-wrap">
+                    {shop && (
+                  <ShopCardA
+                    avgRating={5}
+                    shopInfo={shop[0]}
+                  />
+                )}
+                {shop && (
+                  <ShopCardB
+                    avgRating={4}
+                    shopInfo={shop[1]}
+                  />
+                )}
+                {shop && (
+                      <ShopCardA
+                        avgRating={5}
+                        shopInfo={shop[2]}
+                      />
+                    )}
+                    {shop && (
+                      <ShopCardB
+                        avgRating={5}
+                        shopInfo={shop[3]}
+                      />
+                    )}
+                  </div>
+          </div>
+      </section>
+      
       <Footer />
     </>
   )
