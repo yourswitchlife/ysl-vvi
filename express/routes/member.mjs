@@ -1,6 +1,6 @@
-import express from 'express';
-const router = express.Router();
-import db from '../configs/db.mjs';
+import express from 'express'
+const router = express.Router()
+import db from '../configs/db.mjs'
 
 // middleware
 import authenticate from '../middlewares/authenticate-cookie.js'
@@ -11,9 +11,7 @@ import jwt from 'jsonwebtoken'
 import multer from 'multer'
 import path from 'path'
 // OTP NM API
-import nodemailer from 'nodemailer';
-
-
+import nodemailer from 'nodemailer'
 
 router.post('/register', async function (req, res) {
   const { account, email } = req.body
@@ -40,17 +38,19 @@ router.post('/register', async function (req, res) {
 
     password = await generateHash(password) // hash加密密碼
 
-    const [insertedMember] = await db.execute('INSERT INTO member (account, password, email, level_point, shop_valid, created_at) VALUES (?, ?, ?, ?, ?, ?)',
-      [account, password, email, level_point, shop_valid, created_at]);
+    const [insertedMember] = await db.execute(
+      'INSERT INTO member (account, password, email, level_point, shop_valid, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+      [account, password, email, level_point, shop_valid, created_at]
+    )
 
-    const lastInsertId = insertedMember.insertId;
+    const lastInsertId = insertedMember.insertId
     // console.log(lastInsertId)
 
-    const conponGiftQuery = `INSERT INTO member_coupon (member_id, coupon_id, status) VALUES (?, 1, 0)`;
-    await db.execute(conponGiftQuery, [lastInsertId]);
+    const conponGiftQuery = `INSERT INTO member_coupon (member_id, coupon_id, status) VALUES (?, 1, 0)`
+    await db.execute(conponGiftQuery, [lastInsertId])
 
-    const missionStartQuery = `INSERT INTO mission (mission_id, member_id, status) VALUES (2, ?, 0)`;
-    await db.execute(missionStartQuery, [lastInsertId]);
+    const missionStartQuery = `INSERT INTO mission (mission_id, member_id, status) VALUES (2, ?, 0)`
+    await db.execute(missionStartQuery, [lastInsertId])
 
     res.status(201).send({ message: '會員註冊成功' })
   } catch (error) {
@@ -229,7 +229,7 @@ router.put('/account/:memberId', async (req, res) => {
 router.patch('/levelup', async (req, res) => {
   const memberId = req.query.memberId
   console.log(memberId)
-  const { totalPrice } = req.body;
+  const { totalPrice } = req.body
   console.log(totalPrice)
   try {
     // 更新會員積分
@@ -237,8 +237,8 @@ router.patch('/levelup', async (req, res) => {
     UPDATE member
     SET level_point = level_point + ?
     WHERE id = ?;
-  `;
-    const [result] = await db.execute(updatePointQuery, [totalPrice, memberId]);
+  `
+    const [result] = await db.execute(updatePointQuery, [totalPrice, memberId])
     // console.log('SQL 查詢結果:', result);
     if (result.affectedRows > 0) {
       // 最新的level_point
@@ -246,9 +246,9 @@ router.patch('/levelup', async (req, res) => {
       SELECT level_point
       FROM member
       WHERE id = ?;
-      `;
-      const [memberResult] = await db.execute(getMemberQuery, [memberId]);
-      const updatedLevelPoint = memberResult[0].level_point;
+      `
+      const [memberResult] = await db.execute(getMemberQuery, [memberId])
+      const updatedLevelPoint = memberResult[0].level_point
 
       // 檢查level_point
       if (updatedLevelPoint >= 6000 && updatedLevelPoint < 13000) {
@@ -256,59 +256,74 @@ router.patch('/levelup', async (req, res) => {
         SELECT *
         FROM member_coupon
         WHERE member_id = ? AND coupon_id = ?;
-        `;
-        const [couponResult] = await db.execute(checkCouponQuery, [memberId, 64]);
+        `
+        const [couponResult] = await db.execute(checkCouponQuery, [
+          memberId,
+          64,
+        ])
         if (couponResult.length === 0) {
           // 1張50折價
-          await db.execute('INSERT INTO member_coupon (member_id, coupon_id, status, created_at)VALUES (?, ?, ?, NOW())', [memberId, 64, 0]);
-          res.json({ message: '恭喜升級！成功獲得1張高手獎勵優惠券！' });
-          return;
+          await db.execute(
+            'INSERT INTO member_coupon (member_id, coupon_id, status, created_at)VALUES (?, ?, ?, NOW())',
+            [memberId, 64, 0]
+          )
+          res.json({ message: '恭喜升級！成功獲得1張高手獎勵優惠券！' })
+          return
         }
-
       } else if (updatedLevelPoint >= 13000 && updatedLevelPoint < 20000) {
         const checkCouponQuery = `
         SELECT *
         FROM member_coupon
         WHERE member_id = ? AND coupon_id = ?;
-        `;
-        const [couponResult] = await db.execute(checkCouponQuery, [memberId, 65]);
+        `
+        const [couponResult] = await db.execute(checkCouponQuery, [
+          memberId,
+          65,
+        ])
         if (couponResult.length === 0) {
           // 2張100折價
-          await db.execute(`
+          await db.execute(
+            `
             INSERT INTO member_coupon (member_id, coupon_id, status, created_at)
             VALUES (?, ?, ?, NOW()), (?, ?, ?, NOW())
-            `, [memberId, 65, 0, memberId, 65, 0]);
-          res.json({ message: '恭喜升級！成功獲得2張菁英獎勵優惠券！' });
-          return;
+            `,
+            [memberId, 65, 0, memberId, 65, 0]
+          )
+          res.json({ message: '恭喜升級！成功獲得2張菁英獎勵優惠券！' })
+          return
         }
-
       } else if (updatedLevelPoint >= 20000) {
         const checkCouponQuery = `
         SELECT *
         FROM member_coupon
         WHERE member_id = ? AND coupon_id = ?;
-        `;
-        const [couponResult] = await db.execute(checkCouponQuery, [memberId, 66]);
+        `
+        const [couponResult] = await db.execute(checkCouponQuery, [
+          memberId,
+          66,
+        ])
         if (couponResult.length === 0) {
           // 2張200折價
-          await db.execute(`
+          await db.execute(
+            `
             INSERT INTO member_coupon (member_id, coupon_id, status, created_at)
             VALUES (?, ?, ?, NOW()), (?, ?, ?, NOW())
-            `, [memberId, 66, 0, memberId, 66, 0]);
-          res.json({ message: '恭喜升級！成功獲得2張大師獎勵優惠券！' });
-          return;
+            `,
+            [memberId, 66, 0, memberId, 66, 0]
+          )
+          res.json({ message: '恭喜升級！成功獲得2張大師獎勵優惠券！' })
+          return
         }
       }
-      res.json({ message: '會員資料更新成功' });
+      res.json({ message: '會員資料更新成功' })
     } else {
-      throw new Error('沒有找到符合條件的會員');
+      throw new Error('沒有找到符合條件的會員')
     }
   } catch (error) {
     console.error('更新會員資料失敗:', error)
     res.status(500).json({ error: '更新會員資料失敗' })
   }
-});
-
+})
 
 // pic改按鈕上傳
 const storage = multer.diskStorage({
@@ -540,12 +555,13 @@ router.get('/fav-shop', async (req, res) => {
 
 // fav-shop-cancel
 router.patch('/unfav-shop', async (req, res) => {
-  const memberId = req.query.memberId;
-  const sellerId = req.query.sellerId;
+  const memberId = req.query.memberId
+  const sellerId = req.query.sellerId
 
   try {
-    const unfavQuery = 'UPDATE fav_shop SET valid = 0 WHERE buyer_id = ? AND seller_id = ?';
-    const [unfavshopResult] = await db.execute(unfavQuery, [memberId, sellerId]);
+    const unfavQuery =
+      'UPDATE fav_shop SET valid = 0 WHERE buyer_id = ? AND seller_id = ?'
+    const [unfavshopResult] = await db.execute(unfavQuery, [memberId, sellerId])
 
     if (unfavshopResult.affectedRows > 0) {
       res.status(200).json({ success: true, message: '取消收藏成功' })
@@ -633,14 +649,17 @@ router.get('/fav-product', async (req, res) => {
 
 // fav-product-cancel
 router.patch('/unfav-product', async (req, res) => {
-  const memberId = req.body.memberId;
-  const productIds = req.body.productIds; // array
+  const memberId = req.body.memberId
+  const productIds = req.body.productIds // array
   // console.log(productIds)
   const productHolders = productIds.map(() => '?').join(', ')
 
   try {
-    const unfavPQuery = `UPDATE fav_product SET valid = 0 WHERE member_id = ? AND id IN (${productHolders})`;
-    const [unfavPResult] = await db.execute(unfavPQuery, [memberId, ...productIds]);
+    const unfavPQuery = `UPDATE fav_product SET valid = 0 WHERE member_id = ? AND id IN (${productHolders})`
+    const [unfavPResult] = await db.execute(unfavPQuery, [
+      memberId,
+      ...productIds,
+    ])
 
     if (unfavPResult.affectedRows > 0) {
       res.status(200).json({ success: true, message: '取消收藏成功' })
@@ -652,7 +671,6 @@ router.patch('/unfav-product', async (req, res) => {
     res.status(500).json({ success: false, message: '取消收藏失敗' })
   }
 })
-
 
 // order (含篩選) 分頁待修
 router.get('/order', async (req, res) => {
@@ -737,18 +755,16 @@ router.get('/order', async (req, res) => {
       items: data, //含productItems
       totalseller,
       totalPages,
-    };
+    }
     // console.log(offset)
 
-    res.json(responseData);
+    res.json(responseData)
     // console.log(responseData)
-
   } catch (error) {
     console.error('取得收藏列表出錯:', error)
     res.status(500).send('伺服器錯誤')
   }
 })
-
 
 // coupon notify
 // trigger
@@ -775,87 +791,84 @@ router.get('/order', async (req, res) => {
 })(); */
 
 export const triggerWithWebsocket = (io) => {
-  let pollingIntervalId = null;
-  const pollingInterval = 6 * 1000; // s
+  let pollingIntervalId = null
+  const pollingInterval = 6 * 1000 // s
 
-  const memberSockets = new Map(); // 儲存已連接的客戶端的 memberId 和 socket 的映射
+  const memberSockets = new Map() // 儲存已連接的客戶端的 memberId 和 socket 的映射
 
   const startPolling = () => {
     if (!pollingIntervalId) {
       console.log('開始輪詢')
-      pollingIntervalId = setInterval(pollDatabase, pollingInterval);
+      pollingIntervalId = setInterval(pollDatabase, pollingInterval)
     }
-  };
+  }
 
   const stopPolling = () => {
     if (pollingIntervalId && memberSockets.size === 0) {
-      clearInterval(pollingIntervalId);
-      pollingIntervalId = null;
+      clearInterval(pollingIntervalId)
+      pollingIntervalId = null
     }
-  };
+  }
 
   const pollDatabase = async () => {
     for (let [memberId, socket] of memberSockets.entries()) {
-      sendUnreadCount(socket, memberId);
+      sendUnreadCount(socket, memberId)
     }
-  };
+  }
 
   const sendUnreadCount = async (socket, memberId) => {
     try {
       // console.log('收到登入會員id開始掛載通知:', memberId);
-      const [results] = await db.query("SELECT COUNT(*) AS unreadCount FROM notify_coupon WHERE member_id = ? AND valid = 0", [memberId]);
-      socket.emit('unread_count', results[0]['unreadCount']);
-      console.log('未讀通知數:', results[0]['unreadCount']);
+      const [results] = await db.query(
+        'SELECT COUNT(*) AS unreadCount FROM notify_coupon WHERE member_id = ? AND valid = 0',
+        [memberId]
+      )
+      socket.emit('unread_count', results[0]['unreadCount'])
+      console.log('未讀通知數:', results[0]['unreadCount'])
     } catch (error) {
-      console.error('Database query error:', error);
-      socket.emit('error', 'An error occurred while fetching unread counts.');
+      console.error('Database query error:', error)
+      socket.emit('error', 'An error occurred while fetching unread counts.')
     }
-  };
+  }
 
   io.on('connection', (socket) => {
     // console.log('A member connected.');
 
     socket.on('member_connected', (data) => {
       // console.log('A member reading.');
-      socket.memberId = data.memberId;
-      memberSockets.set(socket.memberId, socket);
-      sendUnreadCount(socket, data.memberId); // 初始發送
-      startPolling(); // 開始輪詢
-    });
+      socket.memberId = data.memberId
+      memberSockets.set(socket.memberId, socket)
+      sendUnreadCount(socket, data.memberId) // 初始發送
+      startPolling() // 開始輪詢
+    })
 
     socket.on('disconnect', () => {
       // console.log('Member disconnected.');
-      memberSockets.delete(socket.memberId);
-      stopPolling();
-    });
-  });
-};
-
-
-
-
-
-
+      memberSockets.delete(socket.memberId)
+      stopPolling()
+    })
+  })
+}
 
 // coupon notify render
 // 在 Express 應用中設置路由
 router.get('/notify-coupon', async (req, res) => {
-  const memberId = req.query.memberId;
+  const memberId = req.query.memberId
   // console.log(memberId)
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 6;
-  const offset = (page - 1) * limit;
+  const page = parseInt(req.query.page) || 1
+  const limit = parseInt(req.query.limit) || 6
+  const offset = (page - 1) * limit
 
   try {
     // Total items
     const [totalItemsResult] = await db.execute(
       'SELECT COUNT(*) AS totalItems FROM notify_coupon WHERE member_id = ?',
       [memberId]
-    );
-    const totalItems = totalItemsResult[0].totalItems;
+    )
+    const totalItems = totalItemsResult[0].totalItems
 
     // Total pages
-    const totalPages = Math.ceil(totalItems / limit);
+    const totalPages = Math.ceil(totalItems / limit)
 
     const query = `
     SELECT
@@ -874,31 +887,30 @@ router.get('/notify-coupon', async (req, res) => {
     ORDER BY
       nc.created_at DESC
     LIMIT ?, ?
-  `;
-    const [data] = await db.query(query, [memberId, offset, limit]);
+  `
+    const [data] = await db.query(query, [memberId, offset, limit])
     const responseData = {
       items: data,
       totalItems,
       totalPages,
-    };
+    }
     // console.log(responseData)
-    res.json(responseData);
-
+    res.json(responseData)
   } catch (error) {
-    console.error('Database query error:', error);
-    res.status(500).json({ error: 'error fetching notify coupon.' });
+    console.error('Database query error:', error)
+    res.status(500).json({ error: 'error fetching notify coupon.' })
   }
-});
+})
 // notify readed
 router.put('/notify-couponRead', async (req, res) => {
-  const memberId = req.query.memberId;
+  const memberId = req.query.memberId
   try {
     const query = `
       UPDATE notify_coupon
       SET valid = 1
       WHERE member_id = ?
-    `;
-    await db.query(query, [memberId]);
+    `
+    await db.query(query, [memberId])
 
     //不想重整頁面
     const newQuery = `
@@ -915,16 +927,13 @@ router.put('/notify-couponRead', async (req, res) => {
         discount_coupon dc ON nc.coupon_id = dc.id
       WHERE
         nc.member_id = ?
-    `;
-    const [data] = await db.query(newQuery, [memberId]);
-    res.status(200).json({ message: 'success', items: data });
+    `
+    const [data] = await db.query(newQuery, [memberId])
+    res.status(200).json({ message: 'success', items: data })
   } catch (error) {
-    console.error('Database query error:', error);
-    res.status(500).json({ error: 'Error marking notifications as read.' });
+    console.error('Database query error:', error)
+    res.status(500).json({ error: 'Error marking notifications as read.' })
   }
-});
-
-
-
+})
 
 export default router

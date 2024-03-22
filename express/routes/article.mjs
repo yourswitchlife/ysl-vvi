@@ -173,6 +173,7 @@ router.post('article/:aid', async (req, res) => {
       `UPDATE article_comment SET emo = ? WHERE article_id = ?`,
       [emo, aid]
     )
+    console.log(emo)
 
     if (updateResult.affectedRows === 1) {
       res.status(200).json({ message: 'Emo value updated successfully' })
@@ -222,7 +223,7 @@ router.post('/comment/comment', async (req, res) => {
     // 在这里执行将评论存储到数据库的操作
     // 假设您使用的是 article_comment 表存储评论数据
     const [result] = await db.execute(
-      `INSERT INTO article_comment (content, article_id, emo, member_id) VALUES (?, 3, 1, 3)`,
+      `INSERT INTO article_comment (content, article_id, emo, member_id) VALUES (?, 3, 0, 3)`,
       [content]
     )
 
