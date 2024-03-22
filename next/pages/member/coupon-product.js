@@ -68,7 +68,7 @@ export default function CouponP() {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item onClick={() => handleFilter('valid')}>可以使用</Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleFilter('expiredORUsed')}>過期或已經使用</Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleFilter('expiredORUsed')}>不能使用囉</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
 
