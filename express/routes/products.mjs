@@ -139,9 +139,17 @@ router.post(
       // const comment_img = req.file
       if (req.file) {
         const reviewImg = req.file.filename
+        const created_at = new Date()
         const query =
-          'UPDATE `shop_comment`SET rating = ?, content = ?, comment_img = ? WHERE member_id = ? AND shop_id = ?'
-        await db.execute(query, [rating, review, reviewImg, memberId, shopId])
+          'UPDATE `shop_comment`SET rating = ?, content = ?, comment_img = ?, created_at = ? WHERE member_id = ? AND shop_id = ?'
+        await db.execute(query, [
+          rating,
+          review,
+          reviewImg,
+          created_at,
+          memberId,
+          shopId,
+        ])
       } else {
         const query =
           'UPDATE `shop_comment`SET rating = ?, content = ? WHERE member_id = ? AND shop_id = ?'

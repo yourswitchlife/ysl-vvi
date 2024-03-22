@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import BreadCrumb from '@/components/common/breadcrumb'
 import Image from 'next/image'
-import { FaRegHeart, FaCartPlus, FaShoppingCart, FaStore} from 'react-icons/fa'
+import { FaRegHeart, FaCartPlus, FaShoppingCart, FaStore } from 'react-icons/fa'
 import ProductCard from '@/components/products/product-card'
 import Link from 'next/link'
 import styles from '../../styles/products/product-detail.module.scss'
@@ -109,7 +109,7 @@ export default function ProductDetail() {
   const [shopRating, setShopRating] = useState({})
   const [shopData, setShopData] = useState({})
   const [shopComment, setShopComment] = useState({})
-  const [ben, setBen] = useState(false)
+  const [order, setorder] = useState(false)
   // const [detailImgs,setDetailImgs] = useState(product.img_details)
   // 商品數量+1
   // console.log(shopData)
@@ -162,33 +162,37 @@ export default function ProductDetail() {
       // console.log(data[0].img_details)
       // console.log(data[0].img_details.split(","))
       // console.log(sameTypeP)
-      if(data.shopData[0].name){
+      if (data.shopData[0].name) {
         setShopData(data.shopData[0])
         // console.log(shopData.id)
       }
 
-      if(data.shopRating[0]){
+      if (data.shopRating[0]) {
         // setShopData(data.shopData[0])
         const roundedRating = Math.round(data.shopRating[0].average_rating)
         // console.log(roundedRating)
         setShopRating(roundedRating)
       }
 
-      if(data.shopComment[0].id){
+      if (data.shopComment[0].id) {
         setShopComment(data.shopComment)
         // console.log(shopData.id)
       }
 
-      if(data.productTypeResult[0].name){
-        const sameTypeP = data.productTypeResult.filter((p,i) => p.id != data.responseData[0].id)
-        const sTypeP = sameTypeP.slice(1,5)
+      if (data.productTypeResult[0].name) {
+        const sameTypeP = data.productTypeResult.filter(
+          (p, i) => p.id != data.responseData[0].id
+        )
+        const sTypeP = sameTypeP.slice(1, 5)
         setSameTypeP(sTypeP)
         // console.log(sTypeP)
       }
-      
-      if(data.sameShopP[0].name){
-        const sameShopP = data.sameShopP.filter((p,i) => p.id != data.responseData[0].id)
-        const sSP = sameShopP.slice(1,3)
+
+      if (data.sameShopP[0].name) {
+        const sameShopP = data.sameShopP.filter(
+          (p, i) => p.id != data.responseData[0].id
+        )
+        const sSP = sameShopP.slice(1, 3)
         setSameShopP(sSP)
         // console.log(sSP)
       }
@@ -351,22 +355,18 @@ export default function ProductDetail() {
   // console.log(historyRecords)
   // let imgAry = [product.img_details.split(",")[0], product.img_details.split(",")[1], product.img_details.split(",")[2]]
 
-  const orders = async() => {
-    try{
-        const res = await fetch(
-        `http://localhost:3005/api/products/orders`,
-        {
-          credentials: 'include',
-        }
-      )
-      const {orders} = await res.json()
+  const orders = async () => {
+    try {
+      const res = await fetch(`http://localhost:3005/api/products/orders`, {
+        credentials: 'include',
+      })
+      const { orders } = await res.json()
       console.log(orders)
       // member_buyer_id  member_seller_id
-    }
-    catch (e) {
+    } catch (e) {
       console.error(e)
     }
-  } 
+  }
   orders()
 
   // 蒐藏加入資料庫
@@ -402,7 +402,7 @@ export default function ProductDetail() {
 
   return (
     <>
-    <GoTopButton/>
+      <GoTopButton />
       <Navbar />
       <PhoneTabNav />
 
@@ -454,13 +454,17 @@ export default function ProductDetail() {
 
             <hr className="text-white border-3" />
             <div className="d-flex justify-content-between align-items-end">
-            {product.display_price == null ? (''):(<h5 className="text-white-50">
-                促銷價{' '}
-                <span className="text-decoration-line-through">
-                  NT$ {product.display_price}
-                </span>
-              </h5>)}
-              
+              {product.display_price == null ? (
+                ''
+              ) : (
+                <h5 className="text-white-50">
+                  促銷價{' '}
+                  <span className="text-decoration-line-through">
+                    NT$ {product.display_price}
+                  </span>
+                </h5>
+              )}
+
               <h5 className="text-white">
                 折扣價NT
                 <span className="h3 text-danger">
@@ -486,7 +490,11 @@ export default function ProductDetail() {
               >
                 <FaCartPlus className="text-light pb-1" /> 加入購物車
               </button>
-              <button type="button" className="btn btn-info" onClick={() => addFav(product.id)}>
+              <button
+                type="button"
+                className="btn btn-info"
+                onClick={() => addFav(product.id)}
+              >
                 <FaRegHeart className="text-light pb-1" /> 加入收藏
               </button>
               <button
@@ -500,14 +508,15 @@ export default function ProductDetail() {
 
             <div
               className={`row d-lg-none m-0 ${styles.btns}`}
-              onClick={() => {
-                setBen(true)
-              }}
             >
-              <div typeof="button" className="col btn btn-info rounded-0 py-1" onClick={() => {
+              <div
+                typeof="button"
+                className="col btn btn-info rounded-0 py-1"
+                onClick={() => {
                   addItem(product)
                   notifySuccess()
-                }}>
+                }}
+              >
                 <FaCartPlus className="text-light" /> <p>加入購物車</p>
               </div>
               <div
@@ -518,7 +527,8 @@ export default function ProductDetail() {
               </div>
               <div
                 typeof="button"
-                className="col-6 btn btn-danger rounded-0 py-1 d-flex align-items-center justify-content-center" onClick={handleCheckout}
+                className="col-6 btn btn-danger rounded-0 py-1 d-flex align-items-center justify-content-center"
+                onClick={handleCheckout}
               >
                 <FaShoppingCart className="text-light me-1" /> <h6>立即結帳</h6>
               </div>
@@ -536,16 +546,18 @@ export default function ProductDetail() {
               <li>遊戲人數：1~2人</li>
             </ul>
             <div className="d-flex justify-content-end">
-             {/* 語言/分級 */}
-               {product.language != '' ? product.language.split(',').map((v,i) => {
-                return(
-                  <div key={i} className={`me-3 ${styles.pLanguageBig}`}>
-                      <h5>
-                        <b>{v}</b>{' '}
-                      </h5>
-                    </div>
-                )
-               }):''}
+              {/* 語言/分級 */}
+              {product.language != ''
+                ? product.language.split(',').map((v, i) => {
+                    return (
+                      <div key={i} className={`me-3 ${styles.pLanguageBig}`}>
+                        <h5>
+                          <b>{v}</b>{' '}
+                        </h5>
+                      </div>
+                    )
+                  })
+                : ''}
 
               <div
                 style={{
@@ -588,7 +600,7 @@ export default function ProductDetail() {
               className={`${styles.myshop} d-flex justify-content-between align-items-center mb-4`}
             >
               <div className="d-flex align-items-center">
-                <div style={{height:'85px',width:'75px'}}>
+                <div style={{ height: '85px', width: '75px' }}>
                   <Image
                     // src="https://i.ebayimg.com/images/g/ToYAAOSw-mJh6lHy/s-l1600.png"
                     src={`http://localhost:3005/profile-pic/${shopData.pic}`}
@@ -600,73 +612,81 @@ export default function ProductDetail() {
                   />
                 </div>
                 <div className="ms-3">
-                  <h6 className="text-white">{memberIdChange(product.member_id)}</h6>
-                  <RatingStars rating={shopRating}/>
+                  <h6 className="text-white">
+                    {memberIdChange(product.member_id)}
+                  </h6>
+                  <RatingStars rating={shopRating} />
                 </div>
               </div>
               <div className="me-2">
-                {/* <button
-                  type="button"
-                  className="btn btn-danger btn-sm d-block mb-1"
-                >
-                  <FaRegHeart className="text-light pb-1" /> 關注店家
-                </button> */}
                 <Link href={`http://localhost:3000/shop/${shopData.shop_site}`}>
-                <button type="button" className="btn btn-danger btn-sm mt-1">
-                  <FaStore className="text-light pb-1" /> 進入本店 
-                </button></Link>
+                  <button type="button" className="btn btn-danger btn-sm mt-1">
+                    <FaStore className="text-light pb-1" /> 進入本店
+                  </button>
+                </Link>
               </div>
             </div>
             <hr className="text-white border-3" />
             <h5 className="text-white mb-3">本店精選</h5>
             <div className={styles.wrap}>
-            {sameShopP.length > 0 ? sameShopP.map((p,i)=>{
-              return(
-                <div  onClick={() => {
-                      router.push(`/products/${p.id}`)
-                    }}>
-                <ProductCard key={i}
-                id={p.id}
-                      name={p.name}
-                      price={p.price}
-                      display_price={p.display_price}
-                      releaseTime={p.release_time.split('T')[0]}
-                      img_cover={p.img_cover}
-                      img_details={p.img_details}
-                      type={p.type_id}
-                      ratingId={p.rating_id}
-                      fav={p.fav}
-                      member_id={p.member_id}
-              /></div>
-              )
-            }):''}
+              {sameShopP.length > 0
+                ? sameShopP.map((p, i) => {
+                    return (
+                      <div
+                        onClick={() => {
+                          router.push(`/products/${p.id}`)
+                        }}
+                      >
+                        <ProductCard
+                          key={i}
+                          id={p.id}
+                          name={p.name}
+                          price={p.price}
+                          display_price={p.display_price}
+                          releaseTime={p.release_time.split('T')[0]}
+                          img_cover={p.img_cover}
+                          img_details={p.img_details}
+                          type={p.type_id}
+                          ratingId={p.rating_id}
+                          fav={p.fav}
+                          member_id={p.member_id}
+                        />
+                      </div>
+                    )
+                  })
+                : ''}
             </div>
             <hr className="text-white border-3" />
 
             <h5 className="text-white mb-3">本分類熱銷</h5>
             <div className={styles.wrap}>
-            {/* {console.log(sameTypeP)} */}
-            {sameTypeP.length > 0 ? sameTypeP.map((p,i)=>{
-              return(
-                <div  onClick={() => {
-                      router.push(`/products/${p.id}`)
-                    }}>
-                <ProductCard key={i}
-                id={p.id}
-                      name={p.name}
-                      price={p.price}
-                      display_price={p.display_price}
-                      releaseTime={p.release_time.split('T')[0]}
-                      img_cover={p.img_cover}
-                      img_details={p.img_details}
-                      type={p.type_id}
-                      ratingId={p.rating_id}
-                      fav={p.fav}
-                      member_id={p.member_id}
-              /></div>
-              )
-            }):''}
-            
+              {/* {console.log(sameTypeP)} */}
+              {sameTypeP.length > 0
+                ? sameTypeP.map((p, i) => {
+                    return (
+                      <div
+                        onClick={() => {
+                          router.push(`/products/${p.id}`)
+                        }}
+                      >
+                        <ProductCard
+                          key={i}
+                          id={p.id}
+                          name={p.name}
+                          price={p.price}
+                          display_price={p.display_price}
+                          releaseTime={p.release_time.split('T')[0]}
+                          img_cover={p.img_cover}
+                          img_details={p.img_details}
+                          type={p.type_id}
+                          ratingId={p.rating_id}
+                          fav={p.fav}
+                          member_id={p.member_id}
+                        />
+                      </div>
+                    )
+                  })
+                : ''}
             </div>
             <Link
               href="http://localhost:3000/products"
@@ -679,23 +699,29 @@ export default function ProductDetail() {
         <section className="p-detail-sec-3">
           <h5 className="text-white">對賣家的評價</h5>
           <hr className="text-white border-3" />
-          {shopComment.length > 0 ?shopComment.map((v,i) => {
-            return (
-          <Reviewed key={i}
-            name={v.name}
-            pic={v.pic}
-            content={v.content}
-            created_at={v.created_at}
-            rating={v.rating}
-            comment_img={v.comment_img}
-            reply={v.reply}
-          />
-            )
-          }):''}
-          {/* {orders? orders.filter((v,i) => {
-            v.member_buyer_id
-          }) : null} */}
-          <Review shopId={product.member_id}/>
+          {shopComment.length > 0
+            ? shopComment.map((v, i) => {
+                return (
+                  <Reviewed
+                    key={i}
+                    name={v.name}
+                    pic={v.pic}
+                    content={v.content}
+                    created_at={v.created_at}
+                    rating={v.rating}
+                    comment_img={v.comment_img}
+                    reply={v.reply}
+                  />
+                )
+              })
+            : ''}
+          {orders
+            ? orders.filter((v, i) => {
+                v.member_buyer_id == memberId &&
+                  v.member_seller_id == product.member_id
+                return <Review shopId={product.member_id} />
+              })
+            : null}
         </section>
       </div>
       <Footer />

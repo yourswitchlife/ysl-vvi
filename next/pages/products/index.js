@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import ProductCard from '@/components/products/product-card'
 import BreadCrumb from '@/components/common/breadcrumb'
-// import Link from 'next/link'
 import styles from '../../styles/products/products.module.scss'
 import Footer from '@/components/layout/footer/footer-front'
 import Navbar from '@/components/layout/navbar/navbar'
@@ -16,9 +15,11 @@ import Pagination from 'react-bootstrap/Pagination'
 import Animation from '@/components/products/animation'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { useLoader } from '@/hooks/use-loader'
 const MySwal = withReactContent(Swal)
 
 export default function Products() {
+  const { loader } = useLoader()
   const { isLoggedIn, memberId } = useAuth()
   const [products, setProducts] = useState([])
   const router = useRouter()
@@ -190,33 +191,12 @@ export default function Products() {
 
   return (
     <>
+    <main>
+    {loader()}
       <GoTopButton />
       <Navbar searchWord={searchWord} setSearchWord={setSearchWord} />
       <Animation className="z-3 position-absolute"/>
-      {/* <Image
-        src="/images/product/p-index.jpg"
-        alt="product"
-        width={1440}
-        height={560}
-        priority={true}
-        className={`${styles.pIndexImg}`}
-      /> */}
       <PhoneTabNav />
-
-      <div
-        className={`${styles.pTitle} z-2 position-absolute d-lg-grid d-none`}
-      >
-        <div className="p-slogan">
-          <h4 className="text-white">Enjoy Your Switch Life!</h4>
-          <h1 className="text-white">
-            盡情挑選
-            <br />
-            喜歡的
-            <br />
-            遊戲
-          </h1>
-        </div>
-      </div>
       <div className="container pt-3 px-lg-5 px-4">
         <BreadCrumb />
         <div className="d-flex mb-3">
@@ -380,6 +360,7 @@ export default function Products() {
         </div>
       </div>
       <Footer />
+      </main>
     </>
   )
 }
