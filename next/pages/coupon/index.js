@@ -4,6 +4,7 @@ import Footer from '@/components/layout/footer/footer-front'
 import Image from 'next/image'
 import styles from '@/styles/coupon/coupon.module.scss'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 //components
 import GoTopButton from '@/components/go-to-top/go-top-button'
@@ -23,7 +24,18 @@ import titleCm from '@/public/images/coupon/titleCm.png'
 import player from '@/public/images/coupon/sectionTwo.png'
 
 
+
 export default function CouponPage() {
+  const router = useRouter()
+  const GoRegister =()=>{
+    router.push('/member/register')
+  }
+
+  const GoMission =()=>{
+    router.push('/member/mission-ing')
+  }
+
+
   return (
     <>
       <Navbar />
@@ -37,11 +49,11 @@ export default function CouponPage() {
               </div>
 
               <div>
-                <Image src={titleB} alt="費" className={styles.img} />
+                <Image src={titleB} alt="費" className={styles.img}  />
               </div>
 
               <div>
-                <Image src={titleC} alt="領" className={styles.img} />
+                <Image src={titleC} alt="領" className={styles.img}  />
               </div>
             </div>
             <div className={styles.title_frame_mobile}>
@@ -62,8 +74,9 @@ export default function CouponPage() {
           {/* 加入會員按鈕區塊 */}
           <div className={styles.addMember_btn}>
             <div className={styles.btn_frame}>
-              <button className={`btn btn-light ${styles.title_CTA}`}>
-                <Link href='/member/register' className='text-decoration-none text-dark'>加入會員</Link>
+              <button className={`btn btn-light ${styles.title_CTA}`}
+              onClick={GoRegister}>
+                加入會員
               </button>
             </div>
           </div>
@@ -78,8 +91,9 @@ export default function CouponPage() {
             layout="responsive"
             alt="加入會員"
           />
-          <button className={`btn btn-info ${styles.btn}`}>
-          <Link href='/member/register' className='text-decoration-none text-white'>趕緊加入會員</Link>
+          <button className={`btn btn-info ${styles.btn}`}
+          onClick={()=>GoRegister()}>
+          趕緊加入會員
           </button>
         </div>
 
@@ -101,8 +115,9 @@ export default function CouponPage() {
             </h6>
 
             <div className="pt-4 mt-3 ms-5">
-              <button className={`${styles.missionBTN} btn btn-lg btn-danger`}>
-                <Link href='/member/mission-ing' className='text-decoration-none text-white'>立即解任務</Link>
+              <button className={`${styles.missionBTN} btn btn-lg btn-danger`}
+              onClick={GoMission}>
+                立即解任務
               </button>
             </div>
           </div>

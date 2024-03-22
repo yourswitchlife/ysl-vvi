@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Swal from 'sweetalert2'
 
 //scss
-import styles from './coupon-uni.module.scss'
+import styles from './couponPdd.module.scss'
 
 //pics
 import logo from '@/public/images/coupon/logominiFig.png'
@@ -164,7 +164,9 @@ export default function Coupons() {
                           {!coupon.get ? '立即領取' : '去逛一下'}
                         </h5>
                       </button>
+                      {/* <div className='d-flex justify-content-end align-items-center'><p>使用規則</p></div> */}
                     </div>
+                   
                     <h6 className="text-white text-start fs-6 col-12 mt-4">
                       效期至:{' '}
                       {coupon.expiration_date
@@ -173,6 +175,8 @@ export default function Coupons() {
                         )
                         : 'Unknown'}
                     </h6>
+                    
+
                   </div>
                 </div>
               </div>
