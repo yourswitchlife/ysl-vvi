@@ -74,12 +74,6 @@ export default function MissionFavShop({ status }) {
         console.log('恭喜解任務成功');
         setSolved(true);
 
-        // if (!prize) {
-        //   jsConfetti && jsConfetti.addConfetti({
-        //     confettiNumber: 300,
-        //     confettiRadius: 6,
-        //   });
-        // }
 
       } else {
         console.log("還沒解完任務喔!");
@@ -108,6 +102,8 @@ export default function MissionFavShop({ status }) {
         title: "恭喜完成任務",
         text: "免運券已發放，趕快去查看有沒有領到吧！",
         confirmButtonText: '查看優惠券',
+
+         
       }).then((result) => {
         if (result.isConfirmed) {
           router.push('/member/coupon-delivery')
@@ -115,10 +111,26 @@ export default function MissionFavShop({ status }) {
 
 
       })
-      setPrize(true)
+
+      // if (!m.coupon_id) {
+      //   jsConfetti && jsConfetti.addConfetti({
+      //     confettiNumber: 300,
+      //     confettiRadius: 6,
+      //   });
+      // }
+
       if (jsConfetti) {
-        jsConfetti.clearCanvas()
+        jsConfetti.addConfetti({
+          confettiNumber: 300,
+          confettiRadius: 6,
+        });
       }
+  
+      
+      setPrize(true)
+      // if (jsConfetti) {
+      //   jsConfetti.clearCanvas()
+      // }
     } else {
       Swal.fire({
         icon: "info",
@@ -143,7 +155,7 @@ export default function MissionFavShop({ status }) {
             </div>
 
             <div className='d-flex justify-content-center align-items-center mt-3 mb-3'>
-              <button className={`btn ${m.status === 1 ? (m.coupon_id || prize ? 'btn-dark' : 'btn-info') : 'btn-danger'}`}
+              <button className={`btn ${m.status === 1? (m.coupon_id || prize ? 'btn-dark' : 'btn-info') : 'btn-danger'}`}
                 onClick={() => {
                   if (m.status === 1 && !m.coupon_id) {
                     claimPrize()

@@ -361,6 +361,10 @@ router.post('/create-order', async (req, res) => {
             `UPDATE order_group SET amount = ? WHERE id = ?`,
             [amount, groupId]
           )
+          await connection.execute(
+            'UPDATE member_coupon SET status = 1 WHERE member_id = ? AND coupon_id =?',
+            [member_buyer_id, selectedProductCoupon]
+          )
         }
       } catch (error) {
         console.error('使用reduce錯誤:', error)

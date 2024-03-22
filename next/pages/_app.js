@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
+
 // 樣式
 import '@/styles/globals.scss'
 import '@/styles/loader.scss'
@@ -57,7 +59,7 @@ export default function MyApp({ Component, pageProps }) {
               displayName: gmember.displayName,
               photoURL: gmember.photoURL,
             }),
-            credentials: 'include', 
+            credentials: 'include',
           })
             .then((response) => response.json())
             .then((data) => {
@@ -82,6 +84,25 @@ export default function MyApp({ Component, pageProps }) {
         <CartProvider>
           <ShippingProvider>
             <WithWebSocketProvider>
+              <Head>
+                <link
+                  rel="apple-touch-icon"
+                  sizes="180x180"
+                  href="/favicons/apple-touch-icon.png"
+                />
+                <link
+                  rel="icon"
+                  type="image/png"
+                  sizes="32x32"
+                  href="/favicons/favicon-32x32.png"
+                />
+                <link
+                  rel="icon"
+                  type="image/png"
+                  sizes="16x16"
+                  href="/favicons/favicon-16x16.png"
+                />
+              </Head>
               {getLayout(<Component {...pageProps} />)}
             </WithWebSocketProvider>
           </ShippingProvider>

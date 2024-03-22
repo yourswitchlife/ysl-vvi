@@ -2,77 +2,31 @@
 import express from 'express'
 const router = express.Router()
 import ECPayLogistics from 'ecpay_logistics_nodejs'
+import db from '../configs/db.mjs'
 import fetch from 'node-fetch'
+// 導入dotenv 使用 .env 檔案中的設定值 process.env
+import 'dotenv/config.js'
 
-// 初始化ECPay Logistics SDK的配置
-// const ecpayLogistics = new ECPayLogistics({
-//   MerchantID: '2000933',
-//   HashKey: 'XBERn1YOvpM9nfZc',
-//   HashIV: 'h1ONHk4P4yqbl5LK',
-//   // 其他需要的配置...
-// })
-
-// 创建物流订单的函数
-// async function createLogisticsOrder(orderDetails) {
-//   // const orderDetails = {
-//   //   MerchantTradeNo: '',
-//   //   MerchantTradeDate: '2024/02/15 08:40:00',
-//   //   LogisticsType: 'CVS',
-//   //   LogisticsSubType: 'UNIMARTC2C',
-//   //   GoodsAmount: 950,
-//   //   CollectionAmount: 950,
-//   //   IsCollection: 'Y',
-//   //   GoodsName: 'YSL商品訂單',
-//   //   SenderName: '林雅琳',
-//   //   SenderPhone: '0934567891',
-//   //   SenderCellPhone: '0934567891',
-//   //   ReceiverName: '鄭家豪',
-//   //   ReceiverPhone: '0989012345',
-//   //   ReceiverCellPhone: '0989012345',
-//   //   ReceiverEmail: '',
-//   //   TradeDesc: '',
-//   //   ServerReplyURL:
-//   //     'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
-//   //   ClientReplyURL: 'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
-//   //   LogisticsC2CReplyURL: 'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
-//   //   Remark: '',
-//   //   PlatformID: '',
-//   //   ReceiverStoreID: '131386',
-//   //   ReturnStoreID: '131386',
-//   // }
-//   // 使用ecpayLogistics对象进行API调用，创建物流订单
-//   const url = 'https://logistics-stage.ecpay.com.tw/Express/CreateTestData'
-//   const formData = new URLSearchParams(orderDetails).toString()
-//   const params = new URLSearchParams(orderDetails)
-//   console.log(formData)
-//   console.log(params.get('MerchantTradeDate'))
-
-//   const response = await fetch(url, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/x-www-form-urlencoded',
-//     },
-//     body: formData,
-//   })
-//   const responseBody = await response.text() //先獲取響應文本
-//   console.log(responseBody)
-
-//   if (!response.ok) {
-//     throw new Error(`HTTP error! status: ${response.status}`)
-//   }
-
-//   const data = JSON.parse(responseBody) //假設響應是JSON嘗試解析他
-//   console.log(data)
-//   return data
+// let orderDetails = {
+//   //要從傳入訂單獲得的動態資訊：
+//   merchantTradeDate: '2021/01/27 11:00:45',
+//   goodsAmount: 200,
+//   collectionAmount: 200,
+//   senderName: '林雅琳',
+//   senderPhone: '0934567891',
+//   senderCellPhone: '0934567891',
+//   receiverName: '鄭家豪',
+//   receiverPhone: '0989012345',
+//   receiverCellPhone: '0989012345',
+//   receiverEmail: '',
 // }
-// export { createLogisticsOrder }
+
 async function createLogisticsOrder(orderDetails) {
-  // 假设这里您已经有了一个 ECPayLogistics 实例，且已正确配置
-  // 这里只是一个示范，实际情况可能需要调用实际的 API 方法
+  const serverReplyURL = process.env.REACT_APP_SERVER_REPLY_URL
+  const clientReplyURL = process.env.REACT_APP_CLIENT_REPLY_URL
+  const logisticsC2CReplyURL = process.env.REACT_APP_LOGISTICS_C2C_REPLY_URL
+
   const create = new ECPayLogistics({
-    MerchantID: '2000933',
-    HashKey: 'XBERn1YOvpM9nfZc',
-    HashIV: 'h1ONHk4P4yqbl5LK',
     MerchantTradeDate: orderDetails.MerchantTradeDate,
     LogisticsType: 'CVS',
     LogisticsSubType: 'UNIMARTC2C',
@@ -88,71 +42,120 @@ async function createLogisticsOrder(orderDetails) {
     ReceiverCellPhone: orderDetails.receiverCellPhone,
     ReceiverEmail: orderDetails.receiverEmail,
     TradeDesc: '',
-    ServerReplyURL:
-      'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
-    ClientReplyURL:
-      'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app/',
-    LogisticsC2CReplyURL:
-      'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
+    ServerReplyURL: serverReplyURL,
+    ClientReplyURL: clientReplyURL,
+    LogisticsC2CReplyURL: logisticsC2CReplyURL,
     Remark: '',
     PlatformID: '',
-    ReceiverStoreID: '991182',
+    ReceiverStoreID: '131386',
     ReturnStoreID: '',
   })
 
   return create.create_client.create(orderDetails)
 }
 
-// let orderDetails = {
-//   //假設這裡有一些從其他地方獲取的數據
-//   merchantTradeDate: '2021/01/27 11:00:45',
-//   goodsAmount: 200,
-//   collectionAmount: 200,
-//   senderName: '林雅琳',
-//   senderPhone: '0934567891',
-//   senderCellPhone: '0934567891',
-//   receiverName: '鄭家豪',
-//   receiverPhone: '0989012345',
-//   receiverCellPhone: '0989012345',
-//   receiverEmail: '',
+//把送出給綠界物流時產生的MerchantTradeNo除了給綠界，自己也要留存拿來參照
+// async function createOrder(orderDetails, merchantTradeNo) {
+//   try{
+//     const [result] = await db.execute(`
+
+//     `)
+//   }
+
 // }
 
-//example文檔
-// 參數值為[PLEASE MODIFY]者，請在每次測試時給予獨特值
-// let base_param = {
-//   MerchantTradeNo: generateUniqueTradeNo(),
-//   MerchantTradeDate: orderDetails.merchantTradeDate.toString(),
-//   LogisticsType: 'CVS',
-//   LogisticsSubType: 'UNIMARTC2C',
-//   GoodsAmount: orderDetails.goodsAmount.toString(),
-//   CollectionAmount: orderDetails.collectionAmount.toString(),
-//   IsCollection: '',
-//   GoodsName: 'YSL遊戲商品',
-//   SenderName: orderDetails.senderName.toString(),
-//   SenderPhone: orderDetails.senderPhone.toString(),
-//   SenderCellPhone: orderDetails.senderCellPhone.toString(),
-//   ReceiverName: orderDetails.receiverName.toString(),
-//   ReceiverPhone: orderDetails.receiverPhone.toString(),
-//   ReceiverCellPhone: orderDetails.receiverCellPhone.toString(),
-//   ReceiverEmail: orderDetails.receiverEmail.toString(),
-//   TradeDesc: '',
-//   ServerReplyURL:
-//     'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
-//   ClientReplyURL:
-//     'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
-//   LogisticsC2CReplyURL:
-//     'https://6fae-2001-b400-e352-c041-a1a9-9e85-6f97-d74b.ngrok-free.app',
-//   Remark: '',
-//   PlatformID: '',
-//   ReceiverStoreID: '991182',
-//   ReturnStoreID: '',
-// }
-//創建物流訂單
-// let create = new ECPayLogistics() // 注意這裡的構造函數調用
+//創建物流訂單：在這裡也同時收集前端使用者的訂單資訊
+router.post('/create-logistics-order', async (req, res) => {
+  const merchantTradeNo = generateUniqueTradeNo()
+  const orderDetails = {
+    ...req.body,
+    MerchantTradeNo: merchantTradeNo,
+  }
 
-// let res = create.create_client.create(base_param)
+  try {
+    const htmlForm = await createLogisticsOrder(orderDetails)
+    // console.log('我要看到result是啥:', htmlForm)
+    //在這裡保存訂單存到資料庫，包含merchantTradeNo
+    // await createOrder(req.body, merchantTradeNo)
+
+    res.json({
+      form: htmlForm,
+    })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({
+      success: false,
+      error: '內部伺服器錯誤',
+    })
+  }
+})
+
+function generateUniqueTradeNo() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 12)
+}
+
+//用來更新資料庫的function
+// async function updateOrderStatus(logisticsOrderData) {
+//   // console.log(MerchantTradeNo)
+//   // console.log(status)
+//   const { MerchantTradeNo,
+//     RtnCode,
+//     AllPayLogisticsID,
+//     RtnMsg,
+//     UpdateStatusDate } = logisticsOrderData
+//   try{
+//     const [results] = await db.execute(
+//       'UPDATE `orders` SET `status` = ? WHERE `MerchantTradeNo` = ?',
+//       [newStatus, MerchantTradeNo]
+//     )
+//     console.log(`訂單${}`)
+//   }
+async function createMap(base_params) {
+  const serverReplyURL = process.env.REACT_APP_SERVER_REPLY_URL
+  const merchantTradeNo = generateUniqueTradeNo()
+
+  const create = new ECPayLogistics({
+    MerchantTradeNo: merchantTradeNo, // 請帶20碼uid, ex: f0a0d7e9fae1bb72bc93
+    ServerReplyURL: serverReplyURL, // 物流狀況會通知到此URL
+    LogisticsType: 'CVS',
+    LogisticsSubType: 'UNIMARTC2C',
+    IsCollection: 'Y',
+    ExtraData: '',
+    Device: 0,
+  })
+
+  return create.query_client.expressmap(base_params)
+}
+
+//創建電子地圖
+router.post('/c2cMap', async (req, res) => {
+  const merchantTradeNo = generateUniqueTradeNo()
+  const base_params = {
+    ...req.body,
+    MerchantTradeNo: merchantTradeNo,
+  }
+
+  try {
+    const htmlForm = await createMap(base_params)
+    console.log('我要看到result是啥:', htmlForm)
+    //在這裡保存訂單存到資料庫，包含merchantTradeNo
+    // await createOrder(req.body, merchantTradeNo)
+
+    res.json({
+      form: htmlForm,
+    })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({
+      success: false,
+      error: '內部伺服器錯誤',
+    })
+  }
+})
+
+// let res = create.query_client.expressmap((parameters = base_param))
 // if (typeof res === 'string') {
-//   // console.log(res)
+//   console.log(res)
 // } else {
 //   res
 //     .then(function (result) {
@@ -163,24 +166,74 @@ async function createLogisticsOrder(orderDetails) {
 //     })
 // }
 
-router.post('/create-logistics-order', async (req, res) => {
+router.post('/ecpay/serverReply', async (req, res) => {
+  //處理來自綠界物流的回應
+  // console.log('創建訂單之後綠界物流會發通知過來', req.body)
+  //根據內容來更新訂單狀態:把trade_no內容寫進orders資料表
+  //更新資料庫的訂單訊息：還要自己寫
+  // updateOrderStatus(result.MerchantTradeNo, 'Shipping') //這個是要放的東東，沒有作用
+  // res.status(200).send('OK')
   try {
-    const orderDetails = {
-      ...req.body,
-      MerchantTradeNo: generateUniqueTradeNo(),
+    console.log('創建訂單之後綠界物流會發通知過來', req.body)
+    console.log(req.body.AllPayLogisticsID)
+
+    // 在req.body找到重要訊息！
+    // 這裡假設綠界用MerchantTradeNo來標示交易
+    const {
+      MerchantTradeNo,
+      RtnCode,
+      AllPayLogisticsID,
+      RtnMsg,
+      UpdateStatusDate,
+    } = req.body
+
+    // RtnCode是綠界返回的交易碼
+    if (RtnCode === '300') {
+      // 假设"Shipping"是您定义的订单状态之一
+      // await updateOrderStatus(AllPayLogisticsID, 'Shipping')
+      console.log(
+        `訂單 ${AllPayLogisticsID}, 狀態為：${RtnMsg}, 更新時間為${UpdateStatusDate}`
+      )
+      res
+        .status(200)
+        .send(
+          `訂單 ${AllPayLogisticsID}, 狀態為：${RtnMsg}, 更新時間為${UpdateStatusDate}`
+        )
+    } else {
+      // 如果RtnCode不是300，表示錯誤或其他狀態
+      console.error(
+        `訂單 ${MerchantTradeNo} 更新失敗，收到綠界狀態碼： ${RtnCode}`
+      )
+      res
+        .status(400)
+        .send(
+          `Order update failed:訂單 ${MerchantTradeNo} 更新失敗，收到綠界狀態碼： ${RtnCode}`
+        )
     }
-    console.log(orderDetails)
-    const result = await createLogisticsOrder(orderDetails)
-    console.log(result)
-    res.json(result)
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: error.message })
+    console.error('處理綠界回調出錯:', error)
+    res.status(500).send('Internal Server Error')
   }
 })
 
-function generateUniqueTradeNo() {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2, 10)
-}
+router.post('/ecpay/clientReply', (req, res) => {
+  //處理來自綠界物流的回應
+  console.log('重新定向給顧客的連結', req.body)
+
+  //根據內容來更新訂單狀態
+  //讓賣家去seller/orders這裡看物件編號，物流狀態
+
+  res.status(200).send('OK')
+})
+
+router.post('/ecpay/logisticsC2CReply', (req, res) => {
+  //處理來自綠界物流的回應
+  console.log('收到綠界物流狀態的更新', req.body)
+
+  //根據內容來更新訂單狀態
+  //這裡如果更新了，也要更新orders資料表的shipping_status
+
+  res.status(200).send('OK')
+})
 
 export default router

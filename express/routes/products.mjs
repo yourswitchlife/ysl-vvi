@@ -1,6 +1,7 @@
 import express, { query } from 'express'
 import db from '../configs/db.mjs'
 import multer from 'multer'
+import authenticate from '../middlewares/authenticate-cookie.js'
 
 const router = express.Router()
 const storage = multer.diskStorage({
@@ -32,39 +33,39 @@ router.get('/list', async (req, res) => {
 
   // console.log(req.query)
 
-  let query = 'SELECT * FROM product';
-  const params = [];
+  let query = 'SELECT * FROM product'
+  const params = []
 
-   // 構建SQL查詢條件
-   if (type || rating) {
-    query += ' WHERE';
+  // 構建SQL查詢條件
+  if (type || rating) {
+    query += ' WHERE'
 
     if (type) {
-      query += ' type_id = ?';
-      params.push(type);
+      query += ' type_id = ?'
+      params.push(type)
     }
 
     if (rating) {
       if (type) {
-        query += ' AND';
+        query += ' AND'
       }
-      query += ' rating_id = ?';
-      params.push(rating);
+      query += ' rating_id = ?'
+      params.push(rating)
     }
   }
 
   try {
     // 使用參數化查詢來預防SQL注入攻擊
-    const [products] = await db.execute(query, params);
+    const [products] = await db.execute(query, params)
 
     const responseData = {
       products,
       // 如果需要其他相關資訊，如totalItems或totalPages，可以在這裡計算並添加
-    };
-    res.json(responseData);
+    }
+    res.json(responseData)
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Server error');
+    console.error(error)
+    res.status(500).send('Server error')
   }
 })
 
@@ -85,9 +86,6 @@ router.post('/favProducts', async (req, res) => {
       .json({ success: false, message: 'Error adding product to favorites' })
   }
 })
-
-// 移除蒐藏
-// router
 
 // 新增商品
 router.post(
@@ -144,29 +142,118 @@ router.post(
     }
   }
 )
+// 編輯商品
+router.put(
+  '/edit/:pid',
+  authenticate,
+  upload.fields([
+    { name: 'pCover', maxCount: 1 },
+    { name: 'pImgs', maxCount: 3 },
+  ]),
+  async (req, res) => {
+    try {
+      const memberId = req.memberData.id
+      let { pid } = req.params
+      const img = req.files
+      const p = req.body
+
+      let pCover = p.pCover
+      if (img.pCover && img.pCover.length > 0) {
+        pCover = img.pCover[0].filename
+      }
+
+      let pImgs = img.pImgs || []
+      if (img.pImgs && img.pImgs.length > 0) {
+        pImgs = img.pImgs.map((file) => file.filename)
+      }
+      pImgs = pImgs.join(',')
+
+      let pLanguage = p.pLanguage || []
+      if (typeof pLanguage === 'string') {
+        pLanguage = pLanguage.split(',')
+      }
+      pLanguage = pLanguage.map((v) => v.split('-')[0]).join(',')
+
+      //更新資料庫
+      const query = `UPDATE product SET name=?, type_id=?, price=?, img_cover=?, img_details=?, language=?, rating_id=?, description=?, release_time=? WHERE member_id=? AND id=?`
+      await db.execute(query, [
+        p.pName,
+        parseInt(p.pType),
+        parseInt(p.pPrice),
+        pCover,
+        pImgs,
+        pLanguage,
+        parseInt(p.pRating),
+        p.pDiscribe,
+        p.release_time,
+        memberId,
+        pid,
+      ])
+
+      res.json({ message: '商品更新成功', code: 200 })
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ message: 'Server error' })
+    }
+  }
+)
 // 新增評論 單檔上傳
-router.post('/addReview', upload.single('reviewPhoto'), async (req, res) => {
-  if (req) {
-    // console.log('Uploaded file name: ', req.file.originalname)
-    console.log(req.body)
-    console.log(req.file)
-    const memberId = req.query.memberId
-    const rating = req.body.rating
-    const review = req.body.review
-    // const shop_id =
-    console.log(memberId, rating, review)
-    // const comment_img = req.file
+router.post(
+  '/addReview',
+  upload.single('reviewPhoto'),
+  async (req, res) => {
+    if (req) {
+      // console.log('Uploaded file name: ', req.file.originalname)
+      console.log(req.body)
+      console.log(req.file)
+      console.log(req.file.filename)
+      const memberId = req.query.memberId
+      const shopId = req.query.shopId
+      const rating = req.body.rating
+      const review = req.body.review
+      console.log(memberId, rating, review, shopId)
+      // const comment_img = req.file
+      if (req.file) {
+        const reviewImg = req.file.filename
+        const created_at = new Date()
+        const query =
+          'UPDATE `shop_comment`SET rating = ?, content = ?, comment_img = ?, created_at = ? WHERE member_id = ? AND shop_id = ?'
+        await db.execute(query, [
+          rating,
+          review,
+          reviewImg,
+          created_at,
+          memberId,
+          shopId,
+        ])
+      } else {
+        const query =
+          'UPDATE `shop_comment`SET rating = ?, content = ? WHERE member_id = ? AND shop_id = ?'
+        await db.execute(query, [rating, review, memberId, shopId])
+      }
 
-    const query =
-      'INSERT INTO `shop_comment` (member_id,rating,content) VALUES (?, ?, ?)'
-    await db.execute(query, [memberId, rating, review])
-
-    return res.json({ msg: 'success', code: '200' })
-  } else {
-    console.log('no upload')
-    return res.json({ msg: 'fail', code: '409' })
+      return res.json({ msg: 'success', code: '200' })
+    } else {
+      console.log('no upload')
+      return res.json({ msg: 'fail', code: '409' })
+    }
   }
   // res.json({ body: req.body, file: req.file })
+)
+
+// 拿訂單資料
+router.get('/orders', async (req, res) => {
+  try {
+    // 全部資料
+    let [orders] = await db.execute(`SELECT * FROM orders`)
+    const responseData = {
+      orders,
+    }
+    res.json(responseData)
+  } catch (error) {
+    console.log(error)
+    res.status(500)
+  }
 })
 
 // 商品詳細頁 ([0-9]+)

@@ -7,48 +7,29 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 
-export default function Review() {
+export default function Review({shopId}) {
   const { isLoggedIn, memberId } = useAuth()
   const [review, setReview] = useState({
     rating: 0,
     review: '',
-    reviewPhoto: '',
+    reviewPhoto: null,
   })
-  const [selectFile, setSelectFile] = useState(null)
   const [filePicked, setFilePicked] = useState(false)
-  // const [preview, setPreview] = useState('')
   const [imgServerUrl, setImgServerUrl] = useState('')
-
-  // 當選擇檔案更動時建立預覽圖
-  // useEffect(() => {
-  //   if (!selectFile) {
-  //     setPreview('')
-  //     return
-  //   }
-  //   const objURL = URL.createObjectURL(selectFile)
-  //   console.log(objURL)
-  //   setPreview(objURL)
-
-  //   return () => URL.revokeObjectURL(objURL)
-  // }, [selectFile])
 
   const changHandler = (e) => {
     const file = e.target.files[0]
     if (file) {
       setFilePicked(true)
-      setSelectFile(file)
       setImgServerUrl('')
-      // const fileName = file.name
-      setReview(prevReview => ({ ...prevReview, reviewPhoto: file.Name }))
+      setReview(prevReview => ({ ...prevReview, reviewPhoto: file }))
     } else {
       setFilePicked(false)
-      setSelectFile(null)
       setImgServerUrl('')
-      setReview(prevReview => ({ ...prevReview, reviewPhoto: '' }))
+      setReview(prevReview => ({ ...prevReview, reviewPhoto: null }))
     }
   }
 
-  // const [reviewPhoto, setReviewPhoto] = useState({ reviewPhoto: '' })
   const fieldChange = (e) => {
     setReview({ ...review, [e.target.name]: e.target.value })
   }
@@ -73,8 +54,8 @@ export default function Review() {
       } else {
         const formData = new FormData(e.target)
         formData.append('rating', review.rating)
-        if (selectFile) {
-          formData.append('reviewPhoto', selectFile)
+        if (review.reviewPhoto) {
+          formData.append('reviewPhoto', review.reviewPhoto)
         }
   
         console.log(review.reviewPhoto)
@@ -82,7 +63,7 @@ export default function Review() {
         console.log([...formData])
 
         fetch(
-          `http://localhost:3005/api/products/addReview?memberId=${memberId}`,
+          `http://localhost:3005/api/products/addReview?memberId=${memberId}&shopId=${shopId}`,
           {
             credentials: 'include',
             method: 'POST',
@@ -95,7 +76,6 @@ export default function Review() {
               title: '評論發佈成功！',
               icon: 'success',
             })
-            // alert('評論已發佈！'),
               setTimeout(() => {
                 setReview({
                   rating: 0,
@@ -116,9 +96,6 @@ export default function Review() {
   return (
     <>
       <form
-        // action={'/addReview'}
-        // method="post"
-        // encType="multipart/form-data"
         className={styles.formStyle}
         onSubmit={handleSubmit}
       >
@@ -134,8 +111,6 @@ export default function Review() {
             name="review"
             className="form-control mt-3"
             placeholder="請留下您的評價... 限30字"
-            // aria-label="Recipient's username"
-            // aria-describedby="button-addon2"
             maxLength={50}
             value={review.review}
             onChange={fieldChange}
@@ -143,12 +118,11 @@ export default function Review() {
         </div>
         <div className="m-2">
           <AddPhoto
-            changHandler={changHandler}
-            fieldChange={fieldChange}
+            fileChangHandler={changHandler}
             name="reviewPhoto"
           />
         </div>
-        {/* <button></button> */}
+
         <button
           className={`btn ${styles.btnSubmit}`}
           type="submit"

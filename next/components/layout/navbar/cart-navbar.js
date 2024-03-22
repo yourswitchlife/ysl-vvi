@@ -40,7 +40,7 @@ export default function CartNavbar() {
       <header className={styles.cartNav}>
         <div // logo
         >
-          <Link href="/cart" className={styles.link}>
+          <Link href="/" className={styles.link}>
             <Image src={yslLogo} alt="ysl-logo" />
             <span className="ps-4 pe-4">|</span>
             <h3 className={styles.text}>購物車</h3>

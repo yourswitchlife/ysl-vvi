@@ -1,186 +1,121 @@
-import React, { useEffect, useState } from 'react'
-// import CouponCard from '@/components/coupon-card/coupon-card'
-import styles from '@/components/coupon-card/coupon-uni.module.scss'
-import moment from 'moment'
+import React from 'react'
+import Navbar from '@/components/layout/navbar/navbar'
+import Footer from '@/components/layout/footer/footer-front'
 import Image from 'next/image'
-import Swal from 'sweetalert2'
+import styles from '@/styles/coupon/coupon-tem.module.scss'
+import Link from 'next/link'
 
-//pics
-import logo from '@/public/images/coupon/logominiFig.png'
-import { useRouter } from 'next/router'
+//components
+import GoTopButton from '@/components/go-to-top/go-top-button'
+import CouponUni from '@/components/coupon/coupon-uni'
 
-export default function Test() {
-  // const [couponName, setCouponName] = useState([])
-  const [claimed, setClaimed] = useState([])
-  const router = useRouter()
+//pictures
+import banner from '@/public/images/coupon/bggg.png'
 
-  useEffect(() => {
-    fetch('http://localhost:3005/api/coupon/')
-      .then((response) => response.json())
-      .then((result) => {
-        // console.log('success', result[2].expiration_date)
-        const coupons = [
-          result[15],
-          result[22],
-          result[29],
-          result[36],
-          result[44],
-          result[45],
-          result[46],
-          result[47],
-        ]
-        const couponData = coupons.map((v) => ({ ...v, get: false }))
-        setClaimed(couponData)
-      })
+import titleA from '@/public/images/coupon/title1.png'
+import titleB from '@/public/images/coupon/title2.png'
+import titleC from '@/public/images/coupon/title3.png'
 
-      .catch((error) => {
-        console.log('Error:', error)
-      })
-  }, [])
+import titleAm from '@/public/images/coupon/titleAm.png'
+import titleBm from '@/public/images/coupon/titleBm.png'
+import titleCm from '@/public/images/coupon/titleCm.png'
 
-  const handleGet = (id) => {
-    const didClaimed = claimed.some((coupon) => coupon.id === id && coupon.get)
+import player from '@/public/images/coupon/sectionTwo.png'
 
-    if (didClaimed) {
-      //如果領過，按領取按鈕就導頁
-      router.push('')
-    } else {
-      const updatedGet = claimed.map((v) => {
-        if (v.id === id && !v.get) {
-        
-            const Toast = Swal.mixin({
-              toast: true,
-              position: "top-center",
-              showConfirmButton: false,
-              timer: 2000,
-              timerProgressBar: true,
-              didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-              }
-            });
-            Toast.fire({
-              icon: "success",
-              title: "優惠券領取成功"
-            });
-          return { ...v, get: true }
-        } else {
-          return v
-        }
-      })
-      setClaimed(updatedGet)
-    }
-  }
 
+export default function CouponPage() {
   return (
     <>
-      {/* 電腦版 */}
-      <div className="container text-center">
-        <div className="row">
-          {claimed.map((coupon, index) => (
-            <div key={coupon.id} className="col-6">
-              <div
-                // It's better to use unique IDs if available
-                className="d-none d-md-block grid text-center row d-flex justify-content-center w-100 mt-5"
-              >
-                <div
-                  className={`${styles.cardBG} p-4 row align-items-center col-lg-6 m-2`}
-                >
-                  <div className="col-3">
-                    <Image
-                      src={logo}
-                      alt="YSL coupon logo"
-                      width={70}
-                      height={70}
-                    />
-                  </div>
-                  <div className="col-9 row">
-                    <h4 className="text-white text-start fw-bold mb-0 col-12">
-                      {coupon.title}優惠券
-                    </h4>
-                    <div className="col-12 row justify-content-around align-items-center">
-                      <span
-                        className={`text-white d-none d-md-block col-1 p-0 d-flex align-items-center fs-1 `}
-                      >
-                        $
-                      </span>
-                      <h1
-                        className={`${styles.font} text-white d-none d-md-block col-5 p-0 me-3`}
-                      >
-                        {coupon.discount_value}
-                      </h1>
-                      <button
-                        className={`${styles.btnCTA} btn btn-lg ${
-                          !coupon.get ? 'btn-danger' : 'btn-info'
-                        } ms-3 col-6}`}
-                        onClick={() => handleGet(coupon.id)}
-                      >
-                        <h5 className="">
-                          {!coupon.get ? '立即領取' : '去逛一下'}
-                        </h5>
-                      </button>
-                    </div>
-                    <h6 className="text-white text-start fs-6 col-12 mt-3">
-                      效期至:{' '}
-                      {coupon.expiration_date
-                        ? moment(coupon.expiration_date).format(
-                            'YYYY-MM-DD HH:mm:ss'
-                          )
-                        : 'Unknown'}
-                    </h6>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 手機板 */}
-
-      {claimed.map((coupon, index) => (
-        <div
-          className="d-block d-md-none grid text-center row d-flex justify-content-center w-100 m-auto"
-          key={coupon.id}
-        >
-          <div
-            className={`${styles.cardBG} py-3 px-1 row align-items-center col-lg-6 m-2`}
-          >
-            <div className=" col-3">
-              <Image src={logo} width={35} height={35} alt="YSL coupon Logo" />
-            </div>
-
-            <div className="col-9 row">
-              <p className="text-white text-start fw-bold fs-6 mb-0 col-12">
-                {coupon.title}優惠券
-              </p>
-              <div className="col-12  ">
-                <div className="d-flex justify-content-center align-items-center">
-                  <h4 className="text-white fw-bold col-2 p-0 m-0">$</h4>
-                  <h2 className="text-white fw-bold col-3 p-0">
-                    {coupon.discount_value}
-                  </h2>
-                  <button
-                    className={`${styles.btnCTA} btn btn-sm ${
-                          !coupon.get ? 'btn-danger' : 'btn-info'
-                        } col-5 ms-5`}
-                    onClick= {()=>handleGet(coupon.id)}
-                  >
-                    <p className={`${styles.btnCTA}`}>{!coupon.get ? '立即領取' : '去逛一下'}</p>
-                  </button>
-                </div>
+      <Navbar />
+      <section className={`${styles.wrapper}  container-field`}>
+        <div className={`${styles.banner} position-relative`}>
+          <Image src={banner} alt="ysl coupon" className={styles.main_img} />
+          <div className={styles.title_action}>
+            <div className={styles.title_frame}>
+              <div>
+                <Image src={titleA} alt="免" className={styles.img} />
               </div>
 
-              <p className="text-white text-start col-12">
-                效期至:{' '}
-                {coupon.expiration_date
-                  ? moment(coupon.expiration_date).format('YYYY-MM-DD HH:mm:ss')
-                  : 'Unknown'}
-              </p>
+              <div>
+                <Image src={titleB} alt="費" className={styles.img} />
+              </div>
+
+              <div>
+                <Image src={titleC} alt="領" className={styles.img} />
+              </div>
+            </div>
+            <div className={styles.title_frame_mobile}>
+              <div>
+                <Image src={titleAm} alt="免" className={styles.img} />
+              </div>
+
+              <div>
+                <Image src={titleBm} alt="費" className={styles.img} />
+              </div>
+
+              <div>
+                <Image src={titleCm} alt="領" className={styles.img} />
+              </div>
+            </div>
+          </div>
+
+          {/* 加入會員按鈕區塊 */}
+          <div className={styles.addMember_btn}>
+            <div className={styles.btn_frame}>
+              <button className={`btn btn-light ${styles.title_CTA}`}>
+                <Link href='/member/register' className='text-decoration-none text-dark'>加入會員</Link>
+              </button>
             </div>
           </div>
         </div>
-      ))}
+      </section>
+      <section className={styles.get_coupon_bg_frame}>
+        <div className={`${styles.get_coupon_bg} container`}>
+          <Image
+            src={player}
+            width={1124}
+            height={462}
+            layout="responsive"
+            alt="加入會員"
+          />
+          <button className={`btn btn-info ${styles.btn}`}>
+          <Link href='/member/register' className='text-decoration-none text-white'>趕緊加入會員</Link>
+          </button>
+        </div>
+
+        <div>
+          <CouponUni/>
+          {/* <CouponCard/> */}
+        </div>
+      </section>
+
+      <section className="text-white mt-3">
+        <div className={`${styles.missionBG}`}>
+          <div className="d-flex flex-column justify-content-center align-items-center pt-3">
+            <h4 className={`${styles.missionHeader} ms-5 pt-5`}>
+              加入會員，解會員任務，送優惠券
+            </h4>
+
+            <h6 className={`${styles.missionDes} pt-4 mt-3 ms-5`}>
+              只要收藏商品、收藏賣家、把商品加入購物車，以及結帳就能獲得數張優惠券唷，還不來YSL新手村解任務！
+            </h6>
+
+            <div className="pt-4 mt-3 ms-5">
+              <button className={`${styles.missionBTN} btn btn-lg btn-danger`}>
+                <Link href='/member/mission-ing' className='text-decoration-none text-white'>立即解任務</Link>
+              </button>
+            </div>
+          </div>
+          {/* <div className={styles.finalPic}>
+            <Image src={finalPic} />
+          </div> */}
+          {/* </div> */}
+        </div>
+      </section>
+
+      <GoTopButton />
+      {/* <GoGo/> */}
+      <Footer />
     </>
   )
 }

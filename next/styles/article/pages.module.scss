@@ -1,0 +1,32 @@
+
+.hot_main {
+  width: 400px;
+  display: flex;
+  padding-top: 20px;
+}
+
+.hot_main_img {
+  height: 100px;
+  width: 50%;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.time {
+  width: 50%;
+  padding-left: 15px;
+}
+
+.custom_btn {
+  font-size: 13px;
+  padding: 4px;
+  border-radius: 5px;
+}
+
+.a {
+  text-decoration: none;
+  color: black;
+}
