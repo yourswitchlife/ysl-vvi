@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import ControlledCarousel from '@/components/common/ControlledCarousel'
 import styles from '../styles/index.module.scss'
+import style from '@/styles/article/pages.module.scss'
 import mstyles from '../styles/member/index.module.scss'
 import estyles from '../styles/index_event/index.module.scss'
 import Navbar from '@/components/layout/navbar/navbar'
@@ -19,7 +20,7 @@ import WeeklySelect from '@/assets/weekly-select.svg'
 import { FaArrowRightLong } from 'react-icons/fa6'
 import { useAuth } from '@/hooks/use-Auth'
 import TypeSwiper from '@/components/common/typeSwiper'
-import { chunk } from 'lodash' 
+import { chunk } from 'lodash'
 
 export default function Index() {
   const router = useRouter()
@@ -170,6 +171,26 @@ export default function Index() {
     7
   )
 
+  ///精選文章
+  const [hot, setHot] = useState([])
+
+  const getArticle = async () => {
+    try {
+      const res = await fetch('http://localhost:3005/api/article')
+      const data = await res.json()
+
+      if (data) {
+        setHot(data.hot2)
+      }
+
+    } catch (e) {
+      console.error(e)
+    }
+  }
+  useEffect(() => {
+    getArticle()
+  }, [])
+
 
   return (
     <>
@@ -214,9 +235,8 @@ export default function Index() {
                 >
                   <div className={styles.card}>
                     <div
-                      className={`${styles.ura} ${
-                        isFlipped ? styles.isFlipped : ''
-                      }`}
+                      className={`${styles.ura} ${isFlipped ? styles.isFlipped : ''
+                        }`}
                       style={{
                         backgroundImage: `url(http://localhost:3005/productImg/cover/${p.img_cover})`,
                       }}
@@ -233,9 +253,8 @@ export default function Index() {
                       </div>
                     </div>
                     <div
-                      className={`${styles.inner} ${
-                        isFlipped ? styles.isFlipped : ''
-                      }`}
+                      className={`${styles.inner} ${isFlipped ? styles.isFlipped : ''
+                        }`}
                     >
                       <figure className={styles.img}>
                         <Image
@@ -260,85 +279,85 @@ export default function Index() {
       <section className="sec3 container pt-5 pb-5">
         <h4 className="text-white mb-2 d-flex justify-content-center">特賣焦點</h4>
         <div className="container">
-        <div className='row my-3'>
-        {products.slice(20, 24).map((p) => {
-            return (
-              <div
-                key={p.id}
-                className="col"
-                onClick={() => {
-                  historyRecord(p)
-                }}
-              >
+          <div className='row my-3'>
+            {products.slice(20, 24).map((p) => {
+              return (
                 <div
+                  key={p.id}
+                  className="col"
                   onClick={() => {
-                    router.push(`/products/${p.id}`)
+                    historyRecord(p)
                   }}
-                  className={styles.link}
                 >
-                  <ProductCard
-                    className="p-5 my-2"
-                    id={p.id}
-                    name={p.name}
-                    price={p.price}
-                    display_price={p.display_price}
-                    releaseTime={p.release_time.split('T')[0]}
-                    img_cover={p.img_cover}
-                    img_details={p.img_details}
-                    type={p.type_id}
-                    ratingId={p.rating_id}
-                    fav={p.fav}
-                    language={p.language}
-                    handleToggleFav={handleToggleFav}
-                    member_id={p.member_id}
-                    cardIcon={cardIcon}
+                  <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+                    className={styles.link}
+                  >
+                    <ProductCard
+                      className="p-5 my-2"
+                      id={p.id}
+                      name={p.name}
+                      price={p.price}
+                      display_price={p.display_price}
+                      releaseTime={p.release_time.split('T')[0]}
+                      img_cover={p.img_cover}
+                      img_details={p.img_details}
+                      type={p.type_id}
+                      ratingId={p.rating_id}
+                      fav={p.fav}
+                      language={p.language}
+                      handleToggleFav={handleToggleFav}
+                      member_id={p.member_id}
+                      cardIcon={cardIcon}
                     // imgDetails={p.img_details}
-                  />
+                    />
+                  </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
-        <div className='row my-3'>
-        {products.slice(30, 34).map((p) => {
-            return (
-              <div
-                key={p.id}
-                className="col"
-                onClick={() => {
-                  historyRecord(p)
-                }}
-              >
+              )
+            })}
+          </div>
+          <div className='row my-3'>
+            {products.slice(30, 34).map((p) => {
+              return (
                 <div
+                  key={p.id}
+                  className="col"
                   onClick={() => {
-                    router.push(`/products/${p.id}`)
+                    historyRecord(p)
                   }}
-                  className={styles.link}
                 >
-                  <ProductCard
-                    className="p-5 my-2"
-                    id={p.id}
-                    name={p.name}
-                    price={p.price}
-                    display_price={p.display_price}
-                    releaseTime={p.release_time.split('T')[0]}
-                    img_cover={p.img_cover}
-                    img_details={p.img_details}
-                    type={p.type_id}
-                    ratingId={p.rating_id}
-                    fav={p.fav}
-                    language={p.language}
-                    handleToggleFav={handleToggleFav}
-                    member_id={p.member_id}
-                    cardIcon={cardIcon}
+                  <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+                    className={styles.link}
+                  >
+                    <ProductCard
+                      className="p-5 my-2"
+                      id={p.id}
+                      name={p.name}
+                      price={p.price}
+                      display_price={p.display_price}
+                      releaseTime={p.release_time.split('T')[0]}
+                      img_cover={p.img_cover}
+                      img_details={p.img_details}
+                      type={p.type_id}
+                      ratingId={p.rating_id}
+                      fav={p.fav}
+                      language={p.language}
+                      handleToggleFav={handleToggleFav}
+                      member_id={p.member_id}
+                      cardIcon={cardIcon}
                     // imgDetails={p.img_details}
-                  />
+                    />
+                  </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
-          
+              )
+            })}
+          </div>
+
         </div>
       </section>
       <section className="container sec4 pt-5">
@@ -346,52 +365,80 @@ export default function Index() {
         <TypeSwiper />
       </section>
       <section className={`sec5 pt-5 pb-5 ${estyles.eventBox}`}>
-      <div className='container'>
-      <div className="row d-flex justify-content-between">
-          <div className="col-12 col-md-6">
-            <h4 className="mb-2 fw-bold">ARTICLE / 精選文章</h4>
-          </div>
-          <div className="col-12 col-md-6">
-          <div className='mb-3'>
-          <h4 className="mb-2 fw-bold">EVENT / 本月優惠活動</h4>
-            <h6 className='text-white d-none' id="yearAndMonth">{`${now.y}/${now.m}/${myDate ? myDate : ''}`}</h6>
-            <table className={`align-middle ${estyles.tablestyle}`}>
-              <thead id="title">
-                <tr className={estyles.calenderHead}>
-                  {weekDayList.map(function (v, i) {
-                    return <th key={i} className='py-4 text-center'>{v}</th>
-                  })}
-                </tr>
-              </thead>
-              <tbody id="data">
-                {allData.map((v, i) => {
-                  return (
-                    <tr key={i}>
-                      {v.map((item, idx) => (
-                        <td
-                          key={idx}
-                          onClick={() => {
-                            if (item) setMyDate(item)
-                          }}
-                          className={`${now.d === item ? estyles.today : estyles.otherday} ${
-                              myDate === item ? estyles.chosenDate : ''
-                            } ${estyles.tableCell}`}
-                          style={{ cursor: 'pointer' }}
-                          role="presentation"
-                        >
-                          <h5>{item}</h5>
-                        </td>
-                      ))}
+        <div className='container'>
+          <div className="row d-flex justify-content-between">
+            <div className="col-12 col-md-6">
+              <h4 className="mb-2 fw-bold">ARTICLE / 精選文章</h4>
+              {hot.map((h) => {
+                return (
+                  <div className={style.hot_main}>
+                    <div className={style.hot_main_img}>
+                      <Link href={`/article/${h.ai_id}`}>
+                        <img
+                          src={`/images/article/${h.article_img}`}
+                          alt={h.article_img}
+                        />
+                      </Link>
+                    </div>
+                    <div className={style.time}>
+                      <div className="d-flex justify-content-between pb-2 ">
+                        <div className={`btn btn-danger ${style.custom_btn}`}>
+                          Hot
+                        </div>
+                        <p className="text-black d-flex align-items-center">
+                          {h.article_time}
+                        </p>
+                      </div>
+                      <Link href={`/article/${h.ai_id}`} className={style.a}>
+                        <p>
+                          {h.article_title}
+                        </p>
+                      </Link>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="col-12 col-md-6">
+              <div className='mb-3'>
+                <h4 className="mb-2 fw-bold">EVENT / 本月優惠活動</h4>
+                <h6 className='text-white d-none' id="yearAndMonth">{`${now.y}/${now.m}/${myDate ? myDate : ''}`}</h6>
+                <table className={`align-middle ${estyles.tablestyle}`}>
+                  <thead id="title">
+                    <tr className={estyles.calenderHead}>
+                      {weekDayList.map(function (v, i) {
+                        return <th key={i} className='py-4 text-center'>{v}</th>
+                      })}
                     </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-          <div>
-          <h4 className="mb-3 fw-bold">SHOP / 精選賣家</h4>
-          <div className="d-flex justify-content-between align-items-center flex-wrap">
-              {shop && (
+                  </thead>
+                  <tbody id="data">
+                    {allData.map((v, i) => {
+                      return (
+                        <tr key={i}>
+                          {v.map((item, idx) => (
+                            <td
+                              key={idx}
+                              onClick={() => {
+                                if (item) setMyDate(item)
+                              }}
+                              className={`${now.d === item ? estyles.today : estyles.otherday} ${myDate === item ? estyles.chosenDate : ''
+                                } ${estyles.tableCell}`}
+                              style={{ cursor: 'pointer' }}
+                              role="presentation"
+                            >
+                              <h5>{item}</h5>
+                            </td>
+                          ))}
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <h4 className="mb-3 fw-bold">SHOP / 精選賣家</h4>
+                <div className="d-flex justify-content-between align-items-center flex-wrap">
+                  {shop && (
                 <ShopCardA
                   avgRating={5}
                   shopInfo={shop[0]}
@@ -404,22 +451,22 @@ export default function Index() {
                 />
               )}
               {shop && (
-                <ShopCardA
-                  avgRating={5}
-                  shopInfo={shop[2]}
-                />
-              )}
-              {shop && (
-                <ShopCardA
-                  avgRating={5}
-                  shopInfo={shop[3]}
-                />
-              )}
+                    <ShopCardA
+                      avgRating={5}
+                      shopInfo={shop[2]}
+                    />
+                  )}
+                  {shop && (
+                    <ShopCardA
+                      avgRating={5}
+                      shopInfo={shop[3]}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-          </div>
         </div>
-      </div>
       </section>
       <Footer />
     </>

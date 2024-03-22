@@ -57,6 +57,16 @@
         // color:blue;
     }
 
+.cardBG:hover {
+        transform: translateY(-10px);
+        border-radius: 20%;
+      
+    .btnCTA {
+        transform: scale(1.1);
+           
+    }
+}
+
 @media screen and (max-width: 431px) {
     .cardBG {
       width: 300px;

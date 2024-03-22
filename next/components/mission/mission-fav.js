@@ -16,7 +16,7 @@ import { useAuth } from '@/hooks/use-Auth'
 
 
 
-export default function MissionFavShop({ status }) {
+export default function Miss({ status }) {
   const { isLoggedIn, memberId } = useAuth()
   const router = useRouter()
   
@@ -155,7 +155,7 @@ export default function MissionFavShop({ status }) {
             </div>
 
             <div className='d-flex justify-content-center align-items-center mt-3 mb-3'>
-              <button className={`btn ${m.status === 1? (m.coupon_id || prize ? 'btn-dark' : 'btn-info') : 'btn-danger'}`}
+              <button className={`btn ${m.status === 1 ? (m.coupon_id || prize ? 'btn-dark' : 'btn-info') : 'btn-danger'}`}
                 onClick={() => {
                   if (m.status === 1 && !m.coupon_id) {
                     claimPrize()

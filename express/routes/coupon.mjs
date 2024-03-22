@@ -30,11 +30,9 @@ router.get('/memberCP', async (req, res) => {
 
   let condition = ''
   if (filter === 'valid') {
-    condition =
-      'AND discount_coupon.expiration_date > NOW() AND member_coupon.status = 0'
+    condition = 'AND member_coupon.status = 0'
   } else if (filter === 'expiredORUsed') {
-    condition =
-      'AND (discount_coupon.expiration_date < NOW() OR member_coupon.status = 1)'
+    condition = 'AND member_coupon.status = 1'
   }
 
   const query = `
@@ -210,5 +208,20 @@ async function Coupons(memberId) {
   )
   return coupons
 }
+
+// async function CC(memberId, couponId || couponID) {
+//   const [cc] = await db.execute(
+//     'UPDATE member_coupon SET status = 1 WHERE member_id = ? AND coupon_id =? ',
+//     [memberId, couponId OR couponID]
+//   )
+//   return cc
+// }
+
+// Assuming connection is your database connection object
+// and member_buyer_id, selectedProductCoupon, selectedShippingCoupon are defined
+
+// Update for selectedProductCoupon
+
+// const ww = await console.log(ww)
 
 export default router
