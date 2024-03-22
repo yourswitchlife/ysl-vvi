@@ -76,7 +76,7 @@ const handleStatus = (newStatus) =>{
                         <Mission status={status}/>
 
 
-                        <Paginage className={mStyle.paginag} />
+                        {/* <Paginage className={mStyle.paginag} /> */}
                     </div>
 
                 </div>

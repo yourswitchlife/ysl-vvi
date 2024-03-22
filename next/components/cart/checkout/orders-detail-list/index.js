@@ -223,67 +223,7 @@ export default function OrdersDetailList() {
     localStorage.setItem('cartItems', JSON.stringify(remainingItems))
   }
 
-  // 成功建立訂單後更新積分start
-  const handleLevelPoint = async () => {
-    try {
-      const updateResponse = await fetch(
-        `http://localhost:3005/api/member/levelup/?memberId=${memberId}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ totalPrice }),
-          credentials: 'include',
-        }
-      )
 
-      if (!updateResponse.ok) {
-        throw new Error('更新會員資料失敗')
-      }
-
-      const Data = await updateResponse.json()
-      // console.log('consoleMessage',Data.message)
-      if (Data.message.includes('高手獎勵')) {
-        Swal.fire({
-          title: `${memberData.account}，恭喜升級！`,
-          text: 'YSL團隊為您帶來了2張高手獎勵優惠券！',
-          imageUrl: '/images/member/gift.png',
-          imageWidth: 200,
-          imageHeight: 230,
-          imageAlt: 'gift',
-          confirmButtonColor: '#43B0FF',
-          confirmButtonText: '好耶！',
-        })
-      } else if (Data.message.includes('菁英獎勵')) {
-        Swal.fire({
-          title: `${memberData.account}，恭喜升級！`,
-          text: 'YSL團隊為您帶來了2張菁英獎勵優惠券！',
-          imageUrl: '/images/member/gift.png',
-          imageWidth: 200,
-          imageHeight: 200,
-          imageAlt: 'gift',
-          confirmButtonColor: '#43B0FF',
-          confirmButtonText: '好耶！',
-        })
-      } else if (Data.message.includes('大師獎勵')) {
-        Swal.fire({
-          title: `${memberData.account}，恭喜升級！`,
-          text: 'YSL團隊為您帶來了2張大師獎勵優惠券！',
-          imageUrl: '/images/member/gift.png',
-          imageWidth: 200,
-          imageHeight: 200,
-          imageAlt: 'gift',
-          confirmButtonColor: '#43B0FF',
-          confirmButtonText: '好耶！',
-        })
-      }
-    } catch (error) {
-      console.error('更新會員資料時發生錯誤:', error)
-    }
-  }
-
-  // 成功建立訂單後更新積分END
 
   // 處理結帳 / 下訂單按鈕的送出連接後端產生訂單
   const handleSubmit = async () => {
@@ -372,8 +312,8 @@ export default function OrdersDetailList() {
                 .then((response) => response.json())
                 .then((data) => {
                   console.log(data)
-                  handleLevelPoint()
                   window.location.href = `/cart/purchase?orderId=${externalOrderIdForCash}`
+                  
                 })
                 .catch((error) => {
                   console.error('錯誤:', error)
@@ -395,8 +335,8 @@ export default function OrdersDetailList() {
                 .then((response) => response.json())
                 .then((data) => {
                   console.log(data)
-                  handleLevelPoint()
                   window.location.href = data
+                  
                 })
                 .catch((error) => {
                   console.error('錯誤:', error)
@@ -415,8 +355,8 @@ export default function OrdersDetailList() {
                 .then((response) => response.json())
                 .then((data) => {
                   console.log(data)
-                  handleLevelPoint()
                   window.location.href = `/cart/purchase?orderId=${externalOrderIdForCreditCard}`
+                  
                 })
                 .catch((error) => {
                   console.error('錯誤:', error)

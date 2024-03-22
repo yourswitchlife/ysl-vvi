@@ -22,7 +22,7 @@ export default function Purchase() {
   const router = useRouter()
   const { orderId, transactionId } = router.query
   const [products, setProducts] = useState([])
-  const { isLoggedIn, memberId } = useAuth()
+  const { isLoggedIn, memberId, memberData } = useAuth()
 
   // LINEPAY導頁進來
   useEffect(() => {
@@ -40,6 +40,7 @@ export default function Purchase() {
               showConfirmButton: false,
               timer: 2000,
             })
+            console.log("成功")
           } else {
             MySwal.fire({
               text: '付款失敗',
@@ -71,11 +72,11 @@ export default function Purchase() {
   // 過濾會員自己賣的商品
   const filterProducts = products.filter((p) => p.member_id !== memberId)
   // 過濾沒有description的商品
-  const hasDescriptionProducts = filterProducts.filter((p)=> p.description !== "" || null)
+  const hasDescriptionProducts = filterProducts.filter((p) => p.description !== "" || null)
   // 打亂過濾後的產品列表
   const shuffleProducts = hasDescriptionProducts.sort(() => 0.5 - Math.random())
   // 從打亂的列表隨機取4個
-  const randomProducts = shuffleProducts.slice(0,4)
+  const randomProducts = shuffleProducts.slice(0, 4)
 
   // 設定瀏覽紀錄
   const historyRecord = (p) => {
@@ -121,6 +122,91 @@ export default function Purchase() {
     })
     setProducts(newProducts)
   }
+
+  // 成功建立訂單後更新積分start
+  useEffect(() => {
+    if (memberId) {
+      handleLevelPoint();
+    }
+  }, [memberId]);
+
+  const handleLevelPoint = async () => {
+    try {
+      const updateResponse = await fetch(
+        `http://localhost:3005/api/member/levelup/?memberId=${memberId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        }
+      )
+
+      if (!updateResponse.ok) {
+        throw new Error('更新會員資料失敗')
+      }
+
+      const Data = await updateResponse.json()
+      // console.log('consoleMessage',Data.message)
+      if (Data.message.includes('高手獎勵')) {
+        setTimeout(() => {
+          Swal.fire({
+            title: `${memberData.account}，恭喜升級！`,
+            text: 'YSL團隊為您帶來了2張高手獎勵優惠券！',
+            imageUrl: '/images/member/gift.png',
+            imageWidth: 200,
+            imageHeight: 230,
+            imageAlt: 'gift',
+            confirmButtonColor: '#43B0FF',
+            confirmButtonText: '好耶！',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              router.push("/member/points");
+            }
+          })
+        }, 2000);
+      } else if (Data.message.includes('菁英獎勵')) {
+        setTimeout(() => {
+          Swal.fire({
+            title: `${memberData.account}，恭喜升級！`,
+            text: 'YSL團隊為您帶來了2張菁英獎勵優惠券！',
+            imageUrl: '/images/member/gift.png',
+            imageWidth: 200,
+            imageHeight: 200,
+            imageAlt: 'gift',
+            confirmButtonColor: '#43B0FF',
+            confirmButtonText: '好耶！',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              router.push("/member/points");
+            }
+          })
+        }, 2000);
+      } else if (Data.message.includes('大師獎勵')) {
+        setTimeout(() => {
+          Swal.fire({
+            title: `${memberData.account}，恭喜升級！`,
+            text: 'YSL團隊為您帶來了2張大師獎勵優惠券！',
+            imageUrl: '/images/member/gift.png',
+            imageWidth: 200,
+            imageHeight: 200,
+            imageAlt: 'gift',
+            confirmButtonColor: '#43B0FF',
+            confirmButtonText: '好耶！',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              router.push("/member/points");
+            }
+          })
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('更新會員資料時發生錯誤:', error)
+    }
+  }
+
+  // 成功建立訂單後更新積分END
 
   return (
     <>
@@ -195,7 +281,7 @@ export default function Purchase() {
                       member_id={p.member_id}
                       language={p.language}
                       cardIcon={cardIcon}
-                      // imgDetails={p.img_details}
+                    // imgDetails={p.img_details}
                     />
                   </div>
                 </div>

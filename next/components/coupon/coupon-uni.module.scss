@@ -25,6 +25,27 @@
 //     margin-right: ;
 // }
 
+.cardBG:hover {
+    transform: translateY(-10px);
+    border-radius: 20%;
+  
+    .btnCTA {
+      transform: scale(1.1);
+       
+    }
+}
+
+@keyframes btnGlow {
+    from {
+        transform: scale(0.5, 0.5) translate(0, 0);
+        opacity: 0.0;
+    }
+    to {
+        transform: scale(1.5, 1.5) translate(30%, 30%);
+        opacity: 1.0;
+    }
+}
+
 @media screen and (max-width: 431px) {
     .cardBG {
       width: 300px;
