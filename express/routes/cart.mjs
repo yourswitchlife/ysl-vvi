@@ -7,6 +7,7 @@ import crypto from 'crypto'
 import 'dotenv/config.js'
 import axios from 'axios'
 import queryString from 'query-string'
+import ECPayLogistics from '../node_modules/ecpay_logistics_nodejs/lib/ecpay_logistics.js'
 
 // 取得商品對應的賣場名稱
 router.get('/shop-names', async (req, res) => {
@@ -350,10 +351,10 @@ router.post('/create-order', async (req, res) => {
             )
 
             // 更新商品資料表對應商品的庫存數量
-            // await connection.execute(
-            //   `UPDATE product SET product_quanty = product_quanty - ?, valid = CASE WHEN product_quanty - ? <= 0 THEN 0 ELSE 1 END WHERE id = ?`,
-            //   [item.quantity, item.quantity, item.id]
-            // )
+            await connection.execute(
+              `UPDATE product SET product_quanty = product_quanty - ?, valid = CASE WHEN product_quanty <= 0 THEN 0 ELSE 1 END WHERE id = ?`,
+              [item.quantity, item.quantity, item.id]
+            )
           }
           // 更新寫入order_group資料表的amount欄位
           await connection.execute(
@@ -562,15 +563,19 @@ router.get('/get-coupons', async (req, res) => {
 })
 
 // 綠界門市地圖
-router.post('/get-seven-address', async (req, res) => {
+router.get('/get-seven-address', async (req, res) => {
   const dataBody = queryString.stringify({
+    MerchantTradeNo: 'f0a0d7e9fae1bb72bc93',
     LogisticsType: 'CVS',
     LogisticsSubType: 'UNIMARTC2C',
     IsCollection: 'N',
-    ServerReplyURL: 'http://localhost:3005/api/cart/get-seven',
-    MerchantID: '2000933',
-    HashKey: 'XBERn1YOvpM9nfZc',
-    HashIV: 'h1ONHk4P4yqbl5LK',
+    ServerReplyURL:
+      'https://f4df-2402-7500-4e6-92d1-51ba-7154-4a35-80c1.ngrok-free.app/api/cart/get-seven',
+    ExtraData: '',
+    Device: '',
+    // MerchantID: '3407566',
+    // HashKey: 'OVqyEFNSVcj9szQb',
+    // HashIV: 'BV6ifI9FtoQK6PkS',
   })
 
   const headers = {
@@ -580,9 +585,12 @@ router.post('/get-seven-address', async (req, res) => {
   // 綠界超商門市地圖串接路徑
   const url = 'https://logistics-stage.ecpay.com.tw/Express/map'
 
-  const sevenRes = await axios.post(url, dataBody, { headers })
+  const sevenRes = await axios.post(url, dataBody, {
+    headers,
+    withCredentials: true,
+  })
   console.log(sevenRes)
-  console.log(sevenRes.responseUrl)
+  console.log(sevenRes.data)
 })
 
 export default router
