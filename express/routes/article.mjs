@@ -53,10 +53,14 @@ router.get('/', async (req, res) => {
   const perPage = 4
   const perPage2 = 9
   const perPage3 = 3
+  const perPage4 = 5
+
 
   const startIndex = (page - 1) * perPage
   const startIndex2 = (page - 1) * perPage2
   const startIndex3 = (page - 1) * perPage3
+  const startIndex4 = (page - 1) * perPage4
+
 
   try {
     let [article] = await db.execute(
@@ -103,6 +107,14 @@ ORDER BY article_time DESC
       ORDER BY views DESC  
       LIMIT ${startIndex3}, ${perPage3}`
     )
+    let [hot2] = await db.execute(
+      `SELECT *, DATE_FORMAT(article_time, '%Y-%m-%d') AS article_time,
+      article_1.id AS ai_id 
+      FROM article_1 
+      JOIN article_category ON article_1.category_id = article_category.id
+      ORDER BY views DESC  
+      LIMIT ${startIndex4}, ${perPage4}`
+    )
 
     let [title] = await db.execute(
       `SELECT *, DATE_FORMAT(article_time, '%Y-%m-%d') AS article_time,
@@ -128,6 +140,7 @@ ORDER BY article_time DESC
       title,
       more,
       hot,
+      hot2,
     }
     // console.log(article)
     res.json(resData)

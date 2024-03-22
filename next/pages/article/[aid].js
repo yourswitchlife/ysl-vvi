@@ -196,9 +196,9 @@ export default function article_main() {
                         <p>{c.create_at}</p>
                       </div>
                     </div>
-                    <div className={style.edit}>
+                    {/* <div className={style.edit}>
                       <FaRegEdit className={style.edit_icon} />
-                    </div>
+                    </div> */}
                   </div>
                   <div
                     className={`d-flex justify-content-between pt-3 ${style.txt_area}`}
