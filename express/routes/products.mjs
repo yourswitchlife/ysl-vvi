@@ -27,10 +27,10 @@ router.get('/list', async (req, res) => {
   // if(req.params)
   const { type, rating } = req.query
 
-  console.log(`Type: ${type}`)
-  console.log(`Rating: ${rating}`)
+  // console.log(`Type: ${type}`)
+  // console.log(`Rating: ${rating}`)
 
-  console.log(req.query)
+  // console.log(req.query)
 
   let query = 'SELECT * FROM product';
   const params = [];
