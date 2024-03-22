@@ -27,24 +27,44 @@ router.get('/list', async (req, res) => {
   // if(req.params)
   const { type, rating } = req.query
 
-  console.log(`Type: ${type}`)
-  console.log(`Rating: ${rating}`)
+  // console.log(`Type: ${type}`)
+  // console.log(`Rating: ${rating}`)
 
-  console.log(req.query)
+  // console.log(req.query)
+
+  let query = 'SELECT * FROM product';
+  const params = [];
+
+   // 構建SQL查詢條件
+   if (type || rating) {
+    query += ' WHERE';
+
+    if (type) {
+      query += ' type_id = ?';
+      params.push(type);
+    }
+
+    if (rating) {
+      if (type) {
+        query += ' AND';
+      }
+      query += ' rating_id = ?';
+      params.push(rating);
+    }
+  }
 
   try {
-    // 全部資料
-    let [products] = await db.execute(`SELECT * FROM product `)
+    // 使用參數化查詢來預防SQL注入攻擊
+    const [products] = await db.execute(query, params);
 
     const responseData = {
       products,
-      // totalItems,
-      // totalPages,
-    }
-    res.json(responseData)
+      // 如果需要其他相關資訊，如totalItems或totalPages，可以在這裡計算並添加
+    };
+    res.json(responseData);
   } catch (error) {
-    console.log(error)
-    res.status(500)
+    console.error(error);
+    res.status(500).send('Server error');
   }
 })
 

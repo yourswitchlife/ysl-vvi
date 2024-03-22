@@ -7,9 +7,15 @@ import { FaPlus, FaFilter } from 'react-icons/fa'
 import Form from 'react-bootstrap/Form'
 import typeName from '@/data/type.json'
 import ratings from '@/data/rating.json'
+import { useRouter } from 'next/router';
+
+
 
 export default function TypeFilter({ productFilter = () => {} }) {
   //offcanvas const
+  const router = useRouter();
+  const { type } = router.query;
+
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
@@ -36,16 +42,26 @@ export default function TypeFilter({ productFilter = () => {} }) {
   }
 
   // 點按鈕後把選到的值傳給父層且同步
-  const handleSubmit = () => {
-    const typechecked = typeCheck.filter((v) => v.checked === true)
-    const ratingchecked = ratingCheck.filter((v) => v.checked === true)
-    // console.log(typechecked)
-    // console.log(ratingchecked)
-    const pFilterCondintion = { typechecked, ratingchecked }
-    productFilter(pFilterCondintion)
 
-    handleClose()
-  }
+  const handleSubmit = () => {
+    const typechecked = typeCheck.filter(v => v.checked === true);
+    const ratingchecked = ratingCheck.filter(v => v.checked === true);
+
+    const newQueryParams = { ...router.query };
+    delete newQueryParams.type;
+    newQueryParams.page = 1;
+
+    router.replace({
+        pathname: router.pathname,
+        query: newQueryParams,
+    });
+
+    const pFilterCondintion = { typechecked, ratingchecked };
+    productFilter(pFilterCondintion);
+
+    handleClose();
+};
+
   useEffect(() => {
   }, [typeCheck, ratingCheck])
   

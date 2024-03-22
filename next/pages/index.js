@@ -17,7 +17,7 @@ import ProductCard from '@/components/products/product-card'
 import WeeklySelect from '@/assets/weekly-select.svg'
 import { FaArrowRightLong } from 'react-icons/fa6'
 import { useAuth } from '@/hooks/use-Auth'
-import TypeSlider from '@/components/common/typeSlider'
+import TypeSwiper from '@/components/common/typeSwiper'
 
 export default function Index() {
   const router = useRouter()
@@ -246,7 +246,7 @@ export default function Index() {
         </div>
       </section>
       <section class="sec3 container pt-5 pb-5">
-        <h4 className="text-white mb-2">特賣焦點</h4>
+        <h4 className="text-white mb-2 d-flex justify-content-center">特賣焦點</h4>
         <div className="container">
         <div className='row my-3'>
         {products.slice(20, 24).map((p) => {
@@ -329,12 +329,10 @@ export default function Index() {
           
         </div>
       </section>
-      <section class="container sec4 pt-5 pb-5">
+      <section class="container sec4 pt-5">
         <h4 className="text-white mb-2 d-flex justify-content-center">商品分類</h4>
-        <div className='d-flex flex-row'>
-          <TypeSlider />
-        </div>
       </section>
+      <TypeSwiper />
       <section class="container sec5 pt-5 pb-5 ">
         <div className="row d-flex justify-content-between">
           <div class="col">
