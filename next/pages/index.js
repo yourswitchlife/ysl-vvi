@@ -5,6 +5,7 @@ import Image from 'next/image'
 import ControlledCarousel from '@/components/common/ControlledCarousel'
 import styles from '../styles/index.module.scss'
 import mstyles from '../styles/member/index.module.scss'
+import estyles from '../styles/index_event/index.module.scss'
 import Navbar from '@/components/layout/navbar/navbar'
 import ProductList from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
@@ -17,7 +18,8 @@ import ProductCard from '@/components/products/product-card'
 import WeeklySelect from '@/assets/weekly-select.svg'
 import { FaArrowRightLong } from 'react-icons/fa6'
 import { useAuth } from '@/hooks/use-Auth'
-import TypeSlider from '@/components/common/typeSlider'
+import TypeSwiper from '@/components/common/typeSwiper'
+import { chunk } from 'lodash' 
 
 export default function Index() {
   const router = useRouter()
@@ -31,6 +33,8 @@ export default function Index() {
   const { isLoggedIn, memberId } = useAuth()
   // 設置本周精選卡片的翻面狀態
   const [flippedStates, setFlippedStates] = useState({})
+  // 設置日曆
+  const [myDate, setMyDate] = useState(0)
 
   // 卡片翻轉的狀態
   const flipCard = (id) => {
@@ -159,6 +163,26 @@ export default function Index() {
     e.stopPropagation()
   }
 
+  //日曆
+  const now = {
+    y: new Date().getFullYear(),
+    m: new Date().getMonth() + 1, //注意回傳為 0~11
+    d: new Date().getDate(),
+  }
+  const weekDayList = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat']
+  const days = new Date(now.y, now.m, 0).getDate()
+  const firstDay = new Date(now.y, now.m - 1, 1).getDay()
+  const allData = chunk(
+    [
+      ...Array(firstDay).fill(''),
+      ...Array(days)
+        .fill('')
+        .map((v, i) => i + 1),
+    ],
+    7
+  )
+
+
   return (
     <>
       <GoTopButton />
@@ -245,8 +269,8 @@ export default function Index() {
           <Image src={WeeklySelect} className={styles.img} />
         </div>
       </section>
-      <section class="sec3 container pt-5 pb-5">
-        <h4 className="text-white mb-2">特賣焦點</h4>
+      <section className="sec3 container pt-5 pb-5">
+        <h4 className="text-white mb-2 d-flex justify-content-center">特賣焦點</h4>
         <div className="container">
         <div className='row my-3'>
         {products.slice(20, 24).map((p) => {
@@ -329,21 +353,56 @@ export default function Index() {
           
         </div>
       </section>
-      <section class="container sec4 pt-5 pb-5">
+      <section className="container sec4 pt-5">
         <h4 className="text-white mb-2 d-flex justify-content-center">商品分類</h4>
-        <div className='d-flex flex-row'>
-          <TypeSlider />
-        </div>
       </section>
-      <section class="container sec5 pt-5 pb-5 ">
-        <div className="row d-flex justify-content-between">
-          <div class="col">
-            <h4 className="text-white mb-2">精選文章</h4>
+      <TypeSwiper />
+      <section className={`sec5 pt-5 pb-5 ${estyles.eventBox}`}>
+      <div className='container'>
+      <div className="row d-flex justify-content-between">
+          <div className="col-12 col-md-6">
+            <h4 className="mb-2 fw-bold">ARTICLE / 精選文章</h4>
           </div>
-          <div class="col">
-            <h4 className="text-white mb-2">好康資訊</h4>
-            <h4 className="text-white mb-2">精選賣家</h4>
-            <div className="d-flex justify-content-between align-items-center flex-wrap">
+          <div className="col-12 col-md-6">
+          <div className='mb-3'>
+          <h4 className="mb-2 fw-bold">EVENT / 本月優惠活動</h4>
+            <h6 className='text-white d-none' id="yearAndMonth">{`${now.y}/${now.m}/${myDate ? myDate : ''}`}</h6>
+            <table className={`align-middle ${estyles.tablestyle}`}>
+              <thead id="title">
+                <tr>
+                  {weekDayList.map(function (v, i) {
+                    return <th key={i} className='py-4 text-center'>{v}</th>
+                  })}
+                </tr>
+              </thead>
+              <tbody id="data">
+                {allData.map((v, i) => {
+                  return (
+                    <tr key={i}>
+                      {v.map((item, idx) => (
+                        <td
+                          key={idx}
+                          onClick={() => {
+                            if (item) setMyDate(item)
+                          }}
+                          className={`${now.d === item ? estyles.today : estyles.otherday} ${
+                              myDate === item ? estyles.chosenDate : ''
+                            } ${estyles.tableCell}`}
+                          style={{ cursor: 'pointer' }}
+                          role="presentation"
+                        >
+                          {item}
+                        </td>
+                      ))}
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div>
+          <h4 className="mb-3 fw-bold">SHOP / 精選賣家</h4>
+          <div className="d-flex justify-content-between align-items-center flex-wrap">
               {selectedShops[0] && (
                 <ShopCardA
                   avgRating={roundedRating}
@@ -358,7 +417,9 @@ export default function Index() {
               )}
             </div>
           </div>
+          </div>
         </div>
+      </div>
       </section>
       <Footer />
     </>

@@ -431,7 +431,14 @@ router.get('/:shop_site/products', async (req, res) => {
 
 //找出所有有評價的shop和rating
 router.get('/', async (req, res) => {
-  let [shopRating] = await db.execute('SELECT * FROM `shop_comment`')
+  let [shopRating] = await db.execute(`
+  SELECT shop_id, 
+    AVG(rating) AS average_rating
+  FROM 
+    shop_comment
+  GROUP BY 
+    shop_id
+`)
 
   let [shop] = await db.execute(
     'SELECT `id`, `shop_name`, `shop_site`, `pic` FROM `member` WHERE `shop_valid` = 1'

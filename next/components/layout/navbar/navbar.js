@@ -26,10 +26,12 @@ import { useWebSocket } from '@/context/member/websocketLong'
 
 export default function Navbar(props) {
   const { searchWord, setSearchWord } = props
-  const { isLoggedIn, memberData } = useAuth();
+  const { isLoggedIn, memberId, memberData } = useAuth();
+
   const [isHovered, setIsHovered] = useState(false);
   const { totalProducts } = useCart()
   const { unreadCount } = useWebSocket();
+
   // const [unreadCount, setUnreadCount] = useState(0);
   // const socket = io('http://localhost:3005');
 

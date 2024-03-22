@@ -176,8 +176,8 @@ export default function ShopSetting() {
       const formData = new FormData()
       
       formData.append('file', file)
-      // console.log(formData.get('file'))
-      // console.log(selectedFile)
+      console.log(formData.get('file'))
+      console.log(selectedFile)
       try{
         const response = await fetch(`http://localhost:3005/api/seller/shop/shopCover`,{
           method: 'PUT',
@@ -220,7 +220,7 @@ export default function ShopSetting() {
   const handleClick = () => {
     if(fileInputRef.current){
       fileInputRef.current.click()
-      console.log('File Input Clicked!')
+      // console.log('File Input Clicked!')
     }else{
       console.error('FileInputRef is null')
     }
@@ -249,9 +249,9 @@ export default function ShopSetting() {
           )}
           <main className='flex-grow-1'>
             {/* cover */}
-            <div className={styles.coverB}>
+            {/* <div className={styles.coverB}>
           <Image height={170} width={1172} src={shopCover} alt="shop-cover" className={styles.fit} />
-          </div>
+          </div> */}
             {/* {memberData && (
               <>
                 <SellerCover shopCover={shopCover}/>

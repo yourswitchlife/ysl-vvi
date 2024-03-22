@@ -12,6 +12,7 @@ import BreadCrumb from '@/components/common/breadcrumb'
 import { useAuth } from '@/hooks/use-Auth'
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import Swal from 'sweetalert2'
+import axios from 'axios'
 
 //images
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
@@ -26,7 +27,45 @@ export default function New() {
   const [bigPic, setBigPic] = useState(profilePhoto)
   const [shopCover, setShopCover] = useState(cover)
   const router = useRouter()
-  
+  const { pid } = router.query
+  const [product, setProduct] = useState({
+    pName: '',
+    pCover: '',
+    pImgs: [],
+    pType: 0,
+    pRating: '',
+    pLanguage: [],
+    pPrice: '',
+    pDiscribe: '',
+    release_time: '',
+  })
+  const [initProduct, setInitProduct] = useState({
+    pName: '',
+    pCover: '',
+    pImgs: [],
+    pType: 0,
+    pRating: '',
+    pLanguage: [],
+    pPrice: '',
+    pDiscribe: '',
+    release_time: '',
+  })
+  const [errorMsg, setErrorMsg] = useState('')
+  const typeOptions = [
+    'RPG - 角色扮演',
+    'AVG - 冒險遊戲',
+    'ETC - 其他類型',
+    'ACT - 動作遊戲',
+    'SLG - 策略遊戲',
+    'RAC - 競速遊戲',
+    'SPG - 體育遊戲',
+    'STG - 射擊遊戲',
+    'FTG - 格鬥遊戲',
+  ]
+  const ratingOptions = ['普遍級', '保護級', '輔導級', '限制級']
+  const languageOptions = ['CH-中文', 'EN-英文', 'JP-日文']
+  const isDataChanged = JSON.stringify(product) !== JSON.stringify(initProduct)
+  const [newProduct, setNewProduct] = useState([])
   // const MySwal = withReactContent(Swal)
   // console.log(memberId)
   //body style
@@ -55,48 +94,13 @@ export default function New() {
     }
   }, [isLoggedIn, memberId, memberData])
 
-  const [newP, setNewP] = useState({
-    pName: '',
-    pCover: '',
-    pImgs: [],
-    pType: 0,
-    pRating: '',
-    pLanguage: [],
-    pPrice: '',
-    pDiscribe: '',
-    release_time: '',
-  })
-
-  const [errorMsg, setErrorMsg] = useState('')
-  const typeOptions = [
-    'RPG - 角色扮演',
-    'AVG - 冒險遊戲',
-    'ETC - 其他類型',
-    'ACT - 動作遊戲',
-    'SLG - 策略遊戲',
-    'RAC - 競速遊戲',
-    'SPG - 體育遊戲',
-    'STG - 射擊遊戲',
-    'FTG - 格鬥遊戲',
-  ]
-
-  const ratingOptions = ['普遍級', '保護級', '輔導級', '限制級']
-
-  const languageOptions = ['CH-中文', 'EN-英文', 'JP-日文']
-  // const fileInputRef = useRef();
-  const notifySuccess = () => {
-    MySwal.fire({
-      icon: 'success',
-      title: '商品已加入購物車',
-      showConfirmButton: false,
-      timer: 2000,
-    })
-  }
-  const notifyMax = () => {
-    MySwal.fire({
-      text: "已達購買上限",
-      confirmButtonColor: '#E41E49',
-    })
+  const handleProduct = (e) => {
+    const {name, value} = e.target
+    setProduct((prevData) => ({
+      ...prevData,
+      [name]: value
+    }))
+    //表單驗證的地方
   }
 
   const handleChange = (e) => {
@@ -104,11 +108,11 @@ export default function New() {
       const files = e.target.files
       if (e.target.multiple) {
         const fileName = Array.from(files).map((file) => file.name)
-        setNewP({ ...newP, [e.target.name]: fileName })
+        setProduct({ ...product, [e.target.name]: fileName })
       } else {
         if (files.length > 0) {
           const file = files[0]
-          setNewP({ ...newP, [e.target.name]: file.name })
+          setProduct({ ...product, [e.target.name]: file.name })
         }
       }
     } else if (e.target.type === 'checkbox') {
@@ -116,60 +120,70 @@ export default function New() {
       const checked = e.target.checked
       const name = e.target.name
       if (checked) {
-        const update = newP.pLanguage.includes(tv)
-          ? newP.pLanguage
-          : [...newP.pLanguage, tv]
-        setNewP({ ...newP, [name]: update })
+        const update = product.pLanguage.includes(tv)
+          ? product.pLanguage
+          : [...product.pLanguage, tv]
+        setProduct({ ...product, [name]: update })
       } else {
-        const update = newP.pLanguage.filter((v) => v !== tv)
-        setNewP({ ...newP, [name]: update })
+        const update = product.pLanguage.filter((v) => v !== tv)
+        setProduct({ ...product, [name]: update })
       }
-    } else setNewP({ ...newP, [e.target.name]: e.target.value })
+    } else setProduct({ ...product, [e.target.name]: e.target.value })
   }
 
   const handleForm = async (e) => {
-    console.log(e.target)
+    // console.log(e.target)
     e.preventDefault()
     if (
-      !newP.pName ||
-      !newP.pDiscribe ||
-      !newP.pCover ||
-      !newP.pPrice ||
-      !newP.pLanguage ||
-      !newP.pRating ||
-      !newP.pImgs ||
-      !newP.pType
+      !product.pName ||
+      !product.pDiscribe ||
+      !product.pCover ||
+      !product.pPrice ||
+      !product.pLanguage ||
+      !product.pRating ||
+      !product.pImgs ||
+      !product.pType
     ) {
       alert('請檢查是否輸入完整欄位資訊')
       return
     } else {
       const fd = new FormData(e.target)
-      console.log(fd.get('pLanguage'))
+      // console.log(fd.get('pLanguage'))
       fetch(
-        `http://localhost:3005/api/products/addNewProduct?memberId=${memberId}`,
+        `http://localhost:3005/api/products/edit/${pid}`,
         {
           credentials: 'include',
-          method: 'POST',
+          method: 'PUT',
           body: fd,
         }
       )
         .then((res) => res.json())
         .then(
-          (data) => alert('新增成功！'),
-
-          setTimeout(() => {
-            clearForm()
-          }, 1000)
+          Swal.fire({
+            title: "賣場更新成功!",
+            text: "快來上架二手遊戲一起販售商品吧！",
+            icon: "success",
+            showConfirmButton: true,
+            timer: 1200
+          })
+          // setTimeout(() => {
+          //   router.push('./product')
+          // }, 1000)
         )
         .catch((error) => {
           console.error('error', error)
+          Swal.fire({
+            title: "儲存失敗",
+            text: "請確認欄位資料正確！",
+            icon: "error"
+          })
         })
     }
   }
-//   console.log(newP)
+//   console.log(product)
 
   const clearForm = ()=>{
-    setNewP({
+    setProduct({
       pName: '',
       pCover: '',
       pImgs: [],
@@ -184,6 +198,41 @@ export default function New() {
     document.getElementById('pImgs').value = ''
   }
   // console.log(fd)
+
+  useEffect(() => {
+    if(pid && isLoggedIn && memberData){
+      console.log(pid)
+      fetch(`http://localhost:3005/api/seller/product/${pid}`)
+      .then(response => {
+        if(!response.ok){
+          throw new Error('Network res was not OK')
+        }
+        return response.json()
+      }
+      )
+      .then(data =>
+        {
+          console.log(data)
+        //axios會將response數據放在data屬性中
+        // console.log(response.data)
+        // const data = response.data
+        const item = {
+          pName: data.pName || '',
+          pCover: data.pCover || '',
+          pImgs: data.pImgs || [],
+          pType: data.pType || 0,
+          pRating: data.pRating || '',
+          pLanguage: data.pLanguage || [],
+          pPrice: data.pPrice || '',
+          pDiscribe: data.pDiscribe || '',
+          release_time: data.release_time || '',
+        }
+        setProduct(item)
+        setInitProduct(item)
+      })
+      .catch(error => console.error('Error fetching data:', error))
+    }
+  }, [pid, memberData])
 
   return (
     <>
@@ -225,7 +274,7 @@ export default function New() {
                       className="form-control"
                       id="pName"
                       name="pName"
-                      value={newP.pName}
+                      value={product.pName}
                       placeholder="請輸入商品名稱"
                       onChange={handleChange}
                     />
@@ -243,7 +292,7 @@ export default function New() {
                       id="pCover"
                       name="pCover"
                       accept="image/*"
-                      // value={newP.pCover}
+                      // value={product.pCover}
                       onChange={handleChange}
                     />
                   </div>
@@ -264,13 +313,13 @@ export default function New() {
                       className="form-control"
                       id="pImgs"
                       name="pImgs"
-                      // value={newP.pImgs}
+                      // value={product.pImgs}
                       accept="image/*"
                       onChange={(e) => {
                         const files = e.target.files
                         if (files.length > 3) {
                           alert('最多只能上傳3張')
-                          setNewP({ ...newP, pImgs: [] })
+                          setProduct({ ...product, pImgs: [] })
                           e.target.value = ''
                           return
                         }
@@ -287,7 +336,7 @@ export default function New() {
                     </label>
                     <select
                       name="pType"
-                      value={newP.pType}
+                      value={product.pType}
                       onChange={handleChange}
                       className="form-select"
                       aria-label="Default select example"
@@ -311,7 +360,7 @@ export default function New() {
                     </label>
                     <select
                       name="pRating"
-                      value={newP.pRating}
+                      value={product.pRating}
                       onChange={handleChange}
                       className="form-select"
                       aria-label="Default select example"
@@ -341,7 +390,7 @@ export default function New() {
                       className="form-control"
                       id="release_time"
                       name="release_time"
-                      value={newP.release_time}
+                      value={product.release_time}
                       // placeholder="請輸入商品名稱"
                       onChange={handleChange}
                     />
@@ -363,7 +412,7 @@ export default function New() {
                             key={i}
                             type="checkbox"
                             className="form-check-input me-1"
-                            checked={newP.pLanguage.includes(v)}
+                            checked={product.pLanguage.includes(v)}
                             value={v}
                             name="pLanguage"
                             onChange={handleChange}
@@ -385,7 +434,7 @@ export default function New() {
                       className="form-control"
                       id="pPrice"
                       name="pPrice"
-                      value={newP.pPrice}
+                      value={product.pPrice}
                       placeholder="請輸入商品價格"
                       onChange={handleChange}
                     />
@@ -406,7 +455,7 @@ export default function New() {
                       className="form-control"
                       id="pNapDiscribeme"
                       name="pDiscribe"
-                      value={newP.pDiscribe}
+                      value={product.pDiscribe}
                       placeholder="請輸入商品描述"
                       onChange={handleChange}
                     />
@@ -414,20 +463,21 @@ export default function New() {
                 </div>
                 {/* buttons */}
                 <div className="d-flex justify-content-center align-items-center mt-2">
-                  <button type="submit" className="btn btn-danger me-2">
+                  <button type="button" onCLick={handleForm} className="btn btn-danger me-2" disabled={!isDataChanged}>
                     儲存
                   </button>
-                  <button
+                  {/* <button
                     type="button"
                     className={`btn ${styles.btnDangerOutlined} me-2`}
                   >
                     儲存暫不上架
-                  </button>
+                  </button> */}
                   {/* 清空表單 */}
                   <button
                     type="button"
                     className={`btn ${styles.btnGrayOutlined}`}
                     onClick={() => {
+                      // clearForm()
                       router.push('./')
                     }}
                   >

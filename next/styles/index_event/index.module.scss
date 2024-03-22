@@ -1,0 +1,40 @@
+@import "../valuable.scss";
+
+.eventBox{
+    background-color: $light-gray;
+}
+
+.tablestyle{
+    width: 100%;
+    height: 400px;
+    // background-color: rgba(255, 255, 255, 0.764);
+    // border: 3px solid white;
+    border-radius: 10px;
+    overflow: hidden;
+    padding: 10px;
+    .tableCell {
+        width: 70px; // 或其他固定的宽度
+        height: 90px; // 或根据需要设置最小高度
+        text-align: center; // 可选，如果你想内容居中显示
+      }
+    .chosenDate {
+        background-color: gold;
+        border-radius: 50%;
+    }
+    .today {
+        // background-color: black;
+        background-color: $red-secondary;
+        color: $white;
+        border-radius: 50%;
+      }
+    .otherday {
+        transition: 0.3s;
+        &:hover{
+            background-color: rgba(215, 215, 215, 0.873);
+            text-decoration: underline;
+            text-underline-offset: 7px;
+            border-radius: 50%;
+        }
+    }
+}
+

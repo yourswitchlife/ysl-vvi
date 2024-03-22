@@ -46,17 +46,26 @@ $nav-black: #161719ae;
     color: $white;
     text-decoration: none;
     padding-right: 30px;
+    transition: 0.7s;
+    &:hover{
+      text-decoration: underline;
+      text-underline-offset: 7px;
+    }
   }
   .height{
     height: 50px;
     width: 317px;
     display: flex;
     align-items: center;
-    justify-content: end;
+    justify-content: flex-end;
   }
   .link {
     color: $white;
     text-decoration: none;
+    &:hover{
+      text-decoration: underline;
+      text-underline-offset: 7px;
+    }
   }
   .unlogin {
     padding-inline: 10px;

@@ -7,7 +7,11 @@ import Navbar from '@/components/layout/navbar/navbar'
 import sStyle from '@/styles/member/sign-up.module.scss'
 import Link from 'next/link'
 
+//google api
+import { signInWithRedirect } from "firebase/auth";
+import { auth, googleAuthProvider } from '@/utils/firebaseConfig';
 import { FcGoogle } from 'react-icons/fc'
+
 import { FaUser, FaEnvelope } from 'react-icons/fa'
 import { MdKey } from 'react-icons/md'
 import { Form, InputGroup, Button, FormControl } from 'react-bootstrap'
@@ -87,6 +91,10 @@ export default function register() {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+  
+  const handleGoogleLogin = () => {
+    signInWithRedirect(auth, googleAuthProvider);
   };
 
   return (
@@ -184,7 +192,7 @@ export default function register() {
                 </Button>
                 <Button
                   className={sStyle.sign_btn + ' h5 d-flex align-items-center'}
-                >
+                  onClick={handleGoogleLogin}>
                   <FcGoogle className="me-2" />
                   以Google帳號登入
                 </Button>
