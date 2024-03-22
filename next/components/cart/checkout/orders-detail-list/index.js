@@ -134,6 +134,7 @@ export default function OrdersDetailList() {
 
   // 紀錄用戶暫存的優惠券
   const handleTempSelectProductCoupon = (coupon) => {
+    console.log(coupon);
     setTempSelectedProductCoupon(coupon)
   }
   const handleTempSelectShippingCoupon = (coupon) => {
@@ -144,6 +145,7 @@ export default function OrdersDetailList() {
   const handleConfirmSelection = () => {
     setSelectedProductCoupon(tempSelectedProductCoupon)
     setSelectedShippingCoupon(tempSelectedShippingCoupon)
+   
     if (tempSelectedProductCoupon) {
       const productCoupon = coupons.find(
         (coupon) => coupon.id === tempSelectedProductCoupon
@@ -164,6 +166,11 @@ export default function OrdersDetailList() {
     handleCloseDesktopModal()
     handleCloseMobileModal()
   }
+
+  useEffect(()=>{
+    console.log(selectedProductCoupon);
+    console.log(selectedShippingCoupon);
+  }, [selectedProductCoupon, selectedShippingCoupon])
 
   useEffect(() => {
     const selectedCoupon = coupons.find(
