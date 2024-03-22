@@ -37,7 +37,7 @@ export default function SideBar() {
       });
     }
     if (memberData.address) {
-    router.push('/seller/shop');
+    router.push('/seller');
     }
   };
 

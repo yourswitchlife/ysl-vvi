@@ -133,6 +133,13 @@ router.post('/google-login', async function (req, res) {
         created_at,
       ])
       memberId = createResult.insertId
+      // 插入 member_coupon 資料
+      const couponGiftQuery = `INSERT INTO member_coupon (member_id, coupon_id, status) VALUES (?, 1, 0)`;
+      await db.execute(couponGiftQuery, [memberId]);
+
+      // 插入 mission 資料
+      const missionStartQuery = `INSERT INTO mission (mission_id, member_id, status) VALUES (2, ?, 0)`;
+      await db.execute(missionStartQuery, [memberId]);
     }
 
     const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET
@@ -228,10 +235,23 @@ router.put('/account/:memberId', async (req, res) => {
 // 結帳後積分更新
 router.patch('/levelup', async (req, res) => {
   const memberId = req.query.memberId
-  console.log(memberId)
-  const { totalPrice } = req.body
-  console.log(totalPrice)
+  // console.log("memberId", memberId)
+
   try {
+    // 總價格
+    const totalPriceQuery = `
+    SELECT og.amount AS totalPrice
+    FROM order_group og
+    WHERE og.id = (
+    SELECT MAX(o.group_id)
+    FROM orders o
+    WHERE o.member_buyer_id = ?
+    );  
+  `;
+    const [totalPriceResult] = await db.execute(totalPriceQuery, [memberId]);
+    const totalPrice = totalPriceResult[0].totalPrice || 0;
+    console.log("taotalPRICE", totalPrice)
+
     // 更新會員積分
     const updatePointQuery = `
     UPDATE member
@@ -240,6 +260,8 @@ router.patch('/levelup', async (req, res) => {
   `
     const [result] = await db.execute(updatePointQuery, [totalPrice, memberId])
     // console.log('SQL 查詢結果:', result);
+    console.log("result.affectedRows", result.affectedRows)
+
     if (result.affectedRows > 0) {
       // 最新的level_point
       const getMemberQuery = `
@@ -263,12 +285,10 @@ router.patch('/levelup', async (req, res) => {
         ])
         if (couponResult.length === 0) {
           // 1張50折價
-          await db.execute(
-            'INSERT INTO member_coupon (member_id, coupon_id, status, created_at)VALUES (?, ?, ?, NOW())',
-            [memberId, 64, 0]
-          )
-          res.json({ message: '恭喜升級！成功獲得1張高手獎勵優惠券！' })
-          return
+          await db.execute('INSERT INTO member_coupon (member_id, coupon_id, status, created_at)VALUES (?, ?, ?, NOW())', [memberId, 64, 0]);
+          res.json({ message: '恭喜升級！成功獲得1張高手獎勵優惠券！' });
+          // console.log("50 1張")
+          return;
         }
       } else if (updatedLevelPoint >= 13000 && updatedLevelPoint < 20000) {
         const checkCouponQuery = `
@@ -286,11 +306,10 @@ router.patch('/levelup', async (req, res) => {
             `
             INSERT INTO member_coupon (member_id, coupon_id, status, created_at)
             VALUES (?, ?, ?, NOW()), (?, ?, ?, NOW())
-            `,
-            [memberId, 65, 0, memberId, 65, 0]
-          )
-          res.json({ message: '恭喜升級！成功獲得2張菁英獎勵優惠券！' })
-          return
+            `, [memberId, 65, 0, memberId, 65, 0]);
+          res.json({ message: '恭喜升級！成功獲得2張菁英獎勵優惠券！' });
+          // console.log("100 2張")
+          return;
         }
       } else if (updatedLevelPoint >= 20000) {
         const checkCouponQuery = `
@@ -308,11 +327,10 @@ router.patch('/levelup', async (req, res) => {
             `
             INSERT INTO member_coupon (member_id, coupon_id, status, created_at)
             VALUES (?, ?, ?, NOW()), (?, ?, ?, NOW())
-            `,
-            [memberId, 66, 0, memberId, 66, 0]
-          )
-          res.json({ message: '恭喜升級！成功獲得2張大師獎勵優惠券！' })
-          return
+            `, [memberId, 66, 0, memberId, 66, 0]);
+          res.json({ message: '恭喜升級！成功獲得2張大師獎勵優惠券！' });
+          // console.log("200 2張")
+          return;
         }
       }
       res.json({ message: '會員資料更新成功' })
@@ -457,9 +475,9 @@ router.post('/reset-password', async (req, res) => {
     const password = await generateHash(newPassword) // hash加密密碼
     await db.execute(
       'UPDATE member m ' +
-        'JOIN otp o ON m.id = o.member_id ' +
-        'SET m.password = ? ' +
-        'WHERE o.id = ?',
+      'JOIN otp o ON m.id = o.member_id ' +
+      'SET m.password = ? ' +
+      'WHERE o.id = ?',
       [password, otpResult.id]
     )
 
@@ -707,7 +725,9 @@ router.get('/order', async (req, res) => {
   try {
     // 總項目
     const [totalsellerResult] = await db.execute(
-      `SELECT o.member_seller_id, COUNT(o.id) AS totalseller FROM orders o WHERE member_buyer_id = ? ${statusFilter}`,
+      `SELECT COUNT(DISTINCT o.group_id) AS totalseller 
+      FROM orders o 
+      WHERE member_buyer_id = ? ${statusFilter}`,
       totalsellerParams
     )
     const totalseller = totalsellerResult[0].totalseller
@@ -758,8 +778,9 @@ router.get('/order', async (req, res) => {
     }
     // console.log(offset)
 
-    res.json(responseData)
+    res.json(responseData);
     // console.log(responseData)
+
   } catch (error) {
     console.error('取得收藏列表出錯:', error)
     res.status(500).send('伺服器錯誤')
