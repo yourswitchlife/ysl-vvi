@@ -11,7 +11,7 @@ import GoTopButton from '@/components/go-to-top/go-top-button'
 import CouponUni from '@/components/coupon/coupon-uni'
 
 //pictures
-import banner from '@/public/images/coupon/tryout.png'
+import banner from '@/public/images/coupon/bgg.png'
 
 import titleA from '@/public/images/coupon/title1.png'
 import titleB from '@/public/images/coupon/title2.png'
