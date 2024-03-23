@@ -31,7 +31,7 @@ import 'animate.css/animate.min.css'
 import typeName from '@/data/type.json'
 import ratings from '@/data/rating.json'
 //icon
-import { FaPlus, FaAngleDown, FaFilter, FaStar } from 'react-icons/fa'
+import { FaPlus, FaAngleDown, FaFilter, FaStar, FaMinus } from 'react-icons/fa'
 import { IoChatbubblesOutline } from "react-icons/io5"
 //React-bootstrap
 import Form from 'react-bootstrap/Form'
@@ -282,14 +282,14 @@ export default function ShopPage() {
 
 
   let sellerId = shop.seller_id
-  console.log(sellerId)
+  // console.log(sellerId)
   const createRoom = (memberId, sellerId) => {
     if (!isLoggedIn) {
       router.push('/member/login');
       return;
     } else {
       const room = [String(memberId), String(sellerId)].sort().join('_')
-      console.log(room)
+      // console.log(room)
       if (socket) {
         socket.emit("create_room", room);
         setShowChat(true);
@@ -364,8 +364,11 @@ export default function ShopPage() {
                 className="btn btn-danger d-flex align-items-center"
                 onClick={handleFavShop}
               >
-                <FaPlus className="me-1" />
-                  {isFav ? '取消收藏' : '收藏賣家'}
+                  {isFav ? (<>
+                    <FaMinus className="me-1" /><h6>取消收藏</h6>
+                  </>) : (<>
+                    <FaPlus className="me-1" /><h6>收藏賣家</h6>
+                  </>)}
               </button>
               ) : (//沒登入
               <button
@@ -446,8 +449,11 @@ export default function ShopPage() {
               className="btn btn-danger d-flex align-items-center"
               onClick={handleFavShop}
             >
-              <FaPlus className="me-1" />
-              {isFav ? '取消收藏' : '收藏賣家'}
+              {isFav ? (<>
+                    <FaMinus className="me-1" /><h6>取消收藏</h6>
+                  </>) : (<>
+                    <FaPlus className="me-1" /><h6>收藏賣家</h6>
+                  </>)}
             </button>
             ) : (//沒登入
             <button
