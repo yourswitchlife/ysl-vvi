@@ -1,0 +1,54 @@
+@import "../valuable.scss";
+
+.hot_main {
+  transition: 0.3s;
+  width: 100%;
+  display: flex;
+  padding: 20px;
+  border-bottom: 5px solid transparent;
+  border-radius: 10px;
+  &:hover{
+    background-color: #ffffff4f;
+    border-bottom: 5px solid $danger;
+  }
+}
+
+.hot_main_img {
+  height: 110px;
+  width: 30%;
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.time {
+  width: 60%;
+  padding-left: 15px;
+}
+
+.custom_btn {
+  font-size: 13px;
+  padding: 4px;
+  border-radius: 5px;
+}
+
+.a {
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+}
+
+@media screen and (max-width: 431px) {
+  .hot_main_img {
+    height: 110px;
+    width: 50%;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .time {
+    width: 50%;
+    padding-left: 15px;
+  }
+}

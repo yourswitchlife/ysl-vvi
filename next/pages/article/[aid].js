@@ -27,6 +27,7 @@ export default function article_main() {
       [name]: value,
     });
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -52,7 +53,9 @@ export default function article_main() {
       // 处理响应...
       console.log('Comment submitted successfully!');
 
+      const scrollPosition = window.scrollY;
       window.location.reload();
+      window.scrollTo(0, scrollPosition);
     } catch (error) {
       console.error('Error submitting comment:', error);
     }
@@ -70,7 +73,7 @@ export default function article_main() {
     try {
       const newEmo = emo === 1 ? 0 : 1;
 
-      const res = await fetch(`http://localhost:3005/api/article/${aid}`, {
+      const res = await fetch('http://localhost:3005/api/article/comment/comment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +92,6 @@ export default function article_main() {
       console.error('Error updating emo value:', error);
     }
   };
-  console.log(content.content);
 
 
 
@@ -101,7 +103,6 @@ export default function article_main() {
       setArticle(data.article);
       setComment(data.comment);
 
-      console.log(data.comment);
     } catch (e) {
       console.error(e);
     }
@@ -195,9 +196,9 @@ export default function article_main() {
                         <p>{c.create_at}</p>
                       </div>
                     </div>
-                    <div className={style.edit}>
+                    {/* <div className={style.edit}>
                       <FaRegEdit className={style.edit_icon} />
-                    </div>
+                    </div> */}
                   </div>
                   <div
                     className={`d-flex justify-content-between pt-3 ${style.txt_area}`}
@@ -206,13 +207,13 @@ export default function article_main() {
                       <h6 style={{ color: 'white' }}>{c.content}</h6>
                     </div>
                     <button className={`btn btn-light ${style.edit_heart}`} onClick={handleClick}>
-                      {limitedComments.emo === 1 ? <FaSmileWink className='text-warning' /> : <FaSmileWink />}
+                      {c.emo === 1 ? <FaSmileWink className='text-warning' /> : <FaSmileWink />}
                     </button>
                   </div>
                 </div>
               )
             })}
-            <div ref={formRef}>
+            <div ref={formRef} className={` ${style.submit}`}>
               <form onSubmit={handleSubmit}>
                 <div
                   className={`d-flex justify-content-between pt-4 ${style.submit}`}

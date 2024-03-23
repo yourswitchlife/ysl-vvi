@@ -21,6 +21,7 @@ import WithWebSocketProvider from '@/context/member/withloginWebsocket'
 // 導入購物車Provider
 import { CartProvider } from '@/hooks/use-cart'
 import { ShippingProvider } from '@/hooks/use-shipping'
+import { result } from 'lodash'
 
 export default function MyApp({ Component, pageProps }) {
   // 導入bootstrap的JS函式庫
@@ -75,6 +76,65 @@ export default function MyApp({ Component, pageProps }) {
         console.error('登入錯誤:', error)
         Swal.close()
       })
+  }, [router])
+
+  // 比對網址獲取商家名稱
+  const fetchShopTitle = async (shopId) => {
+    try {
+      const response = await fetch(`http://localhost:3005/api/shop/${shopId}`)
+      if (!response.ok) {
+        throw new Error('伺服器連線失敗')
+      }
+      const result = await response.json()
+      return result.shop_name 
+    } catch (error) {
+      console.error(error)
+      return '' 
+    }
+  }
+
+
+  // 監聽路由路徑已改變頁面標題
+  useEffect(() => {
+    const handleRouteChange = async (url) => {
+      let pagetitle = 'Your Switch Life｜二手遊戲交易平台'
+      if (url.startsWith('/cart')) {
+        pagetitle = '我的購物車'
+      } else if (url.startsWith('/article')) {
+        pagetitle = '最新攻略'
+      } else if (url.startsWith('/products')) {
+        pagetitle = '商品專區'
+      } else if (url.startsWith('/coupon')) {
+        pagetitle = '優惠報報'
+      } else if (url.startsWith('/member/login')) {
+        pagetitle = '會員登入'
+      } else if (url.startsWith('/member/register')) {
+        pagetitle = '會員註冊'
+      } else if (url.startsWith('/member')) {
+        pagetitle = '會員專區'
+      } else if (url.startsWith('/seller')) {
+        pagetitle = '賣家中心'
+      } else if (url.startsWith('/shop')) {
+        const shopId = url.split('/shop/')[1]
+        console.log(shopId)
+        const shopName = await fetchShopTitle(shopId)
+        pagetitle = `${shopName} | Your Switch Life`
+      }
+      // 更多路徑判斷請加在這
+
+
+      document.title = pagetitle
+    }
+
+    // 初始化標題載入
+    handleRouteChange(router.pathname)
+    // 路由改變設置標題
+    router.events.on('routeChangeComplete', handleRouteChange)
+
+    // 清理函數
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange)
+    }
   }, [router])
 
   // 我把AuthProvider放在最外面 所有應用都能用

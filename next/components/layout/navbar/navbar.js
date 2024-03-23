@@ -117,7 +117,6 @@ export default function Navbar(props) {
                 {unreadCount > 0 && (
                   <span className="position-absolute start-99 translate-middle badge rounded-pill bg-danger">
                     {unreadCount}
-                    <span className="visually-hidden">unread messages</span>
                   </span>
                 )}
 
@@ -146,7 +145,7 @@ export default function Navbar(props) {
               <Dropdown >
                 <Dropdown.Toggle className={`${styles.member_drop} ${isHovered ? 'hover_toggle' : ''}`} variant="black" id="dropdown-basic">
                   <NavPic />
-                  <h6 className="ps-2 fw-bold">{memberData.account}</h6>
+                  <h6 className="ps-2 fw-bold">{memberData?.account}</h6>
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu onMouseEnter={() => setIsHovered(true)}

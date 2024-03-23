@@ -53,10 +53,12 @@ router.get('/', async (req, res) => {
   const perPage = 4
   const perPage2 = 9
   const perPage3 = 3
+  const perPage4 = 5
 
   const startIndex = (page - 1) * perPage
   const startIndex2 = (page - 1) * perPage2
   const startIndex3 = (page - 1) * perPage3
+  const startIndex4 = (page - 1) * perPage4
 
   try {
     let [article] = await db.execute(
@@ -103,6 +105,14 @@ ORDER BY article_time DESC
       ORDER BY views DESC  
       LIMIT ${startIndex3}, ${perPage3}`
     )
+    let [hot2] = await db.execute(
+      `SELECT *, DATE_FORMAT(article_time, '%Y-%m-%d') AS article_time,
+      article_1.id AS ai_id 
+      FROM article_1 
+      JOIN article_category ON article_1.category_id = article_category.id
+      ORDER BY views DESC  
+      LIMIT ${startIndex4}, ${perPage4}`
+    )
 
     let [title] = await db.execute(
       `SELECT *, DATE_FORMAT(article_time, '%Y-%m-%d') AS article_time,
@@ -128,6 +138,7 @@ ORDER BY article_time DESC
       title,
       more,
       hot,
+      hot2,
     }
     // console.log(article)
     res.json(resData)
@@ -173,6 +184,7 @@ router.post('article/:aid', async (req, res) => {
       `UPDATE article_comment SET emo = ? WHERE article_id = ?`,
       [emo, aid]
     )
+    console.log(emo)
 
     if (updateResult.affectedRows === 1) {
       res.status(200).json({ message: 'Emo value updated successfully' })
@@ -222,7 +234,7 @@ router.post('/comment/comment', async (req, res) => {
     // 在这里执行将评论存储到数据库的操作
     // 假设您使用的是 article_comment 表存储评论数据
     const [result] = await db.execute(
-      `INSERT INTO article_comment (content, article_id, emo, member_id) VALUES (?, 3, 1, 3)`,
+      `INSERT INTO article_comment (content, article_id, emo, member_id) VALUES (?, 3, 0, 3)`,
       [content]
     )
 

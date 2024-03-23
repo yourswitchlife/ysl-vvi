@@ -14,7 +14,8 @@ import BurgerMenu from './burgermenu'
 import handleLogout from '@/services/logout';
 //context hooks
 import { useAuth } from '@/hooks/use-Auth';
-
+//websocket
+import { useWebSocket } from '@/context/member/websocketLong'
 //我做完的組件 可以用到評論上 已套用會員等級框
 import NavPic from '@/hooks/use-navpic';
 // 引入use-cart鉤子
@@ -23,6 +24,7 @@ import { useCart } from '@/hooks/use-cart'
 export default function CartNavbar() {
   const { isLoggedIn, memberData } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
+  const { unreadCount } = useWebSocket();
   const {totalProducts} = useCart()
   const router = useRouter()
   const pathHref = {
@@ -52,9 +54,15 @@ export default function CartNavbar() {
             <Link href="/member/fav-product" className={styles.loginIcon}>
                   <FaHeart className={styles.icon} />
                 </Link>
-                <Link href="/member/notify-order" className={styles.loginIcon}>
-                  <FaBell className={styles.icon} />
-                </Link>
+                <Link href="/member/notify-coupon" className={styles.loginIcon}>
+                <FaBell className={styles.icon} />
+                {unreadCount > 0 && (
+                  <span className="position-absolute start-99 translate-middle badge rounded-pill bg-danger">
+                    {unreadCount}
+                  </span>
+                )}
+
+              </Link>
                 <Link href="/" className={styles.loginIconEnd}>
                   <FaStore className={styles.icon} />
                 </Link>

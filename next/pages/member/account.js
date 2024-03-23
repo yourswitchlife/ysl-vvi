@@ -145,6 +145,7 @@ export default function account() {
               text: "您的個人資料已更新！",
               icon: "success",
               showConfirmButton: false,
+              timer: 1400
             });
             
             window.location.href = '/member/account';
@@ -212,6 +213,13 @@ export default function account() {
 
         if (response.ok) {
           console.log('照片上傳成功');
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "照片上傳成功！",
+            showConfirmButton: false,
+            timer: 1300
+          });
         } else {
           console.error('照片上傳失敗');
         }

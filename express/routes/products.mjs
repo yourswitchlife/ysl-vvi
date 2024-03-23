@@ -74,11 +74,13 @@ router.post('/favProducts', async (req, res) => {
   try {
     const memberId = parseInt(req.query.memberId)
     const pid = parseInt(req.query.pid)
+    const created_at = new Date()
     // const { memberId, id } = req.body
     console.log(memberId, pid)
     const query =
-      'INSERT INTO `fav_product` (member_id,product_id,valid) VALUES (?, ?, 1)'
-    await db.execute(query, [memberId, pid])
+      'INSERT INTO `fav_product` (member_id,product_id,valid,created_at) VALUES (?, ?, 1,?)'
+    await db.execute(query, [memberId, pid, created_at])
+    res.json({ success: true, message: 'Product added to favorites' })
   } catch (error) {
     console.error(error)
     res
@@ -217,7 +219,7 @@ router.post(
         const reviewImg = req.file.filename
         const created_at = new Date()
         const query =
-          'UPDATE `shop_comment`SET rating = ?, content = ?, comment_img = ?, created_at = ? WHERE member_id = ? AND shop_id = ?'
+          'UPDATE `shop_comment`SET rating = ?, content = ?, comment_img = ?, created_at = ? WHERE member_id = ? AND shop_id = ? AND content IS NULL'
         await db.execute(query, [
           rating,
           review,
@@ -245,7 +247,9 @@ router.post(
 router.get('/orders', async (req, res) => {
   try {
     // 全部資料
-    let [orders] = await db.execute(`SELECT * FROM orders`)
+    let [orders] = await db.execute(
+      `SELECT o.*, sc.* FROM orders AS o JOIN shop_comment AS sc ON o.order_number = sc.order_number`
+    )
     const responseData = {
       orders,
     }
@@ -282,7 +286,7 @@ router.get('/:pid', async (req, res) => {
     )
 
     let [shopComment] = await db.execute(
-      'SELECT sc.*, m.* FROM shop_comment AS sc JOIN member AS m ON sc.member_id = m.id WHERE sc.shop_id = ? ORDER BY `sc`.`created_at` ASC',
+      "SELECT sc.*, m.* FROM shop_comment AS sc JOIN member AS m ON sc.member_id = m.id WHERE sc.shop_id = ? AND sc.content <> '' ORDER BY `sc`.`created_at` DESC",
       [shopId]
     )
 

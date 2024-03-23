@@ -56,7 +56,7 @@ export default function list() {
           className={`container d-flex justify-content-between px-lg-5 ${style.tag_link}`}
         >
           <div className={`  ${style.index_padding}`}>
-            <div>
+            <div className={` ${style.index_text}`}>
               <Link href="/article" className="text-decoration-none text-white">
                 首頁&gt;
               </Link>

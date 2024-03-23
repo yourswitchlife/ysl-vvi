@@ -49,6 +49,16 @@ $sortbar-height-rwd: 50px;
     color: $dark-gray;
   }
 }
+.btnGray {
+  border: 1px solid $gray;
+  background-color: $gray;
+  color: $white;
+  &:hover {
+    border: 1px solid $dark-gray;
+    background-color: transparent;
+    color: $dark-gray;
+  }
+}
 
 //size
 .iconsmall {
@@ -368,6 +378,7 @@ $sortbar-height-rwd: 50px;
 }
 }
 .mainContainer {
+  min-height: calc(100vh - 130px);
   margin-top: 58px;
   display: flex;
 }
