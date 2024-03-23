@@ -2,24 +2,28 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { useAuth } from '@/hooks/use-Auth';
+import { useAuth } from '@/hooks/use-Auth'
+import io from 'socket.io-client'
 //components
 import Navbar from '@/components/layout/navbar/navbar'
 import BreadCrumb from '@/components/common/breadcrumb'
 import Sortbar from '@/components/shop/sortbar'
 import SearchbarB from '@/components/shop/searchbar-b'
-import Pagination from '@/components/common/pagination-front'
+import Pagination from '@/components/common/pagination'
 import ProductCard from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
 import SortDropdown from '@/components/common/sortDropdown'
 import TypeFilter from '@/components/shop/type-filter'
 import Star from '@/components/shop/star'
+import GoTopButton from '@/components/go-to-top/go-top-button'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
+import CouponUni from '@/components/coupon/coupon-shop'
+import CouponProduct from '@/components/coupon/coupon-member/couponP-member'
+import Chat from '@/components/chat/chat'
 //images
 import cover from '@/public/images/shopCover/default-cover.jpg'
 import Image from 'next/image'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
-import Coupon from '@/components/shop/coupon'
 //styles
 import styles from '@/components/seller/seller.module.scss'
 import 'animate.css/animate.min.css'
@@ -27,17 +31,19 @@ import 'animate.css/animate.min.css'
 import typeName from '@/data/type.json'
 import ratings from '@/data/rating.json'
 //icon
-import { FaPlus, FaAngleDown, FaFilter, FaStar } from 'react-icons/fa'
+import { FaPlus, FaAngleDown, FaFilter, FaStar, FaMinus } from 'react-icons/fa'
+import { IoChatbubblesOutline } from "react-icons/io5"
 //React-bootstrap
 import Form from 'react-bootstrap/Form'
 import Offcanvas from 'react-bootstrap/Offcanvas'
 import Collapse from 'react-bootstrap/Collapse'
+import Dropdown from 'react-bootstrap/Dropdown';
 //sweetalert
 import Swal from 'sweetalert2'
 
 export default function ShopPage() {
   const router = useRouter()
-  const { isLoggedIn, memberId, memberData } = useAuth();
+  const { isLoggedIn, memberId, memberData } = useAuth()
   //offcanvas的展示狀態
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
@@ -45,8 +51,11 @@ export default function ShopPage() {
   //toggle的展示狀態
   const [openSort, setOpenSort] = useState(false)
   const [openRate, setOpenRate] = useState(false)
-  const [shopSite, setShopSite] = useState([])
-  const {id, shop_name, shop_site, shop_cover, shop_info} = shopSite //解構賦值賣家資料
+  //賣場資訊
+  const [shop, setShop] = useState([])
+  const {id, shop_name, shop_site, shop_cover, shop_info} = shop //解構賦值賣家資料
+  console.log(shop)
+  //賣場商品
   const [products, setProducts] = useState([])
   const [searchResults, setSearchResults] = useState([])
   const [searchQuery, setSearchQuery] = useState("") //用來看有沒有搜尋的值（來決定要不要渲染搜尋結果）
@@ -59,7 +68,20 @@ export default function ShopPage() {
   const [commentNum, setCommentNum] = useState(0)
   const [roundedRating, setRoundedRating] = useState(0)
   const [isFav, setIsFav] = useState(false)
+  
+  //排序
+  const [sort, setSort] = useState('id')
   const [sortProducts, setSortProducts] = useState([])
+  //頁數
+  const [totalPages, setTotalPages] = useState(1)
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(15)
+
+  
+  //聊天室相關
+  const [room, setRoom] = useState("")
+  const [socket, setSocket] = useState(null)
+  const [showChat, setShowChat] = useState(false)
 
   //處理背景樣式
   useEffect(() => {
@@ -74,21 +96,36 @@ export default function ShopPage() {
 
   const getShop = async (shop_site) => {
     try{
-      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}`, {credentials: 'include'})
+      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/overview?page=${page}&limit=${limit}&sort=${sort}`, {credentials: 'include'})
       if(!res.ok){
-        throw new Error('網路請求失敗，找不到此賣場')
+        throw new Error('Failed to fetch: 找不到賣場及賣場商品資料')
       }
       const data = await res.json()
+
       // 確保返回的數據結構正確，並更新狀態
-      if (data && data.shop && data.shopProducts) {
+      if (data) {
         // 這裡假設後端返回的數據結構是 { shop: {...}, shopProducts: [...] }
-        setShopSite(data.shop[0])
+        // console.log(data.shopComments)
+       
+        
+        setShop(data.shopInfo)
+        // console.log(data.shopInfo)
         // 可能需要另一個狀態來存儲商品資訊
-        setProducts(data.shopProducts)
+        setProducts(data.products)
+        setTotalPages(data.shopInfo.totalPages)
+        setShopOrderNum(data.orders.length)
+        setShopFavNum(data.favCount)
+        
+        setShopRating(parseFloat(data.shopComments[0].avg_rating).toFixed(1))
+        setCommentNum(data.shopComments[0].total_comments)
+        const roundedRating = Math.round(parseFloat(data.shopComments[0].avg_rating).toFixed(1))
+        // console.log(roundedRating)
+        setRoundedRating(roundedRating)
+        router.push(`./${shop_site}?page=${page}`)
         // setSearchResults(data.shopProducts)
-        const picUrl = data.shop[0].pic ? (data.shop[0].pic.startsWith("https://") ? data.shop[0].pic : `http://localhost:3005/profile-pic/${data.shop[0].pic}`) : profilePhoto
+        const picUrl = data.shopInfo.pic ? (data.shopInfo.pic.startsWith("https://") ? data.shopInfo.pic : `http://localhost:3005/profile-pic/${data.shopInfo.pic}`) : profilePhoto
         setBigPic(picUrl)
-        const coverUrl = data.shop[0].shop_cover ? (data.shop[0].shop_cover.startsWith("https://") ? data.shop[0].shop_cover : `http://localhost:3005/shopCover/${data.shop[0].shop_cover}`) : cover
+        const coverUrl = data.shopInfo.shop_cover ? (data.shopInfo.shop_cover.startsWith("https://") ? data.shopInfo.shop_cover : `http://localhost:3005/shopCover/${data.shopInfo.shop_cover}`) : cover
         setShopCover(coverUrl)
       }
     }catch (e){
@@ -108,8 +145,15 @@ export default function ShopPage() {
       })
     }
   }
+  const handleSortChange = (sortKey) => {
+    setSort(sortKey)
+    setPage(1)
+  }
+  const handlePageChange = (newpage) => {
+    setPage(newpage)
+  }
   
-  const shopTotalItems = products.length //賣家總商品數
+  // const shopTotalItems = products.length //賣家總商品數
 
   const getRandomHit = (items, num) => {
   // 先shuffle副本
@@ -123,76 +167,6 @@ export default function ShopPage() {
     setHit(randomItems)
   }, [products])
 
-  const getShopOrder = async (shop_site) => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/order`, {credentials: 'include'})
-      if(!res.ok){
-        throw new Error('網路請求失敗，找不到此賣場')
-      }
-      const data = await res.json()
-      // 確保返回的數據結構正確，並更新狀態
-      if (data) {
-        //取得加總數字
-        let totalQty = data.reduce((total, order) => 
-          total + order.quantity, 0)
-        // console.log(totalQty)
-        setShopOrderNum(totalQty)
-      }
-    }catch(e){
-      console.error(e)
-    }
-  }
-
-  const getShopFav = async (shop_site) => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/fav_shop`, {
-        credentials: 'include',
-      })
-      if(!res.ok){
-        throw new Error('網路請求失敗，找不到此賣場')
-      }
-      const data = await res.json()
-      // 確保返回的數據結構正確，並更新狀態
-      if (data && data.length > 0) {
-        //取得加總數字
-        setShopFavNum(data.length)
-        //檢查是否收藏
-        const isFaved = data.some(fav => fav.buyer_id === memberData.id)
-        // console.log(isFaved)會是boolean
-        setIsFav(isFaved)
-      }else{
-        //沒有收藏紀錄
-        setShopFavNum(0)
-        setIsFav(false)
-      }
-    }catch(e){
-      console.error(e)
-    }
-  }
-  const getShopRating = async (shop_site) => {
-    try{
-      const res = await fetch (`http://localhost:3005/api/shop/${shop_site}/shop_comment`, {credentials: 'include'})
-      if(!res.ok){
-        throw new Error('網路請求失敗，找不到此賣場')
-      }
-      const data = await res.json()
-      // 確保返回的數據結構正確，並更新狀態
-      if (data && data.length > 0) {
-        //取得評價平均(要有小數點一位)
-        const totalRating = data.reduce((acc, cur) => acc + cur.rating, 0);
-        const averageRating = (totalRating / data.length).toFixed(1); // 保留一位小數
-        // console.log(`平均評價: ${averageRating}`);
-        const roundedRating = Math.round(averageRating);
-        setShopRating(averageRating)
-        setCommentNum(data.length)
-        setRoundedRating(roundedRating)
-      } else {
-        console.log("沒有找到評價數據");
-      }
-    }catch(e){
-      console.error(e)
-    }
-  }
   //搜尋商品
   // const [searchText, setSearchText] = useState('')
   const handleSearch = (searchQuery) => {
@@ -227,33 +201,39 @@ export default function ShopPage() {
     })
     setSearchResults(newProducts)
   }
-  const toggleFavShop = async () => {
+  const handleFavShop = async () => {
     const url = `http://localhost:3005/api/shop/${shop_site}/fav_shop`
+
+    //準備請求的配置
+    const requestOptions = {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        valid: isFav ? 0 : 1
+      }) //根據目前收藏狀態來設定值
+    }
+
     try{
-      if(isFav){
-        //已經收藏者：執行取消收藏
-        const res = await fetch(url, { method: 'DELETE', credentials: 'include'})
-        const data = await res.json()
-        if(res.ok){
-          Swal.fire('取消收藏成功', '', 'success')
-        }else{
-          throw new Error(data.message || '取消收藏失敗')
-        }
+      const res = await fetch(url, requestOptions)
+      const data = await res.json()
+
+      if(res.ok){
+        setIsFav(!isFav) //反轉當前的收藏狀態
+        const actionMessage = isFav ? '取消收藏成功' : '收藏成功'
+        Swal.fire(actionMessage, '', 'success')
       }else{
-        //沒收藏過的人來收藏
-        const res = await fetch(url, { method: 'POST', credentials: 'include' })
-        const data = await res.json()
-        if(res.ok){
-          Swal.fire('收藏成功', '', 'success')
-        }else{
-          throw new Error(data.message || '添加收藏失敗')
-        }
+        throw new Error(data.message || '操作失敗')
       }
     }catch(error){
-      Swal.fire('操作失敗', error.toString(), 'error')
+      //用replace方法去除"Error:"前綴
+      let errorMessage = error.toString().replace('Error: ', '')
+      Swal.fire('操作失敗', errorMessage, 'error')
     }finally{
       //無論操作成功或失敗，都重新獲取收藏狀態
-      getShopFav(shop_site)
+      getShop(shop_site)
     }
   }
   //點擊之後導向登入的函式
@@ -271,36 +251,67 @@ export default function ShopPage() {
       }
     })
   }
-  //排序的商品
-  const handleSort = (SortedData) => {
-    setSortProducts(SortedData)
-  }
-//   console.log(sortProducts)
-
   useEffect(()=>{
     if(router.isReady){
       const {shop_site} = router.query
+      // console.log(shop_site)
       getShop(shop_site)
-      getShopOrder(shop_site)
-      getShopFav(shop_site)
-      getShopRating(shop_site)
-      if(isLoggedIn){
-        getShopFav(shop_site)
+      // getShopFav(shop_site)
+      // getShopRating(shop_site)
+    }
+  },[router.isReady, sort, page, limit])
+
+
+  const cardIcon = (e) => {
+    e.persist()
+    e.nativeEvent.stopImmediatePropagation()
+    e.stopPropagation()
+  }
+
+  const [currentFilter, setCurrentFilter] = useState('valid')
+  const handleFilter = (newFilter) => {
+    setCurrentFilter(newFilter)
+  }
+
+  //聊天室相關
+  useEffect(() => {
+    const newSocket = io("http://localhost:3005");
+    setSocket(newSocket);
+    return () => newSocket.close();
+  }, [setSocket]);
+
+
+  let sellerId = shop.seller_id
+  // console.log(sellerId)
+  const createRoom = (memberId, sellerId) => {
+    if (!isLoggedIn) {
+      router.push('/member/login');
+      return;
+    } else {
+      const room = [String(memberId), String(sellerId)].sort().join('_')
+      // console.log(room)
+      if (socket) {
+        socket.emit("create_room", room);
+        setShowChat(true);
+        setRoom(room);
       }
     }
-  },[router.isReady, isLoggedIn])
+  }
 
   return (
     <>
+      <GoTopButton />
       {/* navbar */}
       <Navbar />
-      {/* <CartNavbar /> */}
       {/* cover */}
       <div className={styles.cover}>
         <Image height={330} width={1440} src={shopCover} alt="shop-cover" className={styles.fit} />
       </div>
       {/* shop info */}
       <div className="container">
+      {!showChat ? ("") :
+                  (<Chat socket={socket} memberId={memberId} memberData={memberData} room={room} isLoggedIn={isLoggedIn}/>)
+                }
         <div className="d-none d-lg-block">
         <div className='mt-2'><BreadCrumb /></div>
           <div className="d-flex justify-content-around mb-5 mt-5">
@@ -334,10 +345,10 @@ export default function ShopPage() {
                 {/* little dashboard */}
                 <div className="d-flex flex-column align-items-center pe-4">
                   <h5>商品數量</h5>
-                  <h5 className='text-danger fw-bold'>{shopTotalItems}</h5>
+                  <h5 className='text-danger fw-bold'>{shop.totalItems}</h5>
                 </div>
                 <div className="d-flex flex-column align-items-center pe-4">
-                  <h5>已賣出件數</h5>
+                  <h5>售出件數</h5>
                   <h5 className='text-danger fw-bold'>{shopOrderNum}</h5>
                 </div>
                 <div className="d-flex flex-column align-items-center">
@@ -345,15 +356,19 @@ export default function ShopPage() {
                   <h5 className='text-danger fw-bold'>{shopFavNum}</h5>
                 </div>
               </div>
+              <div className='d-flex justify-content-center '>
               {/* 這裡要加上登入判斷：沒登入跳出modal導向登入，有登入要判斷這個有沒有加入收藏 */}
               {isLoggedIn ? (//有登入
               <button
                 type="button"
                 className="btn btn-danger d-flex align-items-center"
-                onClick={toggleFavShop}
+                onClick={handleFavShop}
               >
-                <FaPlus className="me-1" />
-                  {isFav ? '取消收藏' : '收藏賣家'}
+                  {isFav ? (<>
+                    <FaMinus className="me-1" /><h6>取消收藏</h6>
+                  </>) : (<>
+                    <FaPlus className="me-1" /><h6>收藏賣家</h6>
+                  </>)}
               </button>
               ) : (//沒登入
               <button
@@ -365,6 +380,17 @@ export default function ShopPage() {
                 收藏賣家
               </button>
               )}
+
+              <button
+                  type="button"
+                  className="btn btn-danger d-flex align-items-center ms-3"
+                  onClick={() => createRoom(memberId, sellerId)}
+                  
+                >
+                  <IoChatbubblesOutline className="me-1" />
+                  與賣家聊聊
+                </button>
+                </div>       
               
             </div>
             <div className="d-flex flex-column align-items-start justify-content-center">
@@ -397,10 +423,10 @@ export default function ShopPage() {
             {/* little dashboard */}
             <div className="d-flex flex-column align-items-center pe-4">
               <h6>商品數量</h6>
-              <h6 className="text-danger mb-0">{shopTotalItems}</h6>
+              <h6 className="text-danger mb-0">{shop.totalItems}</h6>
             </div>
             <div className="d-flex flex-column align-items-center pe-4">
-              <h6>已賣出件數</h6>
+              <h6>售出件數</h6>
               <h6 className="text-danger mb-0">{shopOrderNum}</h6>
             </div>
             <div className="d-flex flex-column align-items-center">
@@ -421,10 +447,13 @@ export default function ShopPage() {
             <button
               type="button"
               className="btn btn-danger d-flex align-items-center"
-              onClick={toggleFavShop}
+              onClick={handleFavShop}
             >
-              <FaPlus className="me-1" />
-              {isFav ? '取消收藏' : '收藏賣家'}
+              {isFav ? (<>
+                    <FaMinus className="me-1" /><h6>取消收藏</h6>
+                  </>) : (<>
+                    <FaPlus className="me-1" /><h6>收藏賣家</h6>
+                  </>)}
             </button>
             ) : (//沒登入
             <button
@@ -436,25 +465,94 @@ export default function ShopPage() {
                 收藏賣家
               </button>
               )}
+
+              <button
+                  type="button"
+                  className="btn btn-danger d-flex align-items-center ms-3"
+                  onClick={() => createRoom(memberId, sellerId)}
+                  
+                >
+                  <IoChatbubblesOutline className="me-1" />
+                  與賣家聊聊
+                </button>
+
           </div>
         </div>
         <Sortbar />
-        <div className="d-flex d-md-none flex-column ps-4 pe-4">
-          <h5 className="fw-bold mt-3">賣場商品</h5>
-          <h6 className="mb-3">共{shopTotalItems}項</h6>
+        <div className="d-none d-md-block">
+        <h4 className="mt-3 mb-2 d-none d-md-block">YSL官網優惠券</h4>
+          {/* <CouponProduct currentFilter={currentFilter}/> */}
+          <CouponUni />
         </div>
-        <div className="d-flex justify-content-between mt-4">
+        <div className={styles.hit}>
+        <h4 className="mb-5 d-none d-md-block">焦點遊戲熱賣中</h4>
+        <h5 className="mb-4 d-block d-md-none ps-4">焦點遊戲熱賣中</h5>
+        <div className={`justify-content-md-around align-items-md-center ${styles.scroller}`}>
+        {hit.map((v) => {
+          return (
+            <div className={styles.insideScr} key={v.id}>
+            <div
+            onClick={() => {
+              router.push(`/products/${v.id}`)
+            }}>
+            
+          <ProductCard
+          className="p-5"
+          id={v.id} 
+          name={v.name}
+          releaseTime={v.release_time.split('T')[0]}
+          display_price={v.display_price}
+          price={v.price}
+          img_cover={v.img_cover}
+          type={v.type_id}
+          ratingId={v.rating_id}
+          member_id={v.member_id}
+          fav={v.fav}
+          handleToggleFav={handleHitToggleFav}
+          img_details={v.img_details}
+          cardIcon={cardIcon}
+          /></div>
+          </div>
+          )
+        })}</div>
+        </div>
+        <div className="d-flex d-md-none flex-column ps-4 pe-4">
+          <h5 className="fw-bold mb-2">賣場商品</h5>
+          <h6 className="mb-3">共{shop.totalItems}項</h6>
+        </div>
+        <h4 className="d-none d-md-block mb-4">賣場所有商品</h4>
+        <div className="d-flex justify-content-between">
           <div className="d-none d-md-block">
             <SearchbarB onSearch={handleSearch}/>
           </div>
           <div className="d-none d-md-flex justify-content-end">
             {/* offcanvas btn */}
             <TypeFilter />
-            <SortDropdown handleSort={handleSort}/>
+            {/* <SortDropdown handleSort={handleSort}/> */}
+            <Dropdown>
+              <Dropdown.Toggle 
+                variant="success" 
+                id="dropdown-basic"
+                type="button"
+                className={`btn d-flex justify-content-center align-items-center ${styles.offcanvasBtn}`}
+              >
+                <h6 className="mb-0 d-none d-md-block">排序</h6>
+                <p className="mb-0 d-block d-md-none">排序</p>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={() => handleSortChange('price_asc')}>價格由低到高</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleSortChange('price_desc')}>價格由高到低</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleSortChange('release_time_desc')}>發行時間由近到遠</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleSortChange('release_time_asc')}>發行時間由遠到近</Dropdown.Item>
+                {/* <Dropdown.Item href="#/action-5">收藏數量由低到高</Dropdown.Item>
+                <Dropdown.Item href="#/action-6">收藏數量由高到低</Dropdown.Item> */}
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
           <div className="d-flex d-md-none ps-4 pe-4">
             <TypeFilter />
-            <SortDropdown handleSort={handleSort}/>
+            {/* <SortDropdown handleSort={handleSort}/> */}
           </div>
         </div>
         { searchQuery && searchResults.length > 0 ? (
@@ -464,7 +562,11 @@ export default function ShopPage() {
         {searchResults.map((p) => {
           return (
             <div key={p.id} className='col-6 col-md-2 mb-3'>
-            <Link href={`/products/${p.id}`} className='text-decoration-none'>
+            <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+                  >
               <ProductCard className="p-5" 
               id={p.id}
               name={p.name} 
@@ -477,8 +579,9 @@ export default function ShopPage() {
               fav={p.fav}
               handleToggleFav={handleSearchToggleFav}
               member_id={p.member_id}
-              imgDetails={p.img_details}
-              /></Link>
+              img_details={p.img_details}
+              cardIcon={cardIcon}
+              /></div>
             </div>
           )
         })}</div>
@@ -488,10 +591,14 @@ export default function ShopPage() {
         ) : (<>
           
           <div className='row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-0'>
-        {(sortProducts.length > 0 ? sortProducts : products).map((p)=> {
+        {products.map((p)=> {
           return (
             <div key={p.id} className='col mb-3'>
-            <Link href={`/products/${p.id}`} className='text-decoration-none'>
+            <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+                  >
               <ProductCard className="p-5" 
               id={p.id}
               name={p.name} 
@@ -504,15 +611,16 @@ export default function ShopPage() {
               fav={p.fav}
               handleToggleFav={handleToggleFav}
               member_id={p.member_id}
-              imgDetails={p.img_details}
-              /></Link>
+              img_details={p.img_details}
+              cardIcon={cardIcon}
+              /></div>
             </div>
           )
         })}</div>
         </>)
         }
         <div>
-          <Pagination />
+          {/* <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/> */}
         </div>
       </div>
       <PhoneTabNav />

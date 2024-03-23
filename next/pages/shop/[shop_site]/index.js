@@ -478,7 +478,7 @@ export default function ShopPage() {
 
           </div>
         </div>
-        <Sortbar />
+        {/* <Sortbar /> */}
         <div className="d-none d-md-block">
         <h4 className="mt-3 mb-2 d-none d-md-block">YSL官網優惠券</h4>
           {/* <CouponProduct currentFilter={currentFilter}/> */}
