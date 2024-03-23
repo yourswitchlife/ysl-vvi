@@ -145,6 +145,7 @@ export default function account() {
               text: "您的個人資料已更新！",
               icon: "success",
               showConfirmButton: false,
+              timer: 1400
             });
             
             window.location.href = '/member/account';

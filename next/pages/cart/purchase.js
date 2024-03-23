@@ -165,7 +165,7 @@ export default function Purchase() {
               router.push("/member/points");
             }
           })
-        }, 2000);
+        }, 2100);
       } else if (Data.message.includes('菁英獎勵')) {
         setTimeout(() => {
           Swal.fire({
@@ -182,7 +182,7 @@ export default function Purchase() {
               router.push("/member/points");
             }
           })
-        }, 2000);
+        }, 2100);
       } else if (Data.message.includes('大師獎勵')) {
         setTimeout(() => {
           Swal.fire({
@@ -199,7 +199,7 @@ export default function Purchase() {
               router.push("/member/points");
             }
           })
-        }, 2000);
+        }, 2100);
       }
     } catch (error) {
       console.error('更新會員資料時發生錯誤:', error)

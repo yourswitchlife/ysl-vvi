@@ -546,6 +546,7 @@ router
 // 取得會員優惠券
 router.get('/get-coupons', async (req, res) => {
   const memberId = req.query.memberId
+  // console.log(memberId)
 
   if (!memberId) {
     return res.status(400).send({ error: '找不到用戶' })
@@ -555,7 +556,7 @@ router.get('/get-coupons', async (req, res) => {
     const [coupons] = await db.execute(
       `SELECT discount_coupon.*
     FROM discount_coupon JOIN member_coupon ON discount_coupon.id = member_coupon.coupon_id
-    WHERE member_coupon.member_id = ? AND member_coupon.status = 0 AND discount_coupon.expiration_date >= NOW() AND discount_coupon.valid = 1`,
+    WHERE member_coupon.member_id = ? AND member_coupon.status = 0 AND (discount_coupon.expiration_date >= NOW() OR discount_coupon.expiration_date = '0000-00-00 00:00:00')`,
       [memberId]
     )
 

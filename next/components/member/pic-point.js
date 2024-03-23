@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image'
-import head_pic from '@/public/images/member/profile-pic/mario.webp'
 import Style from '@/styles/member/pic.module.scss'
 import dStyle from '@/styles/member/sidebar.module.scss'
 import mStyle from '@/styles/member/g-valuable.module.scss'

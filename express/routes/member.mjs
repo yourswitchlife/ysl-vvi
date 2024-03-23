@@ -243,14 +243,17 @@ router.patch('/levelup', async (req, res) => {
     SELECT og.amount AS totalPrice
     FROM order_group og
     WHERE og.id = (
-    SELECT MAX(o.group_id)
+    SELECT o.group_id
     FROM orders o
     WHERE o.member_buyer_id = ?
-    );  
+    ORDER BY o.order_date DESC
+    LIMIT 1
+);
+
   `;
     const [totalPriceResult] = await db.execute(totalPriceQuery, [memberId]);
     const totalPrice = totalPriceResult[0].totalPrice || 0;
-    console.log("taotalPRICE", totalPrice)
+    // console.log("taotalPRICE", totalPrice)
 
     // 更新會員積分
     const updatePointQuery = `
@@ -260,7 +263,7 @@ router.patch('/levelup', async (req, res) => {
   `
     const [result] = await db.execute(updatePointQuery, [totalPrice, memberId])
     // console.log('SQL 查詢結果:', result);
-    console.log("result.affectedRows", result.affectedRows)
+    // console.log("result.affectedRows", result.affectedRows)
 
     if (result.affectedRows > 0) {
       // 最新的level_point
@@ -788,28 +791,7 @@ router.get('/order', async (req, res) => {
 })
 
 // coupon notify
-// trigger
-/* (async () => {
-  try {
-    const triggerSQL = `
-    CREATE TRIGGER after_member_coupon_insert
-    AFTER INSERT ON member_coupon
-    FOR EACH ROW
-    BEGIN
-      INSERT INTO notify_coupon (member_id, coupon_id, valid, created_at)
-      VALUES (NEW.member_id, NEW.coupon_id, 0, NEW.created_at);
-    END;
-    `;
-    await db.query(triggerSQL);
-    console.log('trigger創建成功');
-  } catch (error) {
-    if (error.code === 'ER_TRG_ALREADY_EXISTS') {
-      console.log('trigger已存在(看到這個很正常)');
-    } else {
-      console.error('創建trigger發生錯誤:', error);
-    }
-  }
-})(); */
+// trigger at app.js
 
 export const triggerWithWebsocket = (io) => {
   let pollingIntervalId = null
@@ -948,6 +930,8 @@ router.put('/notify-couponRead', async (req, res) => {
         discount_coupon dc ON nc.coupon_id = dc.id
       WHERE
         nc.member_id = ?
+      ORDER BY
+        nc.created_at DESC
     `
     const [data] = await db.query(newQuery, [memberId])
     res.status(200).json({ message: 'success', items: data })
