@@ -369,8 +369,8 @@ export default function ProductDetail() {
         const hasMatchingOrder = orders.some(
           (v) =>
             v.member_buyer_id === memberId &&
-            v.member_seller_id === product.member_id &&
-            v.content == null
+            v.member_seller_id === product.member_id 
+            // && v.order != null
         )
         console.log(hasMatchingOrder)
         setOrderReview(hasMatchingOrder)
