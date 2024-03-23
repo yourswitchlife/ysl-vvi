@@ -1,17 +1,28 @@
 @import '@/styles/valuable.scss';
 
 .bg {
-    background: linear-gradient(174deg, rgba(93,163,242,0.4) 0%, rgba(67,103,123,0.4) 96%);
+    background: linear-gradient(174deg, rgba(196, 196, 196, 0.4) 0%, rgba(147, 217, 255, 0.753) 96%);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.18);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    // max-width: 40%;
+    max-width: 40%;
     // width: 40%;
     // height: 30%;
     border: none;
     z-index: 1;
-    border-radius: 5px;
+    border-radius: 20px;
+
+    .Mario{
+      animation: mario 0.5s ease;
+    }
+
+    .btn:hover{
+      background-color: rgb(0, 50, 112);
+      border:none;
+      // color:$primary-black;
+    }
+
 }
 
 // .btn-13 {
@@ -28,9 +39,9 @@
     bottom: 0;
     left: 0;
     z-index: -1;
-    border-radius: 5px;
+    border-radius: 20px;
     background: rgb(192, 80, 129);
-    background: radial-gradient(circle, rgb(115, 91, 119)0%, rgb(56, 113, 179) 100%);
+    background: linear-gradient(0deg, rgb(143, 191, 250)0%, rgb(0, 50, 112) 100%);
     // box-shadow:
     //  -7px -7px 20px 0px #fff9,
     //  -4px -4px 5px 0px #fff9,
@@ -54,5 +65,15 @@
   @media screen and (max-width: 431px) {
     .bg{
         max-width:80% ;
+
+    }
+  }
+
+  @keyframes mario {
+    0%, 100% { 
+      transform: translateY(0);
+    }
+    50% { 
+      transform: translateY(-30px); 
     }
   }

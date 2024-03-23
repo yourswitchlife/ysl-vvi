@@ -44,12 +44,12 @@ const handleStatus = (newStatus) =>{
                         <div className={fpStyle.page_check + " pt-5"}>
                             <Link href="/member/mission-ing" className={fsStyle.pagep_btn}
                             onClick = {()=>{handleStatus('0')}}>
-                                <span></span>進行中的任務
+                                <span></span>進行中
                             </Link>
                             <h3 className={pStyle.gray_text}>|</h3>
                             <Link href="/member/mission-finished" className={fsStyle.pages_btn}
                             onClick = {()=>{handleStatus('1')}}>
-                                完成的任務
+                                完成的
                             </Link>
                         </div>
                         <div className=" container d-flex justify-content-end pt-3 pe-5">
