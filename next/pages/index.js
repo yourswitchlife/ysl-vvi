@@ -372,10 +372,11 @@ export default function Index() {
 
         </div>
       </section>
-      <section className="container sec4 py-5 mb-5">
+      <section className="container sec4 pt-5">
         <h4 className="text-white mb-2 d-flex justify-content-center">商品分類</h4>
       </section>
       <TypeSwiper />
+      <div className='mb-md-5 mb-4'></div>
       <section className={`sec5 pt-md-5 pb-md-5 pb-3 pt-3 ${estyles.eventBox}`}>
         <div className='container px-md-0 px-4'>
           <div className="row d-flex justify-content-between">
