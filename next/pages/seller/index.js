@@ -230,7 +230,7 @@ export default function Seller() {
           <div className='d-block d-md-none container ps-4 pe-4'>
             <div className="d-flex justify-content-between mb-3">
               <h6 className="mb-0 me-3">我的銷售</h6>
-              <Link href="/" className={styles.linkstyle}>
+              <Link href="./seller/order" className={styles.linkstyle}>
               <p className="mb-0">查看銷售紀錄<IoIosArrowForward /></p>
               </Link>
             </div>
@@ -240,28 +240,28 @@ export default function Seller() {
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
                   <h5 className="text-danger">{undealedOrders}</h5>
-                  <p className="text-secondary">待處理訂單</p>
+                  <p className="text-light">待處理訂單</p>
                 </Link>
                 <Link
                   href="./seller/order"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
                   <h5 className="text-danger">{doneOrders}</h5>
-                  <p className="text-secondary">已完成訂單</p>
+                  <p className="text-light">已完成訂單</p>
                 </Link>
                 <Link
                   href="./seller/product"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
                   <h5 className="text-danger">{zeroItems}</h5>
-                  <p className="text-secondary">已售完商品</p>
+                  <p className="text-light">已售完商品</p>
                 </Link>
                 <Link
                   href="./seller/comment"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
                   <h5 className="text-danger">{commentNum}</h5>
-                  <p className="text-secondary">評價</p>
+                  <p className="text-light">評價</p>
                 </Link>
                 
             </div>
