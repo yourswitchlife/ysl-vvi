@@ -155,7 +155,7 @@ export default function MissionFavShop({ status }) {
             </div>
 
             <div className='d-flex justify-content-center align-items-center mt-3 mb-3'>
-              <button className={`${styles.btn} btn ${m.status === 1 || solved? (m.coupon_id || prize ? 'btn-dark' : 'btn-info') : 'btn-danger'}`}
+              <button className={`${styles.btn} btn ${m.status === 1 ? (m.coupon_id || prize ? 'btn-dark' : 'btn-info') : 'btn-danger'}`}
                 onClick={() => {
                   if (m.status === 1 && !m.coupon_id) {
                     claimPrize()
@@ -163,7 +163,7 @@ export default function MissionFavShop({ status }) {
                     router.push('/products')
                   }
                 }}
-                disabled={m.status === 1 && m.coupon_id}> {m.status === 1 || solved ?(m.coupon_id || prize ? '任務完成' : '快來領獎勵') : '去解任務'}</button>
+                disabled={m.status === 1 && m.coupon_id}> {m.status === 1  ?(m.coupon_id || prize ? '任務完成' : '快來領獎勵') : '去解任務'}</button>
             </div>
           </div>
         ))}
