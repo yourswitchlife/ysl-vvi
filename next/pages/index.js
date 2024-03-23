@@ -475,14 +475,17 @@ export default function Index() {
                 }
                 ><IoCloseSharp className='mt-1'/></span>
               <div className={estyles.modalContent}>
-                <h2 className={`fw-bold`}>WEEKLY</h2>
-                <h2 className={`fw-bold mb-4`}>CHOICE</h2>
+                <h2 className={`fw-bold d-none d-md-block`}>WEEKLY</h2>
+                <h2 className={`fw-bold mb-4 d-none d-md-block`}>CHOICE</h2>
+                <h4 className={`fw-bold d-block d-md-none mb-0`}>WEEKLY</h4>
+                <h4 className={`fw-bold mb-4 d-block d-md-none mt-0`}>CHOICE</h4>
                 <div className='d-flex flex-column'>
                   {/* <div>
                   <h4 className='text-dark fw-bold mb-2'>本週限定</h4>
                   </div> */}
                   <div>
-                  <h4 className='text-dark fw-bold'>迎接連假的多人遊戲</h4>
+                  <h4 className='text-dark fw-bold d-none d-md-block'>迎接連假的多人遊戲</h4>
+                  <h5 className='text-dark fw-bold d-block d-md-none mb-2'>迎接連假的多人遊戲</h5>
                   <div className='d-flex flex-column'>
                   <Link href='http://localhost:3000/products/13'>
                   <div className={`mb-3 ${estyles.eventPicks}`}>
