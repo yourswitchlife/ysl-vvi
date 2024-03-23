@@ -142,6 +142,32 @@ export default function Index() {
     historyRecord()
   }, [])
 
+  const addFav = async (id) => {
+    try {
+      const res = await fetch(
+        `http://localhost:3005/api/products/favProducts?memberId=${memberId}&pid=${id}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+        }
+        )
+        console.log('HIIII');
+      if (!res.ok) {
+        throw new Error('Failed to fetch fav products')
+      }
+      
+      MySwal.fire({
+        icon: 'success',
+        text: '成功加入收藏!',
+        showConfirmButton: false,
+        showCancelButton: false,
+        timer: 1500,
+      })
+    } catch (err) {
+      console.log('Error')
+    }
+  }
+  
   const handleToggleFav = (id) => {
     const newProducts = products.map((p) => {
       if (p.id === id) return { ...p, fav: !p.fav }
@@ -284,8 +310,50 @@ export default function Index() {
       </section>
       <section className="sec3 container pt-5 pb-5">
         <h4 className="text-white mb-2 d-flex justify-content-center">特賣焦點</h4>
-        <div className="container">
-          <div className='row my-3'>
+        <div className="container px-0 py-2 mb-3">
+       
+          <div className="row row-cols-2 row-cols-lg-5 g-0 g-lg-3">
+            {products.slice(30, 40).map((p) => {
+              return (
+                <div
+                  key={p.id}
+                  className="col"
+                  onClick={() => {
+                    historyRecord(p)
+                  }}
+                >
+                  <div
+                    onClick={() => {
+                      router.push(`/products/${p.id}`)
+                    }}
+                    className={styles.link}
+                  >
+                    <ProductCard
+                      className="p-5"
+                      id={p.id}
+                      name={p.name}
+                      price={p.price}
+                      display_price={p.display_price}
+                      releaseTime={p.release_time.split('T')[0]}
+                      img_cover={p.img_cover}
+                      img_details={p.img_details}
+                      type={p.type_id}
+                      ratingId={p.rating_id}
+                      fav={p.fav}
+                      addFav={addFav}
+                      handleToggleFav={handleToggleFav}
+                      member_id={p.member_id}
+                      cardIcon={cardIcon}
+                      product_quanty={p.product_quanty}
+                      language={p.language}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+    
+          {/* <div className='row my-3'>
             {products.slice(20, 24).map((p) => {
               return (
                 <div
@@ -323,8 +391,8 @@ export default function Index() {
                 </div>
               )
             })}
-          </div>
-          <div className='row my-3'>
+          </div> */}
+          {/* <div className='row my-3'>
             {products.slice(30, 34).map((p) => {
               return (
                 <div
@@ -362,7 +430,7 @@ export default function Index() {
                 </div>
               )
             })}
-          </div>
+          </div> */}
 
         </div>
       </section>
