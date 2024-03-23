@@ -158,7 +158,7 @@ export default function CouponP({ currentFilter }) {
                   <button
                     className={`${styles.btnCTA} btn btn-sm  ${(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? "btn-secondary" : "btn-info"}
                        col-5 ms-5`}
-                    onClick={() => handleGet(coupon.id)}
+                    onClick={() => visit()}
                     disabled={(new Date(coupon.expiration_date) < new Date() || coupon.status === 1)}
                   >
                     <p className={`${styles.btnCTA}`}>

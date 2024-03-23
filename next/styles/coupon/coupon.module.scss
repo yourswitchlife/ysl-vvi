@@ -1,9 +1,5 @@
 @import '@/styles/valuable.scss';
 
-@font-face {
-  font-family: 'cubic 11';
-  src: url('Cubic_11_1.100_R.woff') format('woff');
-}
 
 // hero背景區塊
 .wrapper {
@@ -66,7 +62,7 @@
       justify-content: center;
 
       .title_CTA {
-        padding: 15px 100px;
+        padding: 20px 158px;
         font-size: 1.75rem;
         background-color: $white;
         color: $primary-black;
@@ -161,7 +157,7 @@
 
       .btn_frame {
         .title_CTA {
-          padding: 0px 15px;
+          padding: 0px 17px;
           font-size: 14px;
           border:none;
         }
