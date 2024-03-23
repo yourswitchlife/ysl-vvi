@@ -12,15 +12,18 @@ import ProductList from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
 import IndexSlider from '@/components/common/index-slider'
 import ShopCardA from '@/components/shop/shop-card-a'
+import ShopCardB from '@/components/shop/shop-card-b'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 // import Navbar from '@/components/layout/navbar/navbar'
 import GoTopButton from '@/components/go-to-top/go-top-button'
 import ProductCard from '@/components/products/product-card'
 import WeeklySelect from '@/assets/weekly-select.svg'
 import { FaArrowRightLong } from 'react-icons/fa6'
+import { IoIosCloseCircle } from "react-icons/io"
 import { useAuth } from '@/hooks/use-Auth'
 import TypeSwiper from '@/components/common/typeSwiper'
 import { chunk } from 'lodash'
+import checkLogin from '@/context/member/checkLogin'
 
 export default function Index() {
   const router = useRouter()
@@ -36,6 +39,7 @@ export default function Index() {
   const [flippedStates, setFlippedStates] = useState({})
   // 設置日曆
   const [myDate, setMyDate] = useState(0)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   // 卡片翻轉的狀態
   const flipCard = (id) => {
@@ -44,7 +48,7 @@ export default function Index() {
   }
 
   useEffect(() => {
-    console.log(flippedStates)
+    // console.log(flippedStates)
   }, [flippedStates])
 
   const getShop = async () => {
@@ -62,7 +66,6 @@ export default function Index() {
       // 確保返回的數據結構正確，並更新狀態
       if (data && shop.length > 0 && shopRating.length > 0) {
         setShop(shop)
-        setRating(shopRating)
       }
     } catch (e) {
       console.error(e)
@@ -72,17 +75,6 @@ export default function Index() {
   useEffect(() => {
     getShop()
   }, [])
-  useEffect(() => {
-    if (shop.length > 1) {
-      let firstIndex = Math.floor(Math.random() * shop.length)
-      let secondIndex = Math.floor(Math.random() * shop.length)
-      //確保兩個索引值不同
-      while (secondIndex === firstIndex) {
-        secondIndex = Math.floor(Math.random() * shop.length)
-      }
-      setSelectedShops([shop[firstIndex], shop[secondIndex]])
-    }
-  }, [shop])
 
   // 取得商品資料
   const getProducts = () => {
@@ -182,6 +174,7 @@ export default function Index() {
     ],
     7
   )
+  // console.log(allData)
 
   ///精選文章
   const [hot, setHot] = useState([])
@@ -192,6 +185,7 @@ export default function Index() {
       const data = await res.json()
 
       if (data) {
+        // console.log(data.hot2)
         setHot(data.hot2)
       }
 
@@ -372,19 +366,20 @@ export default function Index() {
 
         </div>
       </section>
-      <section className="container sec4 pt-5">
+      <section className="container sec4 py-5 mb-5">
         <h4 className="text-white mb-2 d-flex justify-content-center">商品分類</h4>
+        <TypeSwiper />
       </section>
-      <TypeSwiper />
-      <section className={`sec5 pt-5 pb-5 ${estyles.eventBox}`}>
-        <div className='container'>
+      <section className={`sec5 pt-md-5 pb-md-5 pb-3 pt-3 ${estyles.eventBox}`}>
+        <div className='container px-md-0 px-4'>
           <div className="row d-flex justify-content-between">
-            <div className="col-12 col-md-6">
-              <h4 className="mb-2 fw-bold">ARTICLE / 精選文章</h4>
+            <div className="col-12 col-md-5">
+              <h4 className="d-none d-md-block my-5 text-light fw-bold">ARTICLE / 精選文章</h4>
+              <h4 className="d-block d-md-none text-light text-center mb-4 fw-bold">ARTICLE / 精選文章</h4>
               {hot.map((h) => {
                 return (
-                  <div className={style.hot_main}>
-                    <div className={style.hot_main_img}>
+                  <div className={`${style.hot_main} mb-3`}>
+                    <div className={`${style.hot_main_img} col-4`}>
                       <Link href={`/article/${h.ai_id}`}>
                         <img
                           src={`/images/article/${h.article_img}`}
@@ -392,32 +387,39 @@ export default function Index() {
                         />
                       </Link>
                     </div>
-                    <div className={style.time}>
+                    <div className={`${style.time} col-8`}>
                       <div className="d-flex justify-content-between pb-2 ">
                         <div className={`btn btn-danger ${style.custom_btn}`}>
                           Hot
                         </div>
-                        <p className="text-black d-flex align-items-center">
+                        <p className="text-light d-flex align-items-center">
                           {h.article_time}
                         </p>
                       </div>
                       <Link href={`/article/${h.ai_id}`} className={style.a}>
-                        <p>
+                        <h6>
                           {h.article_title}
-                        </p>
+                        </h6>
                       </Link>
                     </div>
                   </div>
                 )
               })}
             </div>
-            <div className="col-12 col-md-6">
-              <div className='mb-3'>
-                <h4 className="mb-2 fw-bold">EVENT / 本月優惠活動</h4>
+            <div className="col-12 col-md-7">
+              <div className={`${estyles.calender} mb-3`}>
+                <h4 className="mb-2 text-light d-none d-md-block fw-bold">EVENT / 本月優惠活動</h4>
+                <h4 className="mb-2 text-light text-center d-block d-md-none fw-bold">EVENT / 本月優惠活動</h4>
+                <div className='d-flex align-items-center justify-content-md-start justify-content-center mb-md-5 mb-3'>
+                  <div className={estyles.cirleToday}></div>
+                  <h6 className='text-secondary ms-1'>TODAY</h6>
+                  <div className={`${estyles.cirleSelectDate} ms-3`}></div>
+                  <h6 className='text-secondary ms-1'>SELECT DATE</h6>
+                </div>
                 <h6 className='text-white d-none' id="yearAndMonth">{`${now.y}/${now.m}/${myDate ? myDate : ''}`}</h6>
                 <table className={`align-middle ${estyles.tablestyle}`}>
                   <thead id="title">
-                    <tr>
+                    <tr className={estyles.calenderHead}>
                       {weekDayList.map(function (v, i) {
                         return <th key={i} className='py-4 text-center'>{v}</th>
                       })}
@@ -432,13 +434,15 @@ export default function Index() {
                               key={idx}
                               onClick={() => {
                                 if (item) setMyDate(item)
+                                setIsModalOpen(true)
                               }}
                               className={`${now.d === item ? estyles.today : estyles.otherday} ${myDate === item ? estyles.chosenDate : ''
                                 } ${estyles.tableCell}`}
                               style={{ cursor: 'pointer' }}
                               role="presentation"
                             >
-                              {item}
+                              <h5 className='d-none d-md-block'>{item}</h5>
+                              <h6 className='d-block d-md-none'>{item}</h6>
                             </td>
                           ))}
                         </tr>
@@ -446,28 +450,64 @@ export default function Index() {
                     })}
                   </tbody>
                 </table>
-              </div>
-              <div>
-                <h4 className="mb-3 fw-bold">SHOP / 精選賣家</h4>
-                <div className="d-flex justify-content-between align-items-center flex-wrap">
-                  {selectedShops[0] && (
-                    <ShopCardA
-                      avgRating={roundedRating}
-                      shopInfo={selectedShops[0]}
-                    />
-                  )}
-                  {selectedShops[1] && (
-                    <ShopCardA
-                      avgRating={roundedRating}
-                      shopInfo={selectedShops[1]}
-                    />
-                  )}
+                <div className='d-flex justify-content-end'>
+                <Link href='./coupon' className='text-decoration-none'>
+                  <h5 className={`my-3 pe-4 ${estyles.moreLink}`}>More event ...</h5>
+                </Link>
                 </div>
               </div>
             </div>
+            {/* modal 放這裡 */}
+            {isModalOpen && (
+              <div id='calModal' className={estyles.modal}>
+              <div className={estyles.modalContent}>
+                <span 
+                style={{ cursor: 'pointer' }}
+                role="presentation"
+                className={estyles.close}
+                onClick={
+                  () => setIsModalOpen(false)
+                }
+                ><IoIosCloseCircle /></span>
+                <h5 className='text-dark p-5'>這是日曆點選出來ㄉmodal，還在手刻中，會放優惠活動資訊（假的宣傳廣告圖）或是推播新上架的文章和商品！</h5>
+              </div>
+            </div>
+            )}
           </div>
         </div>
       </section>
+      <section className='py-md-5 pt-4 container'>
+      <div className='mb-md-4 mb-2'>
+        <h4 className="mb-3 mb-md-5 fw-bold text-light text-md-start text-center">SHOP / 精選賣家</h4>
+        <div className="d-flex justify-content-between align-items-center flex-wrap">
+                    {shop && (
+                  <ShopCardA
+                    avgRating={5}
+                    shopInfo={shop[0]}
+                  />
+                )}
+                {shop && (
+                  <ShopCardB
+                    avgRating={4}
+                    shopInfo={shop[1]}
+                  />
+                )}
+                {shop && (
+                      <ShopCardA
+                        avgRating={5}
+                        shopInfo={shop[2]}
+                      />
+                    )}
+                    {shop && (
+                      <ShopCardB
+                        avgRating={5}
+                        shopInfo={shop[3]}
+                      />
+                    )}
+                  </div>
+          </div>
+      </section>
+      
       <Footer />
     </>
   )

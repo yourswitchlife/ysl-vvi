@@ -34,6 +34,8 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Card from 'react-bootstrap/Card'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
+//npm install
+import Swal from 'sweetalert2'
 
 export default function Product() {
   const { isLoggedIn, memberId, memberData } = useAuth()
@@ -121,6 +123,73 @@ export default function Product() {
     setSelectedTab(selectedTab)
     //更新url的查詢參數（但不加載頁面）
     router.push(`./product?tab=${selectedTab}`, undefined, { shallow: true })
+  }
+
+  //下架商品
+  const handleUnshop = async (pid) => {
+    Swal.fire({
+      title: "要下架商品嗎？",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: '確認下架',
+      cancelButtonText: '取消'
+    })
+    .then(async(result) => {
+      if(result.isConfirmed){
+        try{
+          const response = await fetch(`http://localhost:3005/api/seller/product/${pid}`, {
+          method: 'PATCH', 
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ pid })
+        });
+        if (response.ok) {
+          // 成功刪除後，Swal一下
+          Swal.fire("下架商品成功！", {
+            icon: 'success',
+          })
+          //更新商品列表
+          fetchProduct(); 
+        } else {
+          throw new Error('下架商品失敗');
+        }
+      }catch (error) {
+        console.error('下架商品錯誤：', error)
+        Swal.fire("下架商品失敗！", {
+          icon: 'error',
+        })
+      }
+    }else{
+      Swal.fire("您的商品還活著！")
+    }
+  })
+  }
+
+  //重新上架商品
+  const handleOnshop = async (pid) => {
+    const response = await fetch(`http://localhost:3005/api/seller/product/onshop/${pid}`, {
+      method: 'PATCH', 
+      headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ pid })
+        });
+        if (response.ok) {
+          // 成功刪除後，Swal一下
+          Swal.fire("上架商品成功！", {
+            icon: 'success',
+          })
+          //更新商品列表
+          fetchProduct(); 
+        } else {
+          throw new Error('上架商品失敗')
+            // Swal.fire("下架商品失敗！", {
+            //   icon: 'error',
+            // })
+        }
   }
 
   // 處理選擇框
@@ -224,7 +293,7 @@ export default function Product() {
                   }} />
                     </div>
                   </Form.Group>
-                  <Form.Group className="mb-3" controlId="typeName">
+                  {/* <Form.Group className="mb-3" controlId="typeName">
                     <div className="d-flex justify-content-center align-items-center">
                       <Form.Label className="mb-1 me-3 flex-shrink-0">
                         <h5 className="text-dark">類別名稱</h5>
@@ -241,7 +310,7 @@ export default function Product() {
                       <p className="text-dark mx-2">-</p>
                       <Form.Control type="text" placeholder="最大值" />
                     </div>
-                  </Form.Group>
+                  </Form.Group> */}
                 </div>
                 <div className="d-flex justify-content-start align-items-center mt-2">
                   <button type="button" className="btn btn-danger me-2" onClick={handleSearch}>
@@ -399,18 +468,29 @@ export default function Product() {
                             type="button"
                             className={`btn btn-danger btn-sm mb-1 ${styles.btnDangerOutlined}`}
                             onClick={() => {
-                              router.push(`./product/${v.id}`)
+                              router.push(`http://localhost:3000/products/${v.id}`)
                             }}
                           >
-                            編輯
+                            {v.valid === 0 ? '編輯' : '查看'}
                           </button>
-                          <button
+                          {v.valid === 0 ? (<button
                             type="button"
-                            href="/comment/reply"
                             className={`btn btn-danger btn-sm ${styles.btnGrayOutlined }`}
+                            onClick={() => {
+                            handleOnshop(v.id)
+                          }}
+                          >
+                            上架
+                          </button>) : (<button
+                            type="button"
+                            className={`btn btn-danger btn-sm ${styles.btnGray}`}
+                            onClick={() => {
+                            handleUnshop(v.id)
+                          }}
                           >
                             下架
                           </button>
+                      )}
                         </div>
                       </div>
                     </div>
@@ -474,13 +554,14 @@ export default function Product() {
           </div>
           <div className="d-block d-md-none container ps-4 pe-4">
             <Tabs
-              defaultActiveKey="all-order"
+              defaultActiveKey="all"
               id="orderStatusTabs"
               className="mb-3"
+              onSelect={handleTabChange}
             >
               <Tab
-                eventKey="all-order"
-                title={<span style={{ color: '#e41e49' }}>全部</span>}
+                eventKey="all"
+                title={<span className={selectedTab === 'all' ? "text-danger" : "text-light"}>全部</span>}
               >
                 <Form>
                   <Form.Group className="mb-3" controlId="productName">
@@ -488,432 +569,103 @@ export default function Product() {
                       <Form.Label className="my-2 me-3 flex-shrink-0">
                         <h6>商品名稱</h6>
                       </Form.Label>
-                      <Form.Control type="text" placeholder="請輸入商品名稱" />
+                      <Form.Control type="text" placeholder="請輸入商品名稱" 
+                      value={searchQuery}
+                      onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                  }} />
                     </div>
                   </Form.Group>
-                  <Form.Group className="mb-3" controlId="typeName">
+                  {/* <Form.Group className="mb-3" controlId="typeName">
                     <div className="d-flex justify-content-center align-items-center">
                       <Form.Label className="my-2 me-3 flex-shrink-0">
                         <h6>遊戲類別</h6>
                       </Form.Label>
                       <Form.Control type="text" placeholder="請輸入類別名稱" />
                     </div>
-                  </Form.Group>
+                  </Form.Group> */}
                   <div className="d-flex justify-content-start align-items-center mt-2">
                     <button
                       type="button"
                       className="btn btn-danger btn-sm me-2"
+                      onClick={handleSearch}
                     >
                       搜尋
                     </button>
-                    <button type="button" className={`btn btn-danger btn-sm ${styles.btnDangerOutlined}`}>
+                    <button type="button" className={`btn btn-danger btn-sm ${styles.btnDangerOutlined}`}
+                    onClick={() => {
+                    setSearchQuery("")
+                    setPage(1) //重置到第一頁
+                    fetchProduct()
+                  }}>
                       取消
                     </button>
                   </div>
                   <hr />
                 </Form>
                 <div className="d-flex justify-content-between align-items-center mb-2">
-                  <h6 className="fw-bold">152件商品</h6>
+                  <h6 className="fw-bold">{productNum}件商品</h6>
+                  <Link href="./product/new" className='text-decoration-none'>
                   <button
                     type="button"
                     className="btn btn-danger btn-sm d-flex align-items-center"
                   >
                     <FaPlus className="me-1" />
-                    新增商品
+                    <p className='text-decoration-none'>新增商品</p>
                   </button>
+                  </Link>
                 </div>
-                {/*--------------Rating Content------------------ */}
-                <div className={`px-3 py-2 mb-2 ${styles.productCard}`}>
-                  <div className="text-dark">
-                    <div className="row align-items-center text-center">
-                      <h6 className="mb-0 col-2 fw-normal text-start">O</h6>
-                      <div className="col-6 d-flex flex-column justify-content-start align-items-start mt-2">
-                        <div className="d-flex justify-content-start align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={42}
-                            height={70}
-                          />
-                          <div className="d-flex justify-content-start align-items-start flex-column">
-                            <p className="mb-0 text-dark ms-2">
-                              集合啦！動物森友會
-                            </p>
-                            <div>
-                              <p className="text-secondary ms-2">NT$ 760</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-4 d-flex flex-column justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger btn-sm mb-1"
-                        >
-                          編輯
-                        </button>
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger btn-sm"
-                        >
-                          下架
-                        </button>
-                      </div>
-                      <hr className='mb-2 mt-1'/>
-                      <div className="col-6 text-start d-flex justify-content-start align-items-center">
-                      <BsFlag className='me-1 fs-small'/>
-                        <p className="text-secondary">級別 普遍級</p>
-                      </div>
-                      <div className="col-6 d-flex justify-content-start align-items-center">
-                      <BsFiles className='me-1'/>
-                        <p className="text-secondary">商品數量 3</p>
-                      </div>
-                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
-                        <IoBagCheckOutline className='me-1'/>
-                        <p className="text-secondary">已售出 1</p>
-                      </div>
-                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
-                        <BsHeart className="me-1" />
-                        <p className="text-secondary">收藏 9</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className={`px-3 py-2 mb-2 ${styles.productCard}`}>
-                  <div className="text-dark">
-                    <div className="row align-items-center text-center">
-                      <h6 className="mb-0 col-2 fw-normal text-start">O</h6>
-                      <div className="col-6 d-flex flex-column justify-content-start align-items-start mt-2">
-                        <div className="d-flex justify-content-start align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={42}
-                            height={70}
-                          />
-                          <div className="d-flex justify-content-start align-items-start flex-column">
-                            <p className="mb-0 text-dark ms-2">
-                              集合啦！動物森友會
-                            </p>
-                            <div>
-                              <p className="text-secondary ms-2">NT$ 760</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-4 d-flex flex-column justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger btn-sm mb-1"
-                        >
-                          編輯
-                        </button>
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger btn-sm"
-                        >
-                          下架
-                        </button>
-                      </div>
-                      <hr className='mb-2 mt-1'/>
-                      <div className="col-6 text-start d-flex justify-content-start align-items-center">
-                      <BsFlag className='me-1 fs-small'/>
-                        <p className="text-secondary">級別 普遍級</p>
-                      </div>
-                      <div className="col-6 d-flex justify-content-start align-items-center">
-                      <BsFiles className='me-1'/>
-                        <p className="text-secondary">商品數量 3</p>
-                      </div>
-                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
-                        <IoBagCheckOutline className='me-1'/>
-                        <p className="text-secondary">已售出 1</p>
-                      </div>
-                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
-                        <BsHeart className="me-1" />
-                        <p className="text-secondary">收藏 9</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className={`px-3 py-2 mb-2 ${styles.productCard}`}>
-                  <div className="text-dark">
-                    <div className="row align-items-center text-center">
-                      <h6 className="mb-0 col-2 fw-normal text-start">O</h6>
-                      <div className="col-6 d-flex flex-column justify-content-start align-items-start mt-2">
-                        <div className="d-flex justify-content-start align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={42}
-                            height={70}
-                          />
-                          <div className="d-flex justify-content-start align-items-start flex-column">
-                            <p className="mb-0 text-dark ms-2">
-                              集合啦！動物森友會
-                            </p>
-                            <div>
-                              <p className="text-secondary ms-2">NT$ 760</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-4 d-flex flex-column justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger btn-sm mb-1"
-                        >
-                          編輯
-                        </button>
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger btn-sm"
-                        >
-                          下架
-                        </button>
-                      </div>
-                      <hr className='mb-2 mt-1'/>
-                      <div className="col-6 text-start d-flex justify-content-start align-items-center">
-                      <BsFlag className='me-1 fs-small'/>
-                        <p className="text-secondary">級別 普遍級</p>
-                      </div>
-                      <div className="col-6 d-flex justify-content-start align-items-center">
-                      <BsFiles className='me-1'/>
-                        <p className="text-secondary">商品數量 3</p>
-                      </div>
-                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
-                        <IoBagCheckOutline className='me-1'/>
-                        <p className="text-secondary">已售出 1</p>
-                      </div>
-                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
-                        <BsHeart className="me-1" />
-                        <p className="text-secondary">收藏 9</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className={`px-3 py-2 mb-2 ${styles.productCard}`}>
-                  <div className="text-dark">
-                    <div className="row align-items-center text-center">
-                      <h6 className="mb-0 col-2 fw-normal text-start">O</h6>
-                      <div className="col-6 d-flex flex-column justify-content-start align-items-start mt-2">
-                        <div className="d-flex justify-content-start align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={42}
-                            height={70}
-                          />
-                          <div className="d-flex justify-content-start align-items-start flex-column">
-                            <p className="mb-0 text-dark ms-2">
-                              集合啦！動物森友會
-                            </p>
-                            <div>
-                              <p className="text-secondary ms-2">NT$ 760</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-4 d-flex flex-column justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger btn-sm mb-1"
-                        >
-                          編輯
-                        </button>
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger btn-sm"
-                        >
-                          下架
-                        </button>
-                      </div>
-                      <hr className='mb-2 mt-1'/>
-                      <div className="col-6 text-start d-flex justify-content-start align-items-center">
-                      <BsFlag className='me-1 fs-small'/>
-                        <p className="text-secondary">級別 普遍級</p>
-                      </div>
-                      <div className="col-6 d-flex justify-content-start align-items-center">
-                      <BsFiles className='me-1'/>
-                        <p className="text-secondary">商品數量 3</p>
-                      </div>
-                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
-                        <IoBagCheckOutline className='me-1'/>
-                        <p className="text-secondary">已售出 1</p>
-                      </div>
-                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
-                        <BsHeart className="me-1" />
-                        <p className="text-secondary">收藏 9</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className={`px-3 py-2 mb-2 ${styles.productCard}`}>
-                  <div className="text-dark">
-                    <div className="row align-items-center text-center">
-                      <h6 className="mb-0 col-2 fw-normal text-start">O</h6>
-                      <div className="col-6 d-flex flex-column justify-content-start align-items-start mt-2">
-                        <div className="d-flex justify-content-start align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={42}
-                            height={70}
-                          />
-                          <div className="d-flex justify-content-start align-items-start flex-column">
-                            <p className="mb-0 text-dark ms-2">
-                              集合啦！動物森友會
-                            </p>
-                            <div>
-                              <p className="text-secondary ms-2">NT$ 760</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-4 d-flex flex-column justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger btn-sm mb-1"
-                        >
-                          編輯
-                        </button>
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger btn-sm"
-                        >
-                          下架
-                        </button>
-                      </div>
-                      <hr className='mb-2 mt-1'/>
-                      <div className="col-6 text-start d-flex justify-content-start align-items-center">
-                      <BsFlag className='me-1 fs-small'/>
-                        <p className="text-secondary">級別 普遍級</p>
-                      </div>
-                      <div className="col-6 d-flex justify-content-start align-items-center">
-                      <BsFiles className='me-1'/>
-                        <p className="text-secondary">商品數量 3</p>
-                      </div>
-                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
-                        <IoBagCheckOutline className='me-1'/>
-                        <p className="text-secondary">已售出 1</p>
-                      </div>
-                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
-                        <BsHeart className="me-1" />
-                        <p className="text-secondary">收藏 9</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className={`px-3 py-2 mb-2 ${styles.productCard}`}>
-                  <div className="text-dark">
-                    <div className="row align-items-center text-center">
-                      <h6 className="mb-0 col-2 fw-normal text-start">O</h6>
-                      <div className="col-6 d-flex flex-column justify-content-start align-items-start mt-2">
-                        <div className="d-flex justify-content-start align-items-center mb-2">
-                          <Image
-                            src={gameCover}
-                            alt="game-cover"
-                            width={42}
-                            height={70}
-                          />
-                          <div className="d-flex justify-content-start align-items-start flex-column">
-                            <p className="mb-0 text-dark ms-2">
-                              集合啦！動物森友會
-                            </p>
-                            <div>
-                              <p className="text-secondary ms-2">NT$ 760</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-4 d-flex flex-column justify-content-center align-items-center">
-                        {/* 可以跳出一個MODAL來處理 */}
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger btn-sm mb-1"
-                        >
-                          編輯
-                        </button>
-                        <button
-                          type="button"
-                          href="/comment/reply"
-                          className="btn btn-danger btn-sm"
-                        >
-                          下架
-                        </button>
-                      </div>
-                      <hr className='mb-2 mt-1'/>
-                      <div className="col-6 text-start d-flex justify-content-start align-items-center">
-                      <BsFlag className='me-1 fs-small'/>
-                        <p className="text-secondary">級別 普遍級</p>
-                      </div>
-                      <div className="col-6 d-flex justify-content-start align-items-center">
-                      <BsFiles className='me-1'/>
-                        <p className="text-secondary">商品數量 3</p>
-                      </div>
-                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
-                        <IoBagCheckOutline className='me-1'/>
-                        <p className="text-secondary">已售出 1</p>
-                      </div>
-                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
-                        <BsHeart className="me-1" />
-                        <p className="text-secondary">收藏 9</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
+                
               </Tab>
-              <Tab eventKey="unsend" title="架上商品">
+              <Tab eventKey="onShop" title={<span className={selectedTab === 'onShop' ? "text-danger" : "text-light"}>架上商品</span>}>
               <Form>
                   <Form.Group className="mb-3" controlId="productName">
                     <div className="d-flex justify-content-center align-items-center">
                       <Form.Label className="my-2 me-3 flex-shrink-0">
                         <h6>商品名稱</h6>
                       </Form.Label>
-                      <Form.Control type="text" placeholder="請輸入商品名稱" />
-                    </div>
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="typeName">
-                    <div className="d-flex justify-content-center align-items-center">
-                      <Form.Label className="my-2 me-3 flex-shrink-0">
-                        <h6>遊戲類別</h6>
-                      </Form.Label>
-                      <Form.Control type="text" placeholder="請輸入類別名稱" />
+                      <Form.Control type="text" placeholder="請輸入商品名稱" 
+                      value={searchQuery}
+                      onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                  }} />
                     </div>
                   </Form.Group>
                   <div className="d-flex justify-content-start align-items-center mt-2">
                     <button
                       type="button"
                       className="btn btn-danger btn-sm me-2"
+                      onClick={handleSearch}
                     >
                       搜尋
                     </button>
-                    <button type="button" className="btn btn-danger btn-sm">
+                    <button type="button" className={`btn btn-danger btn-sm ${styles.btnDangerOutlined}`}
+                    onClick={() => {
+                    setSearchQuery("")
+                    setPage(1) //重置到第一頁
+                    fetchProduct()
+                  }}>
                       取消
                     </button>
                   </div>
                   <hr />
                 </Form>
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <h6 className="fw-bold">{productNum}件商品</h6>
+                  <Link href="./product/new" className='text-decoration-none'>
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm d-flex align-items-center"
+                  >
+                    <FaPlus className="me-1" />
+                    <p className='text-decoration-none'>新增商品</p>
+                  </button>
+                  </Link>
+                </div>
               </Tab>
               <Tab
-                eventKey="sending"
-                title="已售完"
+                eventKey="soldout"
+                title={<span className={selectedTab === 'soldout' ? "text-danger" : "text-light"}>已售完</span>}
               >
                 <Form>
                   <Form.Group className="mb-3" controlId="productName">
@@ -921,34 +673,48 @@ export default function Product() {
                       <Form.Label className="my-2 me-3 flex-shrink-0">
                         <h6>商品名稱</h6>
                       </Form.Label>
-                      <Form.Control type="text" placeholder="請輸入商品名稱" />
-                    </div>
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="typeName">
-                    <div className="d-flex justify-content-center align-items-center">
-                      <Form.Label className="my-2 me-3 flex-shrink-0">
-                        <h6>遊戲類別</h6>
-                      </Form.Label>
-                      <Form.Control type="text" placeholder="請輸入類別名稱" />
+                      <Form.Control type="text" placeholder="請輸入商品名稱" 
+                      value={searchQuery}
+                      onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                  }} />
                     </div>
                   </Form.Group>
                   <div className="d-flex justify-content-start align-items-center mt-2">
                     <button
                       type="button"
                       className="btn btn-danger btn-sm me-2"
+                      onClick={handleSearch}
                     >
                       搜尋
                     </button>
-                    <button type="button" className="btn btn-danger btn-sm">
+                    <button type="button" className={`btn btn-danger btn-sm ${styles.btnDangerOutlined}`}
+                    onClick={() => {
+                    setSearchQuery("")
+                    setPage(1) //重置到第一頁
+                    fetchProduct()
+                  }}>
                       取消
                     </button>
                   </div>
                   <hr />
                 </Form>
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <h6 className="fw-bold">{productNum}件商品</h6>
+                  <Link href="./product/new" className='text-decoration-none'>
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm d-flex align-items-center"
+                  >
+                    <FaPlus className="me-1" />
+                    <p className='text-decoration-none'>新增商品</p>
+                  </button>
+                  </Link>
+                </div>
               </Tab>
               <Tab
-                eventKey="done"
-                title="未上架"
+                eventKey="unShop"
+                title={<span className={selectedTab === 'unShop' ? "text-danger" : "text-light"}>未上架</span>}
               >
               <Form>
                   <Form.Group className="mb-3" controlId="productName">
@@ -956,33 +722,126 @@ export default function Product() {
                       <Form.Label className="my-2 me-3 flex-shrink-0">
                         <h6>商品名稱</h6>
                       </Form.Label>
-                      <Form.Control type="text" placeholder="請輸入商品名稱" />
-                    </div>
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="typeName">
-                    <div className="d-flex justify-content-center align-items-center">
-                      <Form.Label className="my-2 me-3 flex-shrink-0">
-                        <h6>遊戲類別</h6>
-                      </Form.Label>
-                      <Form.Control type="text" placeholder="請輸入類別名稱" />
+                      <Form.Control type="text" placeholder="請輸入商品名稱" 
+                      value={searchQuery}
+                      onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                  }} />
                     </div>
                   </Form.Group>
                   <div className="d-flex justify-content-start align-items-center mt-2">
                     <button
                       type="button"
                       className="btn btn-danger btn-sm me-2"
+                      onClick={handleSearch}
                     >
                       搜尋
                     </button>
-                    <button type="button" className="btn btn-danger btn-sm">
+                    <button type="button" className={`btn btn-danger btn-sm ${styles.btnDangerOutlined}`}
+                    onClick={() => {
+                    setSearchQuery("")
+                    setPage(1) //重置到第一頁
+                    fetchProduct()
+                  }}>
                       取消
                     </button>
                   </div>
                   <hr />
                 </Form>
-                <h6 className="text-secondary">尚無商品資訊</h6>
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <h6 className="fw-bold">{productNum}件商品</h6>
+                  <Link href="./product/new" className='text-decoration-none'>
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm d-flex align-items-center"
+                  >
+                    <FaPlus className="me-1" />
+                    <p className='text-decoration-none'>新增商品</p>
+                  </button>
+                  </Link>
+                </div>
               </Tab>
             </Tabs>
+            {/*--------------Rating Content------------------ */}
+            {product && (<>
+              {product.map((v, i) => {
+                return (
+                  <div className={`px-3 py-2 mb-2 ${styles.productCard}`} key={v.id}>
+                  <div className="text-dark">
+                    <div className="row align-items-center text-center">
+                      <h6 className="mb-0 col-2 fw-normal text-start"><Form.Check aria-label="option 1" /></h6>
+                      <div className="col-6 d-flex flex-column justify-content-start align-items-start mt-2">
+                        <div className="d-flex justify-content-start align-items-center mb-2">
+                        <Image
+                              src={v.img_cover ? (v.img_cover.startsWith("https://") ? v.img_cover : `http://localhost:3005/productImg/cover/${v.img_cover}`) : gameCover}
+                              alt="game-cover"
+                              width={42}
+                              height={70}
+                            />
+                          <div className="d-flex justify-content-start align-items-start flex-column">
+                            <p className="mb-0 text-dark text-start ms-2">
+                            {v.name}
+                            </p>
+                            <div>
+                              <p className="text-secondary ms-2">NT$  {v.price}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-4 d-flex flex-column justify-content-center align-items-center">
+                        {/* 可以跳出一個MODAL來處理 */}
+                        <button
+                          type="button"
+                          className={`btn btn-danger btn-sm mb-1 ${styles.btnDangerOutlined}`}
+                            onClick={() => {
+                              router.push(`./product/${v.id}`)
+                            }}
+                        >
+                          {v.valid === 0 ? '編輯' : '查看'}
+                        </button>
+                        {v.valid === 0 ? (<button
+                            type="button"
+                            className={`btn btn-danger btn-sm`}
+                            onClick={() => {
+                            handleOnshop(v.id)
+                          }}
+                          >
+                            上架
+                          </button>) : (<button
+                            type="button"
+                            className={`btn btn-danger btn-sm ${styles.btnGrayOutlined }`}
+                            onClick={() => {
+                            handleUnshop(v.id)
+                          }}
+                          >
+                            下架
+                          </button>
+                      )}
+                      </div>
+                      <hr className='mb-2 mt-1'/>
+                      <div className="col-6 text-start d-flex justify-content-start align-items-center">
+                      <BsFlag className='me-1 fs-small'/>
+                        <p className="text-secondary">{v.type_name}</p>
+                      </div>
+                      <div className="col-6 d-flex justify-content-start align-items-center">
+                      <BsFiles className='me-1'/>
+                        <p className="text-secondary">商品數量 {v.product_quanty}</p>
+                      </div>
+                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
+                        <IoBagCheckOutline className='me-1'/>
+                        <p className="text-secondary">已售出 {v.total_quantity}</p>
+                      </div>
+                      <div className="mt-2 col-6 d-flex justify-content-start align-items-center">
+                        <BsHeart className="me-1" />
+                        <p className="text-secondary">收藏 {v.favorite_count}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                )
+              })}
+            </>)}
+                <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
           </div>
           <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
         </main>

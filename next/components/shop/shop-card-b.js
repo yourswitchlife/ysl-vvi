@@ -8,7 +8,7 @@ import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 //styles
 import styles from './shop-card.module.scss'
 
-export default function ShopCardA({
+export default function ShopCardB({
   shopInfo = { id: 20, rating: 4, shop_id: 3, shop_name: '碧姬公主的玩具城堡', pic: 'peach.png', shop_site: '' },
   avgRating = 5,
 }) {
@@ -20,7 +20,7 @@ export default function ShopCardA({
   return (
     <>
     <Link href={`http://localhost:3000/shop/${shopInfo.shop_site}`} className='text-decoration-none'>
-    <div className={`${styles.cardSize} d-flex justify-content-start align-items-center mb-3`}>
+    <div className={`${styles.cardSizeB} d-flex justify-content-start align-items-center mb-3`}>
     <div className={styles.shopProfile}>
     <Image height={75} width={75} src={picUrl} alt='shop-profile' className={styles.fit}/>
     </div>
