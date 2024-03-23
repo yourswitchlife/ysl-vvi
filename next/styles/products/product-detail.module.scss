@@ -199,12 +199,15 @@
     width: 75px;
   }
 }
-
+.commentMore{
+  background-color: #ffffff00;
+  cursor: pointer;
+}
 .btns {
   z-index: 5;
   height: 30px;
   width: 100%;
-  bottom: 112px;
+  bottom: 100px;
   right: 0;
   position: fixed;
 }

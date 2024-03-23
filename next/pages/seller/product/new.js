@@ -16,9 +16,6 @@ const MySwal = withReactContent(Swal)
 //images
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 import cover from '@/public/images/shopCover/default-cover.jpg'
-import profileImg from '@/public/images/profile-photo/peach.png'
-import defaultHead from '@/public/images/profile-photo/default-profile-img.svg'
-import gameCover from '@/public/images/seller/product-cover/crymachina.jpg'
 
 export default function New() {
   //抓會員資料
@@ -26,7 +23,7 @@ export default function New() {
   const [bigPic, setBigPic] = useState(profilePhoto)
   const [shopCover, setShopCover] = useState(cover)
   const router = useRouter()
-  
+
   // const MySwal = withReactContent(Swal)
   // console.log(memberId)
   //body style
@@ -41,14 +38,19 @@ export default function New() {
 
   //抓會員資料：cover and profile photo
   useEffect(() => {
-    if(isLoggedIn && memberData) {
+    if (isLoggedIn && memberData) {
       console.log(memberData.shop_cover)
-      const picUrl = memberData.pic ? (memberData.pic.startsWith("https://") 
-        ? memberData.pic 
-        : `http://localhost:3005/profile-pic/${memberData.pic}`) 
-      : profilePhoto
+      const picUrl = memberData.pic
+        ? memberData.pic.startsWith('https://')
+          ? memberData.pic
+          : `http://localhost:3005/profile-pic/${memberData.pic}`
+        : profilePhoto
       setBigPic(picUrl)
-      const coverUrl = memberData.shop_cover ? (memberData.shop_cover.startsWith("https://") ? memberData.shop_cover : `http://localhost:3005/shopCover/${memberData.shop_cover}`) : cover
+      const coverUrl = memberData.shop_cover
+        ? memberData.shop_cover.startsWith('https://')
+          ? memberData.shop_cover
+          : `http://localhost:3005/shopCover/${memberData.shop_cover}`
+        : cover
       setShopCover(coverUrl)
       // console.log(memberData)
       // getSellerData()
@@ -163,6 +165,9 @@ export default function New() {
             Swal.fire({
               title: '商品新增成功！',
               icon: 'success',
+              showConfirmButton: false,
+              showCancelButton: false,
+              timer: 1500,
             }),
 
           setTimeout(() => {
@@ -197,12 +202,16 @@ export default function New() {
     <>
       <SellerNavbar />
       <div className={styles.mainContainer}>
-      {memberData && (
-            <>
-              <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
-            </>
+        {memberData && (
+          <>
+            <Sidebar
+              profilePhoto={bigPic}
+              memberShopSite={memberData.shop_site}
+              memberShopName={memberData.shop_name}
+            />
+          </>
         )}
-        <main className='flex-grow-1'>
+        <main className="flex-grow-1">
           <div className={`${styles.dashboardMargin}`}>
             <div className="d-lg-block d-none">
               <BreadCrumb />
@@ -360,7 +369,7 @@ export default function New() {
                   </div>
                   {/* 商品語言 */}
                   <div className="mb-3 col-lg-6 col-12 d-flex ">
-                  <label
+                    <label
                       htmlFor="pImgs"
                       className="h6 me-2 flex-shrink-0 d-flex align-items-end"
                     >
@@ -372,11 +381,11 @@ export default function New() {
 
                     {languageOptions.map((v, i) => {
                       return (
-                        <label className="me-3 text-dark" key={i}>
+                        <label className="me-3 mt-2 text-dark" key={i}>
                           <input
                             key={i}
                             type="checkbox"
-                            className="form-check-input me-1"
+                            className="form-check-input pt-1 mb-0"
                             checked={newP.pLanguage.includes(v)}
                             value={v}
                             name="pLanguage"
@@ -457,7 +466,7 @@ export default function New() {
       </div>
       <PhoneTabNav />
       <div className="d-none d-md-block">
-          <SellerFooter />
+        <SellerFooter />
       </div>
     </>
   )
