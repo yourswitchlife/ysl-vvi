@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import RatingStars from './rating-stars'
 import styles from '../../styles/products/product-detail.module.scss'
 import AddPhoto from '@/components/products/addPhoto'
@@ -7,7 +7,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 
-export default function Review({shopId}) {
+export default function Review({ shopId , update,hideReview}) {
   const { isLoggedIn, memberId } = useAuth()
   const [review, setReview] = useState({
     rating: 0,
@@ -22,11 +22,11 @@ export default function Review({shopId}) {
     if (file) {
       setFilePicked(true)
       setImgServerUrl('')
-      setReview(prevReview => ({ ...prevReview, reviewPhoto: file }))
+      setReview((prevReview) => ({ ...prevReview, reviewPhoto: file }))
     } else {
       setFilePicked(false)
       setImgServerUrl('')
-      setReview(prevReview => ({ ...prevReview, reviewPhoto: null }))
+      setReview((prevReview) => ({ ...prevReview, reviewPhoto: null }))
     }
   }
 
@@ -36,14 +36,13 @@ export default function Review({shopId}) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if(!memberId){
+    if (!memberId) {
       MySwal.fire({
         icon: 'warning',
         text: '請先登入',
         confirmButtonColor: '#E41E49',
       })
-    }else{
-
+    } else {
       if (!review.review) {
         MySwal.fire({
           icon: 'warning',
@@ -57,7 +56,7 @@ export default function Review({shopId}) {
         if (review.reviewPhoto) {
           formData.append('reviewPhoto', review.reviewPhoto)
         }
-  
+
         console.log(review.reviewPhoto)
         console.log(formData.get('rating'))
         console.log([...formData])
@@ -75,14 +74,19 @@ export default function Review({shopId}) {
             Swal.fire({
               title: '評論發佈成功！',
               icon: 'success',
+              showConfirmButton: false,
+              showCancelButton: false,
+              timer: 1500,
             })
-              setTimeout(() => {
-                setReview({
-                  rating: 0,
-                  review: '',
-                  reviewPhoto: '',
-                })
-              }, 1000)
+            setTimeout(() => {
+              setReview({
+                rating: 0,
+                review: '',
+                reviewPhoto: '',
+              })
+              update()
+              // hideReview()
+            }, 1000)
           })
           .catch((error) => {
             console.error('error', error)
@@ -95,10 +99,7 @@ export default function Review({shopId}) {
 
   return (
     <>
-      <form
-        className={styles.formStyle}
-        onSubmit={handleSubmit}
-      >
+      <form className={styles.formStyle} onSubmit={handleSubmit}>
         <div className="ms-3 flex-grow-1">
           <RatingStars
             fieldChange={fieldChange}
@@ -117,10 +118,7 @@ export default function Review({shopId}) {
           />
         </div>
         <div className="m-2">
-          <AddPhoto
-            fileChangHandler={changHandler}
-            name="reviewPhoto"
-          />
+          <AddPhoto fileChangHandler={changHandler} name="reviewPhoto" />
         </div>
 
         <button

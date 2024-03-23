@@ -130,7 +130,9 @@ export default function Products() {
       MySwal.fire({
         icon: 'success',
         text: '成功加入收藏!',
-        confirmButtonColor: '#E41E49',
+        showConfirmButton: false,
+        showCancelButton: false,
+        timer: 1500,
       })
     } catch (err) {
       console.log('Error')

@@ -61,7 +61,7 @@ export default function BreadCrumb({
       // 最後一個
       if (i === array.length - 1) {
         return (
-          <li key={i} className="breadcrumb-item text-light text-decoration-underline link-offset-3" aria-current="page">
+          <li key={i} className={`breadcrumb-item text-decoration-underline fw-semibold link-offset-3 ${styles.lastBreadTitle}`} aria-current="page">
             {v}
           </li>
         )
@@ -72,7 +72,7 @@ export default function BreadCrumb({
         <li key={i} className="breadcrumb-item">
           <Link
             href={paths.slice(0, i + 1).join('/')}
-            className="link-body-emphasis fw-semibold text-decoration-none text-light"
+            className={`link-body-emphasis fw-semibold text-decoration-none ${styles.middleBreadTitle}`}
           >
             {v}
           </Link>
@@ -104,7 +104,7 @@ export default function BreadCrumb({
           >
             <Link
               href="/"
-              className="link-body-emphasis fw-semibold text-decoration-none text-light"
+              className={`link-body-emphasis fw-semibold text-decoration-none ${styles.middleBreadTitle}`}
             >
               {!isHomeIcon ? pathsLocaleMap['home'] : homeIcon}
             </Link>

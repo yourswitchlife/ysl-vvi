@@ -213,7 +213,7 @@ export default function article_main() {
                 </div>
               )
             })}
-            <div ref={formRef}>
+            <div ref={formRef} className={` ${style.submit}`}>
               <form onSubmit={handleSubmit}>
                 <div
                   className={`d-flex justify-content-between pt-4 ${style.submit}`}
