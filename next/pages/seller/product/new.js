@@ -378,6 +378,7 @@ export default function New() {
                         (可複選)<span className="text-danger h5">*</span>
                       </p>
                     </label>
+
                     {languageOptions.map((v, i) => {
                       return (
                         <label className="me-3 mt-2 text-dark" key={i}>
