@@ -194,6 +194,7 @@ export default function FavProduct() {
               {favProducts.map((product, index) => (
                 <div className={fpStyle.card + ' m-4 rounded-3'} key={index}>
                   <div className="d-flex justify-content-center">
+                    <Link href={`/products/${product.productId}`}>
                     <Image
                       src={`http://localhost:3005/productImg/cover/${product.img_cover}` || profileImg}
                       alt={product.img_cover}
@@ -204,6 +205,7 @@ export default function FavProduct() {
                       layout="fixed"
                     // fetchPriority="width"
                     />
+                    </Link>
                   </div>
 
                   <div className="card-body p-3 pt-0">
