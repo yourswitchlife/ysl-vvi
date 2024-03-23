@@ -156,7 +156,7 @@
 .card {
   padding: 5px;
   padding-top: 20px;
-  background-color: $white;
+  background-color: rgba(255, 255, 255, 0.5);
   width: 275px;
   height: 430px;
   transition: 0.4s;
@@ -267,7 +267,6 @@
   .card {
     padding: 0;
     padding-top: 20px;
-    background-color: $white;
     margin-inline: 10px !important;
     width: 182px;
     height: 385px;

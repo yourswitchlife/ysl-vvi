@@ -209,9 +209,9 @@ export default function Index() {
       <GoTopButton />
       <Navbar />
       <div
-        className={`${styles.headTitleCard} z-1 position-absolute d-lg-inline-flex d-none flex-column justify-content-center`}
+        className={`${styles.headTitleCard} z-1 position-absolute d-lg-inline-flex d-none flex-column justify-content-center ms-5`}
       >
-        <div>
+        <div className='ps-4' style={{ textShadow: '2px 2px 3px #000000' }}>
           <h4 className="text-white">Let’s enjoy</h4>
           <h1 className="text-white">
             <b>
@@ -220,12 +220,18 @@ export default function Index() {
               Life !
             </b>
           </h1>
-          <h4 className="text-white">二手Switch遊戲販售平台</h4>
+          <h4 className="text-white pt-4">二 手 Switch 遊 戲 販 售 平 台</h4>
         </div>
-        <div className="btns mt-4">
-          <button className="btn btn-danger px-4 me-sm-3">會員登入</button>
-          <button className="btn btn-info me-sm-3">加入會員</button>
-        </div>
+        {!isLoggedIn && (
+          <div className="btns mt-4 ps-4">
+            <Link href="member/login" className="me-3">
+              <button className={mstyles.sign_btn+" btn btn-danger px-4 me-sm-3"}>會員登入</button>
+            </Link>
+            <Link href="member/register">
+              <button className={mstyles.signin_btn+" btn btn-info me-sm-3"}>立即加入</button>
+            </Link>
+          </div>
+        )}
       </div>
       <ControlledCarousel />
       <section className={styles.sec2}>
