@@ -19,7 +19,7 @@ import GoTopButton from '@/components/go-to-top/go-top-button'
 import ProductCard from '@/components/products/product-card'
 import WeeklySelect from '@/assets/weekly-select.svg'
 import { FaArrowRightLong } from 'react-icons/fa6'
-import { IoIosCloseCircle } from "react-icons/io"
+import { IoCloseSharp } from "react-icons/io5"
 import { useAuth } from '@/hooks/use-Auth'
 import TypeSwiper from '@/components/common/typeSwiper'
 import { chunk } from 'lodash'
@@ -379,10 +379,10 @@ export default function Index() {
       <section className={`sec5 pt-md-5 pb-md-5 pb-3 pt-3 ${estyles.eventBox}`}>
         <div className='container px-md-0 px-4'>
           <div className="row d-flex justify-content-between">
-            <div className="col-12 col-md-5">
-              <h4 className="d-none d-md-block my-5 text-light fw-bold">ARTICLE / 精選文章</h4>
+            <div className="col-12 col-md-6">
+              <h4 className="d-none d-md-block mt-5 mb-4 text-light fw-bold">ARTICLE / 精選文章</h4>
               <h4 className="d-block d-md-none text-light text-center mb-4 fw-bold">ARTICLE / 精選文章</h4>
-              {hot.map((h) => {
+              {hot.slice(0, 4).map((h) => {
                 return (
                   <div className={`${style.hot_main} mb-3`}>
                     <div className={`${style.hot_main_img} col-4`}>
@@ -412,11 +412,11 @@ export default function Index() {
                 )
               })}
             </div>
-            <div className="col-12 col-md-7">
+            <div className="col-12 col-md-6">
               <div className={`${estyles.calender} mb-3`}>
                 <h4 className="mb-2 text-light d-none d-md-block fw-bold">EVENT / 本月優惠活動</h4>
                 <h4 className="mb-2 text-light text-center d-block d-md-none fw-bold">EVENT / 本月優惠活動</h4>
-                <div className='d-flex align-items-center justify-content-md-start justify-content-center mb-md-5 mb-3'>
+                <div className='d-flex align-items-center justify-content-md-start justify-content-center mb-md-4 mb-3'>
                   <div className={estyles.cirleToday}></div>
                   <h6 className='text-secondary ms-1'>TODAY</h6>
                   <div className={`${estyles.cirleSelectDate} ms-3`}></div>
@@ -465,17 +465,55 @@ export default function Index() {
             </div>
             {/* modal 放這裡 */}
             {isModalOpen && (
-              <div id='calModal' className={estyles.modal}>
-              <div className={estyles.modalContent}>
-                <span 
+              <div id='calModal' className={`${estyles.modal} ${isModalOpen ? estyles['modal-show'] : ''}`}>
+              <span 
                 style={{ cursor: 'pointer' }}
                 role="presentation"
                 className={estyles.close}
                 onClick={
                   () => setIsModalOpen(false)
                 }
-                ><IoIosCloseCircle /></span>
-                <h5 className='text-dark p-5'>這是日曆點選出來ㄉmodal，還在手刻中，會放優惠活動資訊（假的宣傳廣告圖）或是推播新上架的文章和商品！</h5>
+                ><IoCloseSharp className='mt-1'/></span>
+              <div className={estyles.modalContent}>
+                <h2 className={`fw-bold`}>WEEKLY</h2>
+                <h2 className={`fw-bold mb-4`}>CHOICE</h2>
+                <div className='d-flex flex-column'>
+                  {/* <div>
+                  <h4 className='text-dark fw-bold mb-2'>本週限定</h4>
+                  </div> */}
+                  <div>
+                  <h4 className='text-dark fw-bold'>迎接連假的多人遊戲</h4>
+                  <div className='d-flex flex-column'>
+                  <Link href='http://localhost:3000/products/13'>
+                  <div className={`mb-3 ${estyles.eventPicks}`}>
+                      <div className={estyles.image}>
+                        <Image src='./images/event/brain-academy.png' alt='game-cover' height={120} width={120} className={`${estyles.fit} ${estyles.position2}`}/>
+                      </div>
+                      {/* <h5>一起伸展大腦！</h5> */}
+                    </div>
+                  </Link>
+                    <Link href='http://localhost:3000/products/25'>
+                    <div className={`mb-3 ${estyles.eventPicks}`}>
+                      <div className={estyles.image}>
+                        <Image src='./images/event/wario.jpeg' alt='game-cover' height={120} width={120} className={estyles.fit}/>
+                      </div>
+                      {/* <h5>一起伸展大腦！</h5> */}
+                    </div>
+                    </Link>
+                    <Link href='http://localhost:3000/products/14'>
+                    <div className={`mb-3 ${estyles.eventPicks}`}>
+                      <div className={estyles.image}>
+                        <Image src='./images/event/hop-step-dance.webp' alt='game-cover' height={120} width={120} className={`${estyles.fit} ${estyles.position}`}/>
+                      </div>
+                      {/* <h5>一起伸展大腦！</h5> */}
+                    </div>
+                    </Link>
+                  </div>
+                  </div>
+                  {/* <div>
+                  <h4 className='text-dark fw-bold'>遊戲新上市</h4>
+                  </div> */}
+                </div>
               </div>
             </div>
             )}
