@@ -41,6 +41,25 @@ import moment from 'moment'
 //   }
 // })
 
+//--------------------賣場名稱----------------------//
+router.get('/:shop_site', async (req, res) => {
+  const { shop_site } = req.params
+  try {
+    const [shopName] = await db.execute(
+      `SELECT shop_name FROM member WHERE shop_site = ?`,
+      [shop_site]
+    )
+    if (shopName.length === 0) {
+      return res.status(404).json({ message: '查無此賣場' })
+    }
+    const shop_name = shopName[0].shop_name
+    res.json({ shop_name })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: '伺服器錯誤' })
+  }
+})
+
 //--------------------賣場資料----------------------//
 router.get('/:shop_site/overview', async (req, res) => {
   const { shop_site } = req.params

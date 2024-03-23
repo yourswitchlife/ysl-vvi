@@ -95,7 +95,7 @@
 
   .pInfoFrame {
     display: flex;
-    width: calc(100% - 65px);
+    width: 100%;
   }
 }
 
@@ -804,6 +804,7 @@
     // 商品名稱+語言版本 / 單價+數量
     .pInfoFrame {
       flex-direction: column;
+      width: calc(100% - 65px);
     }
   }
 
