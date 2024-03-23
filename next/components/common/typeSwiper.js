@@ -31,23 +31,22 @@ export default function TypeSwiper() {
     }
   };
 
-
-
-  const NextArrow = ({ onClick }) => {
-    return (
-      <div className={`${styles.arrow} ${styles.next}`} onClick={onClick}>
-        <IoMdArrowDroprightCircle />
-      </div>
-    );
-  };
-
-  const PrevArrow = ({ onClick }) => {
-    return (
-      <div className={`${styles.arrow} ${styles.prev}`} onClick={onClick}>
-        <IoMdArrowDropleftCircle />
-      </div>
-    );
-  };
+  /* 
+    const NextArrow = ({ onClick }) => {
+      return (
+        <div className={`${styles.arrow} ${styles.next}`} onClick={onClick}>
+          <IoMdArrowDroprightCircle />
+        </div>
+      );
+    };
+  
+    const PrevArrow = ({ onClick }) => {
+      return (
+        <div className={`${styles.arrow} ${styles.prev}`} onClick={onClick}>
+          <IoMdArrowDropleftCircle />
+        </div>
+      );
+    }; */
 
   const handleInit = (swiper) => {
     // Swiper 初始化
@@ -82,13 +81,18 @@ export default function TypeSwiper() {
       onSlideChange={handleSlideChange}
       grabCursor={true}
       centeredSlides={true}
-      slidesPerView={'5'}
+      slidesPerView={3} 
       loop={true}
+      breakpoints={{
+        1440: {
+          slidesPerView: 5,
+        },
+      }}
     >
       {type.map((item, idx) => (
         <SwiperSlide key={idx}>
           <div className={styles.slidebox}>
-            <Link  href={`/products?type=${item.id}`}>
+            <Link href={`/products?type=${item.id}`}>
               <img src={`http://localhost:3005/type/${item.image}`} alt={item.name} className={styles.fit} />
             </Link>
           </div>

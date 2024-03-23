@@ -12,20 +12,16 @@
   }
 }
 
-.title_card{
+.title_card {
   border-radius: 0;
-  background: linear-gradient(
-    180deg,
-    #4c5668 0%,
-    rgba(22, 23, 25, 0) 46.35%,
-    #3f4858 100%
-  );
+  background: linear-gradient(180deg,
+      #59616e 0%,
+      rgba(95, 114, 155, 0) 46.35%,
+      #616774 100%);
 }
 
 .bg_card {
   background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 1)), url('/images/member/1709974047758.jpg') left/cover no-repeat;
-
-  background-color: $bright-gray;
 }
 
 .text_frame {
@@ -35,7 +31,7 @@
 .coupon_pages {
   position: absolute;
   left: 51%;
-  padding-inline:40px;
+  padding-inline: 40px;
   font-size: 24px;
   font-weight: bold;
   font-family: verdana;
@@ -45,6 +41,7 @@
   cursor: default;
   border-bottom: 2px solid $red-secondary;
 }
+
 .cancel_btn {
   font-weight: bold;
   color: $white;
@@ -58,6 +55,7 @@
     background: $dark-gray;
     box-shadow: 0px 0px 10px 5px rgba(247, 39, 58, 0.25);
   }
+
   &:active {
     color: $white;
     border: 2px solid $danger !important;
@@ -67,11 +65,12 @@
 }
 
 @media (max-width: 430px) {
-  .cancel_btn{
-    padding-inline:10px;
+  .cancel_btn {
+    padding-inline: 10px;
     position: relative;
     left: 48%;
   }
+
   .coupon_pages {
     position: absolute;
     padding-inline: 15px;
@@ -80,10 +79,12 @@
     font-size: 20px;
     font-weight: bold;
   }
+
   .bg_card {
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.795), rgb(255, 255, 255)), url('/images/member/1709974047758.jpg') left/cover no-repeat;
     margin-inline: 0 !important;
     padding-inline: 0 !important;
-    justify-content: space-between;
+    justify-content: center !important;
   }
 
   .wid_xs {
