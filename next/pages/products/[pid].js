@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import BreadCrumb from '@/components/common/breadcrumb'
 import Image from 'next/image'
@@ -369,8 +370,8 @@ export default function ProductDetail() {
         const hasMatchingOrder = orders.some(
           (v) =>
             v.member_buyer_id === memberId &&
-            v.member_seller_id === product.member_id 
-            // && v.order != null
+            v.member_seller_id === product.member_id
+          // && v.order != null
         )
         console.log(hasMatchingOrder)
         setOrderReview(hasMatchingOrder)
@@ -417,6 +418,9 @@ export default function ProductDetail() {
 
   return (
     <>
+      <Head>
+        <title>{product.name}</title>
+      </Head>
       <main>
         {loader()}
         <GoTopButton />
@@ -441,9 +445,9 @@ export default function ProductDetail() {
             </div>
             <div className="col-lg-6 col-12 mt-lg-0 mt-3">
               <h4 className="text-white mb-0">{product.name}</h4>
-              <p className={`${styles.pDiscount} bg-info p-1 mb-4 text-white`}>
-                滿＄999免運
-              </p>
+              <a href='http://localhost:3000/coupon' className={`${styles.pDiscount} p bg-info p-1 mb-4 text-white`}>
+                快領券享結帳免運
+              </a>
               <div className="d-flex mt-4 align-items-center">
                 <h5 className="me-3 text-white mb-2 pt-2">數量 </h5>
                 <div className={`${styles.counter} d-flex bg-light`}>
