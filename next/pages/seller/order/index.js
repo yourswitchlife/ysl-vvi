@@ -474,28 +474,28 @@ export default function Order() {
           </div>
           <div className="d-block d-md-none container ps-4 pe-4">
           <Tabs
-                defaultActiveKey="all-order"
+                defaultActiveKey="all"
                 id="orderStatusTabs-mobile"
                 className="mb-3"
                 justify
                 onSelect={handleTabChange}
               >
-                <Tab eventKey="all" title="全部">
+                <Tab eventKey="all" title={<span className={selectedTab === 'all' ? "text-danger" : "text-light"}>全部</span>}>
                   {orders &&
                     <h5 className="fw-bold mb-2">{orderNum}筆訂單</h5>
                   }
                 </Tab>
-                <Tab eventKey="shipped" title="待出貨">
+                <Tab eventKey="shipped" title={<span className={selectedTab === 'shipped' ? "text-danger" : "text-light"}>待出貨</span>}>
                 {orders &&
                     <h5 className="fw-bold mb-2">{orderNum}筆訂單</h5>
                   }
                 </Tab>
-                <Tab eventKey="processing" title="運送中">
+                <Tab eventKey="processing" title={<span className={selectedTab === 'processing' ? "text-danger" : "text-light"}>運送中</span>}>
                 {orders &&
                     <h5 className="fw-bold mb-2">{orderNum}筆訂單</h5>
                   }
                 </Tab>
-                <Tab eventKey="delivered" title="已完成">
+                <Tab eventKey="delivered" title={<span className={selectedTab === 'delivered' ? "text-danger" : "text-light"}>已完成</span>}>
                 {orders &&
                     <h5 className="fw-bold mb-2">{orderNum}筆訂單</h5>
                   }
