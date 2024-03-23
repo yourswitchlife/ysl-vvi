@@ -212,6 +212,13 @@ export default function account() {
 
         if (response.ok) {
           console.log('照片上傳成功');
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "照片上傳成功！",
+            showConfirmButton: false,
+            timer: 1300
+          });
         } else {
           console.error('照片上傳失敗');
         }
