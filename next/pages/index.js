@@ -19,9 +19,11 @@ import GoTopButton from '@/components/go-to-top/go-top-button'
 import ProductCard from '@/components/products/product-card'
 import WeeklySelect from '@/assets/weekly-select.svg'
 import { FaArrowRightLong } from 'react-icons/fa6'
+import { IoIosCloseCircle } from "react-icons/io"
 import { useAuth } from '@/hooks/use-Auth'
 import TypeSwiper from '@/components/common/typeSwiper'
 import { chunk } from 'lodash'
+import checkLogin from '@/context/member/checkLogin'
 
 export default function Index() {
   const router = useRouter()
@@ -37,6 +39,7 @@ export default function Index() {
   const [flippedStates, setFlippedStates] = useState({})
   // 設置日曆
   const [myDate, setMyDate] = useState(0)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   // 卡片翻轉的狀態
   const flipCard = (id) => {
@@ -171,6 +174,7 @@ export default function Index() {
     ],
     7
   )
+  // console.log(allData)
 
   ///精選文章
   const [hot, setHot] = useState([])
@@ -430,6 +434,7 @@ export default function Index() {
                               key={idx}
                               onClick={() => {
                                 if (item) setMyDate(item)
+                                setIsModalOpen(true)
                               }}
                               className={`${now.d === item ? estyles.today : estyles.otherday} ${myDate === item ? estyles.chosenDate : ''
                                 } ${estyles.tableCell}`}
@@ -452,8 +457,23 @@ export default function Index() {
                 </div>
               </div>
             </div>
+            {/* modal 放這裡 */}
+            {isModalOpen && (
+              <div id='calModal' className={estyles.modal}>
+              <div className={estyles.modalContent}>
+                <span 
+                style={{ cursor: 'pointer' }}
+                role="presentation"
+                className={estyles.close}
+                onClick={
+                  () => setIsModalOpen(false)
+                }
+                ><IoIosCloseCircle /></span>
+                <h5 className='text-dark p-5'>這是日曆點選出來ㄉmodal，還在手刻中，會放優惠活動資訊（假的宣傳廣告圖）或是推播新上架的文章和商品！</h5>
+              </div>
+            </div>
+            )}
           </div>
-          
         </div>
       </section>
       <section className='py-md-5 pt-4 container'>
