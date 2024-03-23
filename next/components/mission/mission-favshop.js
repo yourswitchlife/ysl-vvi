@@ -145,17 +145,17 @@ export default function MissionFavShop({ status }) {
   return (
     <>
       {/* <Row xs={1} md={2} className=""> */}
-      <div className='row justify-content-center '>
+      <div className='row justify-content-center'>
         {mission.map(m => (
           <div key={m.id} className={`${styles.bg} m-2 col-md-6 col-sm-12`}>
-            <h4 className={`${styles.title} text-center p-2`}>{m.title}</h4>
+            <h4 className={`${styles.title} fw-bolder text-center m-3`}>{m.title}</h4>
             <div className='fs-4 p-3 text-start'>{m.content}</div>
             <div className={`${styles.Mario} d-flex justify-content-center`}>
               <Image src={redMario} className='object-fit-cover' alt="red_mario" />
             </div>
 
             <div className='d-flex justify-content-center align-items-center mt-3 mb-3'>
-              <button className={`btn ${m.status === 1? (m.coupon_id || prize ? 'btn-dark' : 'btn-info') : 'btn-danger'}`}
+              <button className={`${styles.btn} btn ${m.status === 1 ? (m.coupon_id || prize ? 'btn-dark' : 'btn-info') : 'btn-danger'}`}
                 onClick={() => {
                   if (m.status === 1 && !m.coupon_id) {
                     claimPrize()
@@ -163,7 +163,7 @@ export default function MissionFavShop({ status }) {
                     router.push('/products')
                   }
                 }}
-                disabled={m.status === 1 && m.coupon_id}> {m.status === 1 ?(m.coupon_id || prize ? '任務完成' : '快來領獎勵') : '去解任務'}</button>
+                disabled={m.status === 1 && m.coupon_id}> {m.status === 1  ?(m.coupon_id || prize ? '任務完成' : '快來領獎勵') : '去解任務'}</button>
             </div>
           </div>
         ))}

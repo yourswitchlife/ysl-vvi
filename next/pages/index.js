@@ -372,10 +372,11 @@ export default function Index() {
 
         </div>
       </section>
-      <section className="container sec4 py-5 mb-5">
+      <section className="container sec4 pt-5">
         <h4 className="text-white mb-2 d-flex justify-content-center">商品分類</h4>
-        <TypeSwiper />
       </section>
+      <TypeSwiper />
+      <div className='mb-md-5 mb-4'></div>
       <section className={`sec5 pt-md-5 pb-md-5 pb-3 pt-3 ${estyles.eventBox}`}>
         <div className='container px-md-0 px-4'>
           <div className="row d-flex justify-content-between">
@@ -475,14 +476,17 @@ export default function Index() {
                 }
                 ><IoCloseSharp className='mt-1'/></span>
               <div className={estyles.modalContent}>
-                <h2 className={`fw-bold`}>WEEKLY</h2>
-                <h2 className={`fw-bold mb-4`}>CHOICE</h2>
+                <h2 className={`fw-bold d-none d-md-block`}>WEEKLY</h2>
+                <h2 className={`fw-bold mb-4 d-none d-md-block`}>CHOICE</h2>
+                <h4 className={`fw-bold d-block d-md-none mb-0`}>WEEKLY</h4>
+                <h4 className={`fw-bold mb-4 d-block d-md-none mt-0`}>CHOICE</h4>
                 <div className='d-flex flex-column'>
                   {/* <div>
                   <h4 className='text-dark fw-bold mb-2'>本週限定</h4>
                   </div> */}
                   <div>
-                  <h4 className='text-dark fw-bold'>迎接連假的多人遊戲</h4>
+                  <h4 className='text-dark fw-bold d-none d-md-block'>迎接連假的多人遊戲</h4>
+                  <h5 className='text-dark fw-bold d-block d-md-none mb-2'>迎接連假的多人遊戲</h5>
                   <div className='d-flex flex-column'>
                   <Link href='http://localhost:3000/products/13'>
                   <div className={`mb-3 ${estyles.eventPicks}`}>
