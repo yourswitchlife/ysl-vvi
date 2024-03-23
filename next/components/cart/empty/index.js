@@ -17,10 +17,10 @@ export default function Empty() {
           </div>
           <div className={styles.text}>你的購物車中沒有商品</div>
           <div className={styles.btnFrame}>
-            <Link href="/" type="button" className="btn btn-info">
+            <Link href="/" type="button" className={`btn btn-info ${styles.button}`}>
               回首頁逛逛
             </Link>
-            <Link href="/member/fav-product" type="button" className="btn btn-danger">
+            <Link href="/member/fav-product" type="button" className={`btn btn-danger ${styles.button}`}>
               我的收藏清單
             </Link>
           </div>

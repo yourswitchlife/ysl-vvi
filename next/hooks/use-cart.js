@@ -79,7 +79,7 @@ export function CartProvider({ children }) {
       icon: 'success',
       title: '商品已加入購物車',
       showConfirmButton: false,
-      timer: 2000,
+      timer: 1500,
     })
   }
 
