@@ -7,7 +7,7 @@
 }
 .calender{
     border: 1px solid $gray;
-    padding: 48px 50px 100px;
+    padding: 48px 70px 100px;
     border-radius: 20px;
 }
 .tablestyle{
@@ -20,7 +20,7 @@
     padding: 10px;
     .tableCell {
         width: 70px; // 或其他固定的宽度
-        height: 90px; // 或根据需要设置最小高度
+        height: 70px; // 或根据需要设置最小高度
         text-align: center;
         color: $bright-gray;
       }
@@ -48,7 +48,7 @@
         border-top: 1px solid $gray;
         border-bottom: 1px solid $gray;
         color: $light-gray;
-        height: 100px;
+        height: 70px;
     }
 }
 
@@ -75,35 +75,69 @@
 
 //modal style
 .modal{
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s;
 //   display: none; /* Hidden by default */
   position: absolute; /* Stay in place */
+  visibility: hidden;
   z-index: 5; /* Sit on top */
-  left: 40px;
-  top: 3350px;
-  width: 560px; /* Full width */
-  height: 400px; /* Full height */
+  left: 60px;
+  top: 3034px;
+  width: 640px; /* Full width */
+  height: 803px; /* Full height */
   overflow: auto; /* Enable scroll if needed */
   background-color: $light-gray; /* Fallback color */
 //   background-color: rgb(101, 101, 101); /* Black w/ opacity */
-  border-radius: 10px;
+  border-radius: 20px;
   border: 1px solid $gray;
+  box-shadow: 2px 2px 15px 3px rgba(37, 37, 37, 0.689);
+  padding: 20px 20px;
 }
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+.modal-show{
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-in-out, visibility 0s linear 0s;
+}
+.modalContent {
+    margin: 20px 20px;
+    .eventPicks{
+        &:hover{
+            opacity: 0.5;
+        }
+    }
+    .image{
+        width: 100%;
+        height: 150px;
+        overflow: hidden;
+        .fit{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .position{
+            object-position: 0px -30px;
+        }
+        .position2{
+            object-position: 0px -70px;
+        }
+      }
 }
 .close {
-    color: #aaa;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    border-radius: 15px;
+    background-color: $danger;
+    color: $light-gray;
     float: right;
     font-size: 28px;
     font-weight: bold;
 }
 .close:hover,
 .close:focus {
-  color: black;
+  transition: 0.3s;
+  background-color: $primary-black;
+  color: $white;
   text-decoration: none;
   cursor: pointer;
 }
