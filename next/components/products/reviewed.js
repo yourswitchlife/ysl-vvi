@@ -51,7 +51,7 @@ export default function Reviewed({
             ''
           )}
         </div>
-        {reply != '' ? (
+        {reply != '' && reply != null ? (
           <div className="text-white pe-lg-3 pe-0 p">
             店家回覆：<p className="text-white">{reply}</p>
           </div>
