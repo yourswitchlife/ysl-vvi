@@ -95,9 +95,9 @@ export default function Order() {
           ReceiverEmail: '',
           TradeDesc: '',
           ServerReplyURL:
-            'https://1bae-2001-b400-e332-fff7-7810-43d0-8b9d-6c84.ngrok-free.app/api/logisticsService/ecpay/serverReply',
-          ClientReplyURL: 'https://1bae-2001-b400-e332-fff7-7810-43d0-8b9d-6c84.ngrok-free.app/api/logisticsService/ecpay/clientReply',
-          LogisticsC2CReplyURL: 'https://1bae-2001-b400-e332-fff7-7810-43d0-8b9d-6c84.ngrok-free.app/api/logisticsService/ecpay/logisticsC2CReply',
+            'https://ca67-114-25-202-203.ngrok-free.app/api/logisticsService/ecpay/serverReply',
+          ClientReplyURL: 'https://ca67-114-25-202-203.ngrok-free.app/api/logisticsService/ecpay/clientReply',
+          LogisticsC2CReplyURL: 'https://ca67-114-25-202-203.ngrok-free.app/api/logisticsService/ecpay/logisticsC2CReply',
           Remark: '',
           PlatformID: '',
           ReceiverStoreID: '131386',

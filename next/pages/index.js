@@ -366,11 +366,12 @@ export default function Index() {
         <h4 className="text-white mb-2 d-flex justify-content-center">商品分類</h4>
         <TypeSwiper />
       </section>
-      <section className={`sec5 pt-5 pb-5 ${estyles.eventBox}`}>
-        <div className='container'>
+      <section className={`sec5 pt-md-5 pb-md-5 pb-3 pt-3 ${estyles.eventBox}`}>
+        <div className='container px-md-0 px-4'>
           <div className="row d-flex justify-content-between">
             <div className="col-12 col-md-5">
-              <h4 className="my-5 text-light fw-bold">ARTICLE / 精選文章</h4>
+              <h4 className="d-none d-md-block my-5 text-light fw-bold">ARTICLE / 精選文章</h4>
+              <h4 className="d-block d-md-none text-light text-center mb-4 fw-bold">ARTICLE / 精選文章</h4>
               {hot.map((h) => {
                 return (
                   <div className={`${style.hot_main} mb-3`}>
@@ -403,8 +404,9 @@ export default function Index() {
             </div>
             <div className="col-12 col-md-7">
               <div className={`${estyles.calender} mb-3`}>
-                <h4 className="mb-2 text-light fw-bold">EVENT / 本月優惠活動</h4>
-                <div className='d-flex align-items-center justify-content-start mb-5'>
+                <h4 className="mb-2 text-light d-none d-md-block fw-bold">EVENT / 本月優惠活動</h4>
+                <h4 className="mb-2 text-light text-center d-block d-md-none fw-bold">EVENT / 本月優惠活動</h4>
+                <div className='d-flex align-items-center justify-content-md-start justify-content-center mb-md-5 mb-3'>
                   <div className={estyles.cirleToday}></div>
                   <h6 className='text-secondary ms-1'>TODAY</h6>
                   <div className={`${estyles.cirleSelectDate} ms-3`}></div>
@@ -434,7 +436,8 @@ export default function Index() {
                               style={{ cursor: 'pointer' }}
                               role="presentation"
                             >
-                              <h5>{item}</h5>
+                              <h5 className='d-none d-md-block'>{item}</h5>
+                              <h6 className='d-block d-md-none'>{item}</h6>
                             </td>
                           ))}
                         </tr>
@@ -453,10 +456,10 @@ export default function Index() {
           
         </div>
       </section>
-      <section className='pt-5 pb-5 container'>
-      <div className='mb-4'>
-                  <h4 className="mb-5 fw-bold text-light">SHOP / 精選賣家</h4>
-                  <div className="d-flex justify-content-between align-items-center flex-wrap">
+      <section className='py-md-5 pt-4 container'>
+      <div className='mb-md-4 mb-2'>
+        <h4 className="mb-3 mb-md-5 fw-bold text-light text-md-start text-center">SHOP / 精選賣家</h4>
+        <div className="d-flex justify-content-between align-items-center flex-wrap">
                     {shop && (
                   <ShopCardA
                     avgRating={5}

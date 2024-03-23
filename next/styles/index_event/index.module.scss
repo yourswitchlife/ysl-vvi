@@ -72,3 +72,20 @@
         text-underline-offset: 7px;
     }
 }
+
+@media screen and (max-width: 431px) {
+    .tablestyle{
+        .tableCell {
+            width: 42px; // 或其他固定的宽度
+            height: 42px; // 或根据需要设置最小高度
+            text-align: center;
+            color: $bright-gray;
+          }
+          .calenderHead{
+            height: 60px;
+        }
+    }
+    .calender{
+        padding: 30px 30px 15px;
+    }
+}

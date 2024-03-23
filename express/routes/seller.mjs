@@ -190,12 +190,20 @@ router.get('/product', authenticate, async (req, res) => {
       return res.status(400).json({ message: '找不到member data' })
     }
     const queryParams = [memberId]
+
+    //判斷tab為all時，不應用valid的條件過濾
+    //只有在tab不為all時才根據tab的值
+    let validCondition = ''
+    if (tab !== 'all') {
+      validCondition = ` AND product.valid = ${tab === 'unShop' ? '0' : '1'}`
+    }
+
     let sqlBase = `
   FROM product
   LEFT JOIN orders ON orders.product_id = product.id
   LEFT JOIN fav_product ON fav_product.product_id = product.id AND fav_product.valid = 1
   LEFT JOIN p_type ON product.type_id = p_type.id
-  WHERE product.member_id = ? AND product.valid = ${tab === 'unShop' ? '0' : '1'}
+  WHERE product.member_id = ?${validCondition}
 `
 
     if (tab === 'soldout') {
@@ -232,189 +240,198 @@ router.get('/product', authenticate, async (req, res) => {
   }
 })
 //新增賣家商品
-router.post(
-  '/product/new',
-  authenticate,
-  upload.fields([
-    { name: 'imgCover', maxCount: 1 },
-    { name: 'img1', maxCount: 1 },
-    { name: 'img2', maxCount: 1 },
-    { name: 'img3', maxCount: 1 },
-  ]),
-  async (req, res) => {
-    const {
-      typeId,
-      name,
-      productQuantity,
-      displayPrice,
-      price,
-      imgCover,
-      img1,
-      img2,
-      img3,
-      releaseTime,
-      language,
-      ratingId,
-      coOpValid,
-      description,
-      valid,
-      launch_valid,
-    } = req.body
-    const dateString = new Date() //創建商品日期
-    const created_at = moment(dateString).format('YYYY-MM-DD HH:mm:ss')
-    //const memberId = 抓當前使用者的id
-    // const memberId = req.memberData.id
-    const memberId = parseInt(req.memberData.id, 10) // 將其轉換為整數
+// router.post(
+//   '/product/new',
+//   authenticate,
+//   upload.fields([
+//     { name: 'imgCover', maxCount: 1 },
+//     { name: 'img1', maxCount: 1 },
+//     { name: 'img2', maxCount: 1 },
+//     { name: 'img3', maxCount: 1 },
+//   ]),
+//   async (req, res) => {
+//     const {
+//       typeId,
+//       name,
+//       productQuantity,
+//       displayPrice,
+//       price,
+//       imgCover,
+//       img1,
+//       img2,
+//       img3,
+//       releaseTime,
+//       language,
+//       ratingId,
+//       coOpValid,
+//       description,
+//       valid,
+//       launch_valid,
+//     } = req.body
+//     const dateString = new Date() //創建商品日期
+//     const created_at = moment(dateString).format('YYYY-MM-DD HH:mm:ss')
+//     //const memberId = 抓當前使用者的id
+//     // const memberId = req.memberData.id
+//     const memberId = parseInt(req.memberData.id, 10) // 將其轉換為整數
 
-    if (isNaN(memberId) || memberId < 0) {
-      // 如果 memberId 不是一個正整數，返回錯誤響應
-      return res.status(400).json({ message: 'Invalid member_id' })
-    }
-    const fav = 0
-    console.log(
-      typeId,
-      name,
-      productQuantity,
-      fav,
-      displayPrice,
-      price,
-      imgCover,
-      img1,
-      img2,
-      img3,
-      releaseTime,
-      language,
-      ratingId,
-      coOpValid,
-      description,
-      created_at,
-      memberId,
-      valid,
-      launch_valid
-    )
-    if (!req.memberData) {
-      // 如果memberData不存在，则返回错误信息
-      return res.status(400).json({ message: '找不到member data' })
-    }
-    // try {
-    //把資料存進去
-    const Query =
-      'INSERT INTO `product` (`type_id`, `name`,`product_quantity`, `fav`, `display_price`,`price`, `img_cover`, `img_1`,`img_2`,`img_3`, `release_time`,`language`,`rating_id`,`co_op_valid`,`description`, `member_id`, `valid`, `launch_valid`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    await db.execute(Query, [
-      typeId,
-      name,
-      productQuantity,
-      fav,
-      displayPrice,
-      price,
-      imgCover,
-      img1,
-      img2,
-      img3,
-      releaseTime,
-      language,
-      ratingId,
-      coOpValid,
-      description,
-      created_at,
-      memberId,
-      valid,
-      launch_valid,
-    ])
-    // res.status(201).send({ message: '新增商品成功' })
-    // } catch (error) {
-    // res.status(500).send({ message: '新增商品失敗' })
-    // console.log('資料庫相關錯誤:', error)
-    // }
-  }
-)
+//     if (isNaN(memberId) || memberId < 0) {
+//       // 如果 memberId 不是一個正整數，返回錯誤響應
+//       return res.status(400).json({ message: 'Invalid member_id' })
+//     }
+//     const fav = 0
+//     console.log(
+//       typeId,
+//       name,
+//       productQuantity,
+//       fav,
+//       displayPrice,
+//       price,
+//       imgCover,
+//       img1,
+//       img2,
+//       img3,
+//       releaseTime,
+//       language,
+//       ratingId,
+//       coOpValid,
+//       description,
+//       created_at,
+//       memberId,
+//       valid,
+//       launch_valid
+//     )
+//     if (!req.memberData) {
+//       // 如果memberData不存在，则返回错误信息
+//       return res.status(400).json({ message: '找不到member data' })
+//     }
+//     // try {
+//     //把資料存進去
+//     const Query =
+//       'INSERT INTO `product` (`type_id`, `name`,`product_quantity`, `fav`, `display_price`,`price`, `img_cover`, `img_1`,`img_2`,`img_3`, `release_time`,`language`,`rating_id`,`co_op_valid`,`description`, `member_id`, `valid`, `launch_valid`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+//     await db.execute(Query, [
+//       typeId,
+//       name,
+//       productQuantity,
+//       fav,
+//       displayPrice,
+//       price,
+//       imgCover,
+//       img1,
+//       img2,
+//       img3,
+//       releaseTime,
+//       language,
+//       ratingId,
+//       coOpValid,
+//       description,
+//       created_at,
+//       memberId,
+//       valid,
+//       launch_valid,
+//     ])
+//     // res.status(201).send({ message: '新增商品成功' })
+//     // } catch (error) {
+//     // res.status(500).send({ message: '新增商品失敗' })
+//     // console.log('資料庫相關錯誤:', error)
+//     // }
+//   }
+// )
 //商品讀一個產品
-router.get('/product/:pid', authenticate, async (req, res) => {
-  // const {
-  //   typeId,
-  //   name,
-  //   productQuantity,
-  //   fav,
-  //   displayPrice,
-  //   price,
-  //   imgCover,
-  //   img1,
-  //   img2,
-  //   img3,
-  //   imgDetails,
-  //   releaseTime,
-  //   language,
-  //   ratingId,
-  //   coOpValid,
-  //   description,
-  // } = req.body
-  // const created_at = new Date() //創建商品日期
-  //const memberId = 抓當前使用者的id
+// router.get('/product/:pid', authenticate, async (req, res) => {
+//   // const {
+//   //   typeId,
+//   //   name,
+//   //   productQuantity,
+//   //   fav,
+//   //   displayPrice,
+//   //   price,
+//   //   imgCover,
+//   //   img1,
+//   //   img2,
+//   //   img3,
+//   //   imgDetails,
+//   //   releaseTime,
+//   //   language,
+//   //   ratingId,
+//   //   coOpValid,
+//   //   description,
+//   // } = req.body
+//   // const created_at = new Date() //創建商品日期
+//   //const memberId = 抓當前使用者的id
+//   try {
+//     const memberId = req.memberData.id
+//     let { pid } = req.params
+//     console.log(memberId, pid)
+//     let [product] = await db.execute(
+//       'SELECT * FROM `product` WHERE `member_id` = ? AND `id` = ?',
+//       [memberId, pid]
+//     )
+//     res.json(product)
+//   } catch (error) {
+//     console.error(error)
+//     res.status(500).json({ message: '伺服器錯誤' })
+//   }
+// })
+
+//商品下架:valid=0
+router.patch('/product/:pid', authenticate, async (req, res) => {
+  const valid = 0
+  const pid = req.params.pid
+  const shop_id = req.memberData.id
+
   try {
-    const memberId = req.memberData.id
-    let { pid } = req.params
-    console.log(memberId, pid)
-    let [product] = await db.execute(
-      'SELECT * FROM `product` WHERE `member_id` = ? AND `id` = ?',
-      [memberId, pid]
+    //先檢查這個產品有沒有存在＆和pid匹配
+    const [products] = await db.execute(
+      'SELECT * FROM `product` WHERE `id` = ?',
+      [pid]
     )
-    res.json(product)
+    //檢查評論是存在以及shop_id是否匹配
+    if (products.length === 0) {
+      return res.status(404).send({ message: '商品不存在' })
+    }
+    const product = products[0]
+    if (product.member_id !== shop_id) {
+      //不符合沒有權限修改
+      return res.status(403).send({ message: '無權限修改此商品資訊' })
+    }
+    const Query =
+      'UPDATE `product` SET `valid` = ? WHERE `id` = ? AND `member_id` = ?'
+    await db.execute(Query, [valid, pid, shop_id])
+    res.status(200).send({ message: '下架商品成功' })
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: '伺服器錯誤' })
+    res.status(400).send({ message: '不存在的商品，下架商品失敗' })
+    console.log('資料庫相關錯誤：', error)
   }
 })
 
-//商品編輯:只改成DELETE裡面都還沒修改
-router.delete('/product/:pid', authenticate, async (req, res) => {
-  const {
-    typeId,
-    name,
-    productQuantity,
-    fav,
-    displayPrice,
-    price,
-    imgCover,
-    img1,
-    img2,
-    img3,
-    imgDetails,
-    releaseTime,
-    language,
-    ratingId,
-    coOpValid,
-    description,
-  } = req.body
-  const created_at = new Date() //創建商品日期
-  //const memberId = 抓當前使用者的id
-  try {
-    //把資料存進去
-    const Query =
-      'UPDATE `product` (`type_id`, `name`,`product_quantity`, `fav`, `display_price`,`price`, `img_cover`, `img_1`,`img_2`,`img_3`,`img_details`,`release_time`,`language`,`rating_id`,`co_op_valid`,`description`,`created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) WHERE `product`.`member_id` = '
-    await db.execute(Query, [
-      typeId,
-      name,
-      productQuantity,
-      fav,
-      displayPrice,
-      price,
-      imgCover,
-      img1,
-      img2,
-      img3,
-      imgDetails,
-      releaseTime,
-      language,
-      ratingId,
-      coOpValid,
-      description,
-      created_at,
-    ])
+//商品重新上架:valid=1
+router.patch('/product/onshop/:pid', authenticate, async (req, res) => {
+  const valid = 1
+  const pid = req.params.pid
+  const shop_id = req.memberData.id
 
-    res.status(201).send({ message: '新增商品成功' })
+  try {
+    //先檢查這個產品有沒有存在＆和pid匹配
+    const [products] = await db.execute(
+      'SELECT * FROM `product` WHERE `id` = ? AND `valid` = 0',
+      [pid]
+    )
+    //檢查評論是存在以及shop_id是否匹配
+    if (products.length === 0) {
+      return res.status(404).send({ message: '商品不存在' })
+    }
+    const product = products[0]
+    if (product.member_id !== shop_id) {
+      //不符合沒有權限修改
+      return res.status(403).send({ message: '無權限修改此商品資訊' })
+    }
+    const Query =
+      'UPDATE `product` SET `valid` = ? WHERE `id` = ? AND `member_id` = ?'
+    await db.execute(Query, [valid, pid, shop_id])
+    res.status(200).send({ message: '重新上架商品成功' })
   } catch (error) {
-    res.status(500).send({ message: '新增商品失敗' })
-    console.log('資料庫相關錯誤:', error)
+    res.status(400).send({ message: '不存在的商品，上架商品失敗' })
+    console.log('資料庫相關錯誤：', error)
   }
 })
 

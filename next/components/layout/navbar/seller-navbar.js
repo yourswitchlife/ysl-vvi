@@ -30,7 +30,7 @@ export default function SellerNavbar({shopSite=""}) {
       <header className={styles.sellerNavbar}>
         <div // logo
         >
-          <Link href="/seller" className={styles.link}>
+          <Link href="/" className={styles.link} title='回到首頁'>
             <Image src={yslLogo} alt="ysl-logo"/>
             <span className="ps-4 pe-4">|</span>
             <h3 className={styles.text}>賣家中心</h3>
