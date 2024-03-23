@@ -97,26 +97,29 @@ export default function MyApp({ Component, pageProps }) {
   // 監聽路由路徑已改變頁面標題
   useEffect(() => {
     const handleRouteChange = async (url) => {
+      console.log('Changing route to:', url)
+      const path = url.split('?')[0]
       let pagetitle = 'Your Switch Life｜二手遊戲交易平台'
-      if (url.startsWith('/cart')) {
+      if (path.startsWith('/cart')) {
         pagetitle = '我的購物車'
-      } else if (url.startsWith('/article')) {
+      } else if (path.startsWith('/article')) {
         pagetitle = '最新攻略'
-      } else if (url.startsWith('/products')) {
+      } else if (path.startsWith('/products')) {
+        console.log('商品路由: /products');
         pagetitle = '商品專區'
-      } else if (url.startsWith('/coupon')) {
+      } else if (path.startsWith('/coupon')) {
         pagetitle = '優惠報報'
-      } else if (url.startsWith('/member/login')) {
+      } else if (path.startsWith('/member/login')) {
         pagetitle = '會員登入'
-      } else if (url.startsWith('/member/register')) {
+      } else if (path.startsWith('/member/register')) {
         pagetitle = '會員註冊'
-      } else if (url.startsWith('/member')) {
+      } else if (path.startsWith('/member')) {
         pagetitle = '會員專區'
-      } else if (url.startsWith('/seller')) {
+      } else if (path.startsWith('/seller')) {
         pagetitle = '賣家中心'
-      } else if (url.startsWith('/shop')) {
-        const shopId = url.split('/shop/')[1]
-        console.log(shopId)
+      } else if (path.startsWith('/shop')) {
+        const shopId = path.split('/shop/')[1]
+        // console.log(shopId)
         const shopName = await fetchShopTitle(shopId)
         pagetitle = `${shopName} | Your Switch Life`
       }
@@ -133,7 +136,7 @@ export default function MyApp({ Component, pageProps }) {
 
     // 清理函數
     return () => {
-      router.events.off('routeChangeStart', handleRouteChange)
+      router.events.off('routeChangeComplete', handleRouteChange)
     }
   }, [router])
 
