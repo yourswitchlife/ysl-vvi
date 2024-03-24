@@ -89,9 +89,9 @@ export function ShippingProvider({ children }) {
 
   // 根據被選擇的宅配地址radio來拆分地址
   const handleAddressSelection = (memberId, index) => {
-    console.log('開始執行handleAddressSelection')
+    // console.log('開始執行handleAddressSelection')
     const selectedAddress = addresses.homeAddresses[index]
-    console.log(`handleAddressSelection 追蹤index: ${index}`)
+    // console.log(`handleAddressSelection 追蹤index: ${index}`)
     // 解析地址的城市、區域和詳細地址
     const { city, region, detail } = parseAddress(selectedAddress.address)
 
@@ -223,7 +223,7 @@ export function ShippingProvider({ children }) {
 
   // 更新收件地址資訊
   const handleShippingInfoUpdate = (memberId, info) => {
-    console.log('member_id:', memberId, 'info:', info)
+    // console.log('member_id:', memberId, 'info:', info)
     setShippingInfos((currentInfos) => ({
       ...currentInfos,
       [memberId]: {
@@ -484,7 +484,7 @@ export function ShippingProvider({ children }) {
         })
         .catch((error) => console.error('取得賣場名稱失敗', error))
     } else {
-      console.log('沒有可查詢的memberIds') // 當沒有有效的memberIds時
+      // console.log('沒有可查詢的memberIds') // 當沒有有效的memberIds時
     }
   }, [orderGroup])
 

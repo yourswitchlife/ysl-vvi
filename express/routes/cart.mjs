@@ -7,7 +7,8 @@ import crypto from 'crypto'
 import 'dotenv/config.js'
 import axios from 'axios'
 import queryString from 'query-string'
-import ECPayLogistics from '../node_modules/ecpay_logistics_nodejs/lib/ecpay_logistics.js'
+// 啟用綠界物流SDK
+import ecpay_logistics from 'ecpay_logistics_nodejs'
 
 // 取得商品對應的賣場名稱
 router.get('/shop-names', async (req, res) => {
@@ -569,7 +570,8 @@ router.get('/get-coupons', async (req, res) => {
 
 // 綠界門市地圖
 router.get('/get-seven-address', async (req, res) => {
-  const dataBody = queryString.stringify({
+  console.log('開始綠界')
+  const create = new ecpay_logistics({
     MerchantTradeNo: 'f0a0d7e9fae1bb72bc93',
     LogisticsType: 'CVS',
     LogisticsSubType: 'UNIMARTC2C',
@@ -578,24 +580,7 @@ router.get('/get-seven-address', async (req, res) => {
       'https://f4df-2402-7500-4e6-92d1-51ba-7154-4a35-80c1.ngrok-free.app/api/cart/get-seven',
     ExtraData: '',
     Device: '',
-    // MerchantID: '3407566',
-    // HashKey: 'OVqyEFNSVcj9szQb',
-    // HashIV: 'BV6ifI9FtoQK6PkS',
   })
-
-  const headers = {
-    Accept: 'text/html',
-    ContentType: 'application/x-www-form-urlencoded',
-  }
-  // 綠界超商門市地圖串接路徑
-  const url = 'https://logistics-stage.ecpay.com.tw/Express/map'
-
-  const sevenRes = await axios.post(url, dataBody, {
-    headers,
-    withCredentials: true,
-  })
-  console.log(sevenRes)
-  console.log(sevenRes.data)
 })
 
 export default router
