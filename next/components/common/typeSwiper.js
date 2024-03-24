@@ -97,7 +97,7 @@ export default function TypeSwiper() {
             </Link>
           </div>
           <h6 className='text-white d-lg-none d-flex ps-2'>{item.name}</h6>
-          <h4 className='text-white d-none d-lg-flex'>{item.name}</h4>
+          <h4 className='text-white d-none d-lg-flex justify-content-center'>{item.name}</h4>
         </SwiperSlide>
       ))}
     </Swiper>

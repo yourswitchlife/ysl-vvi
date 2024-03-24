@@ -21,7 +21,7 @@ import GoTopButton from '@/components/go-to-top/go-top-button'
 import ProductCard from '@/components/products/product-card'
 import WeeklySelect from '@/assets/weekly-select.svg'
 import { FaArrowRightLong } from 'react-icons/fa6'
-import { IoCloseSharp } from "react-icons/io5"
+import { IoCloseSharp } from 'react-icons/io5'
 import { useAuth } from '@/hooks/use-Auth'
 import TypeSwiper from '@/components/common/typeSwiper'
 import { chunk } from 'lodash'
@@ -152,8 +152,8 @@ export default function Index() {
           method: 'POST',
           credentials: 'include',
         }
-        )
-        console.log('HIIII');
+      )
+      console.log('HIIII')
       if (!res.ok) {
         throw new Error('Failed to fetch fav products')
       }
@@ -167,7 +167,7 @@ export default function Index() {
       console.log('Error')
     }
   }
-  
+
   const handleToggleFav = (id) => {
     const newProducts = products.map((p) => {
       if (p.id === id) return { ...p, fav: !p.fav }
@@ -214,7 +214,6 @@ export default function Index() {
         // console.log(data.hot2)
         setHot(data.hot2)
       }
-
     } catch (e) {
       console.error(e)
     }
@@ -223,16 +222,15 @@ export default function Index() {
     getArticle()
   }, [])
 
-
   return (
     <>
-    <PhoneTabNav />
+      <PhoneTabNav />
       <GoTopButton />
       <Navbar />
       <div
         className={`${styles.headTitleCard} z-1 position-absolute d-lg-inline-flex d-none flex-column justify-content-center ms-5`}
       >
-        <div className='ps-3'>
+        <div className="ps-3">
           <h4 className="text-white">Let’s enjoy</h4>
           <h1 className="text-white">
             <b>
@@ -246,16 +244,22 @@ export default function Index() {
         {!isLoggedIn && (
           <div className="btns mt-1 ps-3">
             <Link href="member/login" className="me-3">
-              <button className={mstyles.sign_btn+" btn btn-danger px-4 me-sm-3"}>會員登入</button>
+              <button
+                className={mstyles.sign_btn + ' btn btn-danger px-4 me-sm-3'}
+              >
+                會員登入
+              </button>
             </Link>
             <Link href="member/register">
-              <button className={mstyles.signin_btn+" btn btn-info me-sm-3"}>立即加入</button>
+              <button className={mstyles.signin_btn + ' btn btn-info me-sm-3'}>
+                立即加入
+              </button>
             </Link>
           </div>
         )}
       </div>
       <ControlledCarousel />
-      <section className={`${styles.sec2}`} >
+      <section className={`${styles.sec2}`}>
         <div className={`${styles.weeklySelect} ${styles.top}`}>
           <Image src={WeeklySelect} className={styles.img} />
           <Image src={WeeklySelect} className={styles.img} />
@@ -274,8 +278,9 @@ export default function Index() {
                 >
                   <div className={`${styles.card}`}>
                     <div
-                      className={`${styles.ura} ${isFlipped ? styles.isFlipped : ''
-                        }`}
+                      className={`${styles.ura} ${
+                        isFlipped ? styles.isFlipped : ''
+                      }`}
                       style={{
                         backgroundImage: `url(http://localhost:3005/productImg/cover/${p.img_cover})`,
                       }}
@@ -292,8 +297,9 @@ export default function Index() {
                       </div>
                     </div>
                     <div
-                      className={`${styles.inner} ${isFlipped ? styles.isFlipped : ''
-                        }`}
+                      className={`${styles.inner} ${
+                        isFlipped ? styles.isFlipped : ''
+                      }`}
                     >
                       <figure className={`${styles.img}`}>
                         <Image
@@ -316,9 +322,10 @@ export default function Index() {
         </div>
       </section>
       <section className="sec3 container pt-5 pb-3">
-        <h4 className="text-white mb-2 d-flex justify-content-center fw-bold">特賣焦點</h4>
+        <h4 className="text-white mb-2 d-flex justify-content-center fw-bold">
+          特賣焦點
+        </h4>
         <div className="container px-0 py-2 mb-3">
-       
           <div className="row row-cols-2 row-cols-lg-5 g-0 g-lg-3">
             {products.slice(30, 40).map((p) => {
               return (
@@ -359,20 +366,25 @@ export default function Index() {
               )
             })}
           </div>
-
         </div>
       </section>
       <section className="container sec4 mb-4 pb-3 mt-3">
-        <h4 className="text-white mb-3 d-flex justify-content-center fw-bold ">商品分類</h4>
-      <TypeSwiper/>
+        <h4 className="text-white mb-3 d-flex justify-content-center fw-bold ">
+          商品分類
+        </h4>
       </section>
-      <div className='mb-md-5 mb-4'></div>
+      <TypeSwiper />
+      <div className="mb-md-5 mb-4"></div>
       <section className={`sec5 pt-md-5 pb-md-5 pb-3 pt-3 ${estyles.eventBox}`}>
-        <div className='container px-md-0 px-4'>
+        <div className="container px-md-0 px-4">
           <div className="row d-flex justify-content-between">
             <div className="col-12 col-md-6">
-              <h4 className="d-none d-md-block mt-5 mb-4 text-light fw-bold">ARTICLE / 精選文章</h4>
-              <h4 className="d-block d-md-none text-light text-center mb-4 fw-bold">ARTICLE / 精選文章</h4>
+              <h4 className="d-none d-md-block mt-5 mb-4 text-light fw-bold">
+                ARTICLE / 精選文章
+              </h4>
+              <h4 className="d-block d-md-none text-light text-center mb-4 fw-bold">
+                ARTICLE / 精選文章
+              </h4>
               {hot.slice(0, 4).map((h) => {
                 return (
                   <div className={`${style.hot_main} mb-3`}>
@@ -394,9 +406,7 @@ export default function Index() {
                         </p>
                       </div>
                       <Link href={`/article/${h.ai_id}`} className={style.a}>
-                        <h6>
-                          {h.article_title}
-                        </h6>
+                        <h6>{h.article_title}</h6>
                       </Link>
                     </div>
                   </div>
@@ -405,20 +415,30 @@ export default function Index() {
             </div>
             <div className="col-12 col-md-6">
               <div className={`${estyles.calender} mb-3`}>
-                <h4 className="mb-2 text-light d-none d-md-block fw-bold">EVENT / 本月優惠活動</h4>
-                <h4 className="mb-2 text-light text-center d-block d-md-none fw-bold">EVENT / 本月優惠活動</h4>
-                <div className='d-flex align-items-center justify-content-md-start justify-content-center mb-md-4 mb-3'>
+                <h4 className="mb-2 text-light d-none d-md-block fw-bold">
+                  EVENT / 本月優惠活動
+                </h4>
+                <h4 className="mb-2 text-light text-center d-block d-md-none fw-bold">
+                  EVENT / 本月優惠活動
+                </h4>
+                <div className="d-flex align-items-center justify-content-md-start justify-content-center mb-md-4 mb-3">
                   <div className={estyles.cirleToday}></div>
-                  <h6 className='text-secondary ms-1'>TODAY</h6>
+                  <h6 className="text-secondary ms-1">TODAY</h6>
                   <div className={`${estyles.cirleSelectDate} ms-3`}></div>
-                  <h6 className='text-secondary ms-1'>SELECT DATE</h6>
+                  <h6 className="text-secondary ms-1">SELECT DATE</h6>
                 </div>
-                <h6 className='text-white d-none' id="yearAndMonth">{`${now.y}/${now.m}/${myDate ? myDate : ''}`}</h6>
+                <h6 className="text-white d-none" id="yearAndMonth">{`${
+                  now.y
+                }/${now.m}/${myDate ? myDate : ''}`}</h6>
                 <table className={`align-middle ${estyles.tablestyle}`}>
                   <thead id="title">
                     <tr className={estyles.calenderHead}>
                       {weekDayList.map(function (v, i) {
-                        return <th key={i} className='py-4 text-center'>{v}</th>
+                        return (
+                          <th key={i} className="py-4 text-center">
+                            {v}
+                          </th>
+                        )
                       })}
                     </tr>
                   </thead>
@@ -433,13 +453,18 @@ export default function Index() {
                                 if (item) setMyDate(item)
                                 setIsModalOpen(true)
                               }}
-                              className={`${now.d === item ? estyles.today : estyles.otherday} ${myDate === item ? estyles.chosenDate : ''
-                                } ${estyles.tableCell}`}
+                              className={`${
+                                now.d === item
+                                  ? estyles.today
+                                  : estyles.otherday
+                              } ${myDate === item ? estyles.chosenDate : ''} ${
+                                estyles.tableCell
+                              }`}
                               style={{ cursor: 'pointer' }}
                               role="presentation"
                             >
-                              <h5 className='d-none d-md-block'>{item}</h5>
-                              <h6 className='d-block d-md-none'>{item}</h6>
+                              <h5 className="d-none d-md-block">{item}</h5>
+                              <h6 className="d-block d-md-none">{item}</h6>
                             </td>
                           ))}
                         </tr>
@@ -447,105 +472,118 @@ export default function Index() {
                     })}
                   </tbody>
                 </table>
-                <div className='d-flex justify-content-end'>
-                <Link href='./coupon' className='text-decoration-none'>
-                  <h5 className={`my-3 pe-4 ${estyles.moreLink}`}>More event ...</h5>
-                </Link>
+                <div className="d-flex justify-content-end">
+                  <Link href="./coupon" className="text-decoration-none">
+                    <h5 className={`my-3 pe-4 ${estyles.moreLink}`}>
+                      More event ...
+                    </h5>
+                  </Link>
                 </div>
               </div>
             </div>
             {/* modal 放這裡 */}
             {isModalOpen && (
-              <div id='calModal' className={`${estyles.modal} ${isModalOpen ? estyles['modal-show'] : ''}`}>
-              <span 
-                style={{ cursor: 'pointer' }}
-                role="presentation"
-                className={estyles.close}
-                onClick={
-                  () => setIsModalOpen(false)
-                }
-                ><IoCloseSharp className='mt-1'/></span>
-              <div className={estyles.modalContent}>
-                <h2 className={`fw-bold d-none d-md-block`}>WEEKLY</h2>
-                <h2 className={`fw-bold mb-4 d-none d-md-block`}>CHOICE</h2>
-                <h4 className={`fw-bold d-block d-md-none mb-0`}>WEEKLY</h4>
-                <h4 className={`fw-bold mb-4 d-block d-md-none mt-0`}>CHOICE</h4>
-                <div className='d-flex flex-column'>
-                  {/* <div>
+              <div
+                id="calModal"
+                className={`${estyles.modal} ${
+                  isModalOpen ? estyles['modal-show'] : ''
+                }`}
+              >
+                <span
+                  style={{ cursor: 'pointer' }}
+                  role="presentation"
+                  className={estyles.close}
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  <IoCloseSharp className="mt-1" />
+                </span>
+                <div className={estyles.modalContent}>
+                  <h2 className={`fw-bold d-none d-md-block`}>WEEKLY</h2>
+                  <h2 className={`fw-bold mb-4 d-none d-md-block`}>CHOICE</h2>
+                  <h4 className={`fw-bold d-block d-md-none mb-0`}>WEEKLY</h4>
+                  <h4 className={`fw-bold mb-4 d-block d-md-none mt-0`}>
+                    CHOICE
+                  </h4>
+                  <div className="d-flex flex-column">
+                    {/* <div>
                   <h4 className='text-dark fw-bold mb-2'>本週限定</h4>
                   </div> */}
-                  <div>
-                  <h4 className='text-dark fw-bold d-none d-md-block'>迎接連假的多人遊戲</h4>
-                  <h5 className='text-dark fw-bold d-block d-md-none mb-2'>迎接連假的多人遊戲</h5>
-                  <div className='d-flex flex-column'>
-                  <Link href='http://localhost:3000/products/13'>
-                  <div className={`mb-3 ${estyles.eventPicks}`}>
-                      <div className={estyles.image}>
-                        <Image src='./images/event/brain-academy.png' alt='game-cover' height={120} width={120} className={`${estyles.fit} ${estyles.position2}`}/>
+                    <div>
+                      <h4 className="text-dark fw-bold d-none d-md-block">
+                        迎接連假的多人遊戲
+                      </h4>
+                      <h5 className="text-dark fw-bold d-block d-md-none mb-2">
+                        迎接連假的多人遊戲
+                      </h5>
+                      <div className="d-flex flex-column">
+                        <Link href="http://localhost:3000/products/13">
+                          <div className={`mb-3 ${estyles.eventPicks}`}>
+                            <div className={estyles.image}>
+                              <Image
+                                src="./images/event/brain-academy.png"
+                                alt="game-cover"
+                                height={120}
+                                width={120}
+                                className={`${estyles.fit} ${estyles.position2}`}
+                              />
+                            </div>
+                            {/* <h5>一起伸展大腦！</h5> */}
+                          </div>
+                        </Link>
+                        <Link href="http://localhost:3000/products/25">
+                          <div className={`mb-3 ${estyles.eventPicks}`}>
+                            <div className={estyles.image}>
+                              <Image
+                                src="./images/event/wario.jpeg"
+                                alt="game-cover"
+                                height={120}
+                                width={120}
+                                className={estyles.fit}
+                              />
+                            </div>
+                            {/* <h5>一起伸展大腦！</h5> */}
+                          </div>
+                        </Link>
+                        <Link href="http://localhost:3000/products/14">
+                          <div className={`mb-3 ${estyles.eventPicks}`}>
+                            <div className={estyles.image}>
+                              <Image
+                                src="./images/event/hop-step-dance.webp"
+                                alt="game-cover"
+                                height={120}
+                                width={120}
+                                className={`${estyles.fit} ${estyles.position}`}
+                              />
+                            </div>
+                            {/* <h5>一起伸展大腦！</h5> */}
+                          </div>
+                        </Link>
                       </div>
-                      {/* <h5>一起伸展大腦！</h5> */}
                     </div>
-                  </Link>
-                    <Link href='http://localhost:3000/products/25'>
-                    <div className={`mb-3 ${estyles.eventPicks}`}>
-                      <div className={estyles.image}>
-                        <Image src='./images/event/wario.jpeg' alt='game-cover' height={120} width={120} className={estyles.fit}/>
-                      </div>
-                      {/* <h5>一起伸展大腦！</h5> */}
-                    </div>
-                    </Link>
-                    <Link href='http://localhost:3000/products/14'>
-                    <div className={`mb-3 ${estyles.eventPicks}`}>
-                      <div className={estyles.image}>
-                        <Image src='./images/event/hop-step-dance.webp' alt='game-cover' height={120} width={120} className={`${estyles.fit} ${estyles.position}`}/>
-                      </div>
-                      {/* <h5>一起伸展大腦！</h5> */}
-                    </div>
-                    </Link>
-                  </div>
-                  </div>
-                  {/* <div>
+                    {/* <div>
                   <h4 className='text-dark fw-bold'>遊戲新上市</h4>
                   </div> */}
+                  </div>
                 </div>
               </div>
-            </div>
             )}
           </div>
         </div>
       </section>
-      <section className='py-md-5 pt-4 container'>
-      <div className='mb-md-4 mb-2'>
-        <h4 className="mb-3 mb-md-5 fw-bold text-light text-md-start text-center">SHOP / 精選賣家</h4>
-        <div className="d-flex justify-content-between align-items-center flex-wrap">
-                    {shop && (
-                  <ShopCardA
-                    avgRating={5}
-                    shopInfo={shop[0]}
-                  />
-                )}
-                {shop && (
-                  <ShopCardB
-                    avgRating={4}
-                    shopInfo={shop[1]}
-                  />
-                )}
-                {shop && (
-                      <ShopCardA
-                        avgRating={5}
-                        shopInfo={shop[2]}
-                      />
-                    )}
-                    {shop && (
-                      <ShopCardB
-                        avgRating={5}
-                        shopInfo={shop[3]}
-                      />
-                    )}
-                  </div>
+      <section className="py-md-5 pt-4 container">
+        <div className="mb-md-4 mb-2">
+          <h4 className="mb-3 mb-md-5 fw-bold text-light text-md-start text-center">
+            SHOP / 精選賣家
+          </h4>
+          <div className="d-flex justify-content-between align-items-center flex-wrap">
+            {shop && <ShopCardA avgRating={5} shopInfo={shop[0]} />}
+            {shop && <ShopCardB avgRating={4} shopInfo={shop[1]} />}
+            {shop && <ShopCardA avgRating={5} shopInfo={shop[2]} />}
+            {shop && <ShopCardB avgRating={5} shopInfo={shop[3]} />}
           </div>
+        </div>
       </section>
-      
+
       <Footer />
     </>
   )
