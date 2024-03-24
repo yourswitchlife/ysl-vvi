@@ -252,7 +252,10 @@ export default function Comment() {
       <div className={styles.mainContainer}>
         {memberData && (
             <>
-              <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
+            <Sidebar 
+              profilePhoto={bigPic} 
+              memberShopSite={memberData.shop_site || memberData.account} 
+              memberShopName={memberData.shop_name || memberData.account}/>
             </>
           )}
         <main className='flex-grow-1'>
@@ -268,14 +271,23 @@ export default function Comment() {
               {memberData && <Image src={bigPic} width={75} height={75} alt="profile-photo" className={styles.fit} />}
               </div>
               <div className="d-flex flex-column align-items-start justify-content-center">
-              {memberData && <h5 className="mb-1 fw-bold">{memberData.shop_name}</h5>}
-              {memberData && <p className="mb-1">@{memberData.shop_site}</p>}
+              {memberData && (
+                <>
+                <h6 className="mb-1 fw-bold">{memberData.shop_name || memberData.account}</h6>
+                <p className="mb-1">@{memberData.shop_site || memberData.account}</p>
+                </>
+              )}
               </div>
               <div>
-              {memberData &&
-                <button className="btn btn-danger btn-sm" onClick={() => {
-                  router.push(`/shop/${memberData.shop_site}`)
-                }}>查看賣場</button>}
+              {memberData && (
+                <>
+                {memberData.shop_name ? (<button className='btn btn-danger' onClick={() => {
+                router.push(`http://localhost:3000/shop/${memberData.shop_site}`)
+              }}>查看賣場</button>) : (<button className='btn btn-danger' onClick={() => {
+                router.push(`http://localhost:3000/seller/shop`)
+              }}>建置賣場</button>)}
+                </>
+              )}
               </div>
             </div>
             <hr />

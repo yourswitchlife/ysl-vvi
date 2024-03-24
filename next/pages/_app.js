@@ -7,7 +7,6 @@ import '@/styles/globals.scss'
 import '@/styles/loader.scss'
 import Swal from 'sweetalert2'
 import 'react-tooltip/dist/react-tooltip.css'
-
 // 載入動畫context
 import { LoaderProvider } from '@/hooks/use-loader'
 import DefaultLayout from '@/components/layout/default-layout'
@@ -143,6 +142,13 @@ export default function MyApp({ Component, pageProps }) {
     }
   }, [router])
 
+  //決定要不要套用動畫
+  const addAnimation = (route) => {
+    //在這裡的不用動畫
+    const routesWithoutAnimation = ['/seller', '/seller/shop', '/seller/product', '/seller/product/new', '/seller/order', '/seller/comment']
+    return !routesWithoutAnimation.includes(route) 
+  }
+
   // 我把AuthProvider放在最外面 所有應用都能用
   return (
     <LoaderProvider close={3} CustomLoader={CatLoader} global={true}>
@@ -169,7 +175,9 @@ export default function MyApp({ Component, pageProps }) {
                   href="/favicons/favicon-16x16.png"
                 />
               </Head>
-              <AnimatePresence>
+              
+              {addAnimation(router.route) ? (
+                <AnimatePresence>
                 <motion.div
                   key={router.route}
                   initial={{ opacity: 0 }}
@@ -180,6 +188,11 @@ export default function MyApp({ Component, pageProps }) {
                   {getLayout(<Component {...pageProps} />)}
                 </motion.div>
               </AnimatePresence>
+              ):(
+                <>
+                  {getLayout(<Component {...pageProps} />)}
+                </>
+              )}
             </WithWebSocketProvider>
           </ShippingProvider>
         </CartProvider>

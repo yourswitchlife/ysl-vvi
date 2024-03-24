@@ -124,7 +124,7 @@ export default function Seller() {
       <div className={styles.mainContainer}>
         {memberData && (
           <>
-          <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
+          <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site || memberData.account} memberShopName={memberData.shop_name || memberData.account}/>
           </>
           )}
         <main className='flex-grow-1'>
@@ -140,16 +140,22 @@ export default function Seller() {
               <div className="d-flex flex-column align-items-start justify-content-center">
               {memberData && (
                 <>
-                <h6 className="mb-1 fw-bold">{memberData.shop_name}</h6>
-                <p className="mb-1">ysl.com/{memberData.shop_site}</p>
+                <h6 className="mb-1 fw-bold">{memberData.shop_name || memberData.account}</h6>
+                <p className="mb-1">@{memberData.shop_site || memberData.account}</p>
                 </>
               )}
                 {/* <h6 className="mb-1 fw-bold">{shop_name}</h6>
                 <p className="mb-1">ysl.com/{shop_site}</p> */}
               </div>
-              <div><button className='btn btn-danger' onClick={() => {
+              {memberData && (
+                <>
+                {memberData.shop_name ? (<button className='btn btn-danger' onClick={() => {
                 router.push(`http://localhost:3000/shop/${memberData.shop_site}`)
-              }}>查看賣場</button></div>
+              }}>查看賣場</button>) : (<button className='btn btn-danger' onClick={() => {
+                router.push(`http://localhost:3000/seller/shop`)
+              }}>建置賣場</button>)}
+                </>
+              )}
             </div>
             <hr />
           </div>

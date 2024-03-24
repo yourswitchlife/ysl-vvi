@@ -37,11 +37,10 @@ import { IoChatbubblesOutline } from "react-icons/io5"
 import Form from 'react-bootstrap/Form'
 import Offcanvas from 'react-bootstrap/Offcanvas'
 import Collapse from 'react-bootstrap/Collapse'
-import Dropdown from 'react-bootstrap/Dropdown';
+import Dropdown from 'react-bootstrap/Dropdown'
 //sweetalert
 import Swal from 'sweetalert2'
 import { Tooltip } from 'react-tooltip'
-
 export default function ShopPage() {
   const router = useRouter()
   const { isLoggedIn, memberId, memberData } = useAuth()
