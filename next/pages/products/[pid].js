@@ -150,7 +150,7 @@ export default function ProductDetail() {
 
   // 立即結帳
   const handleCheckout = () => {
-    const routerPush = addItem(product)
+    const routerPush = addItem(product, false)
     // 如果有成功加入購物車，在跳轉到購物車頁面
     if (routerPush) {
       router.push('/cart')
@@ -533,7 +533,6 @@ export default function ProductDetail() {
                   className="col btn btn-info rounded-0 py-1"
                   onClick={() => {
                     addItem(product)
-                    notifySuccess()
                   }}
                 >
                   <FaCartPlus className="text-light" /> <p>加入購物車</p>
