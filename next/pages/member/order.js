@@ -19,7 +19,7 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav';
 //Auth
 import { useAuth } from '@/hooks/use-Auth';
-import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+// import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 
 export default function order() {
   const router = useRouter();
@@ -194,6 +194,6 @@ export default function order() {
   )
 }
 
-export async function getServerSideProps(context) {
+/* export async function getServerSideProps(context) {
   return await mainCheckToLogin(context);
-}
+} */

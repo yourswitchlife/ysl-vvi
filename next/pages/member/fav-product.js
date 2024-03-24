@@ -18,7 +18,7 @@ import PhoneTabNav from '@/components/layout/navbar/phone-TabNav';
 //hooks
 import { useAuth } from '@/hooks/use-Auth';
 import { useCart } from '@/hooks/use-cart'
-import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+// import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 
 export default function FavProduct() {
   const router = useRouter();
@@ -279,6 +279,6 @@ export default function FavProduct() {
   )
 }
 
-export async function getServerSideProps(context) {
+/* export async function getServerSideProps(context) {
   return await mainCheckToLogin(context);
-}
+} */

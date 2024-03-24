@@ -49,7 +49,7 @@ export default function Product() {
   //頁數
   const [totalPages, setTotalPages] = useState(1)
   const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(7)
+  const [limit, setLimit] = useState(5)
   //搜尋
   const [searchQuery, setSearchQuery] = useState('')
   // 新增狀態用來追蹤選中的產品
@@ -116,7 +116,7 @@ export default function Product() {
       // console.log(memberData)
       // getSellerData()
     }
-  }, [isLoggedIn, memberId, memberData,selectedTab, page, limit])
+  }, [isLoggedIn, memberId, memberData, selectedTab, page, limit])
 
   const handleTabChange = (selectedTab) => {
     //更新狀態
@@ -334,8 +334,7 @@ export default function Product() {
                 onSelect={handleTabChange}
               >
                 <Tab
-                  eventKey="all" className={selectedTab === 'all' ? "text-danger" : "text-secondary"}
-                  title={<span style={{ color: '#e41e49' }}>全部</span>}
+                  eventKey="all" title={<span className={selectedTab === 'all' ? "text-danger" : "text-dark"}>全部</span>}
                 >
                   <div className="d-flex justify-content-between align-items-center">
                     <h5 className="text-dark fw-bold">{productNum}件商品</h5>
@@ -352,7 +351,7 @@ export default function Product() {
                 </Tab>
                 <Tab
                   eventKey="onShop"
-                  title={<span style={{ color: '#2D2D2D' }}>架上商品</span>}
+                  title={<span className={selectedTab === 'onShop' ? "text-danger" : "text-dark"}>架上商品</span>}
                 >
                   <div className="d-flex justify-content-between align-items-center">
                     <h5 className="text-dark fw-bold">{productNum}件商品</h5>
@@ -369,7 +368,7 @@ export default function Product() {
                 </Tab>
                 <Tab
                   eventKey="soldout"
-                  title={<span style={{ color: '#2D2D2D' }}>已售完</span>}
+                  title={<span className={selectedTab === 'soldout' ? "text-danger" : "text-dark"}>已售完</span>}
                 >
                   <div className="d-flex justify-content-between align-items-center">
                     <h5 className="text-dark fw-bold">{productNum}件商品</h5>
@@ -386,7 +385,7 @@ export default function Product() {
                 </Tab>
                 <Tab
                   eventKey="unShop"
-                  title={<span style={{ color: '#2D2D2D' }}>未上架</span>}
+                  title={<span className={selectedTab === 'unShop' ? "text-danger" : "text-dark"}>未上架</span>}
                 >
                   <div className="d-flex justify-content-between align-items-center">
                     <h5 className="text-dark fw-bold">{productNum}件商品</h5>
@@ -423,7 +422,7 @@ export default function Product() {
                   {product && (<>
                     {product.map((v, i) => {
                       return (
-                        <div className="px-3 py-2 border-bottom" key={v.id}>
+                        <div className="px-3 py-5 border-bottom" key={v.id}>
                     <div className="text-dark">
                       <div className="row align-items-center text-center">
                         <h6 className="mb-0 col-1 fw-normal text-start"><Form.Check aria-label="option 1" /></h6>
@@ -432,35 +431,35 @@ export default function Product() {
                             <Image
                               src={v.img_cover ? (v.img_cover.startsWith("https://") ? v.img_cover : `http://localhost:3005/productImg/cover/${v.img_cover}`) : gameCover}
                               alt="game-cover"
-                              width={42}
-                              height={70}
+                              width={70}
+                              height={115}
                             />
                             <div className="d-flex justify-content-start align-items-start flex-column">
-                              <p className="mb-0 text-dark ms-2 text-start">
+                              <h6 className="mb-0 text-dark ms-3 text-start">
                                 {v.name}
-                              </p>
+                              </h6>
                               <div className="d-flex justify-content-start align-items-center">
-                                <FaRegHeart className="ms-2 text-secondary" />
-                                <p className="text-secondary ms-1">{v.favorite_count}</p>
+                                <FaRegHeart className="ms-3 mt-2 text-secondary" />
+                                <p className="text-secondary ms-1 mt-2">{v.favorite_count}</p>
                               </div>
                             </div>
                           </div>
                         </div>
                         <div className="col-1">
-                          <p className="text-secondary text-start">{v.type_name}</p>
+                          <h6 className="text-secondary text-start">{v.type_name}</h6>
                         </div>
                         <div className="col-1 d-flex flex-column justify-content-center align-items-center">
-                          <p className="text-secondary">{v.language}</p>
+                          <h6 className="text-secondary">{v.language}</h6>
                         </div>
                         <div className="col-2">
-                          <p className="fw-bold">NT$ {v.price}</p>
+                          <h6 className="fw-bold">NT$ {v.price}</h6>
                           <p className="text-secondary">(NT$ {v.display_price})</p>
                         </div>
                         <div className="col-1">
-                          <p>{v.product_quanty}</p>
+                          <h6 className="text-secondary">{v.product_quanty}</h6>
                         </div>
                         <div className="col-1">
-                          <p>{v.total_quantity}</p>
+                          <h6 className="text-secondary">{v.total_quantity}</h6>
                         </div>
                         <div className="col-2 d-flex flex-column justify-content-center align-items-center">
                           {/* 可以跳出一個MODAL來處理 */}
@@ -475,7 +474,7 @@ export default function Product() {
                           </button>
                           {v.valid === 0 ? (<button
                             type="button"
-                            className={`btn btn-danger btn-sm ${styles.btnGrayOutlined }`}
+                            className={`btn btn-danger btn-sm ${styles.btnGrayOutlined}`}
                             onClick={() => {
                             handleOnshop(v.id)
                           }}
@@ -483,7 +482,7 @@ export default function Product() {
                             上架
                           </button>) : (<button
                             type="button"
-                            className={`btn btn-danger btn-sm ${styles.btnGray}`}
+                            className={`btn btn-danger btn-sm ${styles.btnGrayOutlined}`}
                             onClick={() => {
                             handleUnshop(v.id)
                           }}
@@ -766,7 +765,7 @@ export default function Product() {
             {product && (<>
               {product.map((v, i) => {
                 return (
-                  <div className={`px-3 py-2 mb-2 ${styles.productCard}`} key={v.id}>
+                  <div className={`px-3 py-3 my-3 ${styles.productCard}`} key={v.id}>
                   <div className="text-dark">
                     <div className="row align-items-center text-center">
                       <h6 className="mb-0 col-2 fw-normal text-start"><Form.Check aria-label="option 1" /></h6>
@@ -801,7 +800,7 @@ export default function Product() {
                         </button>
                         {v.valid === 0 ? (<button
                             type="button"
-                            className={`btn btn-danger btn-sm`}
+                            className={`btn btn-danger btn-sm ${styles.btnGrayOutlined }`}
                             onClick={() => {
                             handleOnshop(v.id)
                           }}
