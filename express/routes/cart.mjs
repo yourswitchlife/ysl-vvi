@@ -571,16 +571,16 @@ router.get('/get-coupons', async (req, res) => {
 // 綠界門市地圖
 router.get('/get-seven-address', async (req, res) => {
   console.log('開始綠界')
-  const create = new ecpay_logistics({
-    MerchantTradeNo: 'f0a0d7e9fae1bb72bc93',
-    LogisticsType: 'CVS',
-    LogisticsSubType: 'UNIMARTC2C',
-    IsCollection: 'N',
-    ServerReplyURL:
-      'https://f4df-2402-7500-4e6-92d1-51ba-7154-4a35-80c1.ngrok-free.app/api/cart/get-seven',
-    ExtraData: '',
-    Device: '',
-  })
+  // const create = new ecpay_logistics({
+  //   MerchantTradeNo: 'f0a0d7e9fae1bb72bc93',
+  //   LogisticsType: 'CVS',
+  //   LogisticsSubType: 'UNIMARTC2C',
+  //   IsCollection: 'N',
+  //   ServerReplyURL:
+  //     'https://f4df-2402-7500-4e6-92d1-51ba-7154-4a35-80c1.ngrok-free.app/api/cart/get-seven',
+  //   ExtraData: '',
+  //   Device: '',
+  // })
 })
 
 export default router
