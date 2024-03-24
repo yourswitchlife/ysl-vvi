@@ -606,7 +606,7 @@ router.get('/fav-product', async (req, res) => {
   try {
     // Total items
     const [totalItemsResult] = await db.execute(
-      'SELECT COUNT(*) AS totalItems FROM fav_product WHERE member_id = ?',
+      'SELECT COUNT(*) AS totalItems FROM fav_product WHERE member_id = ? AND valid = 1',
       [buyerId]
     )
     const totalItems = totalItemsResult[0].totalItems
