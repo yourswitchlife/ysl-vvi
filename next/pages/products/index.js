@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
+import Head from 'next/head'
 import ProductCard from '@/components/products/product-card'
 import BreadCrumb from '@/components/common/breadcrumb'
 import styles from '../../styles/products/products.module.scss'
@@ -27,7 +27,7 @@ export default function Products() {
   const [searchWord, setSearchWord] = useState('')
 
   // 首頁連結過來篩選
-  const { type } = router.query;
+  const { type } = router.query
 
   // const [sortBy, setSortBy] = useState('')
   console.log(products)
@@ -58,12 +58,12 @@ export default function Products() {
     // console.log("page Changed: " + currentPage)
     const getProducts = async () => {
       // 構建帶有查詢參數的URL
-      let queryUrl = `http://localhost:3005/api/products/list?page=${currentPage}`;
+      let queryUrl = `http://localhost:3005/api/products/list?page=${currentPage}`
       if (type) {
-        queryUrl += `&type=${type}`;
+        queryUrl += `&type=${type}`
       }
       try {
-        const res = await fetch(queryUrl, { credentials: 'include' });
+        const res = await fetch(queryUrl, { credentials: 'include' })
         const data = await res.json()
         console.log(data)
         if (Array.isArray(data.products)) {
@@ -74,11 +74,11 @@ export default function Products() {
       } catch (e) {
         console.error(e)
       }
-      let newUrl = `/products?page=${currentPage}`;
+      let newUrl = `/products?page=${currentPage}`
       if (type) {
-        newUrl += `&type=${type}`;
+        newUrl += `&type=${type}`
       }
-      router.push(newUrl);
+      router.push(newUrl)
     }
 
     getProducts()
@@ -121,19 +121,18 @@ export default function Products() {
           method: 'POST',
           credentials: 'include',
         }
-        )
-        console.log('HIIII');
+      )
       if (!res.ok) {
         throw new Error('Failed to fetch fav products')
       }
-      
-      MySwal.fire({
-        icon: 'success',
-        text: '成功加入收藏!',
-        showConfirmButton: false,
-        showCancelButton: false,
-        timer: 1500,
-      })
+
+        MySwal.fire({
+          icon: 'success',
+          title: '成功加入收藏!',
+          showConfirmButton: false,
+          timer: 1500,
+        })
+     
     } catch (err) {
       console.log('Error')
     }
@@ -201,9 +200,13 @@ export default function Products() {
 
   return (
     <>
+      <Head>
+        <title>商品專區</title>
+      </Head>
+
       <GoTopButton />
       <Navbar searchWord={searchWord} setSearchWord={setSearchWord} />
-      <Animation className="z-3 position-absolute"/>
+      <Animation className="z-3 position-absolute" />
       <PhoneTabNav />
       <div className="container pt-3 px-lg-5 px-4">
         <BreadCrumb />
@@ -307,8 +310,8 @@ export default function Products() {
           {/* Display the ellipsis if there are pages after the last displayed page */}
           {currentPage <
             Math.ceil(displayProducts.length / ProductsPerPage) - 2 && (
-              <Pagination.Ellipsis disabled />
-            )}
+            <Pagination.Ellipsis disabled />
+          )}
 
           <Pagination.Next
             onClick={() => handlePageChange(currentPage + 1)}
