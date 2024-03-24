@@ -404,11 +404,11 @@ export default function ProductDetail() {
       if (!res.ok) {
         throw new Error('Failed to fetch fav products')
       }
+      
       MySwal.fire({
         icon: 'success',
-        text: '成功加入收藏!',
+        title: '成功加入收藏!',
         showConfirmButton: false,
-        showCancelButton: false,
         timer: 1500,
       })
     } catch (err) {

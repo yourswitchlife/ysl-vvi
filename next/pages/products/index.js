@@ -122,18 +122,17 @@ export default function Products() {
           credentials: 'include',
         }
       )
-      console.log('HIIII')
       if (!res.ok) {
         throw new Error('Failed to fetch fav products')
       }
 
-      MySwal.fire({
-        icon: 'success',
-        text: '成功加入收藏!',
-        showConfirmButton: false,
-        showCancelButton: false,
-        timer: 1500,
-      })
+        MySwal.fire({
+          icon: 'success',
+          title: '成功加入收藏!',
+          showConfirmButton: false,
+          timer: 1500,
+        })
+     
     } catch (err) {
       console.log('Error')
     }

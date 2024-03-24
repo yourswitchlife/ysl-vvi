@@ -2,16 +2,17 @@ import React, { useState, useEffect } from 'react';
 import Carousel from 'react-bootstrap/Carousel'
 import styles from '@/styles/index.module.scss'
 import mstyles from '@/styles/member/index.module.scss'
+import Image from 'next/image';
 
 function ControlledCarousel() {
   const [index, setIndex] = useState(0)
   // const [products, setProducts] = useState([]);
   const [images, setImages] = useState([
-    'http://localhost:3005/main/001.jpg',
+    'http://localhost:3005/main/009.webp',
     'http://localhost:3005/main/002.jpg',
     'http://localhost:3005/main/003.jpg',
-    'http://localhost:3005/main/004.jpg',
-    'http://localhost:3005/main/005.jpg',
+    'http://localhost:3005/main/012.webp',
+    'http://localhost:3005/main/010.png',
   ]);
 
   const handleSelect = (selectedIndex) => {
@@ -34,20 +35,24 @@ function ControlledCarousel() {
       console.error('Error fetching products:', error);
     }
   }; */
-  
 
   return (
     <Carousel
+   style={{ background: 'linear-gradient(to bottom, rgba(225, 225, 225, 0) 0%, rgba(0, 0, 0, 1) 100%)' }}
       activeIndex={index}
       onSelect={handleSelect}
       className={styles.sec1}
     >
       {images.map((imageUrl, i) => (
         <Carousel.Item key={i} className={mstyles.carousel}>
-          <img
+          <Image
             src={imageUrl}
             alt="mainimages"
-            className={mstyles.fit}
+            // className={mstyles.fit}
+            width={1920}
+            height={1100}
+            style={{opacity: 0.65}}
+            className={`${styles.pIndexImg}`}
           />
         </Carousel.Item>
         
