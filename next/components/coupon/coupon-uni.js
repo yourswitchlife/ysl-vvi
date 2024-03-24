@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import moment from 'moment'
 import Image from 'next/image'
 import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 //scss
 import styles from './coupon-uni.module.scss'
@@ -18,6 +19,7 @@ export default function Coupons() {
   const [claimed, setClaimed] = useState([])
   const router = useRouter()
   const { isLoggedIn, memberId } = useAuth()
+  const MySwal = withReactContent(Swal)
 
   //領取成功通知
   const Toast = Swal.mixin({
@@ -81,9 +83,11 @@ export default function Coupons() {
           if (data) {
             const updatedGet = claimed.map((v) => {
               if (v.id === id && !v.get) {
-                Toast.fire({
+                MySwal.fire({
                   icon: 'success',
-                  title: '優惠券領取成功',
+                  title: '優惠券已領取成功',
+                  showConfirmButton: false,
+                  timer: 1500,
                 })
                 return { ...v, get: true }
               } else {
@@ -176,7 +180,7 @@ export default function Coupons() {
       </div>
 
       {/* 手機板 */}
-
+                          
       {claimed.map((coupon, index) => (
         <div
           className="d-block d-md-none grid text-center row d-flex justify-content-center w-100 m-auto"

@@ -6,6 +6,7 @@ import styles from '@/styles/coupon/coupon.module.scss'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Swal from 'sweetalert2'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 
 //components
 import GoTopButton from '@/components/go-to-top/go-top-button'
@@ -58,6 +59,7 @@ export default function CouponPage() {
   return (
     <>
       <Navbar />
+      <PhoneTabNav />
       <section className={`${styles.wrapper}  container-field`}>
         <div className={`${styles.banner} position-relative`}>
           <Image src={banner} alt="ysl coupon" className={styles.main_img} />
