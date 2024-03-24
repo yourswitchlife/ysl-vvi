@@ -61,7 +61,7 @@ export default function CouponP({ currentFilter }) {
                 className="d-none d-md-block grid text-center row d-flex justify-content-center w-100 mx-5 px-5 my-3 "
               >
                 <div
-                  className={`${styles.cardBG} p-4 row align-items-center col-lg-6  ${(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? styles.unvalid : ''}`}
+                  className={`${styles.cardBG} p-4 row align-items-center col-lg-6  ${(coupon.status === 1) ? styles.unvalid : ''}`}
                 >
                   <div className="col-2">
                     <Image
@@ -129,7 +129,7 @@ export default function CouponP({ currentFilter }) {
           key={coupon.id}
         >
           <div
-            className={`${styles.cardBG} py-3 px-1 row align-items-center col-lg-6 m-2  ${(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? styles.unvalid : ''}`}
+            className={`${styles.cardBG} py-3 px-1 row align-items-center col-lg-6 m-2  ${(coupon.status === 1) ? styles.unvalid : ''}`}
           >
             <div className=" col-3">
               <Image src={logo} width={35} height={35} alt="YSL coupon Logo" />
@@ -156,13 +156,13 @@ export default function CouponP({ currentFilter }) {
                     )}
                   </div>
                   <button
-                    className={`${styles.btnCTA} btn btn-sm  ${(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? "btn-secondary" : "btn-info"}
+                    className={`${styles.btnCTA} btn btn-sm  ${( coupon.status === 1) ? "btn-secondary" : "btn-info"}
                        col-5 ms-5`}
                     onClick={() => visit()}
-                    disabled={(new Date(coupon.expiration_date) < new Date() || coupon.status === 1)}
+                    disabled={(coupon.status === 1)}
                   >
                     <p className={`${styles.btnCTA}`}>
-                      {(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? "不能用囉" : "再逛一下"}
+                      {(coupon.status === 1) ? "不能用囉" : "再逛一下"}
                     </p>
                   </button>
                 </div>
