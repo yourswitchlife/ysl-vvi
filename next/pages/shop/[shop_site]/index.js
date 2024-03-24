@@ -40,6 +40,7 @@ import Collapse from 'react-bootstrap/Collapse'
 import Dropdown from 'react-bootstrap/Dropdown';
 //sweetalert
 import Swal from 'sweetalert2'
+import { Tooltip } from 'react-tooltip'
 
 export default function ShopPage() {
   const router = useRouter()
@@ -54,7 +55,7 @@ export default function ShopPage() {
   //賣場資訊
   const [shop, setShop] = useState([])
   const {id, shop_name, shop_site, shop_cover, shop_info} = shop //解構賦值賣家資料
-  console.log(shop)
+  // console.log(shop)
   //賣場商品
   const [products, setProducts] = useState([])
   const [searchResults, setSearchResults] = useState([])
@@ -105,7 +106,7 @@ export default function ShopPage() {
       // 確保返回的數據結構正確，並更新狀態
       if (data) {
         // 這裡假設後端返回的數據結構是 { shop: {...}, shopProducts: [...] }
-        // console.log(data.shopComments)
+        // console.log(data.shopComments[0].avg_rating)
        
         
         setShop(data.shopInfo)
@@ -115,12 +116,17 @@ export default function ShopPage() {
         setTotalPages(data.shopInfo.totalPages)
         setShopOrderNum(data.orders.length)
         setShopFavNum(data.favCount)
-        
-        setShopRating(parseFloat(data.shopComments[0].avg_rating).toFixed(1))
+
+        if(data.shopComments[0].avg_rating === null){
+          setShopRating("尚無評論")
+          setRoundedRating(0)
+        }else{
+          const formattedRating = parseFloat(data.shopComments[0].avg_rating).toFixed(1)
+          setShopRating(formattedRating)
+          const roundedRating = Math.round(formattedRating)
+          setRoundedRating(roundedRating)
+        }
         setCommentNum(data.shopComments[0].total_comments)
-        const roundedRating = Math.round(parseFloat(data.shopComments[0].avg_rating).toFixed(1))
-        // console.log(roundedRating)
-        setRoundedRating(roundedRating)
         router.push(`./${shop_site}?page=${page}`)
         // setSearchResults(data.shopProducts)
         const picUrl = data.shopInfo.pic ? (data.shopInfo.pic.startsWith("https://") ? data.shopInfo.pic : `http://localhost:3005/profile-pic/${data.shopInfo.pic}`) : profilePhoto
@@ -393,7 +399,7 @@ export default function ShopPage() {
                 </div>       
               
             </div>
-            <div className="d-flex flex-column align-items-start justify-content-center">
+            <div className="d-flex flex-column align-items-start justify-content-center border-start ps-3">
               {/* shop detail */}
               <h5 className={styles.detailTitle}>賣場介紹</h5>
               <h6 className={`fw-normal ${styles.textarea}`}>
@@ -479,14 +485,26 @@ export default function ShopPage() {
           </div>
         </div>
         {/* <Sortbar /> */}
+        <hr className={styles.line}/>
         <div className="d-none d-md-block">
+        <div onClick={() => {
+          router.push('/coupon')
+        }} className='text-decoration-none text-light'
+        style={{ cursor: 'pointer' }}
+        role="presentation">
+        <a data-tooltip-id="my-tooltip"
+        data-tooltip-content="點選查看更多優惠！"
+        data-tooltip-place="top-start">
         <h4 className="mt-3 mb-2 d-none d-md-block">YSL官網優惠券</h4>
+        </a>
+        </div>
+        <Tooltip id="my-tooltip" style={{ backgroundColor: "#ED5260", color: "#ffffff" }}/>
           {/* <CouponProduct currentFilter={currentFilter}/> */}
           <CouponUni />
         </div>
         <div className={styles.hit}>
-        <h4 className="mb-5 d-none d-md-block">焦點遊戲熱賣中</h4>
-        <h5 className="mb-4 d-block d-md-none ps-4">焦點遊戲熱賣中</h5>
+        <h4 className="mb-5 d-none d-md-block">焦點遊戲熱賣中❤️‍🔥<span className={`${styles.badge}`}>POPULAR</span></h4>
+        <h5 className="mb-4 d-block d-md-none ps-4">焦點遊戲熱賣中❤️‍🔥</h5>
         <div className={`justify-content-md-around align-items-md-center ${styles.scroller}`}>
         {hit.map((v) => {
           return (
@@ -520,7 +538,7 @@ export default function ShopPage() {
           <h5 className="fw-bold mb-2">賣場商品</h5>
           <h6 className="mb-3">共{shop.totalItems}項</h6>
         </div>
-        <h4 className="d-none d-md-block mb-4">賣場所有商品</h4>
+        <h4 className="d-none d-md-block mb-4">所有商品</h4>
         <div className="d-flex justify-content-between">
           <div className="d-none d-md-block">
             <SearchbarB onSearch={handleSearch}/>
@@ -620,7 +638,7 @@ export default function ShopPage() {
         </>)
         }
         <div>
-          {/* <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/> */}
+          <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
         </div>
       </div>
       <PhoneTabNav />

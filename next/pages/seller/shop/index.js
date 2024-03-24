@@ -323,7 +323,7 @@ export default function ShopSetting() {
                   className="mb-2"
                   controlId="shop_info"
                 >
-                  <Form.Label className="">賣場介紹<small> (30~100字元以內) </small><span className='text-danger'>*</span></Form.Label>
+                  <Form.Label className="">賣場介紹<small> (30~200字元以內) </small><span className='text-danger'>*</span></Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={5}
@@ -421,11 +421,11 @@ export default function ShopSetting() {
                     className="mb-3"
                     controlId="shopInfo"
                   >
-                    <Form.Label className="text-dark">賣場介紹<small> (30~100字元以內) </small><span className="text-danger">*</span></Form.Label>
+                    <Form.Label className="text-dark">賣場介紹<small> (30~200字元以內) </small><span className="text-danger">*</span></Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={5}
-                      placeholder="請輸入30~100字的賣場介紹"
+                      placeholder="請輸入30~200字的賣場介紹"
                       name="shop_info"
                       value={formData.shop_info}
                       onChange={handleShop}

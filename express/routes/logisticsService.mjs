@@ -219,11 +219,11 @@ router.post('/ecpay/serverReply', async (req, res) => {
 router.post('/ecpay/clientReply', (req, res) => {
   //處理來自綠界物流的回應
   console.log('重新定向給顧客的連結', req.body)
-
+  const lognum = req.body.AllPayLogisticsID
   //根據內容來更新訂單狀態
   //讓賣家去seller/orders這裡看物件編號，物流狀態
-
-  res.status(200).send('OK')
+  // res.redirect(`./order/lognum=${lognum}`)
+  res.status(200).send(`取得物流編號成功:${lognum}`)
 })
 
 router.post('/ecpay/logisticsC2CReply', (req, res) => {
@@ -233,7 +233,7 @@ router.post('/ecpay/logisticsC2CReply', (req, res) => {
   //根據內容來更新訂單狀態
   //這裡如果更新了，也要更新orders資料表的shipping_status
 
-  res.status(200).send('OK')
+  res.status(200).send(`OK`)
 })
 
 export default router
