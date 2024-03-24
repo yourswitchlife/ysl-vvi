@@ -6,7 +6,7 @@ import CartStep from '@/components/cart/step-progress'
 import OrderList from '@/components/cart/index/order-list'
 import Empty from '@/components/cart/empty'
 
-import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+// import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import { useAuth } from '@/hooks/use-Auth'
 import { useCart } from '@/hooks/use-cart'
 
@@ -31,6 +31,6 @@ export default function CartConfirmProduct() {
   )
 }
 
-export async function getServerSideProps(context) {
-  return await mainCheckToLogin(context);
-}
+// export async function getServerSideProps(context) {
+//   return await mainCheckToLogin(context);
+// }
