@@ -247,10 +247,34 @@
     width: 92%;
     margin: auto;
 
-    // .cardBody {
-    //   .cardLink {
-    //     margin: 1.5rem 0;
-    //   }
-    // }
+    .cardBody {
+      .cardLink {
+        margin: 1rem 0;
+        .card{
+          .inner {  
+            .img {
+              height: 20vh;  
+            }
+          }
+
+          .ura {
+            padding: 10px;
+  
+            .title {
+              margin-bottom: 10px;
+            }
+  
+            .description {
+              -webkit-line-clamp: 3;
+            }
+  
+            .more {
+              bottom: 5px;
+              right: 8px;
+            }
+          }
+        }
+      }
+    }
   }
 }
