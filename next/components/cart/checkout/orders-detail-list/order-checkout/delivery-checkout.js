@@ -83,22 +83,13 @@ export default function DeliveryCheckout({ items, memberId }) {
 
   // 串接綠界超商地圖
   const getSevenAddress = async () => {
-    try {
-      const response = await fetch(
-        'http://localhost:3005/api/cart/get-seven-address',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-
-      const data = await response.json()
-      console.log(data)
-    } catch (error) {
-      console.error('請求失敗', error)
-    }
+    await fetch('http://localhost:3005/api/cart/get-seven-address').then((response)=>{
+      response.json()
+    }).then((data)=>{
+        console.log(data);
+    }).catch((error)=>{
+      console.error('連線綠界失敗', error)
+    })
   }
 
   // 判斷是新增宅配地址還是編輯宅配地址

@@ -31,8 +31,9 @@ $nav-black: #161719ae;
 }
 /* Navbar */
 .navbar {
+  height: 70px;
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
   position: fixed;
   top: 0;
   z-index: 10;
@@ -40,8 +41,7 @@ $nav-black: #161719ae;
   align-items: center;
   background-color: $nav-black;
   color: $white;
-  font-size: 18px;
-  padding: 10px 50px;
+  // padding: 10px 0px;
   .linkPr {
     color: $white;
     text-decoration: none;
@@ -52,13 +52,7 @@ $nav-black: #161719ae;
       text-underline-offset: 7px;
     }
   }
-  .height{
-    height: 50px;
-    width: 317px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
+ 
   .link {
     color: $white;
     text-decoration: none;
@@ -315,21 +309,21 @@ $nav-black: #161719ae;
   cursor: pointer;
 }
 
-.searchB {
-  width: 100%;
-  background-color: transparent;
-  box-shadow: none;
-  color: $white;
-  padding: 3px 5px 5px 35px;
-  border: none;
-  &:focus {
-    outline: none;
-  }
-}
-.searchB::placeholder {
-  color: $white;
-  font-size: 14px;
-}
+// .searchB {
+//   width: 100%;
+//   background-color: transparent;
+//   box-shadow: none;
+//   color: $white;
+//   padding: 3px 5px 5px 35px;
+//   border: none;
+//   &:focus {
+//     outline: none;
+//   }
+// }
+// .searchB::placeholder {
+//   color: $white;
+//   font-size: 14px;
+// }
 
 // ------------  phoneNav
 .phoneNav {
@@ -379,4 +373,22 @@ $nav-black: #161719ae;
   align-items: center;
   top: 14px;
   right: 235px;
+}
+// .loginM{
+//   padding: 10px 0px;
+// }
+
+@media (max-width: 576px) {
+  .display {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 220px;
+    border: 1px solid $white;
+    // padding: 5px;
+    border-radius: 10px;
+  }
+  .phoneNone{
+    display: none !important;
+  }
 }
