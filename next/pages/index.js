@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import ControlledCarousel from '@/components/common/ControlledCarousel'
@@ -8,9 +10,9 @@ import style from '@/styles/article/pages.module.scss'
 import mstyles from '../styles/member/index.module.scss'
 import estyles from '../styles/index_event/index.module.scss'
 import Navbar from '@/components/layout/navbar/navbar'
-import ProductList from '@/components/products/product-card'
+// import ProductList from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
-import IndexSlider from '@/components/common/index-slider'
+// import IndexSlider from '@/components/common/index-slider'
 import ShopCardA from '@/components/shop/shop-card-a'
 import ShopCardB from '@/components/shop/shop-card-b'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
@@ -23,7 +25,7 @@ import { IoCloseSharp } from "react-icons/io5"
 import { useAuth } from '@/hooks/use-Auth'
 import TypeSwiper from '@/components/common/typeSwiper'
 import { chunk } from 'lodash'
-import checkLogin from '@/context/member/checkLogin'
+// import checkLogin from '@/context/member/checkLogin'
 
 export default function Index() {
   const router = useRouter()
@@ -142,6 +144,30 @@ export default function Index() {
     historyRecord()
   }, [])
 
+  const addFav = async (id) => {
+    try {
+      const res = await fetch(
+        `http://localhost:3005/api/products/favProducts?memberId=${memberId}&pid=${id}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+        }
+        )
+        console.log('HIIII');
+      if (!res.ok) {
+        throw new Error('Failed to fetch fav products')
+      }
+      MySwal.fire({
+        icon: 'success',
+        title: '成功加入收藏!',
+        showConfirmButton: false,
+        timer: 1500,
+      })
+    } catch (err) {
+      console.log('Error')
+    }
+  }
+  
   const handleToggleFav = (id) => {
     const newProducts = products.map((p) => {
       if (p.id === id) return { ...p, fav: !p.fav }
@@ -200,12 +226,13 @@ export default function Index() {
 
   return (
     <>
+    <PhoneTabNav />
       <GoTopButton />
       <Navbar />
       <div
         className={`${styles.headTitleCard} z-1 position-absolute d-lg-inline-flex d-none flex-column justify-content-center ms-5`}
       >
-        <div className='ps-4' style={{ textShadow: '2px 2px 3px #000000' }}>
+        <div className='ps-3'>
           <h4 className="text-white">Let’s enjoy</h4>
           <h1 className="text-white">
             <b>
@@ -214,10 +241,10 @@ export default function Index() {
               Life !
             </b>
           </h1>
-          <h4 className="text-white pt-4">二 手 Switch 遊 戲 販 售 平 台</h4>
+          <h4 className="text-white pt-3">二手Switch 遊戲販售平台</h4>
         </div>
         {!isLoggedIn && (
-          <div className="btns mt-4 ps-4">
+          <div className="btns mt-1 ps-3">
             <Link href="member/login" className="me-3">
               <button className={mstyles.sign_btn+" btn btn-danger px-4 me-sm-3"}>會員登入</button>
             </Link>
@@ -228,13 +255,13 @@ export default function Index() {
         )}
       </div>
       <ControlledCarousel />
-      <section className={styles.sec2}>
+      <section className={`${styles.sec2}`} >
         <div className={`${styles.weeklySelect} ${styles.top}`}>
           <Image src={WeeklySelect} className={styles.img} />
           <Image src={WeeklySelect} className={styles.img} />
         </div>
         <div className={styles.cardFrame}>
-          <div className={`container ${styles.cardBody}`}>
+          <div className={`container d-flex ${styles.cardBody}`}>
             {randomProducts.map((p) => {
               const isFlipped = flippedStates[p.id] || false
               return (
@@ -245,7 +272,7 @@ export default function Index() {
                     flipCard(p.id)
                   }}
                 >
-                  <div className={styles.card}>
+                  <div className={`${styles.card}`}>
                     <div
                       className={`${styles.ura} ${isFlipped ? styles.isFlipped : ''
                         }`}
@@ -268,7 +295,7 @@ export default function Index() {
                       className={`${styles.inner} ${isFlipped ? styles.isFlipped : ''
                         }`}
                     >
-                      <figure className={styles.img}>
+                      <figure className={`${styles.img}`}>
                         <Image
                           src={`http://localhost:3005/productImg/cover/${p.img_cover}`}
                           width={250}
@@ -288,11 +315,12 @@ export default function Index() {
           <Image src={WeeklySelect} className={styles.img} />
         </div>
       </section>
-      <section className="sec3 container pt-5 pb-5">
-        <h4 className="text-white mb-2 d-flex justify-content-center">特賣焦點</h4>
-        <div className="container">
-          <div className='row my-3'>
-            {products.slice(20, 24).map((p) => {
+      <section className="sec3 container pt-5 pb-3">
+        <h4 className="text-white mb-2 d-flex justify-content-center fw-bold">特賣焦點</h4>
+        <div className="container px-0 py-2 mb-3">
+       
+          <div className="row row-cols-2 row-cols-lg-5 g-0 g-lg-3">
+            {products.slice(30, 40).map((p) => {
               return (
                 <div
                   key={p.id}
@@ -308,7 +336,7 @@ export default function Index() {
                     className={styles.link}
                   >
                     <ProductCard
-                      className="p-5 my-2"
+                      className="p-5"
                       id={p.id}
                       name={p.name}
                       price={p.price}
@@ -319,50 +347,12 @@ export default function Index() {
                       type={p.type_id}
                       ratingId={p.rating_id}
                       fav={p.fav}
-                      language={p.language}
+                      addFav={addFav}
                       handleToggleFav={handleToggleFav}
                       member_id={p.member_id}
                       cardIcon={cardIcon}
-                    // imgDetails={p.img_details}
-                    />
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-          <div className='row my-3'>
-            {products.slice(30, 34).map((p) => {
-              return (
-                <div
-                  key={p.id}
-                  className="col"
-                  onClick={() => {
-                    historyRecord(p)
-                  }}
-                >
-                  <div
-                    onClick={() => {
-                      router.push(`/products/${p.id}`)
-                    }}
-                    className={styles.link}
-                  >
-                    <ProductCard
-                      className="p-5 my-2"
-                      id={p.id}
-                      name={p.name}
-                      price={p.price}
-                      display_price={p.display_price}
-                      releaseTime={p.release_time.split('T')[0]}
-                      img_cover={p.img_cover}
-                      img_details={p.img_details}
-                      type={p.type_id}
-                      ratingId={p.rating_id}
-                      fav={p.fav}
+                      product_quanty={p.product_quanty}
                       language={p.language}
-                      handleToggleFav={handleToggleFav}
-                      member_id={p.member_id}
-                      cardIcon={cardIcon}
-                    // imgDetails={p.img_details}
                     />
                   </div>
                 </div>
@@ -372,10 +362,10 @@ export default function Index() {
 
         </div>
       </section>
-      <section className="container sec4 pt-5">
-        <h4 className="text-white mb-2 d-flex justify-content-center">商品分類</h4>
+      <section className="container sec4 mb-4 pb-3 mt-3">
+        <h4 className="text-white mb-3 d-flex justify-content-center fw-bold ">商品分類</h4>
+      <TypeSwiper/>
       </section>
-      <TypeSwiper />
       <div className='mb-md-5 mb-4'></div>
       <section className={`sec5 pt-md-5 pb-md-5 pb-3 pt-3 ${estyles.eventBox}`}>
         <div className='container px-md-0 px-4'>

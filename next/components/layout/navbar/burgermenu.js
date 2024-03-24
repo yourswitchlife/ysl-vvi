@@ -21,13 +21,14 @@ export default function BurgerMenu() {
 
   return (
     <>
+    <div className='d-lg-none d-block'>
       <button
         type="button"
         onClick={handleShowMenu}
         className={`btn text-white ${styles.outline} ${styles.menu}`}
       >
         <IoMenu className={styles.menuicon} />
-      </button>
+      </button></div>
       <Offcanvas
         show={showMenu}
         onHide={handleCloseMenu}

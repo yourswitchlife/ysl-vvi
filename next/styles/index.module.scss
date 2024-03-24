@@ -1,24 +1,35 @@
 @import './valuable.scss';
 
+.pIndexImg {
+  margin-top: 70px;
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+
 .sec1 {
     height: 100vh;
     position: relative;
   }
   .headTitleCard {
-    top: calc(70px + 10vh);
+    top: calc(45vh - 160px);
     left: 120px;
-    width: 33vw;
-    height: 70vh;
-    background: linear-gradient(to bottom, #ff3c3c7c 0%, #4b69ff78 100%);
+    width: 480px;
+    // width: 55vh;
+    // height: 420px;
+    // background: linear-gradient(to bottom, rgba(255, 59, 59, 0.6) 0%, #2045ff78 100%);
+    background: linear-gradient(to bottom, rgba(21, 0, 255, 0.7) 0%, #e80000aa 100%);
     border-top-right-radius: 12%;
-    padding: 50px;
+    padding: 40px;
 }
 
 .sec2 {
   background: linear-gradient(180deg, $gray, $dark-gray, $primary-black);
   display: flex;
   width: 100%;
-  height: 100%;
+  height:calc(100vh - 70px) ;
+  // height: 100vh;
   left: 0;
   top: 0;
   overflow: hidden;
@@ -75,15 +86,15 @@
 }
 
 .cardFrame {
-  width: 92%;
-  margin: auto;
+  width: 100%;
+  // margin: auto;
 
   .cardBody {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
     flex-wrap: wrap;
-    padding: 1.5rem;
+    // padding: 1.5rem;
 
     .cardLink {
       display: block;
@@ -225,6 +236,10 @@
 }
 
 @media screen and (max-width: 431px) {
+  .sec1 {
+    height: 30vh;
+    position: relative;
+  }
   .sec2 {
     padding: 70px 0px 70px;
   }
@@ -232,10 +247,10 @@
     width: 92%;
     margin: auto;
 
-    .cardBody {
-      .cardLink {
-        margin: 1.5rem 0;
-      }
-    }
+    // .cardBody {
+    //   .cardLink {
+    //     margin: 1.5rem 0;
+    //   }
+    // }
   }
 }
