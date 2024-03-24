@@ -8,7 +8,7 @@ import mStyle from '@/styles/member/g-valuable.module.scss'
 import pStyle from '@/styles/member/points.module.scss'
 import ProgressBar from 'react-bootstrap/ProgressBar'
 
-import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+// import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 
 
 import brutal from '@/public/images/member/brutal.png'
@@ -198,6 +198,6 @@ export default function points() {
   )
 }
 
-export async function getServerSideProps(context) {
+/* export async function getServerSideProps(context) {
   return await mainCheckToLogin(context);
-}
+} */
