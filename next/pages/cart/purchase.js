@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import CartNavbar from '@/components/layout/navbar/navbar'
 import Footer from '@/components/layout/footer/footer-front'
 import CartStep from '@/components/cart/step-progress'
-import ProductList from '@/components/products/product-card'
 import styles from '@/styles/cart/purchase.module.scss'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -15,7 +14,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 
-import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+// import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import { useAuth } from '@/hooks/use-Auth'
 
 export default function Purchase() {
@@ -295,6 +294,6 @@ export default function Purchase() {
   )
 }
 
-export async function getServerSideProps(context) {
-  return await mainCheckToLogin(context)
-}
+// export async function getServerSideProps(context) {
+//   return await mainCheckToLogin(context)
+// }

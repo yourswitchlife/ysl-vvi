@@ -6,12 +6,17 @@ import Head from 'next/head'
 import '@/styles/globals.scss'
 import '@/styles/loader.scss'
 import Swal from 'sweetalert2'
+import 'react-tooltip/dist/react-tooltip.css'
 
 // 載入動畫context
 import { LoaderProvider } from '@/hooks/use-loader'
 import DefaultLayout from '@/components/layout/default-layout'
 // 自訂用載入動畫元件
 import { CatLoader, NoLoader } from '@/hooks/use-loader/components'
+
+// 引入Framer motion動畫
+import { motion, AnimatePresence } from 'framer-motion'
+
 //身分驗證
 import { AuthProvider } from '@/hooks/use-Auth'
 import { getRedirectResult } from 'firebase/auth'
@@ -86,42 +91,43 @@ export default function MyApp({ Component, pageProps }) {
         throw new Error('伺服器連線失敗')
       }
       const result = await response.json()
-      return result.shop_name 
+      return result.shop_name
     } catch (error) {
       console.error(error)
-      return '' 
+      return ''
     }
   }
-
 
   // 監聽路由路徑已改變頁面標題
   useEffect(() => {
     const handleRouteChange = async (url) => {
+      console.log('Changing route to:', url)
+      const path = url.split('?')[0]
       let pagetitle = 'Your Switch Life｜二手遊戲交易平台'
-      if (url.startsWith('/cart')) {
+      if (path.startsWith('/cart')) {
         pagetitle = '我的購物車'
-      } else if (url.startsWith('/article')) {
+      } else if (path.startsWith('/article')) {
         pagetitle = '最新攻略'
-      } else if (url.startsWith('/products')) {
+      } else if (path.startsWith('/products')) {
+        console.log('商品路由: /products')
         pagetitle = '商品專區'
-      } else if (url.startsWith('/coupon')) {
+      } else if (path.startsWith('/coupon')) {
         pagetitle = '優惠報報'
-      } else if (url.startsWith('/member/login')) {
+      } else if (path.startsWith('/member/login')) {
         pagetitle = '會員登入'
-      } else if (url.startsWith('/member/register')) {
+      } else if (path.startsWith('/member/register')) {
         pagetitle = '會員註冊'
-      } else if (url.startsWith('/member')) {
+      } else if (path.startsWith('/member')) {
         pagetitle = '會員專區'
-      } else if (url.startsWith('/seller')) {
+      } else if (path.startsWith('/seller')) {
         pagetitle = '賣家中心'
-      } else if (url.startsWith('/shop')) {
-        const shopId = url.split('/shop/')[1]
-        console.log(shopId)
+      } else if (path.startsWith('/shop')) {
+        const shopId = path.split('/shop/')[1]
+        // console.log(shopId)
         const shopName = await fetchShopTitle(shopId)
         pagetitle = `${shopName} | Your Switch Life`
       }
       // 更多路徑判斷請加在這
-
 
       document.title = pagetitle
     }
@@ -133,7 +139,7 @@ export default function MyApp({ Component, pageProps }) {
 
     // 清理函數
     return () => {
-      router.events.off('routeChangeStart', handleRouteChange)
+      router.events.off('routeChangeComplete', handleRouteChange)
     }
   }, [router])
 
@@ -163,7 +169,17 @@ export default function MyApp({ Component, pageProps }) {
                   href="/favicons/favicon-16x16.png"
                 />
               </Head>
-              {getLayout(<Component {...pageProps} />)}
+              <AnimatePresence>
+                <motion.div
+                  key={router.route}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ type: 'linear' }}
+                >
+                  {getLayout(<Component {...pageProps} />)}
+                </motion.div>
+              </AnimatePresence>
             </WithWebSocketProvider>
           </ShippingProvider>
         </CartProvider>

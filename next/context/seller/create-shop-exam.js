@@ -10,16 +10,16 @@ export  function createShopExam(values) {
         return '賣場名稱請控制在25字元內'
     }
     //檢查shop_site 是英文數字大小寫 < 25字元
-    if(!/^[a-zA-Z0-9]{1,99}$/.test(shop_site)){
+    if(!/^[a-zA-Z0-9-_]{1,99}$/.test(shop_site)){
         return '網址僅可輸入100字元內的英文大小寫或數字！'
     }
-    //檢查shop_info 有30-100字元內
+    //檢查shop_info 有30-200字元內
     if(shop_info.length < 30){
         return '賣場介紹需要30字元以上'
     }
-    //檢查shop_info 有30-100字元內
-    if(shop_info.length > 100){
-        return '賣場介紹不可超過100字元！'
+    //檢查shop_info 有30-200字元內
+    if(shop_info.length > 200){
+        return '賣場介紹不可超過200字元！'
     }
     //所有檢查通過，就不顯示錯誤訊息
     return null

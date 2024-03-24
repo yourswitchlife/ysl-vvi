@@ -24,8 +24,8 @@ $sortbar-height-rwd: 50px;
 }
 //shape
 .shapeCircle {
-  width: 25px;
-  height: 25px;
+  width: 40px;
+  height: 40px;
   overflow: hidden;
   border-radius: 50%;
 }
@@ -86,7 +86,7 @@ $sortbar-height-rwd: 50px;
   }
 }
 .coverB {
-  height: 170px;
+  height: 250px;
   // width: 100vw;
   overflow: hidden;
   .fit {
@@ -117,6 +117,19 @@ $sortbar-height-rwd: 50px;
   width: 546px;
   padding-inline: 40px;
   margin: 0;
+}
+//padding
+.line{
+  margin: 90px 0px 60px;
+}
+//badge
+.badge{
+  background-color: $danger;
+  font-size: 15px;
+  padding: 5px;
+  margin-left: 8px;
+  text-align: center;
+  border-radius: 10px;
 }
 
 //sortbar
@@ -332,6 +345,14 @@ $sortbar-height-rwd: 50px;
       }
     }
   }
+  .navLinkActive{
+    background-color: $white !important;
+    border-radius: 0;
+    border-bottom: 2px solid $danger;
+    .navText {
+      color: $danger;
+    }
+  }
 }
 .sidebarRWD {
   .navLink {
@@ -375,11 +396,17 @@ $sortbar-height-rwd: 50px;
   border-radius: 20px;
   .borderRadius {
     border-radius: 5px !important;
-}
+  }
+  .hoverUnderline{
+    &:hover{
+      text-decoration: underline;
+      text-underline-offset: 7px;
+    }
+  }
 }
 .mainContainer {
   min-height: calc(100vh - 130px);
-  margin-top: 58px;
+  margin-top: 65px;
   display: flex;
 }
 
@@ -439,6 +466,13 @@ $sortbar-height-rwd: 50px;
 .spaceForPhoneTab {
   width: 100%;
   height: 100px;
+}
+
+.shapeCircle {
+  width: 30px;
+  height: 30px;
+  overflow: hidden;
+  border-radius: 50%;
 }
 
 
@@ -529,7 +563,7 @@ $sortbar-height-rwd: 50px;
   }
 
   .mainContainer {
-    margin-top: 50px;
+    margin-top: 55px;
   }
   .offcanvasBtn {
     background-color: $gray;

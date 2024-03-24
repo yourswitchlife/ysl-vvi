@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-Auth'
+import io from 'socket.io-client'
 //components
 import Navbar from '@/components/layout/navbar/navbar'
 import BreadCrumb from '@/components/common/breadcrumb'
 import Sortbar from '@/components/shop/sortbar'
 import SearchbarB from '@/components/shop/searchbar-b'
-// import Pagination from '@/components/common/pagination-front'
+import Pagination from '@/components/common/pagination'
 import ProductCard from '@/components/products/product-card'
 import Footer from '@/components/layout/footer/footer-front'
 import SortDropdown from '@/components/common/sortDropdown'
@@ -18,18 +19,20 @@ import GoTopButton from '@/components/go-to-top/go-top-button'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import CouponUni from '@/components/coupon/coupon-shop'
 import CouponProduct from '@/components/coupon/coupon-member/couponP-member'
+import Chat from '@/components/chat/chat'
 //images
 import cover from '@/public/images/shopCover/default-cover.jpg'
 import Image from 'next/image'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 //styles
 import styles from '@/components/seller/seller.module.scss'
-// import 'animate.css/animate.min.css'
+import 'animate.css/animate.min.css'
 //data
 import typeName from '@/data/type.json'
 import ratings from '@/data/rating.json'
 //icon
-import { FaPlus, FaAngleDown, FaFilter, FaStar } from 'react-icons/fa'
+import { FaPlus, FaAngleDown, FaFilter, FaStar, FaMinus } from 'react-icons/fa'
+import { IoChatbubblesOutline } from "react-icons/io5"
 //React-bootstrap
 import Form from 'react-bootstrap/Form'
 import Offcanvas from 'react-bootstrap/Offcanvas'
@@ -51,6 +54,7 @@ export default function ShopPage() {
   //賣場資訊
   const [shop, setShop] = useState([])
   const {id, shop_name, shop_site, shop_cover, shop_info} = shop //解構賦值賣家資料
+  console.log(shop)
   //賣場商品
   const [products, setProducts] = useState([])
   const [searchResults, setSearchResults] = useState([])
@@ -72,6 +76,12 @@ export default function ShopPage() {
   const [totalPages, setTotalPages] = useState(1)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(15)
+
+  
+  //聊天室相關
+  const [room, setRoom] = useState("")
+  const [socket, setSocket] = useState(null)
+  const [showChat, setShowChat] = useState(false)
 
   //處理背景樣式
   useEffect(() => {
@@ -96,6 +106,8 @@ export default function ShopPage() {
       if (data) {
         // 這裡假設後端返回的數據結構是 { shop: {...}, shopProducts: [...] }
         // console.log(data.shopComments)
+       
+        
         setShop(data.shopInfo)
         // console.log(data.shopInfo)
         // 可能需要另一個狀態來存儲商品資訊
@@ -221,7 +233,7 @@ export default function ShopPage() {
       Swal.fire('操作失敗', errorMessage, 'error')
     }finally{
       //無論操作成功或失敗，都重新獲取收藏狀態
-      getShopFav(shop_site)
+      getShop(shop_site)
     }
   }
   //點擊之後導向登入的函式
@@ -261,6 +273,31 @@ export default function ShopPage() {
     setCurrentFilter(newFilter)
   }
 
+  //聊天室相關
+  useEffect(() => {
+    const newSocket = io("http://localhost:3005");
+    setSocket(newSocket);
+    return () => newSocket.close();
+  }, [setSocket]);
+
+
+  let sellerId = shop.seller_id
+  // console.log(sellerId)
+  const createRoom = (memberId, sellerId) => {
+    if (!isLoggedIn) {
+      router.push('/member/login');
+      return;
+    } else {
+      const room = [String(memberId), String(sellerId)].sort().join('_')
+      // console.log(room)
+      if (socket) {
+        socket.emit("create_room", room);
+        setShowChat(true);
+        setRoom(room);
+      }
+    }
+  }
+
   return (
     <>
       <GoTopButton />
@@ -272,6 +309,9 @@ export default function ShopPage() {
       </div>
       {/* shop info */}
       <div className="container">
+      {!showChat ? ("") :
+                  (<Chat socket={socket} memberId={memberId} memberData={memberData} room={room} isLoggedIn={isLoggedIn}/>)
+                }
         <div className="d-none d-lg-block">
         <div className='mt-2'><BreadCrumb /></div>
           <div className="d-flex justify-content-around mb-5 mt-5">
@@ -316,6 +356,7 @@ export default function ShopPage() {
                   <h5 className='text-danger fw-bold'>{shopFavNum}</h5>
                 </div>
               </div>
+              <div className='d-flex justify-content-center '>
               {/* 這裡要加上登入判斷：沒登入跳出modal導向登入，有登入要判斷這個有沒有加入收藏 */}
               {isLoggedIn ? (//有登入
               <button
@@ -323,8 +364,11 @@ export default function ShopPage() {
                 className="btn btn-danger d-flex align-items-center"
                 onClick={handleFavShop}
               >
-                <FaPlus className="me-1" />
-                  {isFav ? '取消收藏' : '收藏賣家'}
+                  {isFav ? (<>
+                    <FaMinus className="me-1" /><h6>取消收藏</h6>
+                  </>) : (<>
+                    <FaPlus className="me-1" /><h6>收藏賣家</h6>
+                  </>)}
               </button>
               ) : (//沒登入
               <button
@@ -336,6 +380,17 @@ export default function ShopPage() {
                 收藏賣家
               </button>
               )}
+
+              <button
+                  type="button"
+                  className="btn btn-danger d-flex align-items-center ms-3"
+                  onClick={() => createRoom(memberId, sellerId)}
+                  
+                >
+                  <IoChatbubblesOutline className="me-1" />
+                  與賣家聊聊
+                </button>
+                </div>       
               
             </div>
             <div className="d-flex flex-column align-items-start justify-content-center">
@@ -394,8 +449,11 @@ export default function ShopPage() {
               className="btn btn-danger d-flex align-items-center"
               onClick={handleFavShop}
             >
-              <FaPlus className="me-1" />
-              {isFav ? '取消收藏' : '收藏賣家'}
+              {isFav ? (<>
+                    <FaMinus className="me-1" /><h6>取消收藏</h6>
+                  </>) : (<>
+                    <FaPlus className="me-1" /><h6>收藏賣家</h6>
+                  </>)}
             </button>
             ) : (//沒登入
             <button
@@ -407,6 +465,17 @@ export default function ShopPage() {
                 收藏賣家
               </button>
               )}
+
+              <button
+                  type="button"
+                  className="btn btn-danger d-flex align-items-center ms-3"
+                  onClick={() => createRoom(memberId, sellerId)}
+                  
+                >
+                  <IoChatbubblesOutline className="me-1" />
+                  與賣家聊聊
+                </button>
+
           </div>
         </div>
         <Sortbar />

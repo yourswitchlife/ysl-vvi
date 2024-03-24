@@ -41,10 +41,12 @@ export default function Order() {
   }, [cartItems])
 
   // 手機版編輯按鈕切換
-  const [isEditing, setisEditing] = useState(false)
+  const [isEditing, setisEditing] = useState({})
 
-  const toggleEdit = () => {
-    setisEditing(!isEditing)
+  const toggleEdit = (member_id) => {
+    setisEditing(prev => ({
+      ...prev, [member_id]: !prev[member_id]
+    }))
   }
 
   const handleShopSelect = (member_id, checked) => {
@@ -68,7 +70,7 @@ export default function Order() {
     <>
       {/* 單一賣場訂單 */}
       {Object.entries(orderGroup).map(([member_id, items]) => {
-        console.log(orderGroup[member_id])
+        {/* console.log(orderGroup[member_id]) */}
         return (
           <div key={member_id} className={styles.orderList}>
             {/* 單一賣場購買商品清單 */}
@@ -99,8 +101,8 @@ export default function Order() {
                 }}
               />
               {/* 手機板編輯 */}
-              <div className={styles.editBar} onClick={toggleEdit}>
-                {isEditing ? (
+              <div className={styles.editBar} onClick={()=>{toggleEdit(member_id)}}>
+                {isEditing[member_id] ? (
                   <>
                     <FaCheck className="text-info" />
                     <span className={`${styles.text} text-info`}>完成</span>
@@ -118,7 +120,7 @@ export default function Order() {
                 <ProductCard
                   key={item.id}
                   item={item}
-                  isEditing={isEditing}
+                  isEditing={isEditing[member_id]}
                 />
               ))}
             </div>
