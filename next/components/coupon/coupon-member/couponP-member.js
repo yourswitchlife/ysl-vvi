@@ -61,7 +61,7 @@ export default function CouponP({ currentFilter }) {
                 className="d-none d-md-block grid text-center row d-flex justify-content-center w-100 mx-5 px-5 my-3 "
               >
                 <div
-                  className={`${styles.cardBG} p-4 row align-items-center col-lg-6`}
+                  className={`${styles.cardBG} p-4 row align-items-center col-lg-6  ${(new Date(coupon.expiration_date) < new Date() || coupon.status === 1) ? styles.unvalid : ''}`}
                 >
                   <div className="col-2">
                     <Image
