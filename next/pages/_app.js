@@ -6,6 +6,7 @@ import Head from 'next/head'
 import '@/styles/globals.scss'
 import '@/styles/loader.scss'
 import Swal from 'sweetalert2'
+import 'react-tooltip/dist/react-tooltip.css'
 
 // 載入動畫context
 import { LoaderProvider } from '@/hooks/use-loader'

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-Auth'
-import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+// import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import Image from 'next/image'
 import { useRouter } from 'next/router';
 //components
@@ -83,7 +83,7 @@ export default function Comment() {
         //格式化日期再寫進去
         data.items = formatComments(data.items)
         setComments(data.items)
-        // console.log(data)
+        // console.log(data.items)
         //取得評價平均
         // const totalRating = data.reduce((acc, cur) => acc + cur.rating, 0)
         // const averageRating = (totalRating / data.length).toFixed(1); // 保留一位小數
@@ -337,7 +337,7 @@ export default function Comment() {
                   onClick={handleSearch}>
                     搜尋
                   </button>
-                  <button type="button" className="btn btn-danger" onClick={() => {
+                  <button type="button" className={`btn btn-danger ${styles.btnDangerOutlined}`} onClick={() => {
                     setSearchQuery("")
                     setPage(1) //重置到第一頁
                     fetchShopComments()
@@ -351,17 +351,16 @@ export default function Comment() {
               <Tabs
                 defaultActiveKey="all"
                 id="commentStatusTabs"
-                justify
                 className="mb-4"
                 onSelect={handleTabChange}
               >
-                  <Tab eventKey="all" title="全部" className={selectedTab === 'all' ? "text-danger" : "text-secondary"}>
+                  <Tab eventKey="all" title={<span className={selectedTab === 'all' ? "text-danger" : "text-dark"}>全部</span>}>
                   {comments && <h5 className='ms-2 fw-bold text-dark'>{commentNum}則評論</h5>}
                   </Tab>
-                  <Tab eventKey="unreply" title="待回覆" className={selectedTab === 'unreply' ? "text-danger" : "text-secondary"}>
+                  <Tab eventKey="unreply" title={<span className={selectedTab === 'unreply' ? "text-danger" : "text-dark"}>待回覆</span>}>
                   {comments && <h5 className='ms-2 fw-bold text-dark'>{commentNum}則評論</h5>}
                   </Tab>
-                  <Tab eventKey="replied" title="已回覆" className={selectedTab === 'replied' ? "text-danger" : "text-secondary"}>
+                  <Tab eventKey="replied" title={<span className={selectedTab === 'replied' ? "text-danger" : "text-dark"}>已回覆</span>}>
                   {comments && <h5 className='ms-2 fw-bold text-dark'>{commentNum}則評論</h5>}
                   </Tab>
                 {/* <Nav.Item>
@@ -370,7 +369,6 @@ export default function Comment() {
                   </Nav.Link>
                 </Nav.Item> */}
               </Tabs>
-              
               {/* <ButtonGroup aria-label="ratingSort" size="sm">
                 <Button variant="secondary">全部</Button>
                 <Button variant="secondary">5顆星(141)</Button>
@@ -384,21 +382,21 @@ export default function Comment() {
                 <div
                   className={`row my-3 py-2 justify-content-center text-center ${styles.ratingST}`}
                 >
-                  <h6 className="mb-0 col-4 fw-normal">訂單資訊</h6>
-                  <h6 className="mb-0 col-6 fw-normal">評價內容</h6>
+                  <h6 className="mb-0 col-4 fw-normal">評價內容</h6>
+                  <h6 className="mb-0 col-6 fw-normal">我的回覆</h6>
                   <h6 className="mb-0 col-2 fw-normal">操作</h6>
                 </div>
               </div>
               {/*--------------Rating Content------------------ */}
+              <div className='mx-4'>
               {comments && (
                 <>
-                
                 {comments.map((v,i) => {
                   return (
                     <Card border="light" style={{ width: '100%' }} className="mb-3" key={v.id}>
                   <Card.Header>
                     <div className="d-flex align-items-center">
-                      <p className="mb-0 text-secondary me-1">會員名稱:</p>
+                      {/* <p className="mb-0 text-secondary me-1">會員名稱:</p> */}
                       <div className={`me-1 ${styles.shapeCircle}`}>
                       <Image
                           src={v.pic ? (v.pic.startsWith("https://") 
@@ -406,16 +404,16 @@ export default function Comment() {
                                 : `http://localhost:3005/profile-pic/${v.pic}`) 
                               : profilePhoto}
                           alt="member-profile"
-                          width={25}
-                          height={25}
+                          width={30}
+                          height={30}
                         />
                       </div>
-                      <p className="mb-0 text-secondary">{v.account}</p>
+                      <h6 className="mb-0 ms-2 text-secondary">{v.account}</h6>
                     </div>
                   </Card.Header>
                   <Card.Body>
                     <Card.Title className="text-dark">
-                      <p className="mb-0 text-secondary">訂單編號：{v.order_num}</p>
+                      <p className="mb-0 text-secondary">訂單編號：{v.order_number}</p>
                     </Card.Title>
                     <div className="text-dark">
                       <div className="row align-items-center">
@@ -428,8 +426,8 @@ export default function Comment() {
                                 : `http://localhost:3005/reviewImg/${v.comment_img}`) 
                               : profilePhoto}
                           alt="comment-photo"
-                          width={80}
-                          height={60}
+                          width={100}
+                          height={80}
                         />
                       </div>
                         </>
@@ -438,9 +436,9 @@ export default function Comment() {
                           <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
                             <Star avgRating={v.rating}/>
                           </div>
-                          <p className="mb-0 text-dark">
+                          <h6 className="mb-0 text-dark">
                             {v.content}
-                          </p>
+                          </h6>
                           <small className="text-secondary">
                             {v.created_at}
                           </small>
@@ -495,6 +493,8 @@ export default function Comment() {
                 </>
               )}
               <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
+              </div>
+              
             </div>
           </div>
           <div className="d-block d-md-none container ps-4 pe-4">
@@ -554,38 +554,24 @@ export default function Comment() {
               </div>
             </Form>
             <hr />
-            <Nav
-                variant="tabs"
-                defaultActiveKey="/comment/all"
+            <Tabs
+                defaultActiveKey="all"
+                id="commentStatusTabs"
                 className="mb-4"
+                onSelect={handleTabChange}
               >
-                <Nav.Item>
-                  <Nav.Link onClick={() => {
-                    setSelectedTab('all')
-                  }} className={selectedTab === 'all' ? "text-danger" : "text-secondary"}>
-                    全部
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link onClick={() => {
-                    setSelectedTab('unreply')
-                  }} className={selectedTab === 'unreply' ? "text-danger" : "text-secondary"}>
-                    待回覆
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link onClick={() => {
-                    setSelectedTab('replied')
-                  }} className={selectedTab === 'replied' ? "text-danger" : "text-secondary"}>
-                    已回覆
-                  </Nav.Link>
-                </Nav.Item>
+                  <Tab eventKey="all" title={<span className={selectedTab === 'all' ? "text-danger" : "text-light"}>全部</span>}>
+                  </Tab>
+                  <Tab eventKey="unreply" title={<span className={selectedTab === 'unreply' ? "text-danger" : "text-light"}>待回覆</span>}>
+                  </Tab>
+                  <Tab eventKey="replied" title={<span className={selectedTab === 'replied' ? "text-danger" : "text-light"}>已回覆</span>}>
+                  </Tab>
                 {/* <Nav.Item>
                   <Nav.Link eventKey="disabled" disabled>
                     Disabled
                   </Nav.Link>
                 </Nav.Item> */}
-              </Nav>
+              </Tabs>
             {/* <div className="d-flex justify-content-around">
                   <Button variant="secondary" size="sm">
                     5顆星
@@ -619,8 +605,8 @@ export default function Comment() {
                                 : `http://localhost:3005/profile-pic/${v.pic}`) 
                               : profilePhoto}
                           alt="member-profile"
-                          width={25}
-                          height={25}
+                          width={30}
+                          height={30}
                         />
                       </div>
                       <p className="mb-0 text-secondary">{v.account}</p>
@@ -629,12 +615,27 @@ export default function Comment() {
                   <Card.Body>
                     <Card.Title className="text-dark">
                       <p className="mb-0 text-secondary">
-                        訂單編號：{v.order_num}
+                        訂單編號：{v.order_number}
                       </p>
                     </Card.Title>
                     <div className="text-dark">
                       <div className="row align-items-center justify-content-center">
-                        <div className="col-12 py-3">
+                      {v.comment_img && (
+                        <>
+                        <div className='col-12 mt-2'>
+                      <Image
+                          src={v.comment_img ? (v.comment_img.startsWith("https://") 
+                                ? v.comment_img 
+                                : `http://localhost:3005/reviewImg/${v.comment_img}`) 
+                              : profilePhoto}
+                          alt="comment-photo"
+                          width={100}
+                          height={80}
+                        />
+                      </div>
+                        </>
+                      )}
+                        <div className="col-12 pb-3 pt-2">
                           <div className="d-flex justify-content-start align-items-center text-warning fs-6 mb-1">
                           <Star avgRating={v.rating}/>
                           </div>
@@ -733,7 +734,7 @@ export default function Comment() {
   )
 }
 
-export async function getServerSideProps(context) {
-  return await mainCheckToLogin(context);
-}
+// export async function getServerSideProps(context) {
+//   return await mainCheckToLogin(context);
+// }
 
