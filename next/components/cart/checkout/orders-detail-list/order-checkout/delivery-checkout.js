@@ -56,6 +56,7 @@ export default function DeliveryCheckout({ items, memberId }) {
     hasCommonAddr,
   } = useShipping()
 
+
   // 點擊新增宅配地址按鈕狀態
   const [showAddrForm, setshowAddrForm] = useState(false)
 
@@ -83,13 +84,18 @@ export default function DeliveryCheckout({ items, memberId }) {
 
   // 串接綠界超商地圖
   const getSevenAddress = async () => {
-    await fetch('http://localhost:3005/api/cart/get-seven-address').then((response)=>{
-      response.json()
-    }).then((data)=>{
-        console.log(data);
-    }).catch((error)=>{
+    try {
+      const response = await fetch(
+        'http://localhost:3005/api/cart/get-seven-address'
+      )
+      const htmlForm = await response.text()
+      console.log(htmlForm);
+      localStorage.setItem('ecpayMapForm', htmlForm)
+      window.location.href = '/cart/map'
+      
+    } catch (error) {
       console.error('連線綠界失敗', error)
-    })
+    }
   }
 
   // 判斷是新增宅配地址還是編輯宅配地址
