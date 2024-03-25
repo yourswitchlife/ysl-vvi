@@ -96,8 +96,8 @@ export default function TypeSwiper() {
               <img src={`http://localhost:3005/type/${item.image}`} alt={item.name} className={styles.fit} />
             </Link>
           </div>
-          <h6 className='text-white d-lg-none d-flex ps-2'>{item.name}</h6>
-          <h4 className='text-white d-none d-lg-flex'>{item.name}</h4>
+          <h6 className='text-white d-lg-none d-flex ps-2 justify-content-center'>{item.name}</h6>
+          <h4 className='text-white d-none d-lg-flex justify-content-center'>{item.name}</h4>
         </SwiperSlide>
       ))}
     </Swiper>

@@ -364,8 +364,8 @@ export default function Index() {
       </section>
       <section className="container sec4 mb-4 pb-3 mt-3">
         <h4 className="text-white mb-3 d-flex justify-content-center fw-bold ">商品分類</h4>
-      <TypeSwiper/>
       </section>
+      <TypeSwiper/>
       <div className='mb-md-5 mb-4'></div>
       <section className={`sec5 pt-md-5 pb-md-5 pb-3 pt-3 ${estyles.eventBox}`}>
         <div className='container px-md-0 px-4'>
