@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-Auth'
-import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+// import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 //components
@@ -124,7 +124,7 @@ export default function Seller() {
       <div className={styles.mainContainer}>
         {memberData && (
           <>
-          <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
+          <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site || memberData.account} memberShopName={memberData.shop_name || memberData.account}/>
           </>
           )}
         <main className='flex-grow-1'>
@@ -140,16 +140,22 @@ export default function Seller() {
               <div className="d-flex flex-column align-items-start justify-content-center">
               {memberData && (
                 <>
-                <h6 className="mb-1 fw-bold">{memberData.shop_name}</h6>
-                <p className="mb-1">ysl.com/{memberData.shop_site}</p>
+                <h6 className="mb-1 fw-bold">{memberData.shop_name || memberData.account}</h6>
+                <p className="mb-1">@{memberData.shop_site || memberData.account}</p>
                 </>
               )}
                 {/* <h6 className="mb-1 fw-bold">{shop_name}</h6>
                 <p className="mb-1">ysl.com/{shop_site}</p> */}
               </div>
-              <div><button className='btn btn-danger' onClick={() => {
+              {memberData && (
+                <>
+                {memberData.shop_name ? (<button className='btn btn-danger' onClick={() => {
                 router.push(`http://localhost:3000/shop/${memberData.shop_site}`)
-              }}>查看賣場</button></div>
+              }}>查看賣場</button>) : (<button className='btn btn-danger' onClick={() => {
+                router.push(`http://localhost:3000/seller/shop`)
+              }}>建置賣場</button>)}
+                </>
+              )}
             </div>
             <hr />
           </div>
@@ -157,36 +163,36 @@ export default function Seller() {
             <div className={`my-3 ${styles.dashboardStyle}`}>
               <div className="d-flex align-items-center mb-4">
                 <h5 className="text-dark  fw-bold mb-0 me-3">待辦事項清單</h5>
-                <p className="text-primary mb-0">您的待處理事項</p>
+                <h6 className="text-primary mb-0">您的待處理事項</h6>
               </div>
-              <div className="d-flex justify-content-around">
+              <div className="d-flex justify-content-around py-3">
                 <Link
                   href="./seller/order"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
                   <h4 className="text-danger">{unpaidOrders}</h4>
-                  <h6 className="text-dark">待付款訂單</h6>
+                  <h6 className={`text-dark ${styles.hoverUnderline}`}>待付款訂單</h6>
                 </Link>
                 <Link
                   href="./seller/order"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
                   <h4 className="text-danger">{undealedOrders}</h4>
-                  <h6 className="text-dark">待處理訂單</h6>
+                  <h6 className={`text-dark ${styles.hoverUnderline}`}>待處理訂單</h6>
                 </Link>
                 <Link
                   href="./seller/order"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
                   <h4 className="text-danger">{doneOrders}</h4>
-                  <h6 className="text-dark">已完成訂單</h6>
+                  <h6 className={`text-dark ${styles.hoverUnderline}`}>已完成訂單</h6>
                 </Link>
                 <Link
                   href="./seller/product"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
                   <h4 className="text-danger">{zeroItems}</h4>
-                  <h6 className="text-dark">已售完商品</h6>
+                  <h6 className={`text-dark ${styles.hoverUnderline}`}>已售完商品</h6>
                 </Link>
                 {/* <Link
                   href="/"
@@ -204,25 +210,25 @@ export default function Seller() {
                 </Link> */}
               </div>
             </div>
-            <div className={`${styles.dashboardStyle} my-3`}>
+            <div className={`${styles.dashboardStyle} mt-4`}>
               <div className="d-flex align-items-center mb-4">
                 <h5 className="text-dark fw-bold mb-0 me-3">賣場評價</h5>
-                <p className="text-primary mb-0">賣場評價總計</p>
+                <h6 className="text-primary mb-0">賣場評價總計</h6>
               </div>
-              <div className="d-flex justify-content-around">
+              <div className="d-flex justify-content-around py-3">
                 <Link
                   href="./seller/comment"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
                   <h4 className="text-danger">{shopRating}</h4>
-                  <h6 className="text-dark">平均分數</h6>
+                  <h6 className={`text-dark ${styles.hoverUnderline}`}>平均分數</h6>
                 </Link>
                 <Link
                   href="./seller/comment"
                   className="d-flex flex-column align-items-center justify-content-center text-decoration-none"
                 >
                   <h4 className="text-danger">{commentNum}</h4>
-                  <h6 className="text-dark">評論總數</h6>
+                  <h6 className={`text-dark ${styles.hoverUnderline}`}>評論總數</h6>
                 </Link>
               </div>
             </div>
@@ -268,7 +274,7 @@ export default function Seller() {
             <hr />
               <h6 className="mb-3">賣家中心</h6>
               <ul className={`nav nav-pills flex-column mb-auto ${styles.sidebarRWD}`}>
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <Link
               href="http://localhost:3000/seller"
               className={`nav-link d-flex justify-content-center align-items-center ${styles.navLink}`}
@@ -277,7 +283,7 @@ export default function Seller() {
               <FaHome className={`${styles.navText} me-2`} />
               <h6 className={`${styles.navText} mb-0`}>賣家中心</h6>
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link
               href="http://localhost:3000/seller/shop"
@@ -324,6 +330,6 @@ export default function Seller() {
     </>
   )
 }
-export async function getServerSideProps(context) {
-  return await mainCheckToLogin(context);
-}
+// export async function getServerSideProps(context) {
+//   return await mainCheckToLogin(context);
+// }

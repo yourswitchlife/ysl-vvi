@@ -16,7 +16,7 @@ import Swal from 'sweetalert2'
 // import RePassword from '@/components/member/re-password';
 import { uploadExam } from '@/context/member/upload-exam';
 import { useAuth } from '@/hooks/use-Auth';
-import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+// import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav';
 
@@ -416,6 +416,6 @@ export default function account() {
   )
 }
 
-export async function getServerSideProps(context) {
+/* export async function getServerSideProps(context) {
   return await mainCheckToLogin(context);
-}
+} */

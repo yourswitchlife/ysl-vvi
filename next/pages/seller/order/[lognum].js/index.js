@@ -314,10 +314,7 @@ export default function Order() {
       <div className={styles.mainContainer}>
           {memberData && (
             <>
-            <Sidebar 
-              profilePhoto={bigPic} 
-              memberShopSite={memberData.shop_site || memberData.account} 
-              memberShopName={memberData.shop_name || memberData.account}/>
+              <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
             </>
           )}
         <main className='flex-grow-1'>
@@ -331,23 +328,14 @@ export default function Order() {
                 <Image src={bigPic} width={75} height={75} alt="profile-photo" className={styles.fit} />
               </div>
               <div className="d-flex flex-column align-items-start justify-content-center">
-              {memberData && (
-                <>
-                <h6 className="mb-1 fw-bold">{memberData.shop_name || memberData.account}</h6>
-                <p className="mb-1">@{memberData.shop_site || memberData.account}</p>
-                </>
-              )}
+              {memberData && <h5 className="mb-1 fw-bold">{memberData.shop_name}</h5>}
+              {memberData && <p className="mb-1">@{memberData.shop_site}</p>}
               </div>
               <div>
-              {memberData && (
-                <>
-                {memberData.shop_name ? (<button className='btn btn-danger' onClick={() => {
-                router.push(`http://localhost:3000/shop/${memberData.shop_site}`)
-              }}>查看賣場</button>) : (<button className='btn btn-danger' onClick={() => {
-                router.push(`http://localhost:3000/seller/shop`)
-              }}>建置賣場</button>)}
-                </>
-              )}
+              {memberData &&
+                <button className="btn btn-danger btn-sm" onClick={() => {
+                  router.push(`/shop/${memberData.shop_site}`)
+                }}>查看賣場</button>}
               </div>
             </div>
             <hr />
@@ -359,21 +347,22 @@ export default function Order() {
                 defaultActiveKey="all"
                 id="orderStatusTabs"
                 className="mb-3"
+                justify
                 onSelect={handleTabChange}
               >
-                <Tab eventKey="all" title={<span className={selectedTab === 'all' ? "text-danger" : "text-dark"}>全部</span>}>
+                <Tab eventKey="all" title="全部訂單">
                 { orders && <h5 className="text-dark fw-bold">{orderNum}筆訂單</h5>
                   }
                 </Tab>
-                <Tab eventKey="shipped" title={<span className={selectedTab === 'shipped' ? "text-danger" : "text-dark"}>待出貨</span>}>
+                <Tab eventKey="shipped" title="待出貨">
                 { orders && <h5 className="text-dark fw-bold">{orderNum}筆訂單</h5>
                   }
                 </Tab>
-                <Tab eventKey="processing" title={<span className={selectedTab === 'processing' ? "text-danger" : "text-dark"}>運送中</span>}>
+                <Tab eventKey="processing" title="運送中">
                 { orders && <h5 className="text-dark fw-bold">{orderNum}筆訂單</h5>
                   }
                 </Tab>
-                <Tab eventKey="delivered" title={<span className={selectedTab === 'delivered' ? "text-danger" : "text-dark"}>已完成</span>}>
+                <Tab eventKey="delivered" title="已完成">
                 { orders && <h5 className="text-dark fw-bold">{orderNum}筆訂單</h5>
                   }
                 </Tab>
@@ -383,15 +372,14 @@ export default function Order() {
                     <div
                       className={`row my-3 py-2 justify-content-center text-start ${styles.ratingST}`}
                     >
-                      <h6 className="mb-0 ms-1 col-3 fw-normal">商品資訊</h6>
-                      <h6 className="mb-0 ms-2 col-2 fw-normal">付款金額</h6>
-                      <h6 className="mb-0 ms-1 col-2 fw-normal">狀態</h6>
+                      <h6 className="mb-0 col-4 fw-normal">商品</h6>
+                      <h6 className="mb-0 col-2 fw-normal">付款金額</h6>
+                      <h6 className="mb-0 col-2 fw-normal">狀態</h6>
                       <h6 className="mb-0 col-2 fw-normal">運送方式</h6>
-                      <h6 className="mb-0 col-1 fw-normal"></h6>
+                      <h6 className="mb-0 col-2 fw-normal">操作</h6>
                     </div>
                   </div>
                   {/*--------------Rating Content------------------ */}
-                  <div className='mx-4'>
                   {orders && (
                     <>
                       {orders.map((v, i) => {
@@ -399,11 +387,11 @@ export default function Order() {
                           <Card
                     border="light"
                     style={{ width: '100%' }}
-                    className="mb-4"
+                    className="mb-3"
                     key={v.id}
                   >
                     <Card.Header>
-                      <div className="d-flex justify-content-between align-items-center my-2">
+                      <div className="d-flex justify-content-between align-items-center">
                         <div className="d-flex align-items-center">
                           <div className={`me-1 ${styles.shapeCircle}`}>
                             <Image
@@ -412,15 +400,15 @@ export default function Order() {
                                 : `http://localhost:3005/profile-pic/${v.member_pic}`) 
                               : profilePhoto}
                               alt="member-profile"
-                              width={45}
-                              height={45}
+                              width={25}
+                              height={25}
                             />
                           </div>
-                          <h6 className="mb-0 ms-2 text-secondary">{v.member_account}</h6>
+                          <p className="mb-0 text-secondary">{v.member_account}</p>
                         </div>
-                        <h6 className="mb-0 text-secondary">
+                        <p className="mb-0 text-secondary">
                           訂單編號：{v.order_number}
-                        </h6>
+                        </p>
                       </div>
                     </Card.Header>
                     <Card.Body>
@@ -430,22 +418,21 @@ export default function Order() {
                           {/* product-map-card */}
                           {v.products.map((p, i) => {
                             return (
-                              <div className="d-flex justify-content-start align-items-center my-4" key={i}>
+                              <div className="d-flex justify-content-start align-items-center mb-2" key={i}>
                               <Image
                                 src={p.product_img_cover ? (p.product_img_cover.startsWith("https://") 
                                 ? p.product_img_cover 
                                 : `http://localhost:3005/productImg/cover/${p.product_img_cover}`) 
                               : gameCover}
                                 alt="game-cover"
-                                width={50}
-                                height={75}
-                                className='ms-3'
+                                width={24}
+                                height={40}
                               />
-                              <div className='ms-2'>
-                                <h6 className="mb-0 text-dark ms-2">
+                              <div>
+                                <p className="mb-0 text-dark ms-2">
                                 {p.product_name}
-                                </h6>
-                                <h6 className="text-info ms-2">x{p.quantity}</h6>
+                                  <span className="text-info ms-2">x{p.quantity}</span>
+                                </p>
                                 {/* <p className="text-secondary ms-2">
                                   規格：中文版
                                 </p> */}
@@ -455,20 +442,20 @@ export default function Order() {
                             })}
                           </div>
                           <div className="col-2">
-                            <h6 className="fw-bold">NT${v.final_price}</h6>
-                            <h6 className="text-secondary">{paymentMethods[v.payment_method]}</h6>
+                            <p className="fw-bold">NT${v.final_price}</p>
+                            <p className="text-secondary">{paymentMethods[v.payment_method]}</p>
                           </div>
                           <div className="col-2">
-                            <h6 className="fw-bold">{shippingStatuses[v.shipping_status]}</h6>
+                            <p className="fw-bold">{shippingStatuses[v.shipping_status]}</p>
                           </div>
                           <div className="col-2">
-                            <h6 className=''>{shippingMethods[v.shipping_method]}</h6>
+                            <p>{shippingMethods[v.shipping_method]}</p>
                           </div>
                           <div className="col-2 d-flex justify-content-center align-items-center">
                             {/* 可以跳出一個MODAL來處理 */}
                             <button
                               type="button"
-                              className={`btn btn-danger btn-sm ${styles.btnGrayOutlined }`}
+                              className="btn btn-danger btn-sm"
                               onClick={handleViewClick}
                             >
                               寄貨處理
@@ -482,8 +469,6 @@ export default function Order() {
                       })}
                     </>
                   )}
-                  </div>
-                  
                   <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
             </div>
           </div>
@@ -537,11 +522,11 @@ export default function Order() {
                                 : `http://localhost:3005/profile-pic/${v.member_pic}`) 
                               : profilePhoto}
                               alt="member-profile"
-                              width={30}
-                              height={30}
+                              width={25}
+                              height={25}
                             />
                           </div>
-                          <h6 className="mb-0 ms-2 text-secondary">{v.member_account}</h6>
+                          <p className="mb-0 text-secondary">{v.member_account}</p>
                         </div>
                         <p className="mb-0 text-secondary">
                           訂單編號：{v.order_number}
@@ -591,7 +576,7 @@ export default function Order() {
                             {/* 可以跳出一個MODAL來處理 */}
                             <button
                               type="button"
-                              className={`btn btn-danger btn-sm ${styles.btnDangerOutlined }`}
+                              className="btn btn-danger btn-sm"
                             >
                               查看
                             </button>

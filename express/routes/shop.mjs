@@ -67,6 +67,7 @@ router.get('/:shop_site/overview', async (req, res) => {
   const page = parseInt(req.query.page, 10) || 1
   const limit = parseInt(req.query.limit, 10) || 15
   const offset = (page - 1) * limit
+  const buyer_id = req.memberData ? req.memberData.id : null
 
   try {
     // 首先shop_site的member
@@ -134,6 +135,10 @@ router.get('/:shop_site/overview', async (req, res) => {
       WHERE member.shop_site = ? AND fav_shop.valid = 1`,
       [shop_site]
     )
+
+    //判斷是否已經收藏
+    const isFav = shopFav.some((fav) => fav.buyer_id === buyer_id)
+
     // 評價
     let [shopComment] = await db.execute(
       `SELECT AVG(shop_comment.rating) AS avg_rating, COUNT(shop_comment.id) AS total_comments
@@ -157,6 +162,7 @@ router.get('/:shop_site/overview', async (req, res) => {
       products: items,
       orders,
       favCount: shopFav.length, // 添加收藏數量
+      isFav,
       favDetails: shopFav, // 詳細收藏數據
       shopComments: shopComment,
     }

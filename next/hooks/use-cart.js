@@ -12,20 +12,6 @@ const MySwal = withReactContent(Swal)
 // 導出createContext方法
 export const CartContext = createContext()
 
-// 預設模板
-// 加入購物車的商品物件
-// cartItems = {
-//   id:0,
-//   name:"",
-//   language:[],
-//   product_quanty=0
-//   price:0,
-//   display_price:0,
-//   quantity:1
-//   total_price:0,
-//   user_select:false
-// }
-
 // 導出全站Provider 元件，集中要使用的狀態及邏輯函式
 // 預設模板
 // 加入購物車的商品物件
@@ -257,7 +243,7 @@ export function CartProvider({ children }) {
 
 
   // 加入購物車存進狀態內
-  const addItem = (item) => {
+  const addItem = (item, shownotification = true) => {
     // 成功加入要跳轉頁面
     let routerPush = true
     // 先檢查商品的id是否已存在購物車中
@@ -275,6 +261,9 @@ export function CartProvider({ children }) {
             return { ...cartItem, quantity: cartItem.quantity + item.quantity, timeStamp }
           }
           return cartItem
+          if(shownotification){
+            notifySuccess()
+          }
         })
         setCartItems(updateCartItems)
         notifySuccess()
@@ -289,7 +278,9 @@ export function CartProvider({ children }) {
       const newItem = { ...item, quantity: item.quantity || 1, userSelect: item.userSelect || false, timeStamp }
       const newItems = [newItem, ...cartItems]
       setCartItems(newItems)
-      notifySuccess()
+      if(shownotification){
+        notifySuccess()
+      }
       // sellers
       setMemberIds([item.member_id, ...memberIds])
     }

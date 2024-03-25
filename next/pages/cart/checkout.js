@@ -7,7 +7,7 @@ import Empty from '@/components/cart/empty'
 
 import { useCart } from '@/hooks/use-cart'
 
-import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+// import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import { useAuth } from '@/hooks/use-Auth'
 
 export default function Checkout() {
@@ -34,6 +34,6 @@ export default function Checkout() {
   )
 }
 
-export async function getServerSideProps(context) {
-  return await mainCheckToLogin(context);
-}
+// export async function getServerSideProps(context) {
+//   return await mainCheckToLogin(context);
+// }
