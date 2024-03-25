@@ -240,7 +240,10 @@ export default function New() {
       <div className={styles.mainContainer}>
       {memberData && (
             <>
-              <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
+            <Sidebar 
+              profilePhoto={bigPic} 
+              memberShopSite={memberData.shop_site || memberData.account} 
+              memberShopName={memberData.shop_name || memberData.account}/>
             </>
           )}
         <main className='flex-grow-1'>
