@@ -449,7 +449,7 @@ export default function ProductDetail() {
                 快領券享結帳免運
               </a>
               <div className="d-flex mt-4 align-items-center">
-                <h5 className="me-3 text-white mb-2 pt-2">數量 </h5>
+                <h5 className="me-3 text-white mb-2 pt-2">數量 </h5> 
                 <div className={`${styles.counter} d-flex bg-light`}>
                   <button
                     className={`btn btn-secondary ${styles.counterBtn}`}
@@ -471,6 +471,7 @@ export default function ProductDetail() {
                     <b>+</b>
                   </button>
                 </div>
+                <span className='text-white ps-5 h5'>庫存：{product.product_quanty}</span>
               </div>
 
               <hr className="text-white border-3" />
