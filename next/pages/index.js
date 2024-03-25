@@ -25,6 +25,9 @@ import { IoCloseSharp } from "react-icons/io5"
 import { useAuth } from '@/hooks/use-Auth'
 import TypeSwiper from '@/components/common/typeSwiper'
 import { chunk } from 'lodash'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
 // import checkLogin from '@/context/member/checkLogin'
 
 export default function Index() {
@@ -153,7 +156,6 @@ export default function Index() {
           credentials: 'include',
         }
         )
-        console.log('HIIII');
       if (!res.ok) {
         throw new Error('Failed to fetch fav products')
       }
@@ -168,12 +170,31 @@ export default function Index() {
     }
   }
   
-  const handleToggleFav = (id) => {
+  const handleToggleFav = async (id) => {
+    if (!memberId) {
+      MySwal.fire({
+        icon: 'warning',
+        text: '請先登入',
+        confirmButtonColor: '#E41E49',
+      })
+      return
+    }
+    // 是否蒐藏 預設為否
+    let shouldAddFav = false
     const newProducts = products.map((p) => {
-      if (p.id === id) return { ...p, fav: !p.fav }
-      else return p
+      if (p.id === id) {
+        if (!p.fav) {
+          shouldAddFav = true
+        }
+        return { ...p, fav: !p.fav }
+      } else {
+        return p
+      }
     })
     setProducts(newProducts)
+    if (shouldAddFav) {
+      await addFav(id)
+    }
   }
 
   const cardIcon = (e) => {
