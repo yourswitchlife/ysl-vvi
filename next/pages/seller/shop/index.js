@@ -244,7 +244,7 @@ export default function ShopSetting() {
         <div className={styles.mainContainer}>
           {memberData && (
             <>
-              <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site} memberShopName={memberData.shop_name}/>
+              <Sidebar profilePhoto={bigPic} memberShopSite={memberData.shop_site || memberData.account} memberShopName={memberData.shop_name || memberData.account}/>
             </>
           )}
           <main className='flex-grow-1'>
@@ -327,7 +327,7 @@ export default function ShopSetting() {
                   <Form.Control
                     as="textarea"
                     rows={5}
-                    placeholder="請輸入30~100字的賣場介紹"
+                    placeholder="請輸入30~200字的賣場介紹"
                     name="shop_info"
                     value={formData.shop_info}
                     onChange={handleShop}
