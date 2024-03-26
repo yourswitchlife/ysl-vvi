@@ -219,7 +219,7 @@ router.post(
         const reviewImg = req.file.filename
         const created_at = new Date()
         const query =
-          'UPDATE `shop_comment`SET rating = ?, content = ?, comment_img = ?, created_at = ? WHERE member_id = ? AND shop_id = ? AND content IS NULL'
+          'UPDATE `shop_comment`SET rating = ?, content = ?, comment_img = ?, created_at = ? WHERE id = (SELECT id FROM ( SELECT id FROM shop_comment WHERE member_id = ? AND shop_id = ? AND content IS NULL ORDER BY id DESC LIMIT 1 ) AS subquery)'
         await db.execute(query, [
           rating,
           review,
