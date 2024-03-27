@@ -805,7 +805,7 @@ export default function Product() {
                           type="button"
                           className={`btn btn-danger btn-sm mb-1 ${styles.btnDangerOutlined}`}
                             onClick={() => {
-                              router.push(`./product/${v.id}`)
+                              router.push(`../products/${v.id}`)
                             }}
                         >
                           {v.valid === 0 ? '編輯' : '查看'}
