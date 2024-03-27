@@ -27,36 +27,34 @@ $nav-black: #161719ae;
   0% { transform: 
     translate(0,0) scale(1);
   }
-  25% { transform: translate(0, 5px); }
+  25% { transform: translate(0, 3px); }
   40% { transform: translate(0, 0px); }
-  55% { transform: translate(0px, -5px); }
+  55% { transform: translate(0px, -3px); }
   70% { transform: translate(0, 0px); }
-  85% { transform: translate(0, 5px); }
+  85% { transform: translate(0, 3px); }
   100% { transform: translate(0,0); }
 }
 
-@keyframes moveWordsDown {
+@keyframes yslLogo {
   0% { transform: 
     translate(0,0) scale(1);
   }
-  25% { transform: translate(0, -5px); }
-  40% { transform: translate(0, 0px); }
-  55% { transform: translate(0px, 5px); }
-  70% { transform: translate(0, 0px); }
-  85% { transform: translate(0, -5px); }
-  100% { transform: translate(0,0); }
+  40% { transform: translate(0, 0px) scale(1.5); }
+  70% { transform: translate(0, 0px) scale(1.5); }
+  85% { transform: translate(0, -3px) scale(1.5); }
+  100% { transform: translate(0,0) scale(1); }
 }
 
 .logoCircleAnimation {
-  animation: moveCircle 2s ease-in-out;
+  animation: moveCircle 5s ease-in-out;
 }
 
 .logoUpAnimation{
   animation: moveWordsUp 5s ease-in-out;
 }
 
-.logoDownAnimation{
-  animation: moveWordsDown 5s ease-in-out;
+.logoYSLAnimation{
+  animation: yslLogo 5s ease-in-out;
 }
 
 //style
