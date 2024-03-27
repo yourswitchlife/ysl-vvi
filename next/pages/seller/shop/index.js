@@ -17,7 +17,8 @@ import Swal from 'sweetalert2'
 //images
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 import cover from '@/public/images/shopCover/default-cover.jpg'
-
+//animation
+import { motion } from 'framer-motion'
 
 export default function ShopSetting() {
   const router = useRouter()
@@ -357,7 +358,12 @@ export default function ShopSetting() {
             </div>
             {/* ----------------電腦版------------------- */}
             
-            <div className={`d-none d-md-block ${styles.dashboardMargin}`}>
+            <motion.div className={`d-none d-md-block ${styles.dashboardMargin}`}
+              initial={{opacity: 0.5}}
+              animate={{opacity: 1}}
+              exit={{ opacity: 0}}
+              transition={{ duration: 0.5}}
+            >
             
               <div className={`mb-4 ${styles.dashboardStyle}`}>
                 
@@ -453,7 +459,7 @@ export default function ShopSetting() {
                   </div>
                 </Form>
               </div>
-            </div>
+            </motion.div>
           </main>
         </div>
         <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>

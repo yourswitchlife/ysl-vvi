@@ -20,6 +20,8 @@ import { IoGameController } from 'react-icons/io5'
 //images
 import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
 import cover from '@/public/images/shopCover/default-cover.jpg'
+//animation
+import { motion } from 'framer-motion'
 
 
 
@@ -66,7 +68,6 @@ export default function Seller() {
     }
   }, [])
   // console.log(memberData)
-
   const getSellerData = async() => {
     try{
       const res = await fetch(`http://localhost:3005/api/seller/`, { credentials: 'include'})
@@ -115,6 +116,7 @@ export default function Seller() {
       console.error(e)
     }
   } 
+
   return (
     <>
     {/* <div className={styles.outsideHeight}> */}
@@ -160,7 +162,12 @@ export default function Seller() {
             <hr />
           </div>
           <div className={`d-none d-md-block ${styles.dashboardMargin}`}>
-            <div className={`my-3 ${styles.dashboardStyle}`}>
+            <motion.div className={`my-3 ${styles.dashboardStyle}`}
+              initial={{opacity: 0.5}}
+              animate={{opacity: 1}}
+              exit={{ opacity: 0}}
+              transition={{ duration: 0.5}}
+            >
               <div className="d-flex align-items-center mb-4">
                 <h5 className="text-dark  fw-bold mb-0 me-3">待辦事項清單</h5>
                 <h6 className="text-primary mb-0">您的待處理事項</h6>
@@ -209,8 +216,13 @@ export default function Seller() {
                   <h6 className="text-dark">待退貨訂單</h6>
                 </Link> */}
               </div>
-            </div>
-            <div className={`${styles.dashboardStyle} mt-4`}>
+            </motion.div>
+            <motion.div className={`${styles.dashboardStyle} mt-4`}
+              initial={{opacity: 0.5}}
+              animate={{opacity: 1}}
+              exit={{ opacity: 0}}
+              transition={{ duration: 0.5}}
+            >
               <div className="d-flex align-items-center mb-4">
                 <h5 className="text-dark fw-bold mb-0 me-3">賣場評價</h5>
                 <h6 className="text-primary mb-0">賣場評價總計</h6>
@@ -231,7 +243,7 @@ export default function Seller() {
                   <h6 className={`text-dark ${styles.hoverUnderline}`}>評論總數</h6>
                 </Link>
               </div>
-            </div>
+            </motion.div>
           </div>
           <div className='d-block d-md-none container ps-4 pe-4'>
             <div className="d-flex justify-content-between mb-3">

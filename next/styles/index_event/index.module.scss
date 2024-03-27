@@ -81,8 +81,8 @@
   position: absolute; /* Stay in place */
   visibility: hidden;
   z-index: 5; /* Sit on top */
-  left: 160px;
-  top: 3480px;
+  left: 250px;
+  top: calc(100vh + 2445px);
   width: 640px; /* Full width */
   height: 803px; /* Full height */
   overflow: auto; /* Enable scroll if needed */
