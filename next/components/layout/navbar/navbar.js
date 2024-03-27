@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react'
-
+import React, { useState, useEffect, useContext, useRef } from 'react'
+import LogoSm from '@/components/common/logo-sm'
 import styles from '@/components/layout/navbar/navbar.module.scss'
 import yslLogoSm from '@/public/images/logo/logo-sm.svg'
 import yslLogoXs from '@/public/images/logo/logo-xs.svg'
@@ -73,7 +73,7 @@ export default function Navbar(props) {
             className="ms-lg-5 ms-4" // logo
           >
             <Link href="/" title="Your Switch Life首頁">
-              <Image src={yslLogoSm} alt="ysl-logo" />
+              <LogoSm />
             </Link>
           </div>
           <div className="d-lg-block d-none">

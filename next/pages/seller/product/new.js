@@ -8,6 +8,8 @@ import SellerFooter from '@/components/layout/footer/footer-backstage'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import BreadCrumb from '@/components/common/breadcrumb'
 import { useAuth } from '@/hooks/use-Auth'
+//animation
+import { motion } from 'framer-motion'
 import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -211,7 +213,11 @@ export default function New() {
           </>
         )}
         <main className="flex-grow-1">
-          <div className={`${styles.dashboardMargin}`}>
+          <motion.div className={`${styles.dashboardMargin}`}
+            initial={{opacity: 0.5}}
+              animate={{opacity: 1}}
+              exit={{ opacity: 0}}
+              transition={{ duration: 0.5}}>
             <div className="d-lg-block d-none">
               <BreadCrumb />
             </div>
@@ -459,7 +465,7 @@ export default function New() {
                 </div>
               </form>
             </div>
-          </div>
+          </motion.div>
           <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
         </main>
       </div>
