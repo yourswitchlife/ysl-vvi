@@ -12,6 +12,53 @@
 // $bright-gray:#E3E3E3;
 $nav-black: #161719ae;
 
+//logo animation
+@keyframes moveCircle {
+  0% { transform: 
+    translate(0,0) scale(1);
+  }
+  25% { transform: translate(15px, -20px) scale(2); }
+  50% { transform: translate(8px, 20px) scale(1.5); }
+  75% { transform: translate(-90px, 0px) scale(1); }
+  100% { transform: translate(0,0) scale(1); }
+}
+
+@keyframes moveWordsUp {
+  0% { transform: 
+    translate(0,0) scale(1);
+  }
+  25% { transform: translate(0, 5px); }
+  40% { transform: translate(0, 0px); }
+  55% { transform: translate(0px, -5px); }
+  70% { transform: translate(0, 0px); }
+  85% { transform: translate(0, 5px); }
+  100% { transform: translate(0,0); }
+}
+
+@keyframes moveWordsDown {
+  0% { transform: 
+    translate(0,0) scale(1);
+  }
+  25% { transform: translate(0, -5px); }
+  40% { transform: translate(0, 0px); }
+  55% { transform: translate(0px, 5px); }
+  70% { transform: translate(0, 0px); }
+  85% { transform: translate(0, -5px); }
+  100% { transform: translate(0,0); }
+}
+
+.logoCircleAnimation {
+  animation: moveCircle 2s ease-in-out;
+}
+
+.logoUpAnimation{
+  animation: moveWordsUp 5s ease-in-out;
+}
+
+.logoDownAnimation{
+  animation: moveWordsDown 5s ease-in-out;
+}
+
 //style
 .outline {
   border: 1px solid $white;
