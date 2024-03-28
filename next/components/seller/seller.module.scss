@@ -24,8 +24,8 @@ $sortbar-height-rwd: 50px;
 }
 //shape
 .shapeCircle {
-  width: 25px;
-  height: 25px;
+  width: 40px;
+  height: 40px;
   overflow: hidden;
   border-radius: 50%;
 }
@@ -49,6 +49,16 @@ $sortbar-height-rwd: 50px;
     color: $dark-gray;
   }
 }
+.btnGray {
+  border: 1px solid $gray;
+  background-color: $gray;
+  color: $white;
+  &:hover {
+    border: 1px solid $dark-gray;
+    background-color: transparent;
+    color: $dark-gray;
+  }
+}
 
 //size
 .iconsmall {
@@ -66,6 +76,7 @@ $sortbar-height-rwd: 50px;
   color: $white;
 }
 .cover {
+  margin-top: 70px;
   height: 330px;
   // width: 100vw;
   overflow: hidden;
@@ -75,13 +86,14 @@ $sortbar-height-rwd: 50px;
   }
 }
 .coverB {
-  height: 216px;
+  height: 250px;
   // width: 100vw;
   overflow: hidden;
   .fit {
     width: 100%;
+    height: 100%;
     object-fit: cover;
-    object-position: 0px -150px;
+    // object-position: 0px -150px;
   }
 }
 .profile {
@@ -105,6 +117,19 @@ $sortbar-height-rwd: 50px;
   width: 546px;
   padding-inline: 40px;
   margin: 0;
+}
+//padding
+.line{
+  margin: 90px 0px 60px;
+}
+//badge
+.badge{
+  background-color: $danger;
+  font-size: 15px;
+  padding: 5px;
+  margin-left: 8px;
+  text-align: center;
+  border-radius: 10px;
 }
 
 //sortbar
@@ -300,10 +325,11 @@ $sortbar-height-rwd: 50px;
 //sidebar
 .sidebar {
   width: 268px;
-  position: fixed;
-  top: 0px;
-  left: 0;
-  height: 100svh; //扣掉nav高度
+  // position: sticky;
+  // top: 60px;
+  // left: 0;
+  // height: calc(100vh - 125px); //扣掉nav高度
+  overflow-y: auto;
   background-color: $gray;
   .navLink {
     height: 47px;
@@ -311,10 +337,20 @@ $sortbar-height-rwd: 50px;
       color: $white;
     }
     &:hover {
-      background-color: $light-gray;
+      background-color: $white;
+      border-radius: 0;
+      border-bottom: 2px solid $danger;
       .navText {
         color: $danger;
       }
+    }
+  }
+  .navLinkActive{
+    background-color: $white !important;
+    border-radius: 0;
+    border-bottom: 2px solid $danger;
+    .navText {
+      color: $danger;
     }
   }
 }
@@ -336,7 +372,7 @@ $sortbar-height-rwd: 50px;
 }
 
 .sellerprofile {
-  margin-top: 100px;
+  margin-top: 50px;
   margin-bottom: 20px;
   overflow: hidden;
   width: 100px;
@@ -352,18 +388,26 @@ $sortbar-height-rwd: 50px;
 
 //seller dashboard
 .dashboardMargin {
-  padding: 30px 115px 0px 383px;
+  padding: 30px 115px;
 }
 .dashboardStyle {
-  padding: 40px 50px;
+  padding: 60px 50px;
   background-color: $white;
   border-radius: 20px;
   .borderRadius {
     border-radius: 5px !important;
-}
+  }
+  .hoverUnderline{
+    &:hover{
+      text-decoration: underline;
+      text-underline-offset: 7px;
+    }
+  }
 }
 .mainContainer {
-  margin-top: 58px;
+  min-height: calc(100vh - 130px);
+  margin-top: 65px;
+  display: flex;
 }
 
 //---------Tab Color #1 ---------------
@@ -389,6 +433,11 @@ $sortbar-height-rwd: 50px;
 //---------Seller Comment--------------
 .subtitleFs {
   font-size: 18px;
+}
+.reply{
+  // padding: 10px;
+  border-radius: 5px;
+  background-color: $bright-gray;
 }
 
 //--------Seller Product---------------
@@ -419,6 +468,13 @@ $sortbar-height-rwd: 50px;
   height: 100px;
 }
 
+.shapeCircle {
+  width: 30px;
+  height: 30px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
 
 @media (max-width: 576px){
   .dashboardMargin {
@@ -426,8 +482,8 @@ $sortbar-height-rwd: 50px;
   }
 }
 .dashboardStyle {
-  margin-top: 100px;
-  padding: 30px 20px;
+  margin-top: 30px;
+  padding: 30px 40px;
   background-color: $white;
   border-radius: 20px;
 }
@@ -444,11 +500,23 @@ $sortbar-height-rwd: 50px;
     height: 185px;
   }
   .coverB {
-    margin-top: 55px;
-    height: 91px;
+    // margin-top: 55px;
+    height: 120px;
+    overflow: hidden;
     .fit {
-      height: 91px;
-      object-position: 0px -50px;
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+  }
+  .coverC {
+    // margin-top: 55px;
+    height: 91px;
+    overflow: hidden;
+    .fit {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
     }
   }
   .profile {
@@ -495,7 +563,7 @@ $sortbar-height-rwd: 50px;
   }
 
   .mainContainer {
-    margin-top: 50px;
+    margin-top: 55px;
   }
   .offcanvasBtn {
     background-color: $gray;

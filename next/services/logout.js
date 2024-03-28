@@ -8,6 +8,7 @@ const logOut = async () => {
     });
 
     if (response.ok) {
+      localStorage.removeItem('cartItems')
       // 登出成功後的處理，例如重定向到登入頁面
       Swal.fire({
         position: "center",

@@ -34,6 +34,7 @@ export const pathsLocaleMap = {
     'seller': '賣家中心',
     'shop': '賣場',
     'order': '訂單管理',
-    'new': '新增商品'
+    'new': '新增商品',
+    'princess-toy-castle': '碧姬公主的玩具城堡'
   }
 /* eslint-enable */

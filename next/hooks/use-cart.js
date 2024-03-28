@@ -12,31 +12,18 @@ const MySwal = withReactContent(Swal)
 // 導出createContext方法
 export const CartContext = createContext()
 
-// 預設模板
-// 加入購物車的商品物件
-// cartItems = {
-//   id:0,
-//   name:"",
-//   language:[],
-//   product_quanty=0
-//   price:0,
-//   display_price:0,
-//   quantity:1
-//   total_price:0,
-//   user_select:false
-// }
-
 // 導出全站Provider 元件，集中要使用的狀態及邏輯函式
 // 預設模板
 // 加入購物車的商品物件
 // cartItems = {
 //   id:0,
 //   name:"",
-//   language:[],
+//   language:"",
 //   product_quanty=0
 //   price:0,
 //   display_price:0,
 //   quantity:1
+//   member_id:
 //   total_price:0,
 //   user_select:false
 // }
@@ -78,7 +65,7 @@ export function CartProvider({ children }) {
       icon: 'success',
       title: '商品已加入購物車',
       showConfirmButton: false,
-      timer: 2000,
+      timer: 1500,
     })
   }
 
@@ -145,6 +132,19 @@ export function CartProvider({ children }) {
     })
   }
 
+  // 轉換商品語言版本為中文
+  const changeLanguage = (language)=>{
+    // 檢查language是否為非字串格式
+    const languageStr = Array.isArray(language) ? language.join(',') : (typeof language === 'string' ? language : '')
+    const languageList = {
+      CH:'中文',
+      EN:'英文',
+      JP:'日文'
+    }
+    const languageNames = languageStr.split(',').map(item => languageList[item] || item).join(', ')
+    return languageNames
+  }
+
   // 計算被勾選的商品總價
   const filterItems = cartItems.filter((item) => item.userSelect === true)
   let totalPrice = 0
@@ -159,10 +159,6 @@ export function CartProvider({ children }) {
     const filterItems = cartItems.filter((item) => item.member_id !== id)
     setCartItems(filterItems)
   }
-
-  // 選取全部賣場商品
-
-
 
   // 選取全部checkbox
   const handleAllCheckboxChange = (cartItems) => {
@@ -247,9 +243,9 @@ export function CartProvider({ children }) {
 
 
   // 加入購物車存進狀態內
-  const addItem = (item) => {
+  const addItem = (item, shownotification = true) => {
     // 成功加入要跳轉頁面
-    let routerPush = true;
+    let routerPush = true
     // 先檢查商品的id是否已存在購物車中
     const findIndex = cartItems.findIndex((p) => p.id === item.id)
     const existingItem = cartItems[findIndex]
@@ -265,8 +261,12 @@ export function CartProvider({ children }) {
             return { ...cartItem, quantity: cartItem.quantity + item.quantity, timeStamp }
           }
           return cartItem
+          if(shownotification){
+            notifySuccess()
+          }
         })
         setCartItems(updateCartItems)
+        notifySuccess()
       } else {
         // 超過庫存量
         notifyCartQunanty(item.product_quanty)
@@ -278,6 +278,9 @@ export function CartProvider({ children }) {
       const newItem = { ...item, quantity: item.quantity || 1, userSelect: item.userSelect || false, timeStamp }
       const newItems = [newItem, ...cartItems]
       setCartItems(newItems)
+      if(shownotification){
+        notifySuccess()
+      }
       // sellers
       setMemberIds([item.member_id, ...memberIds])
     }
@@ -302,6 +305,7 @@ export function CartProvider({ children }) {
         notifyMax,
         totalProducts,
         totalPrice,
+        changeLanguage,
       }}
     >
       {children}

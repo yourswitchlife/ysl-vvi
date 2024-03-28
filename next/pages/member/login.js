@@ -150,7 +150,7 @@ export default function logIn() {
                 />
               </Form.Group>
               <div className={sStyle.error + ' px-4'}>
-                {errorMessage && <h6>{errorMessage}</h6>}
+                {errorMessage && <h6 className={sStyle.error_text}>提示：{errorMessage}</h6>}
               </div>
 
               <div
@@ -171,9 +171,9 @@ export default function logIn() {
               </div>
             </Form>
             <div className="d-flex justify-content-center mb-3">
-              <h6 className="me-5">還沒加入YSL嗎?</h6>
-              <Link href="" className={sStyle.sign_link}>
-                立即快速註冊
+              <h6 className="me-5">忘記密碼了嗎?</h6>
+              <Link href="/member/forget-password" className={sStyle.sign_link+" fw-bold"}>
+                立即快速重設
               </Link>
             </div>
           </div>

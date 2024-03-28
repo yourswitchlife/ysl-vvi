@@ -1,15 +1,33 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import { useRouter } from 'next/router'
 import SellerNavbar from '@/components/layout/navbar/seller-navbar'
 import Sidebar from '@/components/seller/sidebar'
 import SellerCover from '@/components/seller/sellerCover'
 import styles from '@/components/seller/seller.module.scss'
-// import Link from 'next/link'
 import SellerFooter from '@/components/layout/footer/footer-backstage'
-// import Form from 'react-bootstrap/Form'
 import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 import BreadCrumb from '@/components/common/breadcrumb'
+import { useAuth } from '@/hooks/use-Auth'
+//animation
+import { motion } from 'framer-motion'
+import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
+
+//images
+import profilePhoto from '@/public/images/profile-photo/default-profile-img.svg'
+import cover from '@/public/images/shopCover/default-cover.jpg'
 
 export default function New() {
+  //抓會員資料
+  const { isLoggedIn, memberId, memberData } = useAuth()
+  const [bigPic, setBigPic] = useState(profilePhoto)
+  const [shopCover, setShopCover] = useState(cover)
+  const router = useRouter()
+
+  // const MySwal = withReactContent(Swal)
+  // console.log(memberId)
   //body style
   useEffect(() => {
     // 當元件掛載時添加樣式
@@ -20,6 +38,27 @@ export default function New() {
     }
   }, [])
 
+  //抓會員資料：cover and profile photo
+  useEffect(() => {
+    if (isLoggedIn && memberData) {
+      console.log(memberData.shop_cover)
+      const picUrl = memberData.pic
+        ? memberData.pic.startsWith('https://')
+          ? memberData.pic
+          : `http://localhost:3005/profile-pic/${memberData.pic}`
+        : profilePhoto
+      setBigPic(picUrl)
+      const coverUrl = memberData.shop_cover
+        ? memberData.shop_cover.startsWith('https://')
+          ? memberData.shop_cover
+          : `http://localhost:3005/shopCover/${memberData.shop_cover}`
+        : cover
+      setShopCover(coverUrl)
+      // console.log(memberData)
+      // getSellerData()
+    }
+  }, [isLoggedIn, memberId, memberData])
+
   const [newP, setNewP] = useState({
     pName: '',
     pCover: '',
@@ -29,6 +68,7 @@ export default function New() {
     pLanguage: [],
     pPrice: '',
     pDiscribe: '',
+    release_time: '',
   })
 
   const [errorMsg, setErrorMsg] = useState('')
@@ -46,7 +86,22 @@ export default function New() {
 
   const ratingOptions = ['普遍級', '保護級', '輔導級', '限制級']
 
-  const languageOptions = ['中文版', '英文版', '日文版']
+  const languageOptions = ['CH-中文', 'EN-英文', 'JP-日文']
+  // const fileInputRef = useRef();
+  const notifySuccess = () => {
+    MySwal.fire({
+      icon: 'success',
+      title: '商品已加入購物車',
+      showConfirmButton: false,
+      timer: 2000,
+    })
+  }
+  const notifyMax = () => {
+    MySwal.fire({
+      text: '已達購買上限',
+      confirmButtonColor: '#E41E49',
+    })
+  }
 
   const handleChange = (e) => {
     if (e.target.type === 'file') {
@@ -77,6 +132,7 @@ export default function New() {
   }
 
   const handleForm = async (e) => {
+    console.log(e.target)
     e.preventDefault()
     if (
       !newP.pName ||
@@ -88,37 +144,83 @@ export default function New() {
       !newP.pImgs ||
       !newP.pType
     ) {
-      setErrorMsg('請檢查是否輸入完整欄位資訊')
-      return
-    }else{
-      const fd = new FormData(newP)
-      fetch('http://localhost:3005/api/products/addNewProduct',{
-        method: 'POST',
-        body: JSON.stringify(fd)
+      MySwal.fire({
+        icon: 'warning',
+        text: '請檢查是否輸入完整欄位資訊',
+        confirmButtonColor: '#E41E49',
       })
-      .then(res => res.json())
-      .then(data => console.log(data))
+      return
+    } else {
+      const fd = new FormData(e.target)
+      console.log(fd.get('pLanguage'))
+      fetch(
+        `http://localhost:3005/api/products/addNewProduct?memberId=${memberId}`,
+        {
+          credentials: 'include',
+          method: 'POST',
+          body: fd,
+        }
+      )
+        .then((res) => res.json())
+        .then(
+          (data) =>
+            Swal.fire({
+              title: '商品新增成功！',
+              icon: 'success',
+              showConfirmButton: false,
+              showCancelButton: false,
+              timer: 1500,
+            }),
+
+          setTimeout(() => {
+            clearForm()
+          }, 1000)
+        )
+        .catch((error) => {
+          console.error('error', error)
+        })
     }
   }
   console.log(newP)
 
+  const clearForm = () => {
+    setNewP({
+      pName: '',
+      pCover: '',
+      pImgs: [],
+      pType: 0,
+      pRating: '',
+      pLanguage: [],
+      pPrice: '',
+      pDiscribe: '',
+      release_time: '',
+    })
+    document.getElementById('pCover').value = ''
+    document.getElementById('pImgs').value = ''
+  }
+  // console.log(fd)
+
   return (
     <>
       <SellerNavbar />
-      <div className="d-none d-md-block">
-        <Sidebar />
-      </div>
-      <main style={{ marginTop: 58 }}>
-        <div>
-          {/* cover */}
-          <div className="d-none d-md-block">
-            <SellerCover />
-          </div>
-          <div className={`${styles.dashboardMargin}`}>
+      <div className={styles.mainContainer}>
+        {memberData && (
+          <>
+          <Sidebar 
+          profilePhoto={bigPic} 
+          memberShopSite={memberData.shop_site || memberData.account} 
+          memberShopName={memberData.shop_name || memberData.account}/>
+          </>
+        )}
+        <main className="flex-grow-1">
+          <motion.div className={`${styles.dashboardMargin}`}
+            initial={{opacity: 0.5}}
+              animate={{opacity: 1}}
+              exit={{ opacity: 0}}
+              transition={{ duration: 0.5}}>
             <div className="d-lg-block d-none">
-            <BreadCrumb />
+              <BreadCrumb />
             </div>
-
             <div className={`mb-4 mt-lg-0 ${styles.dashboardStyle}`}>
               <div className="d-flex justify-content-start align-items-center mb-3">
                 <h5 className="text-dark fw-bold">商品基本資訊</h5>
@@ -127,9 +229,9 @@ export default function New() {
 
               <form
                 className=""
-                method="post"
-                action={'/addNewProduct'}
-                encType="multipart/form-data"
+                // method="post"
+                // action={'/addNewProduct'}
+                // encType="multipart/form-data"
                 onSubmit={handleForm}
               >
                 <div className="row">
@@ -162,6 +264,7 @@ export default function New() {
                       className="form-control"
                       id="pCover"
                       name="pCover"
+                      accept="image/*"
                       // value={newP.pCover}
                       onChange={handleChange}
                     />
@@ -188,8 +291,12 @@ export default function New() {
                       onChange={(e) => {
                         const files = e.target.files
                         if (files.length > 3) {
-                          alert('最多只能上傳3張')
-                          setNewP({...newP,pImgs:[]})
+                          MySwal.fire({
+                            icon: 'warning',
+                            text: '最多只能上傳3張',
+                            confirmButtonColor: '#E41E49',
+                          })
+                          setNewP({ ...newP, pImgs: [] })
                           e.target.value = ''
                           return
                         }
@@ -245,23 +352,45 @@ export default function New() {
                       })}
                     </select>
                   </div>
-                  {/* 商品語言 */}
-                  <div className="mb-3 col-lg-6 col-12 d-flex ">
+                  {/* 商品發售時間 */}
+                  <div className="mb-3 col-12 d-flex justify-content-center align-items-center">
                     <label
-                      htmlFor="pLanguage"
+                      htmlFor="release_time"
                       className="h6 me-2 flex-shrink-0"
                     >
                       <h5 className="text-dark">
-                        語言<span className="text-danger">*</span>
+                        發售時間<span className="text-danger">*</span>
                       </h5>
                     </label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="release_time"
+                      name="release_time"
+                      value={newP.release_time}
+                      // placeholder="請輸入商品名稱"
+                      onChange={handleChange}
+                    />
+                  </div>
+                  {/* 商品語言 */}
+                  <div className="mb-3 col-lg-6 col-12 d-flex ">
+                    <label
+                      htmlFor="pImgs"
+                      className="h6 me-2 flex-shrink-0 d-flex align-items-end"
+                    >
+                      <h5 className="text-dark mb-0">語言</h5>
+                      <p className="text-secondary mb-1">
+                        (可複選)<span className="text-danger h5">*</span>
+                      </p>
+                    </label>
+
                     {languageOptions.map((v, i) => {
                       return (
-                        <label className="me-3 text-dark" key={i}>
+                        <label className="me-3 mt-2 text-dark" key={i}>
                           <input
                             key={i}
                             type="checkbox"
-                            className="form-check-input me-1"
+                            className="form-check-input pt-1 mb-0"
                             checked={newP.pLanguage.includes(v)}
                             value={v}
                             name="pLanguage"
@@ -316,31 +445,38 @@ export default function New() {
                   <button type="submit" className="btn btn-danger me-2">
                     儲存並上架
                   </button>
-                  <button
+                  {/* <button
                     type="button"
                     className={`btn ${styles.btnDangerOutlined} me-2`}
                   >
                     儲存暫不上架
-                  </button>
+                  </button> */}
+                  {/* 清空表單 */}
                   <button
                     type="button"
                     className={`btn ${styles.btnGrayOutlined}`}
+                    onClick={() => {
+                      clearForm()
+                      router.push('./')
+                    }}
                   >
                     取消
                   </button>
                 </div>
               </form>
             </div>
-          </div>
-        </div>
-        <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
-        <div className="d-block d-md-none">
-          <PhoneTabNav />
-        </div>
-        <div className="d-none d-md-block">
-          <SellerFooter />
-        </div>
-      </main>
+          </motion.div>
+          <div className={`d-block d-md-none ${styles.spaceForPhoneTab}`}></div>
+        </main>
+      </div>
+      <PhoneTabNav />
+      <div className="d-none d-md-block">
+        <SellerFooter />
+      </div>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  return await mainCheckToLogin(context)
 }

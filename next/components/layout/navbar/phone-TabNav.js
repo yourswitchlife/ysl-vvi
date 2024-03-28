@@ -1,59 +1,64 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import styles from '@/components/layout/navbar/navbar.module.scss'
-import { FaHome, FaHeart, FaBell, FaUserAlt } from 'react-icons/fa'
-import { FaShop, FaCartShopping } from 'react-icons/fa6'
+import { FaHome, FaHeart, FaBell, FaUserAlt, FaStore, FaShoppingCart } from 'react-icons/fa'
 import Link from 'next/link'
-
+//登出邏輯
+import handleLogout from '@/services/logout';
+//context hooks
+// import { useAuth } from '@/hooks/use-Auth';
 // 引入use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
+//websocket
+import { useWebSocket } from '@/context/member/websocketLong'
 
 export default function PhoneTabNav() {
-  const {totalProducts} = useCart()
+  const { totalProducts } = useCart()
+  const { unreadCount } = useWebSocket();
+
   return (
     <>
       <div className={`row g-0 text-center d-lg-none ${styles.phoneNav}`}>
-        <div className="pt-1 d-flex">
+        <div className="d-flex align-items-center">
           <div className="col">
-            <Link href="" className={styles.phoneNavContent}>
-              <FaHome />
-              <br />
-              首頁
+            <Link href="/" className={styles.phoneNavContent}>
+              <h5 className='mb-1'><FaHome /></h5>
+              <p>首頁</p>
             </Link>
           </div>
           <div className="col">
-            <Link href="" className={styles.phoneNavContent}>
-              <FaHeart />
-              <br />
-              追蹤清單
+            <Link href="/member/fav-product" className={styles.phoneNavContent}>
+            <h5 className='mb-1'><FaHeart /></h5>
+              <p>追蹤清單</p>
             </Link>
           </div>
           <div className="col">
-            <Link href="" className={styles.phoneNavContent}>
-              <FaBell />
-              <br />
-              通知
+            <Link href="/member/notify-coupon" className={styles.phoneNavContent}>
+              <h5 className='mb-1'><FaBell className={styles.icon} />
+              {unreadCount > 0 && (
+                <span className={styles.notifyBadge}>{unreadCount}</span>
+              )}</h5>
+              <p>通知中心</p>
             </Link>
           </div>
           <div className="col">
-            <Link href="" className={styles.phoneNavContent}>
-              <FaUserAlt />
-              <br />
-              會員中心
+            <Link href="/member/points" className={styles.phoneNavContent}>
+            <h5 className='mb-1'><FaUserAlt /></h5>
+              <p>會員中心</p>
             </Link>
           </div>
           <div className="col">
-            <Link href="" className={styles.phoneNavContent}>
-              <FaShop />
-              <br />
-              店舖管理
+            <Link href="/seller" className={styles.phoneNavContent}>
+            <h5 className='mb-1'><FaStore /></h5>
+              <p>賣場中心</p>
             </Link>
           </div>
           <div className="col">
             <Link href="/cart" className={`${styles.phoneNavContent} position-relative`}>
-              <FaCartShopping />
-              <span className={styles.cartBadge}>{totalProducts}</span>
-              <br />
-              購物車
+            <h5 className='mb-1'><FaShoppingCart /></h5>
+              {totalProducts > 0 && (
+                <span className={styles.cartBadge}>{totalProducts}</span>
+              )}
+              <p>購物車</p>
             </Link>
           </div>
         </div>

@@ -12,6 +12,51 @@
 // $bright-gray:#E3E3E3;
 $nav-black: #161719ae;
 
+//logo animation
+@keyframes moveCircle {
+  0% { transform: 
+    translate(0,0) scale(1);
+  }
+  25% { transform: translate(15px, -20px) scale(2); }
+  50% { transform: translate(8px, 20px) scale(1.5); }
+  75% { transform: translate(-90px, 0px) scale(1); }
+  100% { transform: translate(0,0) scale(1); }
+}
+
+@keyframes moveWordsUp {
+  0% { transform: 
+    translate(0,0) scale(1);
+  }
+  25% { transform: translate(0, 3px); }
+  40% { transform: translate(0, 0px); }
+  55% { transform: translate(0px, -3px); }
+  70% { transform: translate(0, 0px); }
+  85% { transform: translate(0, 3px); }
+  100% { transform: translate(0,0); }
+}
+
+@keyframes yslLogo {
+  0% { transform: 
+    translate(0,0) scale(1);
+  }
+  40% { transform: translate(0, 0px) scale(1.5); }
+  70% { transform: translate(0, 0px) scale(1.5); }
+  85% { transform: translate(0, -3px) scale(1.5); }
+  100% { transform: translate(0,0) scale(1); }
+}
+
+.logoCircleAnimation {
+  animation: moveCircle 5s ease-in-out;
+}
+
+.logoUpAnimation{
+  animation: moveWordsUp 5s ease-in-out;
+}
+
+.logoYSLAnimation{
+  animation: yslLogo 5s ease-in-out;
+}
+
 //style
 .outline {
   border: 1px solid $white;
@@ -31,8 +76,9 @@ $nav-black: #161719ae;
 }
 /* Navbar */
 .navbar {
+  height: 70px;
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
   position: fixed;
   top: 0;
   z-index: 10;
@@ -40,16 +86,25 @@ $nav-black: #161719ae;
   align-items: center;
   background-color: $nav-black;
   color: $white;
-  font-size: 18px;
-  padding: 15px 50px;
+  // padding: 10px 0px;
   .linkPr {
     color: $white;
     text-decoration: none;
     padding-right: 30px;
+    transition: 0.7s;
+    &:hover{
+      text-decoration: underline;
+      text-underline-offset: 7px;
+    }
   }
+ 
   .link {
     color: $white;
     text-decoration: none;
+    &:hover{
+      text-decoration: underline;
+      text-underline-offset: 7px;
+    }
   }
   .unlogin {
     padding-inline: 10px;
@@ -106,7 +161,7 @@ $nav-black: #161719ae;
   align-items: center;
   background-color: $primary-black;
   color: $white;
-  padding: 10px 150px;
+  padding: 10px 50px;
   .link {
     display: flex;
     align-items: center;
@@ -216,11 +271,11 @@ $nav-black: #161719ae;
   }
 }
 .member_drop{
+  color: $white;
   border: none;
   background-color: #16171900;
   display: flex;
   align-items: center;
-  width: 100px;
   height: 50px;
   &:hover{
     background-color: #16171900;
@@ -299,32 +354,32 @@ $nav-black: #161719ae;
   cursor: pointer;
 }
 
-.searchB {
-  width: 100%;
-  background-color: transparent;
-  box-shadow: none;
-  color: $white;
-  padding: 3px 5px 5px 35px;
-  border: none;
-  &:focus {
-    outline: none;
-  }
-}
-.searchB::placeholder {
-  color: $white;
-  font-size: 14px;
-}
+// .searchB {
+//   width: 100%;
+//   background-color: transparent;
+//   box-shadow: none;
+//   color: $white;
+//   padding: 3px 5px 5px 35px;
+//   border: none;
+//   &:focus {
+//     outline: none;
+//   }
+// }
+// .searchB::placeholder {
+//   color: $white;
+//   font-size: 14px;
+// }
 
 // ------------  phoneNav
 .phoneNav {
   z-index: 5;
-  height: 90px;
+  height: 80px;
   width: 100%;
   bottom: 0;
   position: fixed;
   background-color: #161719;
   // border-top: 1px solid rgb(151, 151, 151);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
 }
 .phoneNavContent {
   color: white;
@@ -347,5 +402,38 @@ $nav-black: #161719ae;
   justify-content: center;
   align-items: center;
   top: 0;
-  right: 5px;
+  right: 17px;
+}
+
+.notifyBadge{
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background:$danger;
+  color: $white;
+  font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 14px;
+  right: 235px;
+}
+// .loginM{
+//   padding: 10px 0px;
+// }
+
+@media (max-width: 576px) {
+  .display {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 220px;
+    border: 1px solid $white;
+    // padding: 5px;
+    border-radius: 10px;
+  }
+  .phoneNone{
+    display: none !important;
+  }
 }

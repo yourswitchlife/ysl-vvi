@@ -4,11 +4,11 @@ import SideBar from '@/components/member/sidebar-member'
 import Navbar from '@/components/layout/navbar/navbar'
 import Footer from '@/components/layout/footer/footer-backstage'
 import mStyle from '@/styles/member/g-valuable.module.scss'
-import sStyle from '@/styles/member/sign-in.module.scss'
+// import sStyle from '@/styles/member/sign-in.module.scss'
 import pStyle from '@/styles/member/points.module.scss'
 import ProgressBar from 'react-bootstrap/ProgressBar'
 
-import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
+// import mainCheckToLogin from '@/hooks/use-mainCheckToLogin'
 
 
 import brutal from '@/public/images/member/brutal.png'
@@ -16,6 +16,7 @@ import cracked from '@/public/images/member/cracked.png'
 import elf from '@/public/images/member/elf.png'
 import warlord from '@/public/images/member/warlord.png'
 import Link from 'next/link'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav';
 
 import { useAuth } from '@/hooks/use-Auth';
 
@@ -68,7 +69,7 @@ export default function points() {
               <h4 className={pStyle.red_text}>{memberData?.level_point}</h4>
               <h6 className="px-3">/</h6>
               <h6 className="flex-grow-1">{levelPoint}</h6>
-              <h6 className={`${pStyle.red_text} px-5`}>
+              <h6 className={`${pStyle.red_text} px-4 m-auto`}>
                 {memberData?.level_point >= 20000 ?
                   "恭喜您解鎖最高等級！" :
                   `再消費 $${levelPoint - (memberData?.level_point)} 可解鎖下一等級`}
@@ -128,12 +129,12 @@ export default function points() {
                       <h6 className={pStyle.level_text}>目前等級</h6>
                     </div>
                   </div>
-                  <h6 className={pStyle.blue_text}>
+                  <h6 className={pStyle.blue_text+" pe-3"}>
                     積分 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0
                   </h6>
                 </div>
                 <h6 className={pStyle.white_text}>
-                  歡迎您，勇者！初來乍到，盡情探索ysl世界吧！探險之旅，每一步都是成長的開始。
+                  歡迎您，勇者！初來乍到，盡情探索ysl世界吧！探險之旅，每一步都是成長！
                 </h6>
               </div>
 
@@ -145,12 +146,12 @@ export default function points() {
                       <h6 className={pStyle.level_text}>目前等級</h6>
                     </div>
                   </div>
-                  <h6 className={pStyle.second_text}>
+                  <h6 className={pStyle.second_text+" pe-3"}>
                     積分 &nbsp;&nbsp;&nbsp; 6000
                   </h6>
                 </div>
                 <h6 className={pStyle.white_text}>
-                  恭喜您晉升為高手！您已經展翅高飛，挑戰更高的領域，無限可能的成就等著您發現！
+                  恭喜您晉升為高手！挑戰更高的領域，無限可能的成就等著您發現，我們將為高手的您準備$50折抵金的優惠禮物！
                 </h6>
               </div>
 
@@ -162,10 +163,10 @@ export default function points() {
                       <h6 className={pStyle.level_text}>目前等級</h6>
                     </div>
                   </div>
-                  <h6 className={pStyle.white_text}>積分 &nbsp; 13000</h6>
+                  <h6 className={pStyle.white_text+" pe-3"}>積分 &nbsp; 13000</h6>
                 </div>
                 <h6 className={pStyle.white_text}>
-                  看來您已經成為菁英之一！在這個圈子裡，與您一同追求卓越的夥伴期待與您互動、挑戰極致。
+                  您成為菁英之一！圈子裡，夥伴們期待與您一起繼續挑戰極致，我們將為菁英們準備兩張$100折抵金的優惠禮物！
                 </h6>
               </div>
 
@@ -177,15 +178,18 @@ export default function points() {
                       <h6 className={pStyle.level_text}>目前等級</h6>
                     </div>
                   </div>
-                  <h6 className={pStyle.master_text}>積分 &nbsp; 20000</h6>
+                  <h6 className={pStyle.master_text+" pe-3"}>積分 &nbsp; 20000</h6>
                 </div>
                 <h6 className={pStyle.white_text}>
-                  我們迎來了一位大師！您的智慧如光芒閃耀，大師降臨，智慧共享之旅展開。引領巔峰。
+                  我們迎來了一位大師！您的智慧如光芒閃耀，大師引領巔峰，我們將為大師準備兩張$200折抵金的優惠禮物！
                 </h6>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div className={mStyle.PhoneTabNav}>
+      <PhoneTabNav />
       </div>
       <div className="d-none d-sm-block">
         <Footer />
@@ -194,6 +198,6 @@ export default function points() {
   )
 }
 
-export async function getServerSideProps(context) {
+/* export async function getServerSideProps(context) {
   return await mainCheckToLogin(context);
-}
+} */

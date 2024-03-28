@@ -33,9 +33,12 @@
     padding-block: 10px;
 }
 
+// sidebar height
+
 .bar {
+    margin-top: 10px;
     max-width: 268px;
-    min-height: calc(100vh - 125px);
+    min-height: calc(100vh - 135px);
     padding: 50px 0px;
     flex-direction: column;
     align-items: center;
@@ -54,12 +57,14 @@
         transition: .2s;
 
         :hover {
+            text-decoration: none !important;
             color: $red-secondary;
             border-bottom: 2px solid $red-secondary;
             background: $white;
         }
     }
-    .shop_link{
+
+    .shop_link {
         color: $red-secondary;
         text-decoration: none;
         transition: .2s;
@@ -73,18 +78,39 @@
     }
 }
 
+.activeLink {
+    width: 268px;
+    height: 47px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $white;
+    text-align: center;
+    text-decoration: none;
+    border-bottom: 2px solid $red-secondary;
+    transition: .2s;
+    cursor: default;
+}
+
+.activeText {
+    color: $red-secondary;
+}
+
 .blue_text {
     align-items: center;
     color: $blue-secondary;
 }
+
 .brown_text {
     align-items: center;
     color: rgb(218, 160, 84);
 }
+
 .silver_text {
     align-items: center;
     color: $bright-gray;
 }
+
 .gold_text {
     align-items: center;
     color: goldenrod;
@@ -95,7 +121,9 @@
 
 @media (max-width: 430px) {
     .bar {
+        margin-top: -5px;
         max-width: 100%;
+
         .member_link {
             letter-spacing: 5px;
             height: 47px;
@@ -107,7 +135,7 @@
             text-decoration: none;
             transition: .2s;
             margin: auto;
-    
+
             :hover {
                 color: $red-secondary;
                 border-bottom: 2px solid $red-secondary;
@@ -115,6 +143,7 @@
             }
         }
     }
+
     .line {
         width: 80%;
     }

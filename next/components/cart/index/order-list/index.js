@@ -2,12 +2,16 @@ import styles from './order-list.module.scss'
 import Order from './order'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+
+//使用SweetAlert2 API
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
+
 
 // 引入use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
-
-// 引用優惠券選擇區
-import UseCoupon from './order/use-coupon'
 
 // 引用星星優惠券
 import CouponStar from '@/public/images/cart/couponStar.svg'
@@ -17,6 +21,24 @@ import coupon from '@/public/images/cart/coupon.svg'
 export default function OrderList() {
   const { cartItems, handleAllCheckboxChange, totalProducts, totalPrice } =
     useCart()
+  const payingItems = cartItems.filter(item => item.userSelect !== false)
+  const selectedItems = payingItems.length
+  const router = useRouter()
+
+  // 去買單
+  const handleSubmit = (e)=>{
+    e.preventDefault()
+    if(cartItems.length > 0 && payingItems.length > 0){
+      router.push('/cart/checkout')
+    }else{
+      MySwal.fire({
+        icon: 'warning',
+        text: '請先選擇商品結帳',
+        confirmButtonColor: '#E41E49',
+      })
+      return
+    }
+  }
   return (
     <>
       <section className="container">
@@ -33,7 +55,7 @@ export default function OrderList() {
                   value={cartItems}
                   checked={
                     cartItems.every((item) => item.userSelect === true)
-                      
+
                   }
                   onChange={() => {
                     handleAllCheckboxChange(cartItems)
@@ -57,7 +79,13 @@ export default function OrderList() {
                   <div className={styles.framHeader}>
                     <h5 className={styles.title}>訂單總覽</h5>
                     <div className={styles.totalQuantity}>
-                      共 {totalProducts} 件商品
+                      {selectedItems ? (
+                        <>
+                          共 {selectedItems} 件商品
+                        </>
+                    ) : (
+                      <></>
+                    )}
                     </div>
                   </div>
                   <div className={styles.frameBody}>
@@ -87,16 +115,15 @@ export default function OrderList() {
                         $60
                       </div>
                     </div> */}
-                    {/* <UseCoupon /> */}
                     <div className={styles.summeryTotal}>
                       <div className={styles.totalText}>訂單總金額</div>
                       <div className={styles.totalPrice}>${totalPrice}</div>
                     </div>
-                    <Link href="/cart/checkout" className={styles.payBtnBar}>
-                      <button className={`btn btn-danger ${styles.btnPay}`}>
+                    <div className={styles.payBtnBar}>
+                      <button className={`btn btn-danger ${styles.btnPay}`} onClick={handleSubmit}>
                         去買單
                       </button>
-                    </Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -106,7 +133,7 @@ export default function OrderList() {
       </section>
       {/* 手機版訂單總覽 */}
       <div className={styles.stickyMobileBar}>
-        <div className={styles.orderOverviewMobileBar}>
+        {/* <div className={styles.orderOverviewMobileBar}>
           <div className={styles.useDiscountBar}>
             <div className={styles.discountLeft}>
               <Image src={CouponStar} />
@@ -123,7 +150,7 @@ export default function OrderList() {
             </div>
             <div className={styles.infoRight}>顯示完整折扣細節</div>
           </div>
-        </div>
+        </div> */}
         <div className={styles.checkoutBar}>
           <div className={styles.checkout}>
             <div className={styles.textContent}>
@@ -133,13 +160,13 @@ export default function OrderList() {
                   <b>${totalPrice}</b>
                 </span>
               </div>
-              <div className={styles.totalQuantity}>共 {totalProducts} 件商品</div>
+              <div className={styles.totalQuantity}>共 {selectedItems} 件商品</div>
             </div>
-            <Link href="/cart/checkout"
-              className={`btn btn-danger rounded-0 ${styles.checkoutBtn}`}
+            <div
+              className={`btn btn-danger rounded-0 ${styles.checkoutBtn}`} onClick={handleSubmit}
             >
               去買單
-            </Link>
+            </div>
           </div>
         </div>
       </div>

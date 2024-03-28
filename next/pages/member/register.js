@@ -7,7 +7,11 @@ import Navbar from '@/components/layout/navbar/navbar'
 import sStyle from '@/styles/member/sign-up.module.scss'
 import Link from 'next/link'
 
+//google api
+import { signInWithRedirect } from "firebase/auth";
+import { auth, googleAuthProvider } from '@/utils/firebaseConfig';
 import { FcGoogle } from 'react-icons/fc'
+
 import { FaUser, FaEnvelope } from 'react-icons/fa'
 import { MdKey } from 'react-icons/md'
 import { Form, InputGroup, Button, FormControl } from 'react-bootstrap'
@@ -71,7 +75,7 @@ export default function register() {
             showConfirmButton: false,
             timer: 1300
           });
-          router.push('/member/login');
+          router.replace('/member/login'); 
           
         } else {
           // 處理錯誤情況
@@ -87,6 +91,10 @@ export default function register() {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+  
+  const handleGoogleLogin = () => {
+    signInWithRedirect(auth, googleAuthProvider);
   };
 
   return (
@@ -171,7 +179,7 @@ export default function register() {
                 <Form.Check className="mx-4" type="checkbox" label="顯示密碼" onChange={togglePasswordVisibility}  />
               </Form.Group>
               <div className={sStyle.error + ' px-4'}>
-                {errorMessage && <h6>{errorMessage}</h6>}
+                {errorMessage && <h6 className={sStyle.error_text}>提示：{errorMessage}</h6>}
               </div>
               <div
                 className={
@@ -180,11 +188,11 @@ export default function register() {
                 }
               >
                 <Button className={sStyle.sign_btn + ' h5 me-4'} type="submit">
-                  開始探索
+                  完成註冊
                 </Button>
                 <Button
                   className={sStyle.sign_btn + ' h5 d-flex align-items-center'}
-                >
+                  onClick={handleGoogleLogin}>
                   <FcGoogle className="me-2" />
                   以Google帳號登入
                 </Button>
@@ -193,7 +201,7 @@ export default function register() {
 
             <div className="d-flex justify-content-center mb-3">
               <h6 className="me-5">已經加入YSL了嗎?</h6>
-              <Link href="" className={sStyle.sign_link}>
+              <Link href="/member/login" className={sStyle.sign_link+" fw-bold text-info"}>
                 立即快速登入
               </Link>
             </div>

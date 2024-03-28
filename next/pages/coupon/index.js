@@ -3,13 +3,18 @@ import Navbar from '@/components/layout/navbar/navbar'
 import Footer from '@/components/layout/footer/footer-front'
 import Image from 'next/image'
 import styles from '@/styles/coupon/coupon.module.scss'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import Swal from 'sweetalert2'
+import PhoneTabNav from '@/components/layout/navbar/phone-TabNav'
 
 //components
 import GoTopButton from '@/components/go-to-top/go-top-button'
 import CouponUni from '@/components/coupon/coupon-uni'
 
+
 //pictures
-import banner from '@/public/images/coupon/tryout.png'
+import banner from '@/public/images/coupon/bgg.png'
 
 import titleA from '@/public/images/coupon/title1.png'
 import titleB from '@/public/images/coupon/title2.png'
@@ -21,11 +26,40 @@ import titleCm from '@/public/images/coupon/titleCm.png'
 
 import player from '@/public/images/coupon/sectionTwo.png'
 
+//hooks
+import { useAuth } from '@/hooks/use-Auth'
 
 export default function CouponPage() {
+  const router = useRouter()
+  const { isLoggedIn, memberId } = useAuth()
+  const GoRegister =()=>{
+    if (!isLoggedIn || !memberId) {
+      router.push('/member/register')
+    }else{
+      Swal.fire({
+        icon: "info",
+        title: "已經是會員囉",
+        // imageUrl: '/images/mission/redMario.png', 
+        // imageWidth: 80, 
+        // imageHeight: 80, 
+        // imageAlt: 'Red Mario', 
+      })
+    }
+  }
+
+  const GoMission =()=>{
+    if (!isLoggedIn || !memberId) {
+      router.push('/member/login')
+    }else{
+      router.push('/member/mission-ing')
+    }
+  }
+
+
   return (
     <>
       <Navbar />
+      <PhoneTabNav />
       <section className={`${styles.wrapper}  container-field`}>
         <div className={`${styles.banner} position-relative`}>
           <Image src={banner} alt="ysl coupon" className={styles.main_img} />
@@ -36,11 +70,11 @@ export default function CouponPage() {
               </div>
 
               <div>
-                <Image src={titleB} alt="費" className={styles.img} />
+                <Image src={titleB} alt="費" className={styles.img}  />
               </div>
 
               <div>
-                <Image src={titleC} alt="領" className={styles.img} />
+                <Image src={titleC} alt="領" className={styles.img}  />
               </div>
             </div>
             <div className={styles.title_frame_mobile}>
@@ -61,7 +95,8 @@ export default function CouponPage() {
           {/* 加入會員按鈕區塊 */}
           <div className={styles.addMember_btn}>
             <div className={styles.btn_frame}>
-              <button className={`btn btn-light ${styles.title_CTA}`}>
+              <button className={`btn btn-light ${styles.title_CTA}`}
+              onClick={GoRegister}>
                 加入會員
               </button>
             </div>
@@ -77,7 +112,10 @@ export default function CouponPage() {
             layout="responsive"
             alt="加入會員"
           />
-          <button className={`btn btn-info ${styles.btn}`}>趕緊加入會員</button>
+          <button className={`btn btn-info ${styles.btn}`}
+          onClick={()=>GoRegister()}>
+          趕緊加入會員
+          </button>
         </div>
 
         <div>
@@ -87,7 +125,7 @@ export default function CouponPage() {
       </section>
 
       <section className="text-white mt-3">
-        <div className={`${styles.missionBG} `}>
+        <div className={`${styles.missionBG}`}>
           <div className="d-flex flex-column justify-content-center align-items-center pt-3">
             <h4 className={`${styles.missionHeader} ms-5 pt-5`}>
               加入會員，解會員任務，送優惠券
@@ -98,7 +136,8 @@ export default function CouponPage() {
             </h6>
 
             <div className="pt-4 mt-3 ms-5">
-              <button className={`${styles.missionBTN} btn btn-lg btn-danger`}>
+              <button className={`${styles.missionBTN} btn btn-lg btn-danger`}
+              onClick={GoMission}>
                 立即解任務
               </button>
             </div>

@@ -10,12 +10,10 @@ import { useCart } from '@/hooks/use-cart'
 
 // 收藏愛心空心圖
 import heartIcon from '@/assets/heart.svg'
-// 收藏愛心實心圖
-import heartFill from '@/assets/heart-fill.svg'
 
 export default function ProductCard({ isEditing, item }) {
   // console.log(item)
-  const { cartItems, increment, decrement, handleCheckboxChange, notifyAlert } =
+  const { cartItems, increment, decrement, handleCheckboxChange, notifyAlert, changeLanguage } =
     useCart()
 
   return (
@@ -40,9 +38,9 @@ export default function ProductCard({ isEditing, item }) {
           />
         </div>
         {/* 手機板商品圖 */}
-        <Link href="" className={styles.pImgMobile}>
+        <Link href={`/products/${item.id}`} className={styles.pImgMobile}>
           <Image
-            src={`/images/product/cover/${item.img_cover}`}
+            src={`http://localhost:3005/productImg/cover/${item.img_cover}`}
             width={65}
             height={105}
             alt={item.name}
@@ -52,22 +50,22 @@ export default function ProductCard({ isEditing, item }) {
           {/* 商品名稱、加入收藏 */}
           <div className={styles.pInfoBar}>
             <div className="d-flex">
-              <Link href="" className={styles.pImg}>
+              <Link href={`/products/${item.id}`} className={styles.pImg}>
                 <Image
-                  src={`/images/product/cover/${item.img_cover}`}
+                  src={`http://localhost:3005/productImg/cover/${item.img_cover}`}
                   width={85}
                   height={140}
-                  alt=""
+                  alt={item.name}
                 />
               </Link>
               <div className={styles.pInfo}>
                 <div className={styles.pInfoTop}>
-                  <Link href="" className={styles.pName}>
+                  <Link href={`/products/${item.id}`} className={styles.pName}>
                     {item.name}
                   </Link>
                   <div className="d-flex justify-content-between align-items-center">
-                    <h6 className={styles.language}>{item.language}版</h6>
-                    {item.display_price ? (
+                    <h6 className={styles.language}>{changeLanguage(item.language)}版</h6>
+                    {item.display_price > item.price ? (
                       <>
                         <h6 className={styles.discount}>
                           {Math.round((item.price / item.display_price) * 10)}折
@@ -78,17 +76,17 @@ export default function ProductCard({ isEditing, item }) {
                     )}
                   </div>
                 </div>
-                <div className={styles.pInfoBottom}>
+                {/* <div className={styles.pInfoBottom}>
                   <Image src={heartIcon} className={styles.icon} />
                   <h6 className={styles.text}>加入收藏清單</h6>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
           {/* 商品金額 */}
           <div className={styles.priceBar}>
             <div className="d-flex flex-wrap">
-              {item.display_price ? (
+              {item.display_price > item.price ? (
                 <>
                   <span className={styles.prePrice}>${item.display_price}</span>
                   <span className={styles.discountPrice}>${item.price}</span>
@@ -104,9 +102,9 @@ export default function ProductCard({ isEditing, item }) {
             <>
               {/* 當手機版點擊編輯出現 */}
               <div className={styles.editBtn}>
-                <button type="button" className="btn btn-sm btn-danger">
+                {/* <button type="button" className="btn btn-sm btn-danger">
                   <FaHeart />
-                </button>
+                </button> */}
                 <button
                   type="button"
                   className="btn btn-sm btn-dark"

@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link'
 import Style from '@/styles/member/sidebar.module.scss'
@@ -22,7 +24,7 @@ export default function SideBar() {
 
   const handleClick = (e) => {
     if (!memberData.address) {
-      e.preventDefault(); 
+      e.preventDefault();
 
       Swal.fire({
         title: '您尚未更新個人資料！',
@@ -37,11 +39,31 @@ export default function SideBar() {
       });
     }
     if (memberData.address) {
-    router.push('/seller/shop');
+      router.push('/seller');
     }
   };
 
-
+  const renderLink = (href, className, icon, text) => {
+    const isCurrentPage = router.pathname === href;
+    if (isCurrentPage) {
+      // 當前頁面
+      return (
+        <span className={`${className} ${Style.activeLink} text-danger`} style={{ cursor: 'default' }}>
+          {React.cloneElement(icon, { className: "me-3 text-danger" })}{text}
+        </span>
+      );
+    } else {
+      // 不是當前頁面
+      return (
+        <div className={Style.member_link}>
+          <Link href={href} className={Style.member_link}>
+            {React.cloneElement(icon, { className: `me-3` })}
+            {text}
+          </Link>
+        </div>
+      );
+    }
+  };
 
   return (
     <>
@@ -51,17 +73,25 @@ export default function SideBar() {
         </div>
 
         <div className={Style.line}></div>
-        <div className={Style.member_link}><Link href='/member/account' className={Style.member_link}><FaUser className="me-3" />我的帳戶</Link></div>
-        <div className={Style.member_link}><Link href='/member/notify-order' className={Style.member_link}><FaBell className="me-3" />通知中心</Link></div>
-        <div className={Style.member_link}><Link href='/member/points' className={Style.member_link}><SiLevelsdotfyi className="me-3" />會員積分</Link></div>
-        <div className={Style.member_link}><Link href='' className={Style.member_link}><FaGamepad className="me-3" />我的任務</Link></div>
-        <div className={Style.member_link}><Link href='/member/order' className={Style.member_link}><FaListAlt className="me-3" />我的訂單</Link></div>
-        <div className={Style.member_link}><Link href='/member/fav-product' className={Style.member_link}><FaHeart className="me-3" />我的收藏</Link></div>
-        <div className={Style.member_link}><Link href='/member/coupon-product' className={Style.member_link}><RiCoupon3Fill className="me-3" />我的優惠</Link></div>
+
+        {renderLink('/member/account', `${Style.member_link}`, <FaUser />, '我的帳戶')}
+
+        {renderLink('/member/notify-coupon', `${Style.member_link}`, <FaBell />, '通知中心')}
+
+        {renderLink('/member/points', `${Style.member_link}`, <SiLevelsdotfyi />, '會員積分')}
+
+        {renderLink('/member/mission-ing', `${Style.member_link}`, <FaGamepad />, '我的任務')}
+
+        {renderLink('/member/order', `${Style.member_link}`, <FaListAlt />, '我的訂單')}
+
+        {renderLink('/member/fav-product', `${Style.member_link}`, <FaHeart />, '我的收藏')}
+
+        {renderLink('/member/coupon-product', `${Style.member_link}`, <RiCoupon3Fill />, '我的優惠')}
+
         <div className='mt-3'></div>
 
         <div className={Style.line}></div>
-        <div className={Style.member_link}> 
+        <div className={Style.member_link}>
           <button className={Style.shop_link} onClick={handleClick}>
             <FaHome className="me-3" />賣家中心
           </button>

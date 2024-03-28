@@ -24,14 +24,15 @@ export default function PHistory({ historyRecords }) {
       </div>
       <div
       id="scrollableContent"
-        style={{ height: '332px', overflow: 'scroll' }}
+        style={{ height: '332px', overflow: 'hidden' }}
       >
           {historyRecords.map((v, i) => {
             return (
               <Link key={i} href={`/products/${v.id}`}>
                 <div className={`my-2 ${styles.h100px}`}>
                   <Image
-                    src={`/images/product/cover/${v.img_cover}`}
+                    // src={`/images/product/cover/${v.img_cover}`}
+                    src={`http://localhost:3005/productImg/cover/${v.img_cover}`}
                     alt="product"
                     width={450}
                     height={250}

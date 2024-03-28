@@ -6,6 +6,8 @@ import express from 'express'
 import logger from 'morgan'
 import path from 'path'
 import session from 'express-session'
+import db from './configs/db.mjs';
+
 
 // 使用檔案的session store，存在sessions資料夾
 import sessionFileStore from 'session-file-store'
@@ -27,8 +29,14 @@ const app = express()
 // cors設定，參數為必要，注意不要只寫`app.use(cors())` 跨域用設定
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'https://localhost:9000'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3005',
+      'https://localhost:9000',
+      'https://sandbox-web-pay.line.me',
+      undefined,
+    ],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
   })
 )
@@ -82,6 +90,29 @@ for (const filename of filenames) {
   // console.log(`已註冊的api路由: ${route}`)
 }
 // 載入routes中的各路由檔案，並套用api路由 END
+
+// TRIGGER
+(async () => {
+  try {
+    const triggerSQL = `
+    CREATE TRIGGER after_member_coupon_insert
+    AFTER INSERT ON member_coupon
+    FOR EACH ROW
+    BEGIN
+      INSERT INTO notify_coupon (member_id, coupon_id, valid, created_at)
+      VALUES (NEW.member_id, NEW.coupon_id, 0, NEW.created_at);
+    END;
+    `;
+    await db.query(triggerSQL);
+    console.log('trigger創建成功');
+  } catch (error) {
+    if (error.code === 'ER_TRG_ALREADY_EXISTS') {
+      console.log('trigger已存在(看到這個很正常)');
+    } else {
+      console.error('創建trigger發生錯誤:', error);
+    }
+  }
+})();
 
 // 捕抓404錯誤處理
 app.use(function (req, res, next) {

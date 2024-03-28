@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { FaCartPlus } from 'react-icons/fa'
+import { FaCartPlus, FaStore } from 'react-icons/fa'
 import styles from '../../styles/products/product-card.module.scss'
 import heartFill from 'assets/heart-fill.svg'
 import heratIcon from 'assets/heart-white.svg'
-import { FaShop } from 'react-icons/fa6'
 
 // 引入use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
@@ -22,7 +21,6 @@ export default function ProductCard({
   member_id,
   fav,
   handleToggleFav,
-  cardIcon = () => {},
   language,
 }) {
   const ratingStyle = (v) => {
@@ -105,24 +103,63 @@ export default function ProductCard({
       case 6:
         memberId = '紅色死神的遊戲收藏'
         break
+      case 7:
+        memberId = '魔法兔子的玩具坊'
+        break
+      case 8:
+        memberId = '星光小狐的玩樂世界'
+        break
+      case 9:
+        memberId = '夢幻精靈的小店鋪'
+        break
+      case 10:
+        memberId = '露西亞的小天地'
+        break
+      case 11:
+        memberId = '奇幻螢火蟲的寶庫'
+        break
+      case 12:
+        memberId = '糖果精靈的甜蜜天地'
+        break
+      case 13:
+        memberId = '秘境小巷的驚奇寶盒'
+        break
+      case 14:
+        memberId = '海盜船長的珍寶藏身處'
+        break
+      case 15:
+        memberId = '奇幻仙境的集市'
+        break
+      case 16:
+        memberId = '森林精靈的神秘市集'
+        break
+      case 17:
+        memberId = '星際冒險家的未知商鋪'
+        break
+      case 18:
+        memberId = '魔法城堡的奇蹟角落'
+        break
+      case 19:
+        memberId = '奇幻之鑰的神秘櫥窗'
+        break
+      case 20:
+        memberId = '傳說中的寶物堡壘'
+        break
     }
     return memberId
   }
 
+  
+
   const { addItem, notifySuccess } = useCart()
 
-
-  // const cardIcon = (e) => {
-  //   e.stopPropagation()
-  // }
-
-  // const HeartIcon = fav === '0' ? FaRegHeart : FaHeart
   return (
     <>
       <div className={styles.card}>
         <div className="d-flex justify-content-center pt-2">
           <Image
-            src={`/images/product/cover/${img_cover}`}
+            // src={`/images/product/cover/${img_cover}`}
+            src={`http://localhost:3005/productImg/cover/${img_cover}`}
             alt={img_cover}
             width={150}
             height={244}
@@ -139,38 +176,48 @@ export default function ProductCard({
                 <b>{typeChange(type)}</b>
               </p>{' '}
             </div>
-            <div className='d-flex justify-content-center align-items-center' onClick={cardIcon}>
-              <div onClick={(e) => {cardIcon(e)}} className='pb-1 p-0'>
+            <div
+              className="d-flex justify-content-center align-items-center"
+            >
+              <div
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
+                className="pb-1 p-0"
+              >
                 <Image
                   src={fav ? heartFill : heratIcon}
                   className="me-2"
                   alt=""
-                  onClick={() => {
+                  onClick={(e) => {
+                    // e.stopPropagation()  
                     handleToggleFav(id)
                   }}
                 />
-              </div>             
-               {/* 加入購物車 */}
-              <FaCartPlus
-                className={`text-light h5 pb-1 ${styles.Chover}`}
-                onClick={() => {
-                  addItem({
-                    name,
-                    releaseTime,
-                    display_price,
-                    price,
-                    img_cover,
-                    type,
-                    id,
-                    member_id,
-                    fav,
-                    product_quanty,
-                    language,
-                    quantity: 1,
-                  })
-                  notifySuccess() 
-                }}
-              />
+              </div>
+              {/* 加入購物車 */}
+                {<FaCartPlus
+                  className={`text-light h5 pb-1 ${styles.Chover}`}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    addItem({
+                      name,
+                      releaseTime,
+                      display_price,
+                      price,
+                      img_cover,
+                      type,
+                      id,
+                      member_id,
+                      fav,
+                      product_quanty,
+                      language,
+                      quantity: 1,
+                    })
+                    // console.log(language)
+                  }}
+                />}
+              
             </div>
           </div>
 
@@ -180,18 +227,22 @@ export default function ProductCard({
             {name}
           </h6>
           <p className="text-light">
-            <FaShop className="me-1 mb-1"  />
+            <FaStore className="me-1 mb-1" />
             {memberIdChange(member_id)}
           </p>
           <p className="text-white">發行日期 {releaseTime}</p>
           <div className="price d-flex justify-content-between mt-1 align-items-center">
             <h6>
-              <b className="text-danger">NT ${price}</b>{' '}
+              <b className="text-danger">NT${price}</b>
             </h6>
-            <p className="text-white-50 text-decoration-line-through">
-              NT ${display_price}
-            </p>
-            {/* <div className={styles[`${rs.className}`]}>{rs.ratingId}⁺</div> */}
+            {display_price == null || display_price == price ? (
+              ''
+            ) : (
+              <p className="text-white-50 text-decoration-line-through">
+                NT ${display_price}
+              </p>
+            )}
+
             <div
               style={{
                 width: '22px',
