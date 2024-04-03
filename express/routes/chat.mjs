@@ -4,7 +4,7 @@ import db from '../configs/db.mjs'
 
 export function setupChat(io) {
   io.on('connection', (socket) => {
-    console.log(`聊天室連線: ${socket.id}`)
+    // console.log(`聊天室連線: ${socket.id}`)
 
     socket.on('create_room', (room) => {
       socket.join(room)

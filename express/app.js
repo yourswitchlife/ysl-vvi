@@ -6,8 +6,7 @@ import express from 'express'
 import logger from 'morgan'
 import path from 'path'
 import session from 'express-session'
-import db from './configs/db.mjs';
-
+import db from './configs/db.mjs'
 
 // 使用檔案的session store，存在sessions資料夾
 import sessionFileStore from 'session-file-store'
@@ -102,17 +101,17 @@ for (const filename of filenames) {
       INSERT INTO notify_coupon (member_id, coupon_id, valid, created_at)
       VALUES (NEW.member_id, NEW.coupon_id, 0, NEW.created_at);
     END;
-    `;
-    await db.query(triggerSQL);
-    console.log('trigger創建成功');
+    `
+    await db.query(triggerSQL)
+    console.log('trigger創建成功')
   } catch (error) {
     if (error.code === 'ER_TRG_ALREADY_EXISTS') {
-      console.log('trigger已存在(看到這個很正常)');
+      console.log('trigger已存在(看到這個很正常)')
     } else {
-      console.error('創建trigger發生錯誤:', error);
+      console.error('創建trigger發生錯誤:', error)
     }
   }
-})();
+})()
 
 // 捕抓404錯誤處理
 app.use(function (req, res, next) {

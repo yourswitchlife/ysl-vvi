@@ -283,6 +283,23 @@
   }
 }
 
+// 新增超商地址按鈕
+.addSevenAdr {
+  background: #82a1b5;
+  color: $white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  border-radius: 5px;
+  // width: 145px;
+  gap: 5px;
+  cursor: pointer;
+  &:hover{
+    background: #b0bec8;
+  }
+}
+
 // 編輯地址按鈕
 .editHomeAdr {
   background: $blue-secondary;
@@ -316,7 +333,7 @@
 .addSevevnAdr {
   text-decoration: none;
   color: $dark-gray;
-  background: $white;
+  background: #ddd8c9;
   padding: 3px 8px;
   border-radius: 15px;
   display: flex;
@@ -330,7 +347,7 @@
   }
 
   &:hover .iconFrame {
-    background: $white;
+    background: #e4dfc7;
   }
 
   .iconFrame {

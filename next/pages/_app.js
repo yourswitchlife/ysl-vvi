@@ -145,8 +145,15 @@ export default function MyApp({ Component, pageProps }) {
   //決定要不要套用動畫
   const addAnimation = (route) => {
     //在這裡的不用動畫
-    const routesWithoutAnimation = ['/seller', '/seller/shop', '/seller/product', '/seller/product/new', '/seller/order', '/seller/comment']
-    return !routesWithoutAnimation.includes(route) 
+    const routesWithoutAnimation = [
+      '/seller',
+      '/seller/shop',
+      '/seller/product',
+      '/seller/product/new',
+      '/seller/order',
+      '/seller/comment',
+    ]
+    return !routesWithoutAnimation.includes(route)
   }
 
   // 我把AuthProvider放在最外面 所有應用都能用
@@ -155,45 +162,43 @@ export default function MyApp({ Component, pageProps }) {
       <AuthProvider>
         <CartProvider>
           <ShippingProvider>
-            <WithWebSocketProvider>
-              <Head>
-                <link
-                  rel="apple-touch-icon"
-                  sizes="180x180"
-                  href="/favicons/apple-touch-icon.png"
-                />
-                <link
-                  rel="icon"
-                  type="image/png"
-                  sizes="32x32"
-                  href="/favicons/favicon-32x32.png"
-                />
-                <link
-                  rel="icon"
-                  type="image/png"
-                  sizes="16x16"
-                  href="/favicons/favicon-16x16.png"
-                />
-              </Head>
-              
-              {addAnimation(router.route) ? (
-                <AnimatePresence>
-                <motion.div
-                  key={router.route}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ type: 'linear' }}
-                >
-                  {getLayout(<Component {...pageProps} />)}
-                </motion.div>
-              </AnimatePresence>
-              ):(
-                <>
-                  {getLayout(<Component {...pageProps} />)}
-                </>
-              )}
-            </WithWebSocketProvider>
+              <WithWebSocketProvider>
+                <Head>
+                  <link
+                    rel="apple-touch-icon"
+                    sizes="180x180"
+                    href="/favicons/apple-touch-icon.png"
+                  />
+                  <link
+                    rel="icon"
+                    type="image/png"
+                    sizes="32x32"
+                    href="/favicons/favicon-32x32.png"
+                  />
+                  <link
+                    rel="icon"
+                    type="image/png"
+                    sizes="16x16"
+                    href="/favicons/favicon-16x16.png"
+                  />
+                </Head>
+
+                {addAnimation(router.route) ? (
+                  <AnimatePresence>
+                    <motion.div
+                      key={router.route}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ type: 'linear' }}
+                    >
+                      {getLayout(<Component {...pageProps} />)}
+                    </motion.div>
+                  </AnimatePresence>
+                ) : (
+                  <>{getLayout(<Component {...pageProps} />)}</>
+                )}
+              </WithWebSocketProvider>
           </ShippingProvider>
         </CartProvider>
       </AuthProvider>

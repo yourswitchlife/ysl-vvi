@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/use-Auth'
 // 引用use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
+
 // 引入台灣城市區域json
 import taiwanDistricts from '@/data/taiwan_districts.json'
 
@@ -46,6 +47,8 @@ export function ShippingProvider({ children }) {
   const [hasCommonAddr, setHasCommonAddr] = useState(false)
   // 紀錄宅配地址是否已滿3條
   const [isMaxHomeAddresses, setIsMaxHomeAddresses] = useState(false)
+  // 紀錄超商地址是否已滿3條
+  const [isMaxSevenAddresses, setIsMaxSevenAddresses] = useState(false)
   // 記錄單一賣場的每個運費
   const [shippingFees, setShippingFees] = useState({})
   // 儲存每個賣場訂單的選取的地址選項
@@ -55,6 +58,8 @@ export function ShippingProvider({ children }) {
   // 紀錄賣場名稱列表
   const [shopName, setShopName] = useState({})
   const [orderGroup, setOrderGroup] = useState({})
+
+
 
   // 處理城市選項變更
   const handleCityChange = (e) => {
@@ -354,6 +359,8 @@ export function ShippingProvider({ children }) {
             setHasCommonAddr(true)
             // 檢查是否達到最大地址數量
             setIsMaxHomeAddresses(homeAddresses.length >= 3)
+            // 檢查是否達到最大超商地址數量
+            setIsMaxSevenAddresses(sevenAddresses.length >= 3)
 
             // 設置默認選擇宅配地址
             const newShippingOptions = {}
@@ -488,7 +495,7 @@ export function ShippingProvider({ children }) {
     }
   }, [orderGroup])
 
-  // 測試
+  // 檢查
   useEffect(() => {
     const pendingPaymentOrderIds = Object.keys(orderGroup).filter((memberId) =>
       orderGroup[memberId].some((item) => item.userSelect)
@@ -543,6 +550,7 @@ export function ShippingProvider({ children }) {
         addresses,
         hasCommonAddr,
         isMaxHomeAddresses,
+        isMaxSevenAddresses,
         regions,
         shippingInfos,
         totalShippingFee,
