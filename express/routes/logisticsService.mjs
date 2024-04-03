@@ -73,14 +73,19 @@ router.post('/create-logistics-order', async (req, res) => {
   }
 
   try {
+    //使用樣板引擎pug
+    //假設createLogisticsOrder函數現在返回必要的表單動作URL
+    // const actionURL = await createLogisticsOrder(orderDetails)
     const htmlForm = await createLogisticsOrder(orderDetails)
     // console.log('我要看到result是啥:', htmlForm)
     //在這裡保存訂單存到資料庫，包含merchantTradeNo
     // await createOrder(req.body, merchantTradeNo)
-
     res.json({
       form: htmlForm,
     })
+
+    //使用pug樣板而不是直接返回表單
+    // res.render('logisticsOrder', { actionURL })
   } catch (error) {
     console.error(error)
     res.status(500).json({

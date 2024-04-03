@@ -25,6 +25,8 @@ import DropdownButton from 'react-bootstrap/DropdownButton'
 import Card from 'react-bootstrap/Card'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
+import Modal from 'react-bootstrap/Modal'
+import Button from 'react-bootstrap/Button'
 //animation
 import { motion } from 'framer-motion'
 
@@ -78,6 +80,8 @@ export default function Order() {
   const [orderSelect, setOrderSelect] = useState('訂單編號')
   const [searchText, setSearchText] = useState('')
 
+  //綠界物流modal
+  const [isModalOpen, setIsModalOpen] = useState(false)
   //在這裡觸發來接應綠界
   const handleViewClick = async () => {
     const orderData = {
@@ -112,12 +116,14 @@ export default function Order() {
         },
         body: JSON.stringify(orderData),
       })
+    
 
       if(response.ok){
         //如果後端有重新導引，這裡就不用幹嘛
         //如果後端告訴我們要重新定向可以這樣處理：
         const data = await response.json()
         // window.location.href = data.redirectUrl
+        setIsModalOpen(true)
         setFormHtml(data.form)
       }else{
         //處理錯誤
@@ -220,7 +226,26 @@ export default function Order() {
       <header>
         <SellerNavbar />
       </header>
-      <div ref={formRef} dangerouslySetInnerHTML={{ __html: formHtml }} />
+      {/* modal放這裡 */}
+      <Modal
+      show={isModalOpen}
+      onHide={() => setIsModalOpen(false)}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          <h4 className='text-dark'>取得物流訂單編號</h4>
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body ref={formRef} dangerouslySetInnerHTML={{ __html: formHtml }}>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={() => setIsModalOpen(false)}>Close</Button>
+      </Modal.Footer>
+    </Modal>
+      {/* <div ref={formRef} dangerouslySetInnerHTML={{ __html: formHtml }} /> */}
       <div className={styles.mainContainer}>
           {memberData && (
             <>
@@ -384,6 +409,7 @@ export default function Order() {
                               type="button"
                               className={`btn btn-danger btn-sm ${styles.btnGrayOutlined }`}
                               onClick={handleViewClick}
+                              // onClick={() => setIsModalOpen(true)}
                             >
                               寄貨處理
                             </button>
