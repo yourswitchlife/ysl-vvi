@@ -4,8 +4,14 @@ html(lang="en")
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     title 物流訂單表單
+    script(type="text/javascript").
+      document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById("_form_create").submit();
+      });
   body
     h1 物流訂單
-    form(action=actionURL method="post")
-      // 在這裡添加表單元素，例如輸入框等
-      button(type="submit") 提交訂單
+    form#_form_create(action="https://logistics-stage.ecpay.com.tw/Express/Create" method="post")
+    each val, name in formData
+      input(type="hidden" name=name value=val)
+    
+

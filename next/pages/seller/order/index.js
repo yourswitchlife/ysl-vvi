@@ -121,10 +121,22 @@ export default function Order() {
       if(response.ok){
         //如果後端有重新導引，這裡就不用幹嘛
         //如果後端告訴我們要重新定向可以這樣處理：
-        const data = await response.json()
-        // window.location.href = data.redirectUrl
-        setIsModalOpen(true)
-        setFormHtml(data.form)
+
+        const contentType = response.headers.get('Content-Type')
+        let data
+        if(contentType && contentType.includes('application/json')){
+          data = await response.json()
+          //處理JSON數據
+          if(data.redirectUrl){
+            window.location.href = data.redirectUrl
+            return //防止繼續執行
+          }
+        }else{
+          const htmlText = await response.text()
+          setIsModalOpen(true)
+          setFormHtml(htmlText)
+          return
+        }
       }else{
         //處理錯誤
         console.error('創建物流訂單失敗')
