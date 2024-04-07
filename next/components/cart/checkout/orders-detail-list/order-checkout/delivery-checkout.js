@@ -20,6 +20,8 @@ import { useShipping } from '@/hooks/use-shipping'
 import taiwanDistricts from '@/data/taiwan_districts.json'
 
 import { useAuth } from '@/hooks/use-Auth'
+import { method } from 'lodash'
+import { headers } from '@/next.config'
 
 export default function DeliveryCheckout({ items, memberId }) {
   const { memberData } = useAuth()
@@ -83,6 +85,9 @@ export default function DeliveryCheckout({ items, memberId }) {
   const [show, setShow] = useState({})
 
   const handleShow = (memberId) => {
+    // 保存當前視窗頁面的滾動位置
+    const scrollPosition = window.scrollY || document.documentElement.scrollTop
+    localStorage.setItem('scrollPosition', scrollPosition.toString())
     setShow((prev) => ({ ...prev, [memberId]: true }))
   }
 
@@ -97,6 +102,15 @@ export default function DeliveryCheckout({ items, memberId }) {
       return () => window.removeEventListener('resize', updateWindowWidth)
     }
   }, [])
+
+  // 從localStorage中恢復每個物流方式選擇狀態/
+  useEffect(() => {
+    const savedMethod = localStorage.getItem(`shippingMethod_${memberId}`)
+    if (savedMethod) {
+      handleSelectChange(savedMethod, memberId, false)
+    }
+  }, [memberId])
+
 
   // 傳遞新增超商表單收件姓名、電話資訊
   const saveUserInfoToSession = async (name, phone, memberId) => {
@@ -145,6 +159,8 @@ export default function DeliveryCheckout({ items, memberId }) {
     }
   }
 
+  
+
   // 取得綠界回傳的地址資訊
   useEffect(() => {
     const query = router.query
@@ -154,13 +170,29 @@ export default function DeliveryCheckout({ items, memberId }) {
     const phoneFromQuery = query.phone
     const storeName = query.storeName
     const storeAddress = query.storeAddress
+    const memberIds = JSON.parse(localStorage.getItem('memberIds') || '[]')
 
     if (storeID && memberIdFromQuery && storeName && storeAddress) {
       setSevenReceiveName({ [memberIdFromQuery]: nameFromQuery })
       setSevenReceivePhone({ [memberIdFromQuery]: phoneFromQuery })
       setSevenAddressInfo({
-        [memberIdFromQuery]: `${storeName} | ${storeAddress}`,
+        [memberIdFromQuery]: {
+          storeName: storeName,
+          address: storeAddress,
+        },
       })
+
+      memberIds.forEach((memberId) => {
+        const savedMethod = localStorage.getItem(`shippingMethod_${memberId}`)
+        if (savedMethod) {
+          handleSelectChange(savedMethod, memberId, false)
+        }
+      })
+
+      const savedScrollPosition = localStorage.getItem('scrollPosition')
+      if (savedScrollPosition) {
+        window.scrollTo(0, parseInt(savedScrollPosition, 10))
+      }
       setShow({ [memberIdFromQuery]: true })
     }
   }, [router.query])
@@ -226,10 +258,65 @@ export default function DeliveryCheckout({ items, memberId }) {
 
     setSevenReceiveName((prev) => ({ ...prev, [memberId]: '' }))
     setSevenReceivePhone((prev) => ({ ...prev, [memberId]: '' }))
-    setSevenAddressInfo((prev) => ({ ...prev, [memberId]: '' }))
+    setSevenAddressInfo((prev) => ({ ...prev, [memberId]: {} }))
 
     setShow((prev) => ({ ...prev, [memberId]: false }))
-    router.push('/cart/checkout')
+    const savedMethod = localStorage.getItem(`shippingMethod_${memberId}`)
+    if (savedMethod) {
+      handleSelectChange(savedMethod, memberId, false)
+    }
+    setShow((prev) => ({ ...prev, [memberId]: false }))
+  }
+
+  // 點擊完成新增超商地址
+  const handleComplete = async () => {
+    const shippingMethod = localStorage.getItem(`shippingMethod_${memberId}`)
+    const sevenInfo = {
+      memberId,
+      shipping_method: shippingMethod,
+      member_id: memberData.id,
+      name: sevenReceiveName[memberId],
+      phone: sevenReceivePhone[memberId],
+      sevenInfo: {
+        storeName: sevenAddressInfo[memberId].storeName,
+        address: sevenAddressInfo[memberId].address,
+      },
+    }
+    try {
+      const response = await fetch(
+        'http://localhost:3005/api/cart/add-seven-address',
+        {
+          method: 'POST',
+          headers: { 'Content-type': 'application/json' },
+          body: JSON.stringify(sevenInfo),
+          credentials: 'include',
+        }
+      )
+      const data = await response.json()
+      if (data.success) {
+        console.log('超商地址新增成功')
+        setShow((prev) => ({ ...prev, [memberId]: false }))
+        const savedScrollPosition = localStorage.getItem('scrollPosition')
+        if (savedScrollPosition) {
+          window.scrollTo(0, parseInt(savedScrollPosition, 10))
+        }
+        MySwal.fire({
+          icon: 'success',
+          title: '超商地址新增成功',
+          showConfirmButton: false,
+          timer: 2000,
+        })
+        const savedMethod = localStorage.getItem(`shippingMethod_${memberId}`)
+        if (savedMethod) {
+          handleSelectChange(savedMethod, memberId, false)
+        }
+        localStorage.removeItem('scrollPosition')
+      } else {
+        console.error('地址新增失敗')
+      }
+    } catch (error) {
+      console.error('請求失敗', error)
+    }
   }
 
   // 設定各個物流運費，當用戶改變selectAddrOption就更新運費
@@ -395,6 +482,17 @@ export default function DeliveryCheckout({ items, memberId }) {
       })
   }
 
+  // 透過localStorage來恢復用戶所選的物流方式及常用地址選項
+  useEffect(() => {
+    const savedShippingMethod = localStorage.getItem(
+      `shippingMethod_${memberId}`
+    )
+
+    if (savedShippingMethod) {
+      handleSelectChange(savedShippingMethod, memberId, false)
+    }
+  }, [memberId])
+
   // 計算假的到貨日期
   const calculateDeliveryDates = () => {
     const currentDate = new Date()
@@ -494,7 +592,11 @@ export default function DeliveryCheckout({ items, memberId }) {
               <input
                 type="text"
                 className="form-control"
-                value={sevenAddressInfo[memberId] || ''}
+                value={
+                  sevenAddressInfo[memberId]
+                    ? `${sevenAddressInfo[memberId].storeName} | ${sevenAddressInfo[memberId].address}`
+                    : ''
+                }
                 aria-describedby="basic-addon1"
                 disabled
                 readOnly
@@ -545,7 +647,9 @@ export default function DeliveryCheckout({ items, memberId }) {
           >
             取消
           </Button>
-          <Button variant="dark">完成</Button>
+          <Button variant="dark" onClick={handleComplete}>
+            完成
+          </Button>
         </Modal.Footer>
       </Modal>
       <div dangerouslySetInnerHTML={{ __html: mapHtml }} />
@@ -571,7 +675,7 @@ export default function DeliveryCheckout({ items, memberId }) {
             </label>
             <Form.Select
               className={styles.formSelect}
-              onChange={(e) => handleSelectChange(e, memberId)}
+              onChange={(e) => handleSelectChange(e, memberId, true)}
               value={currentShippingOption.selectAddrOption || ''}
               disabled={showAddrForm}
             >

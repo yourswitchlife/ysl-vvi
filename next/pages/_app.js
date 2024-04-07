@@ -162,43 +162,43 @@ export default function MyApp({ Component, pageProps }) {
       <AuthProvider>
         <CartProvider>
           <ShippingProvider>
-              <WithWebSocketProvider>
-                <Head>
-                  <link
-                    rel="apple-touch-icon"
-                    sizes="180x180"
-                    href="/favicons/apple-touch-icon.png"
-                  />
-                  <link
-                    rel="icon"
-                    type="image/png"
-                    sizes="32x32"
-                    href="/favicons/favicon-32x32.png"
-                  />
-                  <link
-                    rel="icon"
-                    type="image/png"
-                    sizes="16x16"
-                    href="/favicons/favicon-16x16.png"
-                  />
-                </Head>
+            <WithWebSocketProvider>
+              <Head>
+                <link
+                  rel="apple-touch-icon"
+                  sizes="180x180"
+                  href="/favicons/apple-touch-icon.png"
+                />
+                <link
+                  rel="icon"
+                  type="image/png"
+                  sizes="32x32"
+                  href="/favicons/favicon-32x32.png"
+                />
+                <link
+                  rel="icon"
+                  type="image/png"
+                  sizes="16x16"
+                  href="/favicons/favicon-16x16.png"
+                />
+              </Head>
 
-                {addAnimation(router.route) ? (
-                  <AnimatePresence>
-                    <motion.div
-                      key={router.route}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ type: 'linear' }}
-                    >
-                      {getLayout(<Component {...pageProps} />)}
-                    </motion.div>
-                  </AnimatePresence>
-                ) : (
-                  <>{getLayout(<Component {...pageProps} />)}</>
-                )}
-              </WithWebSocketProvider>
+              {addAnimation(router.route) ? (
+                <AnimatePresence>
+                  <motion.div
+                    key={router.route}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ type: 'linear' }}
+                  >
+                    {getLayout(<Component {...pageProps} />)}
+                  </motion.div>
+                </AnimatePresence>
+              ) : (
+                <>{getLayout(<Component {...pageProps} />)}</>
+              )}
+            </WithWebSocketProvider>
           </ShippingProvider>
         </CartProvider>
       </AuthProvider>

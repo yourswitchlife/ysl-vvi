@@ -662,6 +662,54 @@ router.get('/clear-address-session/:memberId', (req, res) => {
   res.json({ success: true, message: '超商地址session清除成功' })
 })
 
+// 新增超商地址
+router.post('/add-seven-address', async (req, res) => {
+  const { memberId, shipping_method, name, phone, sevenInfo, member_id } =
+    req.body
+  console.log(member_id)
+  const sevenAddressInfo = JSON.stringify({
+    name,
+    phone,
+    sevenInfo,
+  })
+  console.log(sevenAddressInfo)
+  // 先查詢該會員是否有設置超商常用地址
+  const [existingSevenAddresses] = await db.query(
+    'SELECT * FROM shipping_address WHERE member_id = ? AND shipping_method = ?',
+    [member_id, shipping_method]
+  )
+  if (existingSevenAddresses.length === 0) {
+    const insertSql =
+      'INSERT INTO shipping_address (member_id, shipping_method, seven1) VALUES (?, ?, ?)'
+    await db.execute(insertSql, [member_id, shipping_method, sevenAddressInfo])
+    res.status(200).json({ message: '新增超商地址成功' })
+  } else {
+    // 尋找第一個空的地址欄位
+    const findFirstEmptyField = (address) => {
+      const fields = ['seven1', 'seven2', 'seven3']
+      for (const field of fields) {
+        if (!address[field]) {
+          return field
+        }
+      }
+      return null
+    }
+    // 如果已經有超商常用地址了，找到第一個空地址的欄位
+    const emptyField = findFirstEmptyField(existingSevenAddresses[0])
+    if (emptyField) {
+      const updateSql = `UPDATE shipping_address SET ${emptyField} = ? WHERE member_id = ? AND shipping_method = ?`
+      await db.execute(updateSql, [
+        sevenAddressInfo,
+        member_id,
+        shipping_method,
+      ])
+      return res.json({ success: true, message: '超商地址新增成功' })
+    } else {
+      res.status(400).json({ message: '超商地址欄位都已經有資料了' })
+    }
+  }
+})
+
 // 綠界金流付款
 router.post('/credit-card', (req, res) => {
   console.log('開始串接綠界金流')

@@ -3,6 +3,8 @@ import { useAuth } from '@/hooks/use-Auth'
 // 引用use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
 
+import { cleanupShippingMethods } from '@/utils/cleanupMethods'
+
 // 引入台灣城市區域json
 import taiwanDistricts from '@/data/taiwan_districts.json'
 
@@ -58,8 +60,6 @@ export function ShippingProvider({ children }) {
   // 紀錄賣場名稱列表
   const [shopName, setShopName] = useState({})
   const [orderGroup, setOrderGroup] = useState({})
-
-
 
   // 處理城市選項變更
   const handleCityChange = (e) => {
@@ -140,6 +140,13 @@ export function ShippingProvider({ children }) {
     setSelectedAddressIndex(index)
   }
 
+  // useEffect(() => {
+  //   const memberIds = [...new Set(cartItems.map((item) => item.member_id))]
+
+  //   // 使用cleanupShippingMethods來根據當前的memberIds清理localStorage
+  //   cleanupShippingMethods(memberIds)
+  // }, [cartItems])
+
   // 計算運費總金額
   const updateShippingFee = (memberId, fee) => {
     setShippingFees((currentFee) => ({ ...currentFee, [memberId]: fee }))
@@ -179,9 +186,13 @@ export function ShippingProvider({ children }) {
   }
 
   // 選擇物流方式下拉選單值
-  const handleSelectChange = (e, memberId) => {
-    const selectedMethod = e.target.value
-    // console.log('選擇的物流方式: ', selectedMethod)
+  const handleSelectChange = (valueOrEvent, memberId, userAction = false) => {
+    console.log('handleSelectChange 的 memberId:', memberId)
+    if (!userAction) return
+    const selectedMethod = valueOrEvent.target
+      ? valueOrEvent.target.value
+      : valueOrEvent
+    console.log('選擇的物流方式: ', selectedMethod)
     setShippingOptions((prev) => ({
       ...prev,
       [memberId]: {
@@ -198,6 +209,9 @@ export function ShippingProvider({ children }) {
         ...prevInfos[memberId],
       },
     }))
+
+    // 將選擇保存到 localStorage
+    localStorage.setItem(`shippingMethod_${memberId}`, selectedMethod)
 
     const hasAddresses =
       addresses.homeAddresses.length > 0 || addresses.sevenAddresses.length > 0
@@ -362,7 +376,7 @@ export function ShippingProvider({ children }) {
             // 檢查是否達到最大超商地址數量
             setIsMaxSevenAddresses(sevenAddresses.length >= 3)
 
-            // 設置默認選擇宅配地址
+            // 取得常用地址資料後，設置默認選擇宅配地址
             const newShippingOptions = {}
             Object.keys(orderGroup).forEach((memberId) => {
               newShippingOptions[memberId] = {
@@ -397,12 +411,17 @@ export function ShippingProvider({ children }) {
     // console.log(orderGroup)
 
     const initShippingOptions = {}
-    Object.keys(orderGroup).forEach((memberId) => {
+    Object.keys(newOrderGroup).forEach((memberId) => {
+      const storedShippingMethod = localStorage.getItem(
+        `shippingMethod_${memberId}`
+      )
+      const shippingMethod = storedShippingMethod || '2'
       initShippingOptions[memberId] = {
-        selectAddrOption: '2',
+        selectAddrOption: shippingMethod,
         selectedAddressIndex: 0,
       }
     })
+
     setShippingOptions(initShippingOptions)
   }, [cartItems])
 

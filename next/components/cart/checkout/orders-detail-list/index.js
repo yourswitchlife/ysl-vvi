@@ -16,14 +16,15 @@ import { useRouter } from 'next/router'
 
 // 優惠券星星圖
 import couponStar from '@/public/images/cart/couponStar.svg'
-// 優惠券長型圖
-import coupon from '@/public/images/cart/coupon.svg'
+
 
 // 引用use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
 import { useAuth } from '@/hooks/use-Auth'
 // 引入共同shipping鉤子
 import { useShipping } from '@/hooks/use-shipping'
+
+import { cleanupShippingMethods } from '@/utils/cleanupMethods'
 
 //使用SweetAlert2 API
 import Swal from 'sweetalert2'
@@ -134,7 +135,7 @@ export default function OrdersDetailList() {
 
   // 紀錄用戶暫存的優惠券
   const handleTempSelectProductCoupon = (coupon) => {
-    console.log(coupon);
+    console.log(coupon)
     setTempSelectedProductCoupon(coupon)
   }
   const handleTempSelectShippingCoupon = (coupon) => {
@@ -145,7 +146,7 @@ export default function OrdersDetailList() {
   const handleConfirmSelection = () => {
     setSelectedProductCoupon(tempSelectedProductCoupon)
     setSelectedShippingCoupon(tempSelectedShippingCoupon)
-   
+
     if (tempSelectedProductCoupon) {
       const productCoupon = coupons.find(
         (coupon) => coupon.id === tempSelectedProductCoupon
@@ -167,9 +168,9 @@ export default function OrdersDetailList() {
     handleCloseMobileModal()
   }
 
-  useEffect(()=>{
-    console.log(selectedProductCoupon);
-    console.log(selectedShippingCoupon);
+  useEffect(() => {
+    console.log(selectedProductCoupon)
+    console.log(selectedShippingCoupon)
   }, [selectedProductCoupon, selectedShippingCoupon])
 
   useEffect(() => {
@@ -222,8 +223,6 @@ export default function OrdersDetailList() {
     const remainingItems = cartItems.filter((item) => !item.userSelect)
     localStorage.setItem('cartItems', JSON.stringify(remainingItems))
   }
-
-
 
   // 處理結帳 / 下訂單按鈕的送出連接後端產生訂單
   const handleSubmit = async () => {
@@ -298,6 +297,11 @@ export default function OrdersDetailList() {
           console.log(results)
           handleCheckoutSuccess()
 
+          const memberIds = [
+            ...new Set(payingItems.map((item) => item.member_id)),
+          ]
+          cleanupShippingMethods(memberIds)
+
           // 依據message判斷
           switch (results.message) {
             case '建立訂單成功，貨到付款':
@@ -313,7 +317,6 @@ export default function OrdersDetailList() {
                 .then((data) => {
                   console.log(data)
                   window.location.href = `/cart/purchase?orderId=${externalOrderIdForCash}`
-                  
                 })
                 .catch((error) => {
                   console.error('錯誤:', error)
@@ -336,7 +339,6 @@ export default function OrdersDetailList() {
                 .then((data) => {
                   console.log(data)
                   window.location.href = data
-                  
                 })
                 .catch((error) => {
                   console.error('錯誤:', error)
@@ -356,7 +358,6 @@ export default function OrdersDetailList() {
                 .then((data) => {
                   console.log(data)
                   window.location.href = `/cart/purchase?orderId=${externalOrderIdForCreditCard}`
-                  
                 })
                 .catch((error) => {
                   console.error('錯誤:', error)
