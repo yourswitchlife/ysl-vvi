@@ -2,12 +2,12 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 //使用路由鉤子導頁
 import { useRouter } from 'next/router'
+import { cleanupShippingMethods } from '@/utils/cleanupMethods'
 
 //使用SweetAlert2 API
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
-
 
 // 導出createContext方法
 export const CartContext = createContext()
@@ -37,7 +37,6 @@ export function CartProvider({ children }) {
 
   const router = useRouter()
 
-
   // 在元件掛載時讀取 localStorage 中的購物車狀態
   useEffect(() => {
     const cartData = localStorage.getItem('cartItems')
@@ -55,9 +54,12 @@ export function CartProvider({ children }) {
   // 當cartItems變化，就保存到localStorage裡面
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems))
+    // 保存每個商品的商家ID唯一值
+    const uniqueMemberIds = [
+      ...new Set(cartItems.map((item) => item.member_id)),
+    ]
+    localStorage.setItem('memberIds', JSON.stringify(uniqueMemberIds))
   }, [cartItems])
-
-
 
   // SweetAlert2
   const notifySuccess = () => {
@@ -127,21 +129,28 @@ export function CartProvider({ children }) {
   // 購物車中已有幾件商品，超過購買量
   const notifyMax = () => {
     MySwal.fire({
-      text: "已達購買上限",
+      text: '已達購買上限',
       confirmButtonColor: '#E41E49',
     })
   }
 
   // 轉換商品語言版本為中文
-  const changeLanguage = (language)=>{
+  const changeLanguage = (language) => {
     // 檢查language是否為非字串格式
-    const languageStr = Array.isArray(language) ? language.join(',') : (typeof language === 'string' ? language : '')
+    const languageStr = Array.isArray(language)
+      ? language.join(',')
+      : typeof language === 'string'
+      ? language
+      : ''
     const languageList = {
-      CH:'中文',
-      EN:'英文',
-      JP:'日文'
+      CH: '中文',
+      EN: '英文',
+      JP: '日文',
     }
-    const languageNames = languageStr.split(',').map(item => languageList[item] || item).join(', ')
+    const languageNames = languageStr
+      .split(',')
+      .map((item) => languageList[item] || item)
+      .join(', ')
     return languageNames
   }
 
@@ -153,12 +162,24 @@ export function CartProvider({ children }) {
   // 計算購物車總商品件數
   const totalProducts = cartItems.length
 
-
   // 刪除整筆賣場訂單
   const handleDeleteOrder = (id) => {
     const filterItems = cartItems.filter((item) => item.member_id !== id)
     setCartItems(filterItems)
+    // 計算剩餘的memberIds
+    const remainsMemberIds = [
+      ...new Set(filterItems.map((item) => item.member_id)),
+    ]
+    console.log(remainsMemberIds)
+    localStorage.setItem('memberIds', JSON.stringify(remainsMemberIds))
   }
+
+  useEffect(() => {
+    const remainsMemberIds = JSON.parse(
+      localStorage.getItem('memberIds') || '[]'
+    )
+    cleanupShippingMethods(remainsMemberIds)
+  }, [cartItems])
 
   // 選取全部checkbox
   const handleAllCheckboxChange = (cartItems) => {
@@ -241,7 +262,6 @@ export function CartProvider({ children }) {
     setCartItems(newItems)
   }
 
-
   // 加入購物車存進狀態內
   const addItem = (item, shownotification = true) => {
     // 成功加入要跳轉頁面
@@ -258,10 +278,14 @@ export function CartProvider({ children }) {
         // 不超過庫存量
         const updateCartItems = cartItems.map((cartItem) => {
           if (cartItem.id === item.id) {
-            return { ...cartItem, quantity: cartItem.quantity + item.quantity, timeStamp }
+            return {
+              ...cartItem,
+              quantity: cartItem.quantity + item.quantity,
+              timeStamp,
+            }
           }
           return cartItem
-          if(shownotification){
+          if (shownotification) {
             notifySuccess()
           }
         })
@@ -272,13 +296,17 @@ export function CartProvider({ children }) {
         notifyCartQunanty(item.product_quanty)
         routerPush = false
       }
-
     } else {
       // 不存在，加到cartItems裡面
-      const newItem = { ...item, quantity: item.quantity || 1, userSelect: item.userSelect || false, timeStamp }
+      const newItem = {
+        ...item,
+        quantity: item.quantity || 1,
+        userSelect: item.userSelect || false,
+        timeStamp,
+      }
       const newItems = [newItem, ...cartItems]
       setCartItems(newItems)
-      if(shownotification){
+      if (shownotification) {
         notifySuccess()
       }
       // sellers

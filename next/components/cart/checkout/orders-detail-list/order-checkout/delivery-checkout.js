@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import styles from '../orders-detail.module.scss'
 import { FaCircleQuestion, FaPlus, FaAngleRight } from 'react-icons/fa6'
 import { FaRegEdit } from 'react-icons/fa'
+import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
 import Image from 'next/image'
 import Link from 'next/link'
 //使用SweetAlert2 API
@@ -18,9 +20,13 @@ import { useShipping } from '@/hooks/use-shipping'
 import taiwanDistricts from '@/data/taiwan_districts.json'
 
 import { useAuth } from '@/hooks/use-Auth'
+import { method } from 'lodash'
+import { headers } from '@/next.config'
 
 export default function DeliveryCheckout({ items, memberId }) {
   const { memberData } = useAuth()
+  const router = useRouter()
+
   const {
     selectAddrOption,
     handleSelectChange,
@@ -29,6 +35,7 @@ export default function DeliveryCheckout({ items, memberId }) {
     setAddressType,
     addresses,
     isMaxHomeAddresses,
+    isMaxSevenAddresses,
     parseAddress,
     name,
     setName,
@@ -58,7 +65,6 @@ export default function DeliveryCheckout({ items, memberId }) {
 
   // 點擊新增宅配地址按鈕狀態
   const [showAddrForm, setshowAddrForm] = useState(false)
-
   // 點擊編輯地址按鈕狀態
   const [isEditingAddress, setIsEditingAddress] = useState(false)
 
@@ -68,6 +74,22 @@ export default function DeliveryCheckout({ items, memberId }) {
   const [orderPrice, setOrderPrice] = useState(0)
 
   const [windowWidth, setWindowWidth] = useState(null)
+
+  const [mapHtml, setMapHtml] = useState('')
+  // 7-11超商收件名稱
+  const [sevenReceiveName, setSevenReceiveName] = useState({})
+  // 7-11超商收件電話
+  const [sevenReceivePhone, setSevenReceivePhone] = useState({})
+  // 7-11超商收件資訊
+  const [sevenAddressInfo, setSevenAddressInfo] = useState({})
+  const [show, setShow] = useState({})
+
+  const handleShow = (memberId) => {
+    // 保存當前視窗頁面的滾動位置
+    const scrollPosition = window.scrollY || document.documentElement.scrollTop
+    localStorage.setItem('scrollPosition', scrollPosition.toString())
+    setShow((prev) => ({ ...prev, [memberId]: true }))
+  }
 
   // 紀錄視窗大小
   useEffect(() => {
@@ -81,16 +103,99 @@ export default function DeliveryCheckout({ items, memberId }) {
     }
   }, [])
 
+  // 從localStorage中恢復每個物流方式選擇狀態/
+  useEffect(() => {
+    const savedMethod = localStorage.getItem(`shippingMethod_${memberId}`)
+    if (savedMethod) {
+      handleSelectChange(savedMethod, memberId, false)
+    }
+  }, [memberId])
+
+
+  // 傳遞新增超商表單收件姓名、電話資訊
+  const saveUserInfoToSession = async (name, phone, memberId) => {
+    const response = await fetch(
+      `http://localhost:3005/api/cart/save-user-info`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, phone, memberId }),
+        credentials: 'include',
+      }
+    )
+    return response.json()
+  }
+
   // 串接綠界超商地圖
   const getSevenAddress = async () => {
-    await fetch('http://localhost:3005/api/cart/get-seven-address').then((response)=>{
-      response.json()
-    }).then((data)=>{
-        console.log(data);
-    }).catch((error)=>{
+    try {
+      const response = await fetch(
+        'http://localhost:3005/api/cart/get-seven-address'
+      )
+      console.log(response)
+      const htmlContent = await response.text()
+      console.log(htmlContent)
+      setMapHtml(htmlContent)
+    } catch (error) {
       console.error('連線綠界失敗', error)
-    })
+    }
   }
+
+  useEffect(() => {
+    const form = document.getElementById('_form_map')
+    if (form) {
+      form.submit()
+    }
+  }, [mapHtml])
+
+  const handleSelectSevenAddress = async () => {
+    try {
+      await saveUserInfoToSession(sevenReceiveName, sevenReceivePhone, memberId)
+      getSevenAddress()
+    } catch (error) {
+      console.error('保存用戶超商收件資訊錯誤:', error)
+    }
+  }
+
+  
+
+  // 取得綠界回傳的地址資訊
+  useEffect(() => {
+    const query = router.query
+    const storeID = query.storeID
+    const memberIdFromQuery = query.memberId
+    const nameFromQuery = query.name
+    const phoneFromQuery = query.phone
+    const storeName = query.storeName
+    const storeAddress = query.storeAddress
+    const memberIds = JSON.parse(localStorage.getItem('memberIds') || '[]')
+
+    if (storeID && memberIdFromQuery && storeName && storeAddress) {
+      setSevenReceiveName({ [memberIdFromQuery]: nameFromQuery })
+      setSevenReceivePhone({ [memberIdFromQuery]: phoneFromQuery })
+      setSevenAddressInfo({
+        [memberIdFromQuery]: {
+          storeName: storeName,
+          address: storeAddress,
+        },
+      })
+
+      memberIds.forEach((memberId) => {
+        const savedMethod = localStorage.getItem(`shippingMethod_${memberId}`)
+        if (savedMethod) {
+          handleSelectChange(savedMethod, memberId, false)
+        }
+      })
+
+      const savedScrollPosition = localStorage.getItem('scrollPosition')
+      if (savedScrollPosition) {
+        window.scrollTo(0, parseInt(savedScrollPosition, 10))
+      }
+      setShow({ [memberIdFromQuery]: true })
+    }
+  }, [router.query])
 
   // 判斷是新增宅配地址還是編輯宅配地址
   const handleShowForm = (editMode = false) => {
@@ -112,6 +217,106 @@ export default function DeliveryCheckout({ items, memberId }) {
   // 編輯/新增地址時點擊取消
   const handleCancel = () => {
     setshowAddrForm(false)
+  }
+
+  const prepareForNewOperation = async (memberId) => {
+    await clearSessionData(memberId)
+
+    setSevenReceiveName({})
+    setSevenReceivePhone({})
+    setSevenAddressInfo({})
+
+    handleShow(memberId)
+  }
+
+  const clearSessionData = async (memberId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3005/api/cart/clear-address-session/${memberId}`,
+        {
+          credentials: 'include',
+        }
+      )
+    } catch (error) {
+      console.error('請求錯誤', error)
+    }
+  }
+
+  // 取消新增超商地址表單
+  const handleSevenFormCancel = async (memberId) => {
+    // 清除超商地址session
+    try {
+      const response = await fetch(
+        `http://localhost:3005/api/cart/clear-address-session/${memberId}`,
+        {
+          credentials: 'include',
+        }
+      )
+    } catch (error) {
+      console.error('請求錯誤', error)
+    }
+
+    setSevenReceiveName((prev) => ({ ...prev, [memberId]: '' }))
+    setSevenReceivePhone((prev) => ({ ...prev, [memberId]: '' }))
+    setSevenAddressInfo((prev) => ({ ...prev, [memberId]: {} }))
+
+    setShow((prev) => ({ ...prev, [memberId]: false }))
+    const savedMethod = localStorage.getItem(`shippingMethod_${memberId}`)
+    if (savedMethod) {
+      handleSelectChange(savedMethod, memberId, false)
+    }
+    setShow((prev) => ({ ...prev, [memberId]: false }))
+  }
+
+  // 點擊完成新增超商地址
+  const handleComplete = async () => {
+    const shippingMethod = localStorage.getItem(`shippingMethod_${memberId}`)
+    const sevenInfo = {
+      memberId,
+      shipping_method: shippingMethod,
+      member_id: memberData.id,
+      name: sevenReceiveName[memberId],
+      phone: sevenReceivePhone[memberId],
+      sevenInfo: {
+        storeName: sevenAddressInfo[memberId].storeName,
+        address: sevenAddressInfo[memberId].address,
+      },
+    }
+    try {
+      const response = await fetch(
+        'http://localhost:3005/api/cart/add-seven-address',
+        {
+          method: 'POST',
+          headers: { 'Content-type': 'application/json' },
+          body: JSON.stringify(sevenInfo),
+          credentials: 'include',
+        }
+      )
+      const data = await response.json()
+      if (data.success) {
+        console.log('超商地址新增成功')
+        setShow((prev) => ({ ...prev, [memberId]: false }))
+        const savedScrollPosition = localStorage.getItem('scrollPosition')
+        if (savedScrollPosition) {
+          window.scrollTo(0, parseInt(savedScrollPosition, 10))
+        }
+        MySwal.fire({
+          icon: 'success',
+          title: '超商地址新增成功',
+          showConfirmButton: false,
+          timer: 2000,
+        })
+        const savedMethod = localStorage.getItem(`shippingMethod_${memberId}`)
+        if (savedMethod) {
+          handleSelectChange(savedMethod, memberId, false)
+        }
+        localStorage.removeItem('scrollPosition')
+      } else {
+        console.error('地址新增失敗')
+      }
+    } catch (error) {
+      console.error('請求失敗', error)
+    }
   }
 
   // 設定各個物流運費，當用戶改變selectAddrOption就更新運費
@@ -163,7 +368,6 @@ export default function DeliveryCheckout({ items, memberId }) {
       })
     }
   }
-  const router = useRouter()
 
   useEffect(() => {
     const currentSelectedIndex = selectedAddresses[memberId]?.home
@@ -278,6 +482,17 @@ export default function DeliveryCheckout({ items, memberId }) {
       })
   }
 
+  // 透過localStorage來恢復用戶所選的物流方式及常用地址選項
+  useEffect(() => {
+    const savedShippingMethod = localStorage.getItem(
+      `shippingMethod_${memberId}`
+    )
+
+    if (savedShippingMethod) {
+      handleSelectChange(savedShippingMethod, memberId, false)
+    }
+  }, [memberId])
+
   // 計算假的到貨日期
   const calculateDeliveryDates = () => {
     const currentDate = new Date()
@@ -331,6 +546,113 @@ export default function DeliveryCheckout({ items, memberId }) {
 
   return (
     <>
+      <Modal show={show[memberId]}>
+        <Modal.Header>
+          <Modal.Title>新增超商地址</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Control
+                type="text"
+                placeholder="收件姓名"
+                value={sevenReceiveName[memberId] || ''}
+                onChange={(e) =>
+                  setSevenReceiveName((prev) => ({
+                    ...prev,
+                    [memberId]: e.target.value,
+                  }))
+                }
+                autoFocus
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Control
+                type="phone"
+                placeholder="收件電話號碼"
+                value={sevenReceivePhone[memberId] || ''}
+                onChange={(e) =>
+                  setSevenReceivePhone((prev) => ({
+                    ...prev,
+                    [memberId]: e.target.value,
+                  }))
+                }
+              />
+            </Form.Group>
+            <div className="input-group mb-3">
+              <span className="input-group-text" id="basic-addon1">
+                <Image
+                  src="/images/cart/7-eleven.svg"
+                  width={20}
+                  height={20}
+                  alt="7-ELEVEN超商收件地址"
+                  className={styles.sevenimg}
+                />
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                value={
+                  sevenAddressInfo[memberId]
+                    ? `${sevenAddressInfo[memberId].storeName} | ${sevenAddressInfo[memberId].address}`
+                    : ''
+                }
+                aria-describedby="basic-addon1"
+                disabled
+                readOnly
+              />
+            </div>
+            {/* 選擇超商地址按鈕(寄送資訊) */}
+            <div
+              className={`flex-column align-items-center mt-4 ${
+                currentShippingOption.selectAddrOption === '1'
+                  ? 'd-flex'
+                  : 'd-none'
+              }`}
+            >
+              <div
+                onClick={() => {
+                  handleSelectSevenAddress(memberId)
+                }}
+              >
+                <Image
+                  src="/images/cart/7-eleven.svg"
+                  width={50}
+                  height={50}
+                  alt="選擇7-ELEVEN超商地址"
+                  className={styles.sevenimg}
+                />
+              </div>
+              {/* 選擇超商常用地址按鈕 */}
+              <div
+                className={styles.addSevevnAdr}
+                onClick={() => {
+                  handleSelectSevenAddress(memberId)
+                }}
+              >
+                <span className={styles.iconFrame}>
+                  <FaPlus />
+                </span>
+                <span className={styles.text}>選擇超商地址</span>
+              </div>
+            </div>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="light"
+            onClick={() => {
+              handleSevenFormCancel(memberId)
+            }}
+          >
+            取消
+          </Button>
+          <Button variant="dark" onClick={handleComplete}>
+            完成
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <div dangerouslySetInnerHTML={{ __html: mapHtml }} />
       <div className={`row ${styles.deliveryRow}`}>
         <div
           className={
@@ -353,11 +675,11 @@ export default function DeliveryCheckout({ items, memberId }) {
             </label>
             <Form.Select
               className={styles.formSelect}
-              onChange={(e) => handleSelectChange(e, memberId)}
+              onChange={(e) => handleSelectChange(e, memberId, true)}
               value={currentShippingOption.selectAddrOption || ''}
               disabled={showAddrForm}
             >
-              <option value="">請選擇物流方式</option>
+              {/* <option value="">請選擇物流方式</option> */}
               <option value="1">7-11 超商寄送 ｜運費$60</option>
               <option value="2">店家宅配寄送 ｜運費$100</option>
             </Form.Select>
@@ -389,6 +711,25 @@ export default function DeliveryCheckout({ items, memberId }) {
               )}
             </div>
           )}
+          {/* 新增超商按鈕 */}
+          {currentShippingOption.selectAddrOption === '1' &&
+            !isMaxSevenAddresses && (
+              <div className="d-flex justify-content-end mb-3">
+                <div
+                  className={`button ${styles.addSevenAdr}`}
+                  onClick={() => prepareForNewOperation(memberId)}
+                >
+                  <Image
+                    src="/images/cart/7-eleven.svg"
+                    width={16}
+                    height={16}
+                    alt="新增7-ELEVEN超商地址"
+                    className={styles.sevenimg}
+                  />
+                  <div>新增超商地址</div>
+                </div>
+              </div>
+            )}
           {/* 選擇常用地址radio 區塊 (block)*/}
           {currentShippingOption.selectAddrOption && (
             <div
@@ -468,33 +809,8 @@ export default function DeliveryCheckout({ items, memberId }) {
                   })}
             </div>
           )}
-
-          {/* 新增超商地址按鈕(寄送資訊) */}
-          <div
-            className={`flex-column align-items-center mt-4 ${
-              currentShippingOption.selectAddrOption === '1'
-                ? 'd-flex'
-                : 'd-none'
-            }`}
-          >
-            <div onClick={getSevenAddress}>
-              <Image
-                src="/images/cart/7-eleven.svg"
-                width={50}
-                height={50}
-                alt="選擇7-ELEVEN超商地址"
-                className={styles.sevenimg}
-              />
-            </div>
-            {/* 新增超商常用地址按鈕 */}
-            <div className={styles.addSevevnAdr} onClick={getSevenAddress}>
-              <span className={styles.iconFrame}>
-                <FaPlus />
-              </span>
-              <span className={styles.text}>新增地址</span>
-            </div>
-          </div>
         </div>
+
         {/* 宅配地址表單區塊 */}
         <div
           className={`col-12 ${styles.addrForm}`}
@@ -577,7 +893,7 @@ export default function DeliveryCheckout({ items, memberId }) {
                     ))}
                   </select>
                 </div>
-                <div class="col-12">
+                <div className="col-12">
                   <input
                     type="text"
                     name="address"

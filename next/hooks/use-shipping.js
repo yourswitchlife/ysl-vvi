@@ -2,6 +2,9 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/use-Auth'
 // 引用use-cart鉤子
 import { useCart } from '@/hooks/use-cart'
+
+import { cleanupShippingMethods } from '@/utils/cleanupMethods'
+
 // 引入台灣城市區域json
 import taiwanDistricts from '@/data/taiwan_districts.json'
 
@@ -46,6 +49,8 @@ export function ShippingProvider({ children }) {
   const [hasCommonAddr, setHasCommonAddr] = useState(false)
   // 紀錄宅配地址是否已滿3條
   const [isMaxHomeAddresses, setIsMaxHomeAddresses] = useState(false)
+  // 紀錄超商地址是否已滿3條
+  const [isMaxSevenAddresses, setIsMaxSevenAddresses] = useState(false)
   // 記錄單一賣場的每個運費
   const [shippingFees, setShippingFees] = useState({})
   // 儲存每個賣場訂單的選取的地址選項
@@ -135,6 +140,13 @@ export function ShippingProvider({ children }) {
     setSelectedAddressIndex(index)
   }
 
+  // useEffect(() => {
+  //   const memberIds = [...new Set(cartItems.map((item) => item.member_id))]
+
+  //   // 使用cleanupShippingMethods來根據當前的memberIds清理localStorage
+  //   cleanupShippingMethods(memberIds)
+  // }, [cartItems])
+
   // 計算運費總金額
   const updateShippingFee = (memberId, fee) => {
     setShippingFees((currentFee) => ({ ...currentFee, [memberId]: fee }))
@@ -174,9 +186,13 @@ export function ShippingProvider({ children }) {
   }
 
   // 選擇物流方式下拉選單值
-  const handleSelectChange = (e, memberId) => {
-    const selectedMethod = e.target.value
-    // console.log('選擇的物流方式: ', selectedMethod)
+  const handleSelectChange = (valueOrEvent, memberId, userAction = false) => {
+    console.log('handleSelectChange 的 memberId:', memberId)
+    if (!userAction) return
+    const selectedMethod = valueOrEvent.target
+      ? valueOrEvent.target.value
+      : valueOrEvent
+    console.log('選擇的物流方式: ', selectedMethod)
     setShippingOptions((prev) => ({
       ...prev,
       [memberId]: {
@@ -193,6 +209,9 @@ export function ShippingProvider({ children }) {
         ...prevInfos[memberId],
       },
     }))
+
+    // 將選擇保存到 localStorage
+    localStorage.setItem(`shippingMethod_${memberId}`, selectedMethod)
 
     const hasAddresses =
       addresses.homeAddresses.length > 0 || addresses.sevenAddresses.length > 0
@@ -354,8 +373,10 @@ export function ShippingProvider({ children }) {
             setHasCommonAddr(true)
             // 檢查是否達到最大地址數量
             setIsMaxHomeAddresses(homeAddresses.length >= 3)
+            // 檢查是否達到最大超商地址數量
+            setIsMaxSevenAddresses(sevenAddresses.length >= 3)
 
-            // 設置默認選擇宅配地址
+            // 取得常用地址資料後，設置默認選擇宅配地址
             const newShippingOptions = {}
             Object.keys(orderGroup).forEach((memberId) => {
               newShippingOptions[memberId] = {
@@ -390,12 +411,17 @@ export function ShippingProvider({ children }) {
     // console.log(orderGroup)
 
     const initShippingOptions = {}
-    Object.keys(orderGroup).forEach((memberId) => {
+    Object.keys(newOrderGroup).forEach((memberId) => {
+      const storedShippingMethod = localStorage.getItem(
+        `shippingMethod_${memberId}`
+      )
+      const shippingMethod = storedShippingMethod || '2'
       initShippingOptions[memberId] = {
-        selectAddrOption: '2',
+        selectAddrOption: shippingMethod,
         selectedAddressIndex: 0,
       }
     })
+
     setShippingOptions(initShippingOptions)
   }, [cartItems])
 
@@ -488,7 +514,7 @@ export function ShippingProvider({ children }) {
     }
   }, [orderGroup])
 
-  // 測試
+  // 檢查
   useEffect(() => {
     const pendingPaymentOrderIds = Object.keys(orderGroup).filter((memberId) =>
       orderGroup[memberId].some((item) => item.userSelect)
@@ -543,6 +569,7 @@ export function ShippingProvider({ children }) {
         addresses,
         hasCommonAddr,
         isMaxHomeAddresses,
+        isMaxSevenAddresses,
         regions,
         shippingInfos,
         totalShippingFee,

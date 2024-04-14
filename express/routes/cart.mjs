@@ -9,6 +9,7 @@ import axios from 'axios'
 import queryString from 'query-string'
 // 啟用綠界物流SDK
 import ecpay_logistics from 'ecpay_logistics_nodejs'
+import session from 'express-session'
 
 // 取得商品對應的賣場名稱
 router.get('/shop-names', async (req, res) => {
@@ -571,16 +572,147 @@ router.get('/get-coupons', async (req, res) => {
 // 綠界門市地圖
 router.get('/get-seven-address', async (req, res) => {
   console.log('開始綠界')
-  // const create = new ecpay_logistics({
-  //   MerchantTradeNo: 'f0a0d7e9fae1bb72bc93',
-  //   LogisticsType: 'CVS',
-  //   LogisticsSubType: 'UNIMARTC2C',
-  //   IsCollection: 'N',
-  //   ServerReplyURL:
-  //     'https://f4df-2402-7500-4e6-92d1-51ba-7154-4a35-80c1.ngrok-free.app/api/cart/get-seven',
-  //   ExtraData: '',
-  //   Device: '',
-  // })
+  const base_param = {
+    MerchantTradeNo: 'Gn7fJycGqWvqaZdGZLEH',
+    LogisticsType: 'CVS',
+    LogisticsSubType: 'UNIMARTC2C',
+    IsCollection: 'N',
+    ServerReplyURL: 'http://localhost:3005/api/cart/return-map',
+    ExtraData: '',
+    Device: '',
+  }
+
+  const create = new ecpay_logistics()
+  const mapHtml = await create.query_client.expressmap(base_param)
+
+  console.log(mapHtml)
+  res.render('ecpaymap', { title: '', mapHtml })
+})
+
+// 接收超商收件姓名、電話資訊
+router.post('/save-user-info', (req, res) => {
+  const { name, phone, memberId } = req.body
+  console.log(req.body)
+  req.session.userInfo = {
+    memberId,
+    name,
+    phone,
+  }
+  console.log(req.session)
+  res.json({ success: true, message: '用戶超商收件資訊已保存到session' })
+})
+
+// 後端接收綠界地圖回傳的資料
+router.post('/return-map', async (req, res) => {
+  console.log('req.body', req.body)
+  const userInfo = req.session.userInfo || {}
+  console.log(userInfo)
+  const { CVSStoreID, CVSStoreName, CVSAddress } = req.body
+  const storeID = CVSStoreID
+  const storeName = CVSStoreName
+  const storeAddress = CVSAddress
+
+  if (!userInfo.memberId || !userInfo.name || !userInfo.phone) {
+    console.error('缺少必要的session資訊')
+    return res.status(400).send('缺少必要的資訊')
+  }
+
+  const memberId = userInfo.memberId
+  const name = userInfo.name[memberId]
+  const phone = userInfo.phone[memberId]
+  req.session.addressInfo = {
+    id: CVSStoreID,
+    name: CVSStoreName,
+    address: CVSAddress,
+  }
+  console.log(req.session)
+  res.redirect(
+    `http://localhost:3000/cart/checkout?storeID=${CVSStoreID}&memberId=${encodeURIComponent(memberId)}&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&storeName=${encodeURIComponent(CVSStoreName)}&storeAddress=${encodeURIComponent(CVSAddress)}`
+  )
+})
+
+// 清除整個session數據
+router.get('/clear-session', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.log('session 清除失敗:', err)
+      return res.status(500).send('session 清除失敗')
+    }
+    res.send('session 已清除')
+  })
+})
+
+// 清除從綠界儲存的7-11超商地址資訊
+router.get('/clear-address-session/:memberId', (req, res) => {
+  const { memberId } = req.params
+  console.log('當前session數據：', req.session)
+  if (req.session.addressInfo && req.session.addressInfo[memberId]) {
+    delete req.session.addressInfo[memberId]
+  }
+  if (req.session.userInfo && req.session.userInfo[memberId]) {
+    delete req.session.userInfo[memberId]
+  }
+  // 清除SESSION_ID cookie
+  res.cookie('SESSION_ID', '', {
+    expires: new Date(0),
+    path: '/',
+    httpOnly: true,
+  })
+  console.log('清除後的session數據：', req.session)
+  res.json({ success: true, message: '超商地址session清除成功' })
+})
+
+// 新增超商地址
+router.post('/add-seven-address', async (req, res) => {
+  const { memberId, shipping_method, name, phone, sevenInfo, member_id } =
+    req.body
+  console.log(member_id)
+  const sevenAddressInfo = JSON.stringify({
+    name,
+    phone,
+    sevenInfo,
+  })
+  console.log(sevenAddressInfo)
+  // 先查詢該會員是否有設置超商常用地址
+  const [existingSevenAddresses] = await db.query(
+    'SELECT * FROM shipping_address WHERE member_id = ? AND shipping_method = ?',
+    [member_id, shipping_method]
+  )
+  if (existingSevenAddresses.length === 0) {
+    const insertSql =
+      'INSERT INTO shipping_address (member_id, shipping_method, seven1) VALUES (?, ?, ?)'
+    await db.execute(insertSql, [member_id, shipping_method, sevenAddressInfo])
+    res.status(200).json({ message: '新增超商地址成功' })
+  } else {
+    // 尋找第一個空的地址欄位
+    const findFirstEmptyField = (address) => {
+      const fields = ['seven1', 'seven2', 'seven3']
+      for (const field of fields) {
+        if (!address[field]) {
+          return field
+        }
+      }
+      return null
+    }
+    // 如果已經有超商常用地址了，找到第一個空地址的欄位
+    const emptyField = findFirstEmptyField(existingSevenAddresses[0])
+    if (emptyField) {
+      const updateSql = `UPDATE shipping_address SET ${emptyField} = ? WHERE member_id = ? AND shipping_method = ?`
+      await db.execute(updateSql, [
+        sevenAddressInfo,
+        member_id,
+        shipping_method,
+      ])
+      return res.json({ success: true, message: '超商地址新增成功' })
+    } else {
+      res.status(400).json({ message: '超商地址欄位都已經有資料了' })
+    }
+  }
+})
+
+// 綠界金流付款
+router.post('/credit-card', (req, res) => {
+  console.log('開始串接綠界金流')
 })
 
 export default router
