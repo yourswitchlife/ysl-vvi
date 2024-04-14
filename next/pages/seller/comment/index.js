@@ -31,6 +31,8 @@ import Tabs from 'react-bootstrap/Tabs'
 import Modal from 'react-bootstrap/Modal';
 //npm install
 import Swal from 'sweetalert2'
+//animation
+import { motion } from 'framer-motion'
 
 export default function Comment() {
   //body style
@@ -293,7 +295,11 @@ export default function Comment() {
             <hr />
           </div>
           <div className={`d-none d-md-block ${styles.dashboardMargin}`}>
-            <div className={`mb-4 ${styles.dashboardStyle}`}>
+            <motion.div className={`mb-4 ${styles.dashboardStyle}`}
+              initial={{opacity: 0.5}}
+              animate={{opacity: 1}}
+              exit={{ opacity: 0}}
+              transition={{ duration: 0.5}}>
               <Form>
                 <div className="d-flex justify-content-between align-items-end mb-4">
                   <div className="d-flex justify-content-start align-items-end">
@@ -358,8 +364,12 @@ export default function Comment() {
                   </button>
                 </div>
               </Form>
-            </div>
-            <div className={`mb-5 ${styles.dashboardStyle}`}>
+            </motion.div>
+            <motion.div className={`mb-5 ${styles.dashboardStyle}`}
+              initial={{opacity: 0.5}}
+              animate={{opacity: 1}}
+              exit={{ opacity: 0}}
+              transition={{ duration: 0.5}}>
               <Tabs
                 defaultActiveKey="all"
                 id="commentStatusTabs"
@@ -507,7 +517,7 @@ export default function Comment() {
               <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
               </div>
               
-            </div>
+            </motion.div>
           </div>
           <div className="d-block d-md-none container ps-4 pe-4">
             <div className="d-flex justify-content-start align-items-end mb-3">

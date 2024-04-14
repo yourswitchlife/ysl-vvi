@@ -36,6 +36,8 @@ import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
 //npm install
 import Swal from 'sweetalert2'
+//animation
+import { motion } from 'framer-motion'
 
 export default function Product() {
   const { isLoggedIn, memberId, memberData } = useAuth()
@@ -54,7 +56,7 @@ export default function Product() {
   const [searchQuery, setSearchQuery] = useState('')
   // 新增狀態用來追蹤選中的產品
   const [selectedProducts, setSelectedProducts] = useState(new Set());
-
+  
   //body style
   useEffect(() => {
     // 當元件掛載時添加樣式
@@ -287,7 +289,12 @@ export default function Product() {
           </div>
           <div className={`d-none d-md-block ${styles.dashboardMargin}`}>
             <BreadCrumb />
-            <div className={`mb-4 ${styles.dashboardStyle}`}>
+            <motion.div className={`mb-4 ${styles.dashboardStyle}`}
+            initial={{opacity: 0.5}}
+            animate={{opacity: 1}}
+            exit={{ opacity: 0}}
+            transition={{ duration: 0.3}}
+          >
               <div className="d-flex justify-content-start align-items-center mb-3">
                 <h5 className="text-dark fw-bold">我的商品</h5>
                 <h6 className="text-secondary ms-2">查看您的賣場商品</h6>
@@ -337,8 +344,13 @@ export default function Product() {
                   </button>
                 </div>
               </Form>
-            </div>
-            <div className={`mb-4 ${styles.dashboardStyle}`}>
+            </motion.div>
+            <motion.div className={`mb-4 ${styles.dashboardStyle}`}
+            initial={{opacity: 0.5}}
+            animate={{opacity: 1}}
+            exit={{ opacity: 0}}
+            transition={{ duration: 0.7}}
+          >
               <Tabs
                 defaultActiveKey="all"
                 id="product"
@@ -436,7 +448,12 @@ export default function Product() {
                       return (
                         <div className="px-3 py-5 border-bottom" key={v.id}>
                     <div className="text-dark">
-                      <div className="row align-items-center text-center">
+                      <motion.div className="row align-items-center text-center"
+                        initial={{opacity: 0.5}}
+                        animate={{opacity: 1}}
+                        exit={{ opacity: 0}}
+                        transition={{ duration: 0.7}}
+                      >
                         <h6 className="mb-0 col-1 fw-normal text-start"><Form.Check aria-label="option 1" /></h6>
                         <div className="col-3 d-flex flex-column justify-content-start align-items-start mt-2">
                           <div className="d-flex justify-content-start align-items-center mb-2">
@@ -503,7 +520,7 @@ export default function Product() {
                           </button>
                       )}
                         </div>
-                      </div>
+                      </motion.div>
                     </div>
                   </div>
                       )
@@ -561,7 +578,7 @@ export default function Product() {
                   </Dropdown>
                 </div>
               </div> */}
-            </div>
+            </motion.div>
           </div>
           <div className="d-block d-md-none container ps-4 pe-4">
             <Tabs

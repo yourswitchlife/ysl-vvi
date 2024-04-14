@@ -25,6 +25,8 @@ import DropdownButton from 'react-bootstrap/DropdownButton'
 import Card from 'react-bootstrap/Card'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
+//animation
+import { motion } from 'framer-motion'
 
 
 export default function Order() {
@@ -198,49 +200,6 @@ export default function Order() {
     }
   }, [router.query.tab])
 
-
-  // const getSellerData = async() => {
-  //   try{
-  //     const res = await fetch(`http://localhost:3005/api/seller/order`, { credentials: 'include'})
-  //     if(!res.ok){
-  //       throw new Error('網路請求失敗，找不到賣家資料')
-  //     }
-  //     let data = await res.json()
-   
-  //     if(data && data.length > 0){
-  //       //格式化日期再寫進去
-  //       data = formatDatas(data)
-  //       setOrders(data)
-  //       // console.log(data)
-  //       //取得評價平均
-  //       console.log(data)
-  //       // console.log(averageRating)
-        
-  //     }
-  //   }catch(e){
-  //     console.error(e)
-  //   }
-  // } 
-  // const getSellerProducts = async() => {
-  //   try{
-  //     const res = await fetch(`http://localhost:3005/api/seller/product`, { credentials: 'include'})
-  //     if(!res.ok){
-  //       throw new Error('網路請求失敗，找不到賣家資料')
-  //     }
-  //     const data = await res.json()
-   
-  //     if(data && data.length > 0){
-  //       setProducts(data)
-  //     }
-  //   }catch(e){
-  //     console.error(e)
-  //   }
-  // }
-  // useEffect(() => {
-  //   getSellerData()
-  //   getSellerProducts()
-  // }, [])
-
   function formatDatas(datas){
     return datas.map(data => {
       const date = new Date(data.order_date)
@@ -255,55 +214,6 @@ export default function Order() {
       };
     })
   }
-  //處理同一訂單，同一店家，購買不只一件商品（要進行order-map中的shopItems-map）
-  // let orderGroups = orders.reduce((acc, order) => {
-  //   if(!acc[order.order_number]){
-  //     acc[order.order_number] = {productIds: [], quantities: []}
-  //   }
-  //   acc[order.order_number].productIds.push(order.product_id)
-  //   acc[order.order_number].quantities.push(order.quantity)
-  //   return acc
-  // }, {})
-  // console.log(orderGroups)
-
-  // function findProductById(productId){
-  //   return products.find(product => product.id === productId)
-  // }
-
-  //遍歷groupOrders，用product_id找到對應的產品資訊
-  // useEffect(() => {
-  //   if(!products.length || !orders.length){
-  //     //沒準備好就不計算
-  //     return
-  //   }
-  //   //計算orderProductInfos
-  //   let ComputedOrderProductInfos = Object.entries(orderGroups).map(([orderNumber, info]) => {
-  //     let productInfos = info.productIds.map((productId, index) => {
-  //       let product = findProductById(productId);
-  //       if(!product){
-  //         console.error(`Product not found for ID: ${productId}`)
-  //       return{
-  //         name: 'Product not found',
-  //         imgCover: gameCover,
-  //         quantity: info.quantities[index]
-  //       }
-  //     }
-  //       return {
-  //         name: product.name,
-  //         imgCover: product.img_cover,
-  //         quantity: info.quantities[index]
-  //       };
-  //     });
-  //     return { orderNumber, products: productInfos };
-  //   });
-  //   setOrderProductInfos(ComputedOrderProductInfos)
-  // }, [products, orders])
-
-  // console.log(orderProductInfos[0].products[0].name)
-
-  // function handleSubmit(e) {
-  //   e.prevent.default()
-  // }
 
   return (
     <>
@@ -354,7 +264,11 @@ export default function Order() {
           </div>
           <div className={`d-none d-md-block ${styles.dashboardMargin}`}>
             <BreadCrumb />
-            <div className={`mb-4 ${styles.dashboardStyle}`}>
+            <motion.div className={`mb-4 ${styles.dashboardStyle}`}
+              initial={{opacity: 0.5}}
+              animate={{opacity: 1}}
+              exit={{ opacity: 0}}
+              transition={{ duration: 0.5}}>
               <Tabs
                 defaultActiveKey="all"
                 id="orderStatusTabs"
@@ -485,7 +399,7 @@ export default function Order() {
                   </div>
                   
                   <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
-            </div>
+            </motion.div>
           </div>
           <div className="d-block d-md-none container ps-4 pe-4">
           <Tabs
